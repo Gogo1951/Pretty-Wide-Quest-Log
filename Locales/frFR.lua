@@ -1,4 +1,4 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("WideQuestLogPlus", "frFR")
+local L = LibStub("AceLocale-3.0"):NewLocale("Pretty-Wide-Quest-Log", "frFR")
 if not L then
 	return
 end
@@ -7,10 +7,12 @@ end
 -- Add-on
 --------------------------------------------------------------------------------
 
-L["ADDON_TITLE"] = "Wide Quest Log Plus"
+L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["CHAT_LOADED"] =
-	"Version %s. Les paramètres (y compris l'option pour désactiver ce message) se trouvent dans Options > AddOns > Wide Quest Log Plus. L'add-on vous plaît ? Parlez-en à un ami ! (="
+	"Version %s. Les paramètres (y compris l'option pour désactiver ce message) se trouvent dans Options > AddOns > Pretty Wide Quest Log. L'add-on vous plaît ? Parlez-en à un ami ! (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "Par mesure de sécurité, l'interface des options ne peut pas être ouverte en combat."
+L["CHAT_PREDECESSOR_LOADED"] =
+	"Wide Quest Log Plus est aussi activé, et les deux vont se disputer le journal de quêtes. Désactivez Wide Quest Log Plus dans la liste des AddOns, puis rechargez."
 
 --------------------------------------------------------------------------------
 -- Options
@@ -19,11 +21,11 @@ L["CHAT_OPTIONS_IN_COMBAT"] = "Par mesure de sécurité, l'interface des options
 L["OPTIONS_DESCRIPTION"] =
 	"Journal de quêtes large à deux volets, avec niveaux de quête, marqueurs de donjon, de raid et d'élite, et ID de quête. Voyez toute votre liste de quêtes et les détails de chaque quête à la fois, triés à votre façon. Un journal de quêtes plus grand qui garde le style de Blizzard."
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message d'accueil de Wide Quest Log Plus à la connexion."
-L["ENABLE_WIDE_QUEST_LOG"] = "Activer le journal de quêtes large pour ce profil"
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message d'accueil de Pretty Wide Quest Log à la connexion."
+L["ENABLE_WIDE_QUEST_LOG"] = "Activer Pretty Wide Quest Log pour ce profil"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
 	"Fait en sorte que la touche du journal de quêtes, le bouton du micro-menu et les clics sur les quêtes du suivi des objectifs ouvrent ce journal de quêtes large. Désactivez-le pour utiliser à la place le journal de quêtes par défaut de Blizzard, intégré à la carte du monde. Prend effet après un rechargement."
-L["RELOAD_PROMPT"] = "Wide Quest Log Plus change de journal de quêtes après un rechargement. Recharger maintenant ?"
+L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après un rechargement. Recharger maintenant ?"
 L["ZONE_ORDER"] = "Ordre des zones"
 L["ZONE_ORDER_DESCRIPTION"] = "Change l'ordre des zones dans la liste des quêtes."
 L["SORT_ALPHABETICAL_DEFAULT"] = "Alphabétique (par défaut)"
@@ -47,8 +49,10 @@ L["OPTIONS_COMMANDS_HEADER"] = "/Commandes"
 L["OPTIONS_COMMAND"] = "/wide"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Ouvre l'interface des options de cet add-on."
 L["FEEDBACK_HEADER"] = "Commentaires et assistance"
+L["FEEDBACK_DISCORD"] = "Discord"
 L["FEEDBACK_GITHUB"] = "GitHub"
 L["FEEDBACK_CURSEFORGE"] = "CurseForge"
+L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------

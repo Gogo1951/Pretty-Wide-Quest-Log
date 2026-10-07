@@ -1,4 +1,4 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("WideQuestLogPlus", "deDE")
+local L = LibStub("AceLocale-3.0"):NewLocale("Pretty-Wide-Quest-Log", "deDE")
 if not L then
 	return
 end
@@ -7,10 +7,12 @@ end
 -- Add-on
 --------------------------------------------------------------------------------
 
-L["ADDON_TITLE"] = "Wide Quest Log Plus"
+L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["CHAT_LOADED"] =
-	"Version %s. Die Einstellungen (einschließlich der Option, diese Nachricht zu deaktivieren) findest du unter Optionen > AddOns > Wide Quest Log Plus. Gefällt dir das Add-on? Erzähl deinen Freunden davon! (="
+	"Version %s. Die Einstellungen (einschließlich der Option, diese Nachricht zu deaktivieren) findest du unter Optionen > AddOns > Pretty Wide Quest Log. Gefällt dir das Add-on? Erzähl deinen Freunden davon! (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "Aus Sicherheitsgründen kann das Optionsmenü im Kampf nicht geöffnet werden."
+L["CHAT_PREDECESSOR_LOADED"] =
+	"Wide Quest Log Plus ist ebenfalls aktiviert, und die beiden kommen sich beim Questlog in die Quere. Deaktiviere Wide Quest Log Plus in der AddOn-Liste und lade dann neu."
 
 --------------------------------------------------------------------------------
 -- Options
@@ -19,11 +21,11 @@ L["CHAT_OPTIONS_IN_COMBAT"] = "Aus Sicherheitsgründen kann das Optionsmenü im 
 L["OPTIONS_DESCRIPTION"] =
 	"Breites Questlog mit zwei Bereichen, Queststufen, Markierungen für Dungeon-, Schlachtzugs- und Elitequests sowie Quest-IDs. Sieh deine ganze Questliste und die Details jeder Quest auf einmal, sortiert nach deinen Wünschen. Ein größeres Questlog im vertrauten Blizzard-Look."
 L["ENABLE_WELCOME_MESSAGE"] = "Willkommensnachricht aktivieren"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Zeigt beim Einloggen die Begrüßung von Wide Quest Log Plus."
-L["ENABLE_WIDE_QUEST_LOG"] = "Breites Questlog für dieses Profil aktivieren"
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Zeigt beim Einloggen die Begrüßung von Pretty Wide Quest Log."
+L["ENABLE_WIDE_QUEST_LOG"] = "Pretty Wide Quest Log für dieses Profil aktivieren"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
 	"Sorgt dafür, dass die Questlog-Taste, die Schaltfläche im Mikromenü und Klicks auf Quests in der Zielverfolgung dieses breite Questlog öffnen. Deaktiviert öffnen sie stattdessen Blizzards Standard-Questlog, das in der Weltkarte angedockt ist. Wird nach einem Neuladen wirksam."
-L["RELOAD_PROMPT"] = "Wide Quest Log Plus wechselt das Questlog erst nach einem Neuladen. Jetzt neu laden?"
+L["RELOAD_PROMPT"] = "Pretty Wide Quest Log wechselt das Questlog erst nach einem Neuladen. Jetzt neu laden?"
 L["ZONE_ORDER"] = "Reihenfolge der Zonen"
 L["ZONE_ORDER_DESCRIPTION"] = "Ändert die Reihenfolge der Zonen in der Questliste."
 L["SORT_ALPHABETICAL_DEFAULT"] = "Alphabetisch (Standard)"
@@ -47,8 +49,10 @@ L["OPTIONS_COMMANDS_HEADER"] = "/Befehle"
 L["OPTIONS_COMMAND"] = "/wide"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Öffnet das Optionsmenü für dieses Add-on."
 L["FEEDBACK_HEADER"] = "Feedback & Unterstützung"
+L["FEEDBACK_DISCORD"] = "Discord"
 L["FEEDBACK_GITHUB"] = "GitHub"
 L["FEEDBACK_CURSEFORGE"] = "CurseForge"
+L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------

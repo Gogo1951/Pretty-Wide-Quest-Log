@@ -1,4 +1,4 @@
-# CI for WideQuestLogPlus, on every pull request and every push to the release
+# CI for Pretty Wide Quest Log, on every pull request and every push to the release
 # branches. Every check runs even when an earlier one fails, so one run shows
 # everything that needs fixing.
 #
@@ -15,7 +15,6 @@ on:
   push:
     branches:
       - main
-      - forever
   workflow_dispatch:
 
 permissions:

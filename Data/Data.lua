@@ -6,15 +6,20 @@ ns.L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 --------------------------------------------------------------------------------
 
 ns.ADDON_TITLE = ns.L["ADDON_TITLE"]
-ns.SAVED_VARIABLES_NAME = "WideQuestLogPlusDB"
+ns.SAVED_VARIABLES_NAME = "PrettyWideQuestLogDB"
+
+-- The add-on this one replaced. Both hook the quest log, so they must not run together.
+ns.PREDECESSOR_ADDON_NAME = "WideQuestLogPlus"
 
 --------------------------------------------------------------------------------
 -- Links
 --------------------------------------------------------------------------------
 
 ns.URLS = {
-	GITHUB = "https://github.com/DustinChecketts/WideQuestLogPlus",
-	CURSEFORGE = "https://www.curseforge.com/wow/addons/wide-quest-log-plus",
+	DISCORD = "https://discord.gg/eh8hKq992Q",
+	GITHUB = "https://github.com/Gogo1951/Pretty-Wide-Quest-Log",
+	CURSEFORGE = "https://www.curseforge.com/wow/addons/pretty-wide-quest-log",
+	WAGO = "https://addons.wago.io/addons/pretty-wide-quest-log",
 }
 
 --------------------------------------------------------------------------------
@@ -146,7 +151,7 @@ LAYOUT.QUEST_TEXT_X = LAYOUT.CHECK_X + 16 + LAYOUT.CHECK_GAP
 ns.TRACKING_MARKS = {
 	tracked = { texture = "Interface/Buttons/UI-CheckBox-Check", r = 64 / 255, g = 224 / 255, b = 208 / 255 },
 	untracked = {
-		texture = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/WQLP_Untracked",
+		texture = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/PWQL_Untracked",
 		r = 1,
 		g = 0.125,
 		b = 0.125,
@@ -170,7 +175,7 @@ LAYOUT.BUTTON_HEIGHT = 21
 LAYOUT.DETAIL_SCROLL_SLOT_X = 673 + LAYOUT.EXTRA_WIDTH
 
 --[[
-	The drawn border stops short of the frame's own edges: the opaque part of Includes/Images/WQLP_BotRight stops
+	The drawn border stops short of the frame's own edges: the opaque part of Includes/Images/PWQL_BotRight stops
 	176px into the piece and 211px down it. The resize grip sits GRIP_INSET inside that corner
 ]]
 LAYOUT.ART_INSET_RIGHT = LAYOUT.BASE_WIDTH - (515 + LAYOUT.EXTRA_WIDTH + 176)

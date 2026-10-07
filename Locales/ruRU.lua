@@ -1,4 +1,4 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("WideQuestLogPlus", "ruRU")
+local L = LibStub("AceLocale-3.0"):NewLocale("Pretty-Wide-Quest-Log", "ruRU")
 if not L then
 	return
 end
@@ -7,11 +7,13 @@ end
 -- Add-on
 --------------------------------------------------------------------------------
 
-L["ADDON_TITLE"] = "Wide Quest Log Plus"
+L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["CHAT_LOADED"] =
-	"Версия %s. Параметры (в том числе возможность отключить это сообщение) находятся в разделе Настройки > Модификации > Wide Quest Log Plus. Нравится аддон? Расскажите о нём другу! (="
+	"Версия %s. Параметры (в том числе возможность отключить это сообщение) находятся в разделе Настройки > Модификации > Pretty Wide Quest Log. Нравится аддон? Расскажите о нём другу! (="
 L["CHAT_OPTIONS_IN_COMBAT"] =
 	"В целях безопасности окно настроек нельзя открыть во время боя."
+L["CHAT_PREDECESSOR_LOADED"] =
+	"Wide Quest Log Plus тоже включён, и два аддона будут мешать друг другу в журнале заданий. Отключите Wide Quest Log Plus в списке модификаций и перезагрузите интерфейс."
 
 --------------------------------------------------------------------------------
 -- Options
@@ -21,13 +23,12 @@ L["OPTIONS_DESCRIPTION"] =
 	"Широкий журнал заданий с двумя панелями, уровнями заданий, метками подземелий, рейдов и элитных заданий, а также ID заданий. Весь список заданий и подробности каждого задания сразу, в удобном вам порядке. Более крупный журнал заданий в привычном стиле Blizzard."
 L["ENABLE_WELCOME_MESSAGE"] = "Включить приветственное сообщение"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] =
-	"Показывает приветствие Wide Quest Log Plus при входе в игру."
-L["ENABLE_WIDE_QUEST_LOG"] =
-	"Включить широкий журнал заданий для этого профиля"
+	"Показывает приветствие Pretty Wide Quest Log при входе в игру."
+L["ENABLE_WIDE_QUEST_LOG"] = "Включить Pretty Wide Quest Log для этого профиля"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
 	"Заставляет клавишу журнала заданий, кнопку микроменю и щелчки по заданиям в списке целей открывать этот широкий журнал заданий. Отключите, чтобы вместо него использовать стандартный журнал заданий Blizzard, встроенный в карту мира. Вступает в силу после перезагрузки интерфейса."
 L["RELOAD_PROMPT"] =
-	"Wide Quest Log Plus сменит журнал заданий после перезагрузки интерфейса. Перезагрузить сейчас?"
+	"Pretty Wide Quest Log сменит журнал заданий после перезагрузки интерфейса. Перезагрузить сейчас?"
 L["ZONE_ORDER"] = "Порядок зон"
 L["ZONE_ORDER_DESCRIPTION"] = "Меняет порядок зон в списке заданий."
 L["SORT_ALPHABETICAL_DEFAULT"] = "По алфавиту (по умолчанию)"
@@ -53,8 +54,10 @@ L["OPTIONS_COMMANDS_HEADER"] = "/Команды"
 L["OPTIONS_COMMAND"] = "/wide"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Открывает окно настроек этого аддона."
 L["FEEDBACK_HEADER"] = "Отзывы и поддержка"
+L["FEEDBACK_DISCORD"] = "Discord"
 L["FEEDBACK_GITHUB"] = "GitHub"
 L["FEEDBACK_CURSEFORGE"] = "CurseForge"
+L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Версия %s"
 
 --------------------------------------------------------------------------------

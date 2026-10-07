@@ -26,7 +26,7 @@ local currentHeight
 -- Window
 --------------------------------------------------------------------------------
 
-local frame = CreateFrame("Frame", "WideQuestLogPlusFrame", UIParent)
+local frame = CreateFrame("Frame", "PrettyWideQuestLogFrame", UIParent)
 ns.questLogFrame = frame
 frame:Hide()
 frame:SetSize(BASE_WIDTH, BASE_HEIGHT)

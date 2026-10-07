@@ -1,4 +1,4 @@
-package-as: WideQuestLogPlus
+package-as: Pretty-Wide-Quest-Log
 enable-nolib-creation: no
 
 externals:

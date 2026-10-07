@@ -1,4 +1,4 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("WideQuestLogPlus", "esMX")
+local L = LibStub("AceLocale-3.0"):NewLocale("Pretty-Wide-Quest-Log", "esMX")
 if not L then
 	return
 end
@@ -7,10 +7,12 @@ end
 -- Add-on
 --------------------------------------------------------------------------------
 
-L["ADDON_TITLE"] = "Wide Quest Log Plus"
+L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["CHAT_LOADED"] =
-	"Versión %s. Puedes encontrar la configuración (incluida la opción para desactivar este mensaje) en Opciones > Accesorios > Wide Quest Log Plus. ¿Te gusta el accesorio? ¡Cuéntale a un amigo! (="
+	"Versión %s. Puedes encontrar la configuración (incluida la opción para desactivar este mensaje) en Opciones > Accesorios > Pretty Wide Quest Log. ¿Te gusta el accesorio? ¡Cuéntale a un amigo! (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "Por seguridad, la interfaz de opciones no se puede abrir durante el combate."
+L["CHAT_PREDECESSOR_LOADED"] =
+	"Wide Quest Log Plus también está activado y los dos se pelearán por el registro de misiones. Desactiva Wide Quest Log Plus en la lista de accesorios y después recarga."
 
 --------------------------------------------------------------------------------
 -- Options
@@ -19,11 +21,11 @@ L["CHAT_OPTIONS_IN_COMBAT"] = "Por seguridad, la interfaz de opciones no se pued
 L["OPTIONS_DESCRIPTION"] =
 	"Registro de misiones ancho y de doble panel con niveles de misión, etiquetas de calabozo, banda y élite, e ID de misión. Ve toda tu lista de misiones y los detalles de cada una al mismo tiempo, ordenadas a tu gusto. Un registro de misiones más grande que conserva el estilo de Blizzard."
 L["ENABLE_WELCOME_MESSAGE"] = "Activar mensaje de bienvenida"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Muestra el saludo de Wide Quest Log Plus al iniciar sesión."
-L["ENABLE_WIDE_QUEST_LOG"] = "Activar el registro de misiones ancho para este perfil"
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Muestra el saludo de Pretty Wide Quest Log al iniciar sesión."
+L["ENABLE_WIDE_QUEST_LOG"] = "Activar Pretty Wide Quest Log para este perfil"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
 	"Hace que la tecla del registro de misiones, el botón del micromenú y los clics en misiones del seguimiento de objetivos abran este registro de misiones ancho. Desactívalo para usar en su lugar el registro de misiones predeterminado de Blizzard, integrado en el mapa del mundo. Se aplica después de recargar."
-L["RELOAD_PROMPT"] = "Wide Quest Log Plus cambia de registro de misiones después de recargar. ¿Recargar ahora?"
+L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia de registro de misiones después de recargar. ¿Recargar ahora?"
 L["ZONE_ORDER"] = "Orden de zonas"
 L["ZONE_ORDER_DESCRIPTION"] = "Cambia el orden de las zonas en la lista de misiones."
 L["SORT_ALPHABETICAL_DEFAULT"] = "Alfabético (predeterminado)"
@@ -47,8 +49,10 @@ L["OPTIONS_COMMANDS_HEADER"] = "/Comandos"
 L["OPTIONS_COMMAND"] = "/wide"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Abre la interfaz de opciones de este accesorio."
 L["FEEDBACK_HEADER"] = "Comentarios y soporte"
+L["FEEDBACK_DISCORD"] = "Discord"
 L["FEEDBACK_GITHUB"] = "GitHub"
 L["FEEDBACK_CURSEFORGE"] = "CurseForge"
+L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Versión %s"
 
 --------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
-# Wide Quest Log Plus // Manual Test Plan
+# Pretty Wide Quest Log // Manual Test Plan
 
-This is the manual test plan for Wide Quest Log Plus, the steps to confirm it works before a release is tagged. For what it does, see [README.md](https://github.com/DustinChecketts/WideQuestLogPlus/blob/forever/README.md); for how it works, see [README-Technical.md](https://github.com/DustinChecketts/WideQuestLogPlus/blob/forever/README-Technical.md).
+This is the manual test plan for Pretty Wide Quest Log, the steps to confirm it works before a release is tagged. For what it does, see [README.md](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/README.md); for how it works, see [README-Technical.md](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/README-Technical.md).
 
 ## Before you start
 
@@ -22,13 +22,13 @@ This plan deliberately skips Share Quest (it needs a group), the greyed-out Trac
 
 **One TOC per client**
 
-**1.** At character select, open the **AddOns** list. Wide Quest Log Plus must appear **once**, spelled with spaces, with the quest log book icon beside it, and must not be flagged as out of date or incompatible. This closes the change that gave every client its own TOC and retired the shared one. Failure is the add-on missing, listed twice, still spelled `WideQuestLogPlus`, flagged out of date, or showing a blank square or question mark for its icon.
+**1.** At character select, open the **AddOns** list. Pretty Wide Quest Log must appear **once**, spelled with spaces, with the quest log book icon beside it, and must not be flagged as out of date or incompatible. This closes the change that gave every client its own TOC and retired the shared one. Failure is the add-on missing, listed twice, spelled `Pretty-Wide-Quest-Log`, flagged out of date, or showing a blank square or question mark for its icon.
 
 **Settings moved into the Options Interface**
 
-**2.** Type `/wqlp`, then `/widequestlogplus`. Each must get the game's usual reply to a command it doesn't know, because both were retired in favor of `/wide` and the options panel. This closes the slash command change. Failure is the old help text printing, or the quest log changing size.
+**2.** Type `/wqlp`, then `/widequestlogplus`, the old Wide Quest Log Plus commands. Each must get the game's usual reply to a command it doesn't know, because Pretty Wide Quest Log only answers to `/wide`. Failure is the old help text printing, or the quest log changing size.
 
-**3.** Log in. A line must print in the shape *"Wide Quest Log Plus // Version ... Settings (including the option to disable this message) can be found under Options > AddOns > Wide Quest Log Plus. Enjoying the add-on? Tell a friend about it! (="*. Type `/wide`, untick **Enable Welcome Message**, and type `/reload`: no line may print. Tick it again and `/reload`: the line must be back. This closes the new welcome message. Failure is no line, a line that ignores the toggle, or `nil`, `%s` or a raw key such as `CHAT_LOADED` in it.
+**3.** Log in. A line must print in the shape *"Pretty Wide Quest Log // Version ... Settings (including the option to disable this message) can be found under Options > AddOns > Pretty Wide Quest Log. Enjoying the add-on? Tell a friend about it! (="*. Type `/wide`, untick **Enable Welcome Message**, and type `/reload`: no line may print. Tick it again and `/reload`: the line must be back. This closes the new welcome message. Failure is no line, a line that ignores the toggle, or `nil`, `%s` or a raw key such as `CHAT_LOADED` in it.
 
 **Sorting and zone spacing**
 
@@ -48,11 +48,11 @@ This plan deliberately skips Share Quest (it needs a group), the greyed-out Trac
 
 **Blizzard's quest log on WoW Forever**
 
-**10.** On WoW Forever only, type `/wide`. **Enable Wide Quest Log for This Profile** must sit directly under **Enable Welcome Message**, ticked. Untick it: the whole **Quest Log** section, header through **Reset Size and Position**, must vanish at once. Close the Options window: a popup must offer to reload. Click **Reload UI**, then press `L`: Blizzard's quest list, docked in the world map, must open instead of the add-on's window, and the quest log button on the micro menu must do the same. Type `/wide`, tick it again, untick and re-tick it, and close the window: a popup must offer to reload only if the final state differs from the one you loaded with, so here it must appear. Reload and press `L`: the add-on's window must open again. Toggle it twice and close: no popup may appear. On Classic Era and TBC Anniversary the toggle **must not appear at all**, the Quest Log section must always show, and closing Options must never prompt. Failure is the toggle missing on WoW Forever or present on the other two, the section staying while it is off, a missing or unwanted popup, or `L` ignoring the setting after the reload.
+**10.** On WoW Forever only, type `/wide`. **Enable Pretty Wide Quest Log for This Profile** must sit directly under **Enable Welcome Message**, ticked. Untick it: the whole **Quest Log** section, header through **Reset Size and Position**, must vanish at once. Close the Options window: a popup must offer to reload. Click **Reload UI**, then press `L`: Blizzard's quest list, docked in the world map, must open instead of the add-on's window, and the quest log button on the micro menu must do the same. Type `/wide`, tick it again, untick and re-tick it, and close the window: a popup must offer to reload only if the final state differs from the one you loaded with, so here it must appear. Reload and press `L`: the add-on's window must open again. Toggle it twice and close: no popup may appear. On Classic Era and TBC Anniversary the toggle **must not appear at all**, the Quest Log section must always show, and closing Options must never prompt. Failure is the toggle missing on WoW Forever or present on the other two, the section staying while it is off, a missing or unwanted popup, or `L` ignoring the setting after the reload.
 
 **Profiles**
 
-**11.** Set both orders away from their defaults, tick **Space Above Zone Names** and **Mark Untracked Quests**, untick **Enable Welcome Message**, and drag the quest log taller. Then open Options > AddOns > Wide Quest Log Plus > **Profiles** and click **Reset Profile**. Click back to the main panel: both orders must read **(Default)**, the gap and the untracked marks must be unticked, and the welcome message ticked, straight away with no `/reload`. Open the quest log: it must **keep** the taller size you dragged it to, because a profile reset never moves or resizes the window. Failure is any setting surviving the reset, stale values until a reload, or the window snapping back to its default size.
+**11.** Set both orders away from their defaults, tick **Space Above Zone Names** and **Mark Untracked Quests**, untick **Enable Welcome Message**, and drag the quest log taller. Then open Options > AddOns > Pretty Wide Quest Log > **Profiles** and click **Reset Profile**. Click back to the main panel: both orders must read **(Default)**, the gap and the untracked marks must be unticked, and the welcome message ticked, straight away with no `/reload`. Open the quest log: it must **keep** the taller size you dragged it to, because a profile reset never moves or resizes the window. Failure is any setting surviving the reset, stale values until a reload, or the window snapping back to its default size.
 
 **Diagnostic Tools**
 
@@ -62,11 +62,11 @@ When steps 1-12 pass on every flavor, this release's changes are verified. Proce
 
 ## Core checks
 
-**13.** Log in, then type `/reload`. Both times there must be no Lua error window and no red error text, and the welcome line from step 3 must print. Failure is any error naming Wide Quest Log Plus.
+**13.** Log in, then type `/reload`. Both times there must be no Lua error window and no red error text, and the welcome line from step 3 must print. Failure is any error naming Pretty Wide Quest Log.
 
-**14.** Type `/wide`. The settings must appear **docked inside the Blizzard Options window**, with Wide Quest Log Plus selected in the category list on the left. Failure looks like either nothing happening at all, or a standalone window floating free of the Options frame. **TBC Anniversary is the flavor that historically breaks this, so a tester who runs only Classic Era has not finished.**
+**14.** Type `/wide`. The settings must appear **docked inside the Blizzard Options window**, with Pretty Wide Quest Log selected in the category list on the left. Failure looks like either nothing happening at all, or a standalone window floating free of the Options frame. **TBC Anniversary is the flavor that historically breaks this, so a tester who runs only Classic Era has not finished.**
 
-**15.** Close the window, then press `Esc`, choose **Options**, then **AddOns**, and select **Wide Quest Log Plus**. The same docked panel must appear, with three entries under it in this order: **Wide Quest Log Plus**, **Profiles**, **Diagnostic Tools**. Each must open without error. The add-on has no mini-map button, so `/wide` and this list are every way in. Failure is a missing or blank entry, the wrong order, or a floating window, and again **TBC Anniversary is the flavor to watch**.
+**15.** Close the window, then press `Esc`, choose **Options**, then **AddOns**, and select **Pretty Wide Quest Log**. The same docked panel must appear, with three entries under it in this order: **Pretty Wide Quest Log**, **Profiles**, **Diagnostic Tools**. Each must open without error. The add-on has no mini-map button, so `/wide` and this list are every way in. Failure is a missing or blank entry, the wrong order, or a floating window, and again **TBC Anniversary is the flavor to watch**.
 
 **16.** Pull a mob and, while still in combat, type `/wide`. Chat must print *"As a safety precaution, the Options Interface cannot be opened during combat."* and the panel must **not** open. Finish the fight and wait: the panel must not open by itself afterwards. Failure is the panel opening, silence, or a red `ADDON_ACTION_BLOCKED` error.
 
@@ -89,3 +89,5 @@ When steps 1-12 pass on every flavor, this release's changes are verified. Proce
 **25.** Optional, on a non-English client. Log in: the welcome line must print in that language. Type `/wide`: every label and tooltip must render in that language. Open the quest log: type letters may be translated, and the quest ID line must show a real number. Failure is a raw key such as `ZONE_ORDER` on screen, `nil` or a stray `%s` or `%d` anywhere, or text that runs off the panel.
 
 When every step passes on each of Classic Era, WoW Forever, and TBC Anniversary, manual testing is complete. Proceed to `4 - Pre-Launch Review Prompt.md`.
+
+**26.** Optional, needs a copy of the old Wide Quest Log Plus. Put its `WideQuestLogPlus` folder back in `Interface/AddOns`, enable both add-ons at character select, and log in. After the welcome line, a second line must print in the shape *"Pretty Wide Quest Log // Wide Quest Log Plus is also turned on, and the two will fight over the quest log. Turn off Wide Quest Log Plus in the AddOns list, then reload."*, and it must print even with **Enable Welcome Message** unticked. Disable Wide Quest Log Plus and `/reload`: the line must be gone. Failure is no line while both are on, a line with only Pretty Wide Quest Log on, or a raw key such as `CHAT_PREDECESSOR_LOADED`.

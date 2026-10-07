@@ -1,6 +1,6 @@
-## Title: Wide Quest Log Plus
+## Title: Pretty Wide Quest Log
 ## Notes: Wide, dual-pane quest log with quest levels, dungeon, raid and elite tags, and quest IDs. See your whole quest list and every quest's details at once, sorted your way. A bigger quest log that keeps the Blizzard look.
-## Author: StormtrooperTK421
+## Author: Gogo1951
 
 ## IconTexture: 133740
 ## X-License: MIT
@@ -17,12 +17,13 @@
 ## Category-zhCN: 任务
 ## Category-zhTW: 任務
 
-## Interface: 16001
-## X-Flavor: Camelot
+## Interface: 11509
+## X-Flavor: Vanilla
 ## Version: @project-version@
-## X-Curse-Project-ID: 900131
+## X-Curse-Project-ID: 1732686
+## X-Wago-ID: Q6aqkj6W
 
-## SavedVariables: WideQuestLogPlusDB
+## SavedVariables: PrettyWideQuestLogDB
 ## OptionalDeps: Questie, ElvUI, AI_VoiceOver
 
 # Includes
@@ -55,16 +56,15 @@ Data/Flavor.lua
 Data/Data.lua
 Data/Default-Settings.lua
 
-# Wide Quest Log Plus
+# Pretty Wide Quest Log
 Features/Core.lua
 Features/Utilities.lua
 Features/Announcements.lua
 Features/Quest-Display.lua
 Features/Window.lua
-Features/Forever-Tracking.lua
-Features/Forever-Quest-Log.lua
-Features/Forever-Quest-List.lua
-Features/Forever-Quest-Details.lua
+Features/Classic-Quest-List.lua
+Features/Classic-Quest-Details.lua
+Features/Classic-Quest-Log.lua
 
 # Diagnostics
 Diagnostics/Diagnostics-Core.lua
@@ -76,11 +76,11 @@ Diagnostics/Report-Runner.lua
 
 # Options
 Options/Options-Utilities.lua
-Options/Options-Forever-Quest-Log.lua
 Options/Options-General.lua
 Options/Options-Profiles.lua
 Diagnostics/Options-Diagnostics.lua
 Options/Options.lua
 
 # Feedback Welcome! (=
-# Wide Quest Log Plus on GitHub // https://github.com/DustinChecketts/WideQuestLogPlus
+# Pretty Wide Quest Log on GitHub // https://github.com/Gogo1951/Pretty-Wide-Quest-Log
+# Pretty Wide Quest Log on Discord // https://discord.gg/eh8hKq992Q

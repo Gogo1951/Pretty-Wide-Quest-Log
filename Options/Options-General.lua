@@ -78,8 +78,10 @@ local function AddFeedback(args, order)
 	order = order + 3
 
 	local urls = {
+		{ L["FEEDBACK_DISCORD"], ns.URLS.DISCORD },
 		{ L["FEEDBACK_GITHUB"], ns.URLS.GITHUB },
 		{ L["FEEDBACK_CURSEFORGE"], ns.URLS.CURSEFORGE },
+		{ L["FEEDBACK_WAGO"], ns.URLS.WAGO },
 	}
 	for index, row in ipairs(urls) do
 		if index > 1 then

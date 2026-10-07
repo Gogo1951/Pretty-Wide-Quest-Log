@@ -141,10 +141,10 @@ read_globals = {
 	"wipe",
 }
 globals = {
-	"SLASH_WIDEQUESTLOGPLUSOPTIONS1",
-	SlashCmdList = { fields = { "WIDEQUESTLOGPLUSOPTIONS" } }, -- a field, so only the add-on's own slash entry is writable
+	"SLASH_PRETTYWIDEQUESTLOGOPTIONS1",
+	SlashCmdList = { fields = { "PRETTYWIDEQUESTLOGOPTIONS" } }, -- a field, so only the add-on's own slash entry is writable
 	"ToggleQuestLog", -- WoW Forever: routed to the add-on's quest log
 	"QuestMapFrame_OpenToQuestDetails", -- WoW Forever: routed to the add-on's quest log
 	"QUESTS_DISPLAYED", -- Classic: more list rows in a taller quest log
-	StaticPopupDialogs = { fields = { "WIDEQUESTLOGPLUS_RELOAD" } }, -- WoW Forever: the reload prompt
+	StaticPopupDialogs = { fields = { "PRETTYWIDEQUESTLOG_RELOAD" } }, -- WoW Forever: the reload prompt
 }

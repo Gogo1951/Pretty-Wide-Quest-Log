@@ -1,23 +1,23 @@
-# Wide Quest Log Plus // Technical Reference
+# Pretty Wide Quest Log // Technical Reference
 
-This document combines architecture notes and contribution guidance for developers working on Wide Quest Log Plus. For end-user documentation, see [README.md](https://github.com/DustinChecketts/WideQuestLogPlus/blob/forever/README.md).
+This document combines architecture notes and contribution guidance for developers working on Pretty Wide Quest Log. For end-user documentation, see [README.md](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/README.md).
 
 ## File Map
 
 ```
-WideQuestLogPlus/
+Pretty-Wide-Quest-Log/
 ├── .github/
 │   ├── dependabot.yml                 Keeps the pinned actions current
 │   └── workflows/
 │       ├── ci.yml                     Standalone CI: externals, Lua 5.1 syntax, luacheck, StyLua
-│       └── package.yml                Standalone release: a tag builds the zip from forever and uploads it
+│       └── package.yml                Standalone release: a tag builds the zip from main and uploads it
 ├── .gitattributes
 ├── .gitignore
 ├── .luacheckrc
 ├── .pkgmeta                           Ace3 externals and the zip's ignore list
-├── WideQuestLogPlus_Vanilla.toc       Classic Era, Season of Discovery included
-├── WideQuestLogPlus_TBC.toc           TBC Anniversary
-├── WideQuestLogPlus_Camelot.toc       WoW Forever
+├── Pretty-Wide-Quest-Log_Vanilla.toc  Classic Era, Season of Discovery included
+├── Pretty-Wide-Quest-Log_TBC.toc      TBC Anniversary
+├── Pretty-Wide-Quest-Log_Camelot.toc  WoW Forever
 ├── Data/                              No flavor folders, since the add-on ships no static game data
 │   ├── Flavor.lua                     Canonical flavor identity, copied byte for byte
 │   ├── Data.lua                       Locale, palette, registry names, URLs, ns.LAYOUT geometry, tracking marks
@@ -38,7 +38,7 @@ WideQuestLogPlus/
 │   ├── Forever-Quest-List.lua         WoW Forever: list rows and sorting
 │   └── Forever-Quest-Details.lua      WoW Forever: detail pane on QuestInfo_Display
 ├── Includes/
-│   ├── Images/                        Window art (WQLP_*.blp), untracked quest mark (WQLP_Untracked.tga)
+│   ├── Images/                        Window art (PWQL_*.blp), untracked quest mark (PWQL_Untracked.tga)
 │   └── Libraries/                     Vendored Ace3, never edited
 ├── Locales/
 │   ├── enUS.lua                       Source of truth
@@ -56,7 +56,7 @@ WideQuestLogPlus/
 └── README-Testing.md                  Manual test plan
 ```
 
-The unsuffixed `WideQuestLogPlus.toc` and the root-level `Legacy.lua`, `Modern.lua`, `Common.lua`, `Layout.lua` and `img/` are retired. Don't bring them back: their code lives in `Features/` and their art in `Includes/Images/`.
+An unsuffixed TOC and the root-level `Legacy.lua`, `Modern.lua`, `Common.lua`, `Layout.lua` and `img/` are retired. Don't bring them back: their code lives in `Features/` and their art in `Includes/Images/`.
 
 ## Architecture
 
@@ -130,7 +130,7 @@ On WoW Forever the window is the add-on's own, so it also moves: dragging its ti
 
 ## Saved Variables
 
-`WideQuestLogPlusDB`, managed by AceDB-3.0, is the only SavedVariables table and holds every setting. The add-on uses the **Simple** model: one shared Default profile, so Reset Profile restores every option on the profile.
+`PrettyWideQuestLogDB`, managed by AceDB-3.0, is the only SavedVariables table and holds every setting. The add-on uses the **Simple** model: one shared Default profile, so Reset Profile restores every option on the profile.
 
 The profile holds the options panel's settings. `global` holds only the window's saved height, and on WoW Forever its position, with no defaults. They are presentation, kept out of the profile's reach so a profile reset or switch never moves or resizes the window; the General panel's Reset Size and Position button clears them. Classic saves no position, since Blizzard's panel manager places that window.
 
@@ -138,7 +138,11 @@ AceDB applies `ns.DATABASE_DEFAULTS` (`Data/Default-Settings.lua`) whenever a ke
 
 ### Migration Chain
 
-- **Pre-AceDB keys** (`Features/Core.lua`, `ns:OnAddonLoaded`, remove after 2026-11-06): before `AceDB:New`, nils the old top-level `height`, `point` and `useMap`, which nothing reads. The old height is deliberately not carried over.
+None. `PrettyWideQuestLogDB` started fresh with the move from Wide Quest Log Plus, so nothing older than AceDB can be in it. Wide Quest Log Plus's settings live in its own SavedVariables file, which this add-on can't read, so they aren't carried over.
+
+## Moving from Wide Quest Log Plus
+
+This add-on is the continuation of Wide Quest Log Plus (folder `WideQuestLogPlus`), rehosted under a new name, folder and SavedVariables table. Both replace the same Blizzard quest log functions, so they must never run together: `ns:WarnIfPredecessorLoaded()` (`Features/Core.lua`) prints `CHAT_PREDECESSOR_LOADED` on every login while `ns.PREDECESSOR_ADDON_NAME` is loaded. It doesn't disable either add-on itself.
 
 ## Adding a New Setting
 
@@ -179,7 +183,7 @@ Add `{ "EVENT_NAME", "OnEventName" }` to `EVENTS` in `Features/Core.lua` and def
 
 ## Contributing
 
-- **Issues**: [GitHub Issues](https://github.com/DustinChecketts/WideQuestLogPlus/issues).
+- **Issues**: [GitHub Issues](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/issues).
 - **Bug reports**: game client and version, locale, the character's class and level, which other quest add-ons are installed (Questie, ElvUI, VoiceOver), steps to reproduce, and the Diagnostic Tools' Quest Log Context and Display Context reports (plus the Event Log when the quest log didn't update).
 - **PR guidelines**: keep each PR to one change; run `stylua --syntax lua51`, `luac -p` and `luacheck .` before pushing (CI runs all three). Any change to the shape of saved data ships its own migration, tagged `MIGRATION (remove after YYYY-MM-DD)` 30 days past its release. The add-on sends no chat and writes no macros, so the 255-byte limits don't apply yet; a change that starts sending chat measures in bytes against ruRU. Update this document if the architecture, File Map or Saved Variables change.
 - **PR descriptions say what a player will notice**, in plain language, the way release notes do; commit messages carry the developer detail.

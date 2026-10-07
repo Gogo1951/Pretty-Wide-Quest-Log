@@ -83,12 +83,6 @@ function ns:OnAddonLoaded(name)
 		return
 	end
 
-	-- MIGRATION (remove after 2026-11-06): drops the pre-AceDB top-level keys, which nothing reads.
-	local saved = _G[ns.SAVED_VARIABLES_NAME]
-	if type(saved) == "table" then
-		saved.height, saved.point, saved.useMap = nil, nil, nil
-	end
-
 	ns.db = LibStub("AceDB-3.0"):New(ns.SAVED_VARIABLES_NAME, ns.DATABASE_DEFAULTS, true)
 	for _, message in ipairs({ "OnProfileChanged", "OnProfileReset", "OnProfileCopied" }) do
 		ns.db.RegisterCallback(ns, message, "ApplyProfile")
@@ -117,6 +111,14 @@ function ns:PrintWelcome()
 	ns:PrintMessage(L["CHAT_LOADED"]:format(ns.Version))
 end
 
+-- Prints on every login while it holds, ignoring the welcome toggle: it's a conflict, not a greeting.
+function ns:WarnIfPredecessorLoaded()
+	if C_AddOns.IsAddOnLoaded(ns.PREDECESSOR_ADDON_NAME) then
+		ns:PrintMessage(L["CHAT_PREDECESSOR_LOADED"])
+	end
+end
+
 function ns:OnPlayerLogin()
 	ns:PrintWelcome()
+	ns:WarnIfPredecessorLoaded()
 end

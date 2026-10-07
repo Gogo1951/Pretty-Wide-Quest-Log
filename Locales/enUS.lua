@@ -1,4 +1,4 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("WideQuestLogPlus", "enUS", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("Pretty-Wide-Quest-Log", "enUS", true)
 if not L then
 	return
 end
@@ -7,10 +7,12 @@ end
 -- Add-on
 --------------------------------------------------------------------------------
 
-L["ADDON_TITLE"] = "Wide Quest Log Plus"
+L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["CHAT_LOADED"] =
-	"Version %s. Settings (including the option to disable this message) can be found under Options > AddOns > Wide Quest Log Plus. Enjoying the add-on? Tell a friend about it! (="
+	"Version %s. Settings (including the option to disable this message) can be found under Options > AddOns > Pretty Wide Quest Log. Enjoying the add-on? Tell a friend about it! (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "As a safety precaution, the Options Interface cannot be opened during combat."
+L["CHAT_PREDECESSOR_LOADED"] =
+	"Wide Quest Log Plus is also turned on, and the two will fight over the quest log. Turn off Wide Quest Log Plus in the AddOns list, then reload."
 
 --------------------------------------------------------------------------------
 -- Options
@@ -19,11 +21,11 @@ L["CHAT_OPTIONS_IN_COMBAT"] = "As a safety precaution, the Options Interface can
 L["OPTIONS_DESCRIPTION"] =
 	"Wide, dual-pane quest log with quest levels, dungeon, raid and elite tags, and quest IDs. See your whole quest list and every quest's details at once, sorted your way. A bigger quest log that keeps the Blizzard look."
 L["ENABLE_WELCOME_MESSAGE"] = "Enable Welcome Message"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Wide Quest Log Plus greeting when you log in."
-L["ENABLE_WIDE_QUEST_LOG"] = "Enable Wide Quest Log for This Profile"
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log greeting when you log in."
+L["ENABLE_WIDE_QUEST_LOG"] = "Enable Pretty Wide Quest Log for This Profile"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
 	"Makes the quest log key, the micro menu button and quest clicks in the objective tracker open this wide quest log. Turn it off to use Blizzard's default quest log, docked in the world map, instead. Takes effect after a reload."
-L["RELOAD_PROMPT"] = "Wide Quest Log Plus switches quest logs after a reload. Reload now?"
+L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
 L["ZONE_ORDER"] = "Zone Order"
 L["ZONE_ORDER_DESCRIPTION"] = "Changes the order of the zones in the quest list."
 L["SORT_ALPHABETICAL_DEFAULT"] = "Alphabetical (Default)"
@@ -47,8 +49,10 @@ L["OPTIONS_COMMANDS_HEADER"] = "/Commands"
 L["OPTIONS_COMMAND"] = "/wide"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Opens the Options Interface for this add-on."
 L["FEEDBACK_HEADER"] = "Feedback & Support"
+L["FEEDBACK_DISCORD"] = "Discord"
 L["FEEDBACK_GITHUB"] = "GitHub"
 L["FEEDBACK_CURSEFORGE"] = "CurseForge"
+L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------

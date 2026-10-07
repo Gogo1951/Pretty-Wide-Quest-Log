@@ -33,7 +33,7 @@ end
 -- Reload Prompt
 --------------------------------------------------------------------------------
 
-StaticPopupDialogs.WIDEQUESTLOGPLUS_RELOAD = {
+StaticPopupDialogs.PRETTYWIDEQUESTLOG_RELOAD = {
 	text = L["RELOAD_PROMPT"],
 	button1 = RELOADUI,
 	button2 = CANCEL,
@@ -71,7 +71,7 @@ function ns.WatchOptionsForReload(panels)
 			return
 		end
 		if ns.db.profile.enableWideQuestLog ~= (ns.questLogTakenOver == true) then
-			StaticPopup_Show("WIDEQUESTLOGPLUS_RELOAD")
+			StaticPopup_Show("PRETTYWIDEQUESTLOG_RELOAD")
 		end
 	end
 	for _, panel in ipairs(panels) do

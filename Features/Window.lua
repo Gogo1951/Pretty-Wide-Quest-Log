@@ -2,7 +2,7 @@ local ADDON_NAME, ns = ...
 local L = ns.L
 local LAYOUT = ns.LAYOUT
 
-local ART_PATH_PREFIX = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/WQLP_"
+local ART_PATH_PREFIX = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/PWQL_"
 local TOP_SPLIT = 0.5
 local STRIP_SOURCE = 8 -- Pixels of the middle piece the widening strip is cut from
 

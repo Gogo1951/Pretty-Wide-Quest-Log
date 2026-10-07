@@ -1,4 +1,4 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("WideQuestLogPlus", "zhTW")
+local L = LibStub("AceLocale-3.0"):NewLocale("Pretty-Wide-Quest-Log", "zhTW")
 if not L then
 	return
 end
@@ -7,10 +7,12 @@ end
 -- Add-on
 --------------------------------------------------------------------------------
 
-L["ADDON_TITLE"] = "Wide Quest Log Plus"
+L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["CHAT_LOADED"] =
-	"版本 %s。設定（包括關閉此訊息的選項）位於 選項 > 插件 > Wide Quest Log Plus。喜歡這個插件嗎？推薦給朋友吧！(="
+	"版本 %s。設定（包括關閉此訊息的選項）位於 選項 > 插件 > Pretty Wide Quest Log。喜歡這個插件嗎？推薦給朋友吧！(="
 L["CHAT_OPTIONS_IN_COMBAT"] = "基於安全考量，戰鬥中無法開啟設定介面。"
+L["CHAT_PREDECESSOR_LOADED"] =
+	"Wide Quest Log Plus 也已啟用，兩者會互相搶奪任務日誌。請在插件列表中停用 Wide Quest Log Plus，然後重新載入介面。"
 
 --------------------------------------------------------------------------------
 -- Options
@@ -19,11 +21,11 @@ L["CHAT_OPTIONS_IN_COMBAT"] = "基於安全考量，戰鬥中無法開啟設定�
 L["OPTIONS_DESCRIPTION"] =
 	"寬版雙欄任務日誌，顯示任務等級、地城、團隊副本和精英標記以及任務 ID。一次看清完整任務清單和每個任務的詳細資訊，並依你的方式排序。更大的任務日誌，保留暴雪原版外觀。"
 L["ENABLE_WELCOME_MESSAGE"] = "啟用歡迎訊息"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登入時顯示 Wide Quest Log Plus 的歡迎詞。"
-L["ENABLE_WIDE_QUEST_LOG"] = "為此設定檔啟用寬任務日誌"
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登入時顯示 Pretty Wide Quest Log 的歡迎詞。"
+L["ENABLE_WIDE_QUEST_LOG"] = "為此設定檔啟用 Pretty Wide Quest Log"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
 	"讓任務日誌快捷鍵、微型選單按鈕以及在任務追蹤中點擊任務時開啟這個寬任務日誌。關閉後改為開啟嵌在世界地圖中的暴雪預設任務日誌。重新載入介面後生效。"
-L["RELOAD_PROMPT"] = "Wide Quest Log Plus 需要重新載入介面才能切換任務日誌。現在重新載入嗎？"
+L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新載入介面才能切換任務日誌。現在重新載入嗎？"
 L["ZONE_ORDER"] = "區域順序"
 L["ZONE_ORDER_DESCRIPTION"] = "變更任務清單中區域的順序。"
 L["SORT_ALPHABETICAL_DEFAULT"] = "依名稱（預設）"
@@ -47,8 +49,10 @@ L["OPTIONS_COMMANDS_HEADER"] = "/指令"
 L["OPTIONS_COMMAND"] = "/wide"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "開啟此插件的設定介面。"
 L["FEEDBACK_HEADER"] = "意見回饋與支援"
+L["FEEDBACK_DISCORD"] = "Discord"
 L["FEEDBACK_GITHUB"] = "GitHub"
 L["FEEDBACK_CURSEFORGE"] = "CurseForge"
+L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "版本 %s"
 
 --------------------------------------------------------------------------------

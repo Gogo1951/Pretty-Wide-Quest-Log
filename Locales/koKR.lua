@@ -1,4 +1,4 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("WideQuestLogPlus", "koKR")
+local L = LibStub("AceLocale-3.0"):NewLocale("Pretty-Wide-Quest-Log", "koKR")
 if not L then
 	return
 end
@@ -7,10 +7,12 @@ end
 -- Add-on
 --------------------------------------------------------------------------------
 
-L["ADDON_TITLE"] = "Wide Quest Log Plus"
+L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["CHAT_LOADED"] =
-	"버전 %s. 설정(이 메시지를 끄는 옵션 포함)은 설정 > 애드온 > Wide Quest Log Plus에서 찾을 수 있습니다. 애드온이 마음에 드시나요? 친구에게도 알려 주세요! (="
+	"버전 %s. 설정(이 메시지를 끄는 옵션 포함)은 설정 > 애드온 > Pretty Wide Quest Log에서 찾을 수 있습니다. 애드온이 마음에 드시나요? 친구에게도 알려 주세요! (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "안전을 위해 전투 중에는 설정 창을 열 수 없습니다."
+L["CHAT_PREDECESSOR_LOADED"] =
+	"Wide Quest Log Plus도 켜져 있어 두 애드온이 퀘스트 목록을 두고 충돌합니다. 애드온 목록에서 Wide Quest Log Plus를 끈 다음 UI를 다시 불러오세요."
 
 --------------------------------------------------------------------------------
 -- Options
@@ -19,12 +21,12 @@ L["CHAT_OPTIONS_IN_COMBAT"] = "안전을 위해 전투 중에는 설정 창을 �
 L["OPTIONS_DESCRIPTION"] =
 	"퀘스트 레벨, 던전, 공격대, 정예 표시와 퀘스트 ID를 갖춘 넓은 2단 퀘스트 목록. 전체 퀘스트 목록과 각 퀘스트의 세부 정보를 원하는 순서로 정렬해 한 번에 확인하세요. 블리자드 디자인을 그대로 살린 더 큰 퀘스트 목록입니다."
 L["ENABLE_WELCOME_MESSAGE"] = "환영 메시지 사용"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Wide Quest Log Plus 환영 인사를 표시합니다."
-L["ENABLE_WIDE_QUEST_LOG"] = "이 프로필에서 넓은 퀘스트 목록 사용"
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log 환영 인사를 표시합니다."
+L["ENABLE_WIDE_QUEST_LOG"] = "이 프로필에서 Pretty Wide Quest Log 사용"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
 	"퀘스트 목록 단축키, 마이크로 메뉴 버튼, 목표 추적기의 퀘스트 클릭이 이 넓은 퀘스트 목록을 열도록 합니다. 끄면 대신 세계 지도에 붙어 있는 블리자드 기본 퀘스트 목록이 열립니다. UI를 다시 불러온 후에 적용됩니다."
 L["RELOAD_PROMPT"] =
-	"Wide Quest Log Plus는 UI를 다시 불러온 후에 퀘스트 목록을 전환합니다. 지금 다시 불러오시겠습니까?"
+	"Pretty Wide Quest Log는 UI를 다시 불러온 후에 퀘스트 목록을 전환합니다. 지금 다시 불러오시겠습니까?"
 L["ZONE_ORDER"] = "지역 순서"
 L["ZONE_ORDER_DESCRIPTION"] = "퀘스트 목록에서 지역의 순서를 바꿉니다."
 L["SORT_ALPHABETICAL_DEFAULT"] = "이름순 (기본값)"
@@ -48,8 +50,10 @@ L["OPTIONS_COMMANDS_HEADER"] = "/명령어"
 L["OPTIONS_COMMAND"] = "/wide"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "이 애드온의 설정 창을 엽니다."
 L["FEEDBACK_HEADER"] = "피드백 및 지원"
+L["FEEDBACK_DISCORD"] = "Discord"
 L["FEEDBACK_GITHUB"] = "GitHub"
 L["FEEDBACK_CURSEFORGE"] = "CurseForge"
+L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "버전 %s"
 
 --------------------------------------------------------------------------------

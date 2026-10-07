@@ -58,7 +58,7 @@ end
 -- Slash Commands
 --------------------------------------------------------------------------------
 
-SLASH_WIDEQUESTLOGPLUSOPTIONS1 = "/wide"
-SlashCmdList.WIDEQUESTLOGPLUSOPTIONS = function()
+SLASH_PRETTYWIDEQUESTLOGOPTIONS1 = "/wide"
+SlashCmdList.PRETTYWIDEQUESTLOGOPTIONS = function()
 	ns:OpenOptionsPanel()
 end

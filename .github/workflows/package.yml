@@ -1,4 +1,4 @@
-# Release workflow for WideQuestLogPlus.
+# Release workflow for Pretty Wide Quest Log.
 #
 # A tag push builds the zip and uploads it to CurseForge and Wago. A manual run
 # from the Actions tab is always a dry run: it builds the zip and uploads nothing.
@@ -21,7 +21,7 @@ jobs:
     env:
       # The branch releases are built from, and where the vendored-library commit
       # lands. Tag a commit on this branch.
-      RELEASE_BRANCH: forever
+      RELEASE_BRANCH: main
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
       WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
       # NEITHER GITHUB_OAUTH NOR GITHUB_API_TOKEN IS SET HERE, AND NEITHER MAY BE

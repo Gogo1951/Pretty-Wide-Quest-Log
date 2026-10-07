@@ -1,4 +1,4 @@
-# Wide Quest Log Plus
+# Pretty Wide Quest Log
 
 Wide, dual-pane quest log with quest levels, dungeon, raid and elite tags, and quest IDs. See your whole quest list and every quest's details at once, sorted your way. A bigger quest log that keeps the Blizzard look.
 
@@ -14,7 +14,7 @@ Wide, dual-pane quest log with quest levels, dungeon, raid and elite tags, and q
 
 ## Setup
 
-1. Install the add-on, ideally using [CurseForge](https://www.curseforge.com/wow/addons/wide-quest-log-plus).
+1. Install the add-on, ideally using [CurseForge](https://www.curseforge.com/wow/addons/pretty-wide-quest-log) or [Wago](https://addons.wago.io/addons/pretty-wide-quest-log).
 2. Press your quest log key (L) or click the quest log button on the micro menu.
 3. Drag the grip in the bottom-right corner to make the window as tall as you like.
 4. Type `/wide` to pick how zones and quests are sorted.
@@ -47,7 +47,7 @@ That client moved the quest log into the world map, so here the quest log is a w
 
 ### Options
 
-* **Wide Quest Log Plus** // Zone and quest order, a space above zone names, marking untracked quests instead of tracked ones, the welcome message, Reset Size and Position, and on WoW Forever, which quest log the key opens.
+* **Pretty Wide Quest Log** // Zone and quest order, a space above zone names, marking untracked quests instead of tracked ones, the welcome message, Reset Size and Position, and on WoW Forever, which quest log the key opens.
 * **Profiles** // Reset or swap your settings.
 * **Diagnostic Tools** // Reports to attach when you file a bug.
 
@@ -69,7 +69,7 @@ That client moved the quest log into the world map, so here the quest log is a w
 
 ## Appreciation & History
 
-🚀 **This add-on stands on the shoulders of those that came before.**
+👾 **I didn't create this add-on, I just updated it.**
 
 * Iriel and Kudane's [DoubleWide](https://www.wowinterface.com/downloads/info6887-DoubleWide.html)
 * bloodline\_'s [Wide Quest Log](https://www.wowinterface.com/downloads/info25249-WideQuestLog.html)
@@ -77,12 +77,14 @@ That client moved the quest log into the world map, so here the quest log is a w
 * CloneVince's [Wide Quest Log](https://www.curseforge.com/wow/addons/widequestlog)
 * CloneVince's [Wide Quest Log Levels](https://www.curseforge.com/wow/addons/widequestloglevels)
 * austenlo\_ol's [Wide Quest Log IDs](https://www.curseforge.com/wow/addons/widequestlogids)
+* StormtrooperTK421's [Wide Quest Log Plus](https://www.curseforge.com/wow/addons/wide-quest-log-plus)
 
 ## Get Involved
 
 ❤️ **You can help make this better!** Feedback, code contributions, testing, and localization assistance are always appreciated. If you'd like to get involved, please reach out.
 
-* [GitHub](https://github.com/DustinChecketts/WideQuestLogPlus)
+* [GitHub](https://github.com/Gogo1951/Pretty-Wide-Quest-Log)
+* [Discord](https://discord.gg/eh8hKq992Q)
 
 ## Related Add-ons
 
