@@ -4,12 +4,6 @@
 
 ## Exceptions
 
-### Standalone CI and release workflows
-
-- **Departs from:** COMMON-CORE, the shared files and reusable workflows.
-- **Instead:** The repo carries its own complete CI and release workflows, started from Common-Core's, and calls nothing in Common-Core.
-- **Why:** The repo belongs to another owner, so its build and release must not depend on a repo they don't control.
-
 ### Stock quest log icon
 
 - **Departs from:** TOC FILE FORMAT, `IconTexture` pointing into `Includes/Images/`.

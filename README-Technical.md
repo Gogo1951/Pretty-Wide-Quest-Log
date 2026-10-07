@@ -7,12 +7,11 @@ This document combines architecture notes and contribution guidance for develope
 ```
 Pretty-Wide-Quest-Log/
 ├── .github/
-│   ├── dependabot.yml                 Keeps the pinned actions current
 │   └── workflows/
-│       ├── ci.yml                     Standalone CI: externals, Lua 5.1 syntax, luacheck, StyLua
-│       └── package.yml                Standalone release: a tag builds the zip from main and uploads it
-├── .gitattributes
-├── .gitignore
+│       ├── ci.yml                     Shared: calls Common-Core's CI
+│       └── package.yml                Shared: calls Common-Core's release
+├── .gitattributes                     Shared, from Common-Core
+├── .gitignore                         Shared, from Common-Core
 ├── .luacheckrc
 ├── .pkgmeta                           Ace3 externals and the zip's ignore list
 ├── Pretty-Wide-Quest-Log_Vanilla.toc  Classic Era, Season of Discovery included
