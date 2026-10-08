@@ -4,7 +4,7 @@ A bigger, smarter quest log that gives you more room to read, more information a
 
 **TL;DR**: Love Blizzard's quest log but wish it gave you more room? Pretty Wide Quest Log gives you a larger, dual-pane view with quest levels, useful tags, quest IDs, and sorting options, so you can see and organize more of your quests at once.
 
-<img width="600" src="https://github.com/user-attachments/assets/71d0534c-8328-4d37-bc1e-5b6e1d20202d" />
+<img width="600" src="https://github.com/user-attachments/assets/79b24933-2b1b-4a03-a489-8cccf9802111" />
 
 ## Features
 
