@@ -1,16 +1,18 @@
 # Pretty Wide Quest Log
 
-Wide, dual-pane quest log with quest levels, dungeon, raid and elite tags, and quest IDs. See your whole quest list and every quest's details at once, sorted your way. A bigger quest log that keeps the Blizzard look.
+A bigger, smarter quest log that gives you more room to read, more information at a glance, and control over how your quests are organized. Keep the familiar Blizzard look, just make the quest log work better for you.
 
-**TL;DR**: For questers who like Blizzard's quest log but want more of it. Know how hard a quest is before you take it, and stop squinting at a tiny window or alt-tabbing to look one up.
+**TL;DR**: Love Blizzard's quest log but wish it gave you more room? Pretty Wide Quest Log gives you a larger, dual-pane view with quest levels, useful tags, quest IDs, and sorting options, so you can see and organize more of your quests at once.
 
 ## Features
 
-🎯 **Quest Levels at a Glance** // Every quest shows its level and a tag for dungeon, raid, elite, group or PvP, like `[14D]`, so you know what you're walking into. Hardcore players, this one's for you.
+🎯 **See What You're Taking On** // Quest levels and dungeon, raid, elite, group, and PvP tags put the important details right next to each quest. Know what you're looking at before you commit.
 
-🗂️ **Sort Your Way** // Zones alphabetically or by the average level of your quests, and quests by level or name, so the zones you're levelling in float to the top.
+📖 **More Quest, Less Squinting** // A wide, dual-pane layout gives you plenty of room for your quest list and full quest details at the same time, while keeping the familiar Blizzard look.
 
-🤝 **Plays Nice** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken, and keeps the look of the original interface.
+🗂️ **Organize It Your Way** // Sort zones alphabetically or by quest level, then sort quests by level or name. Put the quests you care about where you can find them.
+
+🤝 **Fits Into Your UI** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken, while staying close to Blizzard's original interface.
 
 ## Setup
 
