@@ -24,31 +24,6 @@ A bigger, smarter quest log that gives you more room to read, more information a
 4. Type `/wide` to pick how zones and quests are sorted.
 5. _"Your quest log's sorted. Now go find Mankrik's wife."_
 
-## How It Works
-
-### Reading the Quest Log
-
-| You See | It Means |
-|---|---|
-| `[14D]` before a quest | Level 14, dungeon quest. D dungeon, R raid, P PvP, G group, E elite. |
-| A check in front of a quest | You're tracking it. |
-| A crossed-out eye in front of a quest | You're not tracking it (with **Mark Untracked Quests** on, in place of the checks). |
-| A check on an objective | That objective is done. |
-| `8 / 8` on the right | Objective progress, lined up so it's easy to scan. |
-| `ID 1234` under the details | The quest's ID. |
-
-* Shift+click a quest to link it in chat (with a chat box open) or to track and untrack it.
-* The window remembers its height between sessions.
-
-### WoW Forever
-
-That client moved the quest log into the world map, so here the quest log is a window of its own.
-
-* The quest log key, the micro menu button and clicks on the objective tracker open it. The world map (M) keeps Blizzard's list.
-* Drag the title bar to move it. It stays where you put it.
-* Prefer Blizzard's? One toggle in the options sends the quest log key back to the map.
-* With Questie's tracker on, tracking follows what Questie's tracker can show.
-
 ### Options
 
 * **Pretty Wide Quest Log** // Zone and quest order, a space above zone names, marking untracked quests instead of tracked ones, the welcome message, Reset Size and Position, and on WoW Forever, which quest log the key opens.
