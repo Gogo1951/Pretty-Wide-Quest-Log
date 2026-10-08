@@ -10,7 +10,7 @@ Wide, dual-pane quest log with quest levels, dungeon, raid and elite tags, and q
 
 🗂️ **Sort Your Way** // Zones alphabetically or by the average level of your quests, and quests by level or name, so the zones you're levelling in float to the top.
 
-🤝 **Plays Nice** // Works with Questie's tracker, ElvUI's skin and VoiceOver, and keeps the look of the original interface.
+🤝 **Plays Nice** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken, and keeps the look of the original interface.
 
 ## Setup
 
@@ -93,6 +93,7 @@ That client moved the quest log into the world map, so here the quest log is a w
 * Crieve's [ALL THE THINGS](https://www.curseforge.com/wow/addons/all-the-things)
 * TheCrux\_BB's [Questie](https://www.curseforge.com/wow/addons/questie)
 * RestedXP's [RestedXP Guide](https://www.curseforge.com/wow/addons/restedxp-guide)
+* rustykey's [Spoken Player](https://www.curseforge.com/wow/addons/spoken-player)
 * MrThinger's [VoiceOver (Classic)](https://www.curseforge.com/wow/addons/voiceover)
 
 ### 🔴 Alternatives

@@ -5,10 +5,10 @@ ns.DATABASE_DEFAULTS = {
 	profile = {
 		showWelcome = true,
 		enableWideQuestLog = true,
-		zoneGap = false,
-		markUntracked = false,
-		zoneSort = "ALPHABETICAL",
-		questSort = "LEVEL_LOWEST_FIRST",
+		zoneGap = true,
+		markUntracked = true,
+		zoneSort = "LEVEL_HIGHEST_FIRST",
+		questSort = "LEVEL_HIGHEST_FIRST",
 	},
 	global = {},
 }

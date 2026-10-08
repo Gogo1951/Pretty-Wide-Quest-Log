@@ -102,7 +102,7 @@ local function DumpTable(value, indent, depth, lines)
 end
 
 --[[
-    Dumps the single AceDB-managed table (profiles, profileKeys, char, global)
+    Dumps the single AceDB-managed table (profiles, profileKeys, global)
     so a player can paste their exact configuration: every setting in each
     profile, and the window's saved size and position.
 ]]

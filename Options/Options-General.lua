@@ -127,10 +127,10 @@ function ns.BuildGeneralOptions()
 		spaceQuestLog1 = ns.OptionsSpacer(12, questLogHidden),
 		zoneSortLabel = ns.OptionsRowLabel(L["ZONE_ORDER"], 14, nil, questLogHidden),
 		zoneSort = SortSelect("zoneSort", "ZONE_ORDER_DESCRIPTION", {
-			ALPHABETICAL = L["SORT_ALPHABETICAL_DEFAULT"],
-			LEVEL_HIGHEST_FIRST = L["SORT_AVERAGE_LEVEL_HIGHEST"],
+			LEVEL_HIGHEST_FIRST = L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"],
 			LEVEL_LOWEST_FIRST = L["SORT_AVERAGE_LEVEL_LOWEST"],
-		}, { "ALPHABETICAL", "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST" }, 15),
+			ALPHABETICAL = L["SORT_ALPHABETICAL"],
+		}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 15),
 		spaceZoneSort = ns.OptionsSpacer(16, questLogHidden),
 		zoneGap = {
 			type = "toggle",
@@ -150,10 +150,10 @@ function ns.BuildGeneralOptions()
 		spaceQuestSort = ns.OptionsSpacer(21, questLogHidden),
 		questSortLabel = ns.OptionsRowLabel(L["QUEST_ORDER"], 22, nil, questLogHidden),
 		questSort = SortSelect("questSort", "QUEST_ORDER_DESCRIPTION", {
-			LEVEL_LOWEST_FIRST = L["SORT_LEVEL_LOWEST_DEFAULT"],
-			LEVEL_HIGHEST_FIRST = L["SORT_LEVEL_HIGHEST"],
+			LEVEL_HIGHEST_FIRST = L["SORT_LEVEL_HIGHEST_DEFAULT"],
+			LEVEL_LOWEST_FIRST = L["SORT_LEVEL_LOWEST"],
 			ALPHABETICAL = L["SORT_ALPHABETICAL"],
-		}, { "LEVEL_LOWEST_FIRST", "LEVEL_HIGHEST_FIRST", "ALPHABETICAL" }, 23),
+		}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 23),
 		spaceMarkUntracked = ns.OptionsSpacer(24, questLogHidden),
 		markUntracked = {
 			type = "toggle",

@@ -18,7 +18,7 @@ local _, ns = ...
 
 --[[
     Runtime-only state. NOT a SavedVariable. File-scope init is correct here --
-    the "initialize on PLAYER_LOGIN" rule applies only to SavedVariables, which
+    the SavedVariables init-point rule applies only to SavedVariables, which
     don't exist until the client loads them. This is a plain namespace table, so
     it starts false at every login and is never persisted.
 
@@ -130,7 +130,9 @@ ns.DiagnosticsStrings = {
 	ADDONS_TITLE = "Other Add-ons",
 	ADDONS_DESCRIPTION = "Lists every installed add-on with its version, and whether it is loadable or disabled.",
 	SAVED_TITLE = "Saved Variables",
-	SAVED_DESCRIPTION = "Prints " .. TITLE .. "'s saved settings and lists as readable text.",
+	SAVED_DESCRIPTION = "Prints "
+		.. TITLE
+		.. "'s saved settings and the quest log window's saved size and position as readable text.",
 	LIBS_TITLE = "Library Versions",
 	LIBS_DESCRIPTION = "Lists the version of every library " .. TITLE .. " bundles, as loaded this session.",
 

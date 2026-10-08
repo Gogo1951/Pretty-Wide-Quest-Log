@@ -175,6 +175,7 @@ local function InitRow(row, data)
 	row.Text:SetWidth(0)
 	row.Tag:SetText(nil)
 	row.Check:Hide()
+	ns.HideVoiceOverButton(row)
 	row:EnableMouse(not data.isSpacer)
 
 	if data.isSpacer then
@@ -194,7 +195,8 @@ local function InitRow(row, data)
 		local questID = data.questID
 		local tagDetails = C_QuestLog.GetQuestTagInfo(questID)
 		local elite = C_QuestLog.IsEliteQuest(questID) or (tagDetails and tagDetails.isElite)
-		row.Text:SetPoint("LEFT", LAYOUT.QUEST_TEXT_X, 0)
+		local textX = LAYOUT.QUEST_TEXT_X + ns.ShowVoiceOverButton(row, questID)
+		row.Text:SetPoint("LEFT", textX, 0)
 		row.Icon:Hide()
 		row.Text:SetText(
 			ns.LevelTitle(
@@ -210,7 +212,7 @@ local function InitRow(row, data)
 		end
 
 		-- Shorten the title if it would run into the tag
-		local room = LAYOUT.LIST_WIDTH - LAYOUT.QUEST_TEXT_X - (tag and (row.Tag:GetStringWidth() + 6) or 2)
+		local room = LAYOUT.LIST_WIDTH - textX - (tag and (row.Tag:GetStringWidth() + 6) or 2)
 		if row.Text:GetStringWidth() > room then
 			row.Text:SetWidth(room)
 		end

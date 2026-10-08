@@ -60,26 +60,26 @@ end
 	closes with the profile asking for the other quest log, offer the reload that switches it. Comparing
 	against the load-time state covers a profile switch too, and stays quiet after a toggle flipped back.
 
-	The hook sits on the add-on's own panels, which exist from load on every client, rather than on the
-	game's Options window, which may not exist yet when this file loads. A panel also hides when another
-	category is picked, so the check waits a frame and goes on only once the whole window is closed.
+	The game's Options window may not exist yet when this file loads, so it is hooked the first time one
+	of the add-on's panels shows inside it. Watching the window rather than the panels means the prompt
+	still comes when the player has moved on to another category before closing.
 ]]
 function ns.WatchOptionsForReload(panels)
-	local window
+	local hookedWindow
 	local function PromptIfClosed()
-		if window and window:IsShown() then
-			return
-		end
 		if ns.db.profile.enableWideQuestLog ~= (ns.questLogTakenOver == true) then
 			StaticPopup_Show("PRETTYWIDEQUESTLOG_RELOAD")
 		end
 	end
 	for _, panel in ipairs(panels) do
 		panel:HookScript("OnShow", function()
-			window = OptionsWindow(panel)
-		end)
-		panel:HookScript("OnHide", function()
-			C_Timer.After(0, PromptIfClosed)
+			local window = OptionsWindow(panel)
+			if window ~= hookedWindow then
+				hookedWindow = window
+				window:HookScript("OnHide", function()
+					C_Timer.After(0, PromptIfClosed)
+				end)
+			end
 		end)
 	end
 end
