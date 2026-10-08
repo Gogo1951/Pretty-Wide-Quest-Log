@@ -1,20 +1,22 @@
 # Pretty Wide Quest Log
 
-A bigger, smarter quest log that gives you more room to read, more information at a glance, and control over how your quests are organized. Keep the familiar Blizzard look, just make the quest log work better for you.
+A bigger, better quest log that gives you more room to read and more information at a glance. Keep Blizzard's familiar layout while seeing quest levels, useful tags, objectives, rewards, and your entire quest list side by side.
 
-**TL;DR**: Love Blizzard's quest log but wish it gave you more room? Pretty Wide Quest Log gives you a larger, dual-pane view with quest levels, useful tags, quest IDs, and sorting options, so you can see and organize more of your quests at once.
+**TL;DR**: Get more out of your quest log. See more quests, know what you're taking on, and organize everything by zone, level, or name, all while keeping the familiar Blizzard experience.
 
 <img width="600" src="https://github.com/user-attachments/assets/79b24933-2b1b-4a03-a489-8cccf9802111" />
 
 ## Features
 
-🎯 **See What You're Taking On** // Quest levels and dungeon, raid, elite, group, and PvP tags put the important details right next to each quest. Know what you're looking at before you commit.
+📖 **Read More at Once** // See your entire quest list and the full details of the selected quest side by side. Objectives, rewards, descriptions, and everything else stay on screen together.
 
-📖 **More Quest, Less Squinting** // A wide, dual-pane layout gives you plenty of room for your quest list and full quest details at the same time, while keeping the familiar Blizzard look.
+🎯 **Know What You're Looking At** // See quest levels and useful tags for dungeons, raids, elites, groups, and PvP right where you need them.
 
-🗂️ **Organize It Your Way** // Sort zones alphabetically or by quest level, then sort quests by level or name. Put the quests you care about where you can find them.
+🗂️ **Organize Your Quest Log** // Make it yours. Sort zones alphabetically or by quest level, then sort quests by level or name to keep your current priorities front and center.
 
-🤝 **Fits Into Your UI** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken, while staying close to Blizzard's original interface.
+💎 **A Cleaner Aesthetic** // Slightly roomier lines, cleaner headings, aligned objective counts, and checkmarks for completed objectives make the quest log easier to scan while staying true to Blizzard's original design.
+
+🤝 **Plays Nice With Other Addons** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken while keeping the quest log feeling like part of the default UI.
 
 ## Setup
 
@@ -69,7 +71,7 @@ A bigger, smarter quest log that gives you more room to read, more information a
 
 ### 🟢 Pairs With
 
-* Crieve's [ALL THE THINGS](https://www.curseforge.com/wow/addons/all-the-things)
+* Leatrix's [Leatrix Maps](https://www.curseforge.com/wow/addons/leatrix-maps)
 * TheCrux\_BB's [Questie](https://www.curseforge.com/wow/addons/questie)
 * RestedXP's [RestedXP Guide](https://www.curseforge.com/wow/addons/restedxp-guide)
 * rustykey's [Spoken Player](https://www.curseforge.com/wow/addons/spoken-player)
