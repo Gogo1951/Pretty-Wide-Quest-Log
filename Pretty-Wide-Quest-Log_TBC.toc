@@ -24,7 +24,7 @@
 ## X-Wago-ID: Q6aqkj6W
 
 ## SavedVariables: PrettyWideQuestLogDB
-## OptionalDeps: Questie, ElvUI, AI_VoiceOver
+## OptionalDeps: Questie, ElvUI, AI_VoiceOver, Spoken_Quests
 
 # Includes
 Includes/Libraries/LibStub/LibStub.lua
@@ -63,6 +63,7 @@ Features/Announcements.lua
 Features/Quest-Display.lua
 Features/Window.lua
 Features/Classic-Quest-List.lua
+Features/Classic-VoiceOver.lua
 Features/Classic-Quest-Details.lua
 Features/Classic-Quest-Log.lua
 

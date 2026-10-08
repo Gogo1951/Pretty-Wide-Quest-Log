@@ -216,6 +216,7 @@ function ns:BuildQuestLogContextReport()
 	lines[#lines + 1] = string.format("Questie: %s", Loaded("Questie"))
 	lines[#lines + 1] = string.format("ElvUI: %s", Loaded("ElvUI"))
 	lines[#lines + 1] = string.format("VoiceOver: %s", Loaded("AI_VoiceOver"))
+	lines[#lines + 1] = string.format("Spoken Quests: %s", Loaded("Spoken_Quests"))
 	if ns.FLAVOR == "Camelot" then
 		local profile = Questie and Questie.db and Questie.db.profile
 		lines[#lines + 1] = string.format("Questie tracker enabled: %s", tostring(profile and profile.trackerEnabled))

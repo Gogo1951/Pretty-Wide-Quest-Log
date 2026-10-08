@@ -26,6 +26,37 @@ function ns.ImportQuestieModule(name)
 end
 
 --------------------------------------------------------------------------------
+-- VoiceOver
+--------------------------------------------------------------------------------
+
+--[[
+	VoiceOver puts a play button in front of quest titles in the quest log, and so does Spoken Quests, its
+	fork, which keeps the VoiceOver global. Returns that global while either is loaded with its quest log
+	part switched on, else nil. rawget, as the global falls back to _G for anything it doesn't hold itself
+]]
+function ns.GetVoiceOver()
+	if not (C_AddOns.IsAddOnLoaded("AI_VoiceOver") or C_AddOns.IsAddOnLoaded("Spoken_Quests")) then
+		return nil
+	end
+	local voiceOver = type(VoiceOver) == "table" and VoiceOver
+	if
+		not (
+			voiceOver
+			and rawget(voiceOver, "QuestOverlayUI")
+			and rawget(voiceOver, "DataModules")
+			and rawget(voiceOver, "Enums")
+		)
+	then
+		return nil
+	end
+	local addon = rawget(voiceOver, "Addon")
+	if addon and addon.IsPartOn and not addon:IsPartOn() then
+		return nil
+	end
+	return voiceOver
+end
+
+--------------------------------------------------------------------------------
 -- Sorting
 --------------------------------------------------------------------------------
 
@@ -52,7 +83,7 @@ function ns.AverageLevel(quests)
 end
 
 --[[
-	questSort: LEVEL_LOWEST_FIRST (the default) or LEVEL_HIGHEST_FIRST by level, or ALPHABETICAL by name. Ties keep the
+	questSort: LEVEL_HIGHEST_FIRST (the default) or LEVEL_LOWEST_FIRST by level, or ALPHABETICAL by name. Ties keep the
 	quest log's order
 ]]
 function ns.SortQuests(quests, questSort)
@@ -71,7 +102,7 @@ function ns.SortQuests(quests, questSort)
 	end)
 end
 
--- zoneSort: ALPHABETICAL (the default), LEVEL_HIGHEST_FIRST or LEVEL_LOWEST_FIRST by average quest level, then by name
+-- zoneSort: LEVEL_HIGHEST_FIRST (the default) or LEVEL_LOWEST_FIRST by average quest level, or ALPHABETICAL; ties by name
 local function CompareZones(a, b, zoneSort)
 	if (zoneSort == "LEVEL_HIGHEST_FIRST" or zoneSort == "LEVEL_LOWEST_FIRST") and a.averageLevel ~= b.averageLevel then
 		-- A zone whose level isn't known goes after the rest

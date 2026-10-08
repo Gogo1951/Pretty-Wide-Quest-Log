@@ -24,7 +24,7 @@
 ## X-Wago-ID: Q6aqkj6W
 
 ## SavedVariables: PrettyWideQuestLogDB
-## OptionalDeps: Questie, ElvUI, AI_VoiceOver
+## OptionalDeps: Questie, ElvUI, AI_VoiceOver, Spoken_Quests
 
 # Includes
 Includes/Libraries/LibStub/LibStub.lua
@@ -66,6 +66,7 @@ Features/Forever-Tracking.lua
 Features/Forever-Quest-Log.lua
 Features/Forever-Quest-List.lua
 Features/Forever-Quest-Details.lua
+Features/Forever-VoiceOver.lua
 
 # Diagnostics
 Diagnostics/Diagnostics-Core.lua

@@ -31,17 +31,17 @@ L["RELOAD_PROMPT"] =
 	"Pretty Wide Quest Log сменит журнал заданий после перезагрузки интерфейса. Перезагрузить сейчас?"
 L["ZONE_ORDER"] = "Порядок зон"
 L["ZONE_ORDER_DESCRIPTION"] = "Меняет порядок зон в списке заданий."
-L["SORT_ALPHABETICAL_DEFAULT"] = "По алфавиту (по умолчанию)"
-L["SORT_AVERAGE_LEVEL_HIGHEST"] = "Средний уровень, сначала высокий"
+L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] =
+	"Средний уровень, сначала высокий (по умолчанию)"
 L["SORT_AVERAGE_LEVEL_LOWEST"] = "Средний уровень, сначала низкий"
+L["SORT_ALPHABETICAL"] = "По алфавиту"
 L["ZONE_GAP"] = "Отступ над названиями зон"
 L["ZONE_GAP_DESCRIPTION"] =
 	"Добавляет пустую строку над каждым названием зоны. Удобно, если ваши задания разбросаны по многим зонам."
 L["QUEST_ORDER"] = "Порядок заданий"
 L["QUEST_ORDER_DESCRIPTION"] = "Меняет порядок заданий внутри каждой зоны."
-L["SORT_LEVEL_LOWEST_DEFAULT"] = "Уровень, сначала низкий (по умолчанию)"
-L["SORT_LEVEL_HIGHEST"] = "Уровень, сначала высокий"
-L["SORT_ALPHABETICAL"] = "По алфавиту"
+L["SORT_LEVEL_HIGHEST_DEFAULT"] = "Уровень, сначала высокий (по умолчанию)"
+L["SORT_LEVEL_LOWEST"] = "Уровень, сначала низкий"
 L["MARK_UNTRACKED"] = "Отмечать неотслеживаемые задания"
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"Отслеживаемые задания теряют галочку %s, а неотслеживаемые вместо этого получают глаз %s. Удобно, если вы отслеживаете почти всё."

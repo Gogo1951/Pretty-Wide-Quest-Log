@@ -8,8 +8,8 @@ This document combines architecture notes and contribution guidance for develope
 Pretty-Wide-Quest-Log/
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml                     Shared: calls Common-Core's CI
-│       └── package.yml                Shared: calls Common-Core's release
+│       ├── ci.yml                     Calls Common-Core: CI checks on every PR and push to main
+│       └── package.yml                Calls Common-Core: release packaging on a tag
 ├── .gitattributes                     Shared, from Common-Core
 ├── .gitignore                         Shared, from Common-Core
 ├── .luacheckrc
@@ -25,17 +25,19 @@ Pretty-Wide-Quest-Log/
 │   └── Manifests.lua                  Per-client API checks and the Quest Log Context probe
 ├── Features/
 │   ├── Core.lua                       Version, event dispatcher, AceDB, welcome
-│   ├── Utilities.lua                  Colors, Questie module lookup, sorting
-│   ├── Announcements.lua              ns:PrintMessage
+│   ├── Utilities.lua                  Colors, Questie and VoiceOver lookups, sorting
+│   ├── Announcements.lua              Player prints through ns:PrintMessage
 │   ├── Quest-Display.lua              Quest title text, tracking mark, quest ID, objective lines
 │   ├── Window.lua                     Window art, height clamp and resize grip, both quest logs
-│   ├── Classic-Quest-List.lua         Classic Era and TBC: list rows, sorting, zone gaps, VoiceOver
+│   ├── Classic-Quest-List.lua         Classic Era and TBC: list rows, sorting, zone gaps
+│   ├── Classic-VoiceOver.lua          Classic Era and TBC: VoiceOver's play buttons on the sorted rows
 │   ├── Classic-Quest-Details.lua      Classic Era and TBC: detail pane layout, objectives, rewards, quest ID
 │   ├── Classic-Quest-Log.lua          Classic Era and TBC: widens Blizzard's window, art, resizing
 │   ├── Forever-Tracking.lua           WoW Forever: tracking, deferring to Questie's tracker
 │   ├── Forever-Quest-Log.lua          WoW Forever: window, buttons, refresh, quest log takeover
 │   ├── Forever-Quest-List.lua         WoW Forever: list rows and sorting
-│   └── Forever-Quest-Details.lua      WoW Forever: detail pane on QuestInfo_Display
+│   ├── Forever-Quest-Details.lua      WoW Forever: detail pane on QuestInfo_Display
+│   └── Forever-VoiceOver.lua          WoW Forever: Spoken Quests' play buttons on the list rows
 ├── Includes/
 │   ├── Images/                        Window art (PWQL_*.blp), untracked quest mark (PWQL_Untracked.tga)
 │   └── Libraries/                     Vendored Ace3, never edited
@@ -61,7 +63,7 @@ An unsuffixed TOC and the root-level `Legacy.lua`, `Modern.lua`, `Common.lua`, `
 
 ### Two Quest Logs, One Layout
 
-Classic Era and TBC still ship Blizzard's classic `QuestLogFrame`, so the three `Features/Classic-*.lua` files widen it in place. They move Blizzard's own regions and rows, swap the art, and hook `QuestLog_Update` and `QuestLog_SetSelection` (the list file) and `QuestLog_UpdateQuestDetails` and `QuestFrameItems_Update` (the details file) to restyle what Blizzard just drew; `Classic-Quest-Log.lua` owns the window itself, its art and resizing. WoW Forever runs the Retail engine, which replaced that frame with a list docked in the world map, so there is nothing to widen. The four `Features/Forever-*.lua` files build a window of their own instead. Each client's TOC lists only its own files, so neither side checks which client it is on.
+Classic Era and TBC still ship Blizzard's classic `QuestLogFrame`, so the `Features/Classic-*.lua` files widen it in place. They move Blizzard's own regions and rows, swap the art, and hook `QuestLog_Update` and `QuestLog_SetSelection` (the list file) and `QuestLog_UpdateQuestDetails` and `QuestFrameItems_Update` (the details file) to restyle what Blizzard just drew; `Classic-Quest-Log.lua` owns the window itself, its art and resizing. WoW Forever runs the Retail engine, which replaced that frame with a list docked in the world map, so there is nothing to widen. The `Features/Forever-*.lua` files build a window of their own instead. Each client's TOC lists only its own files, so neither side checks which client it is on.
 
 Both share `ns.LAYOUT` (`Data/Data.lua`) and `Features/Window.lua`, which is why the two look the same. The detail pane's text column is exactly two columns of reward buttons wide (147 + 1 + 147px), because reward buttons can't shrink. The window grows by `EXTRA_WIDTH`, whatever that column plus its margins needs beyond the classic parchment, and the art fills the difference with a strip cut from the last pixels of the middle piece, so both seams continue the art on either side. Numbers in the details (objective counts, gold, experience, the quest ID) end two spaces inside the column (`ns.TwoSpacesWide`), because body text wraps short of the edge and a number flush against it looks like it runs past.
 
@@ -105,19 +107,27 @@ Questie starts its tracker a few seconds after login, partway through its staged
 
 ## Sorting
 
-Both quest logs sort with the same rules in `Features/Utilities.lua`: zones by `zoneSort` (alphabetical by full name, the default, or average quest level either way) and quests within each zone by `questSort` (level, lowest first by default, or highest first, or alphabetical). Ties fall back to the quest log's own order. The defaults match how Blizzard's Classic quest log lists them, and the add-on sorts to them itself so they hold on WoW Forever too. `ns.SortZones` freezes the zone order when the window opens, so turning in or dropping a quest doesn't reshuffle zones under the cursor; closing the window, or changing a setting, clears it.
+Both quest logs sort with the same rules in `Features/Utilities.lua`: zones by `zoneSort` (average quest level, highest first by default, or lowest first, or alphabetical by full name) and quests within each zone by `questSort` (level, highest first by default, or lowest first, or alphabetical). Ties fall back to the quest log's own order. The add-on sorts to every option itself, so each one holds the same on all three clients. `ns.SortZones` freezes the zone order when the window opens, so turning in or dropping a quest doesn't reshuffle zones under the cursor; closing the window, or changing a setting, clears it.
 
 On WoW Forever, `BuildEntries` in `Features/Forever-Quest-List.lua` feeds the sorted entries to the add-on's own list, with the same visibility rules as the map's quest list. The first time the window opens in a session, `ns.ExpandAllZones` opens every zone, so collapsing one lasts only until the next login or reload.
 
-On Classic Era and TBC the rows are Blizzard's. `QuestLog_Update` fills row *i* with quest log entry *i* + scroll offset, and every row handler (click, shift-click track and link, collapse, the party tooltip) finds its entry from the row's ID plus that offset. So after Blizzard draws, `Features/Classic-Quest-List.lua` redraws each row with the entry at its sorted place, the way `QuestLog_Update` would, and sets the row's ID to match. Selecting a quest highlights its row by place in the list, so the highlight is moved again after `QuestLog_SetSelection`. A collapsed zone lists no quests, so it sorts by its average from when it was last seen open, or after the rest when it hasn't been. When the sorted order is the quest log's own, which it is at the defaults, nothing is redrawn.
+On Classic Era and TBC the rows are Blizzard's. `QuestLog_Update` fills row *i* with quest log entry *i* + scroll offset, and every row handler (click, shift-click track and link, collapse, the party tooltip) finds its entry from the row's ID plus that offset. So after Blizzard draws, `Features/Classic-Quest-List.lua` redraws each row with the entry at its sorted place, the way `QuestLog_Update` would, and sets the row's ID to match. Selecting a quest highlights its row by place in the list, so the highlight is moved again after `QuestLog_SetSelection`. A collapsed zone lists no quests, so it sorts by its average from when it was last seen open, or after the rest when it hasn't been. When the sorted order is the quest log's own (zones alphabetical, each zone's quests lowest level first), nothing is redrawn.
 
-## ElvUI and VoiceOver (Classic Era and TBC)
+## ElvUI, VoiceOver and Spoken Quests
 
-Both work on Blizzard's own quest log frames, so the Classic files make room for them rather than replacing what they draw.
+### Classic Era and TBC
+
+ElvUI and VoiceOver work on Blizzard's own quest log frames, so the Classic files make room for them rather than replacing what they draw.
 
 - **ElvUI** skins the window but can't know about this add-on's art. With ElvUI loaded, `Features/Classic-Quest-Log.lua` hides Blizzard's art and the "no active quests" parchment and draws none of its own, leaving the skin's backdrop.
-- **VoiceOver** puts a play button over the start of each quest title. With it loaded, each title starts with as many spaces as clear 24px (spaces only, since a tab draws as a missing glyph in some fonts, ElvUI's among them).
-- VoiceOver hands out its buttons by Blizzard's order, row *i* to entry *i* + scroll offset. With sorting on, `MatchVoiceOverButtons` deals them out again by what each row now shows, through VoiceOver's own button functions. Those functions rewrite the title and move the check, so the row styling runs last, and `UpdateList` also hooks VoiceOver's overlay `Update`, which can run after the `QuestLog_Update` hook.
+- **VoiceOver** puts a play button over the start of each quest title. With it loaded, `Features/Classic-VoiceOver.lua` starts each title with as many spaces as clear 24px (spaces only, since a tab draws as a missing glyph in some fonts, ElvUI's among them).
+- VoiceOver hands out its buttons by Blizzard's order, row *i* to entry *i* + scroll offset. With sorting on, `MatchVoiceOverButtons` deals them out again by what each row now shows, through VoiceOver's own button functions. Those functions rewrite the title and move the check, so the row styling runs last, and the list's update (`ns.UpdateClassicQuestList`) also runs after VoiceOver's overlay `Update`, which can come after the `QuestLog_Update` hook.
+
+**Spoken Quests** is a fork of VoiceOver that keeps the `VoiceOver` global and its quest log functions, so everything above applies to it too. `ns.GetVoiceOver` (`Features/Utilities.lua`) finds either one, and only while its quest log part is switched on in Spoken; both are in the TOCs' `OptionalDeps` so the global exists when the Classic file hooks it. That hook goes on whether or not the part is on yet, because Spoken reads the switch from its saved settings after this file loads.
+
+### Spoken Quests (WoW Forever)
+
+Spoken Quests puts its play buttons on the world map's quest list rows and its details panel, which this add-on's window stands in for, so with the window on they never appeared. `Features/Forever-VoiceOver.lua` puts one on each quest row of the add-on's own list, where the title would start, and moves the title over to clear it. It makes the buttons with Spoken's own `MakePlayButton`, `BindPlayButton` and `SetPlayButtonState`, but keeps its own set, one per quest, because the map's list takes Spoken's set back to its own rows whenever it redraws. List rows are recycled, so each row lets go of its button before it's set up again, unless another row already took it for the same quest.
 
 ## Resizing
 
@@ -126,6 +136,10 @@ The grip in the bottom-right corner (`ns.CreateResizeGrip`, `Features/Window.lua
 On Classic the window belongs to Blizzard's panel manager, which keeps a 152px clamp below it to clear the action bars. `ApplyHeight` trades that clamp away a pixel for every pixel of extra height, down to `MINIMUM_BOTTOM_CLAMP`, because at a normal UI scale there's no other room to grow. It tells the panel manager the new height and clamp each time, or the manager scales the whole window down to fit the space it thinks the window needs. Under ElvUI the grip follows the skin's inset backdrop rather than the frame's own corner.
 
 On WoW Forever the window is the add-on's own, so it also moves: dragging its title bar saves its position.
+
+## Moving from Wide Quest Log Plus
+
+This add-on is the continuation of Wide Quest Log Plus (folder `WideQuestLogPlus`), rehosted under a new name, folder and SavedVariables table. Both replace the same Blizzard quest log functions, so they must never run together: `ns:WarnIfPredecessorLoaded()` (`Features/Core.lua`) prints `CHAT_PREDECESSOR_LOADED` on every login while `ns.PREDECESSOR_ADDON_NAME` is loaded. It doesn't disable either add-on itself. In the code, the old name appears only there and in that string's locale entries. Don't carry it anywhere else, the old `/wqlp` and `/widequestlogplus` commands included.
 
 ## Saved Variables
 
@@ -138,10 +152,6 @@ AceDB applies `ns.DATABASE_DEFAULTS` (`Data/Default-Settings.lua`) whenever a ke
 ### Migration Chain
 
 None. `PrettyWideQuestLogDB` started fresh with the move from Wide Quest Log Plus, so nothing older than AceDB can be in it. Wide Quest Log Plus's settings live in its own SavedVariables file, which this add-on can't read, so they aren't carried over.
-
-## Moving from Wide Quest Log Plus
-
-This add-on is the continuation of Wide Quest Log Plus (folder `WideQuestLogPlus`), rehosted under a new name, folder and SavedVariables table. Both replace the same Blizzard quest log functions, so they must never run together: `ns:WarnIfPredecessorLoaded()` (`Features/Core.lua`) prints `CHAT_PREDECESSOR_LOADED` on every login while `ns.PREDECESSOR_ADDON_NAME` is loaded. It doesn't disable either add-on itself.
 
 ## Adding a New Setting
 
@@ -178,11 +188,13 @@ Add `{ "EVENT_NAME", "OnEventName" }` to `EVENTS` in `Features/Core.lua` and def
 - **Applying the saved height at load**: the screen isn't settled, so the clamp cuts it short. Apply it in `OnShow`, and never save the clamped value.
 - **Matching Blizzard's art by file path**: current clients return nil from `GetTextureFilePath` for XML textures. `IdentifyBlizzardArt` checks the file ID first.
 - **Leaving sort ties to `table.sort`**: it isn't stable, so equal rows swap between repaints. Every comparator ends on `sortIndex`.
+- **Reading VoiceOver's fields by plain indexing**: the `VoiceOver` global falls back to `_G` for anything it doesn't hold, so a missing field reads as some unrelated global instead of nil. `ns.GetVoiceOver` checks its fields with `rawget`.
 - **Registering an event a client lacks**: throws. Add events through `EVENTS` in Core, never `RegisterEvent` in a feature file.
 
 ## Contributing
 
 - **Issues**: [GitHub Issues](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/issues).
-- **Bug reports**: game client and version, locale, the character's class and level, which other quest add-ons are installed (Questie, ElvUI, VoiceOver), steps to reproduce, and the Diagnostic Tools' Quest Log Context and Display Context reports (plus the Event Log when the quest log didn't update).
+- **Bug reports**: game client and version, locale, the character's class and level, which other quest add-ons are installed (Questie, ElvUI, VoiceOver, Spoken Quests), steps to reproduce, and the Diagnostic Tools' Quest Log Context and Display Context reports (plus the Event Log when the quest log didn't update).
+- **Discord**: [Pretty Wide Quest Log on Discord](https://discord.gg/eh8hKq992Q).
 - **PR guidelines**: keep each PR to one change; run `stylua --syntax lua51`, `luac -p` and `luacheck .` before pushing (CI runs all three). Any change to the shape of saved data ships its own migration, tagged `MIGRATION (remove after YYYY-MM-DD)` 30 days past its release. The add-on sends no chat and writes no macros, so the 255-byte limits don't apply yet; a change that starts sending chat measures in bytes against ruRU. Update this document if the architecture, File Map or Saved Variables change.
 - **PR descriptions say what a player will notice**, in plain language, the way release notes do; commit messages carry the developer detail.

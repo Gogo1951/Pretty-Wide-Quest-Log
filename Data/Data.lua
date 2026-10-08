@@ -135,12 +135,13 @@ LAYOUT.QUEST_ID_GAP = 10 + 2 * 13
 LAYOUT.QUEST_ID_FONT_SHRINK = 2
 
 --[[
-	Quest list rows: zone headers have their +/- at the left and their name after it; quest titles sit
-	further in, after a slot for the tracking mark that's there whether the quest is marked or not. The
-	untracked eye fills its square edge to edge, unlike Blizzard's check, so a gap keeps it off the title
+	Quest list rows: zone headers have their +/- at the left and their name after it; quest titles have
+	a slot for the tracking mark in the same column as the +/-, there whether the quest is marked or not,
+	and start just after it. The untracked eye fills its square edge to edge, unlike Blizzard's check, so
+	a gap keeps it off the title
 ]]
 LAYOUT.HEADER_TEXT_X = 20
-LAYOUT.CHECK_X = 18
+LAYOUT.CHECK_X = 3
 LAYOUT.CHECK_GAP = 4
 LAYOUT.QUEST_TEXT_X = LAYOUT.CHECK_X + 16 + LAYOUT.CHECK_GAP
 
