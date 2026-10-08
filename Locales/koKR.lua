@@ -19,7 +19,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"퀘스트 레벨, 던전, 공격대, 정예 표시와 퀘스트 ID를 갖춘 넓은 2단 퀘스트 목록. 전체 퀘스트 목록과 각 퀘스트의 세부 정보를 원하는 순서로 정렬해 한 번에 확인하세요. 블리자드 디자인을 그대로 살린 더 큰 퀘스트 목록입니다."
+	"읽을 공간은 더 넓게, 한눈에 보이는 정보는 더 많게, 퀘스트 정리 방식은 원하는 대로 바꿀 수 있는 더 크고 똑똑한 퀘스트 목록입니다. 익숙한 블리자드 디자인은 그대로 두고, 퀘스트 목록만 더 편리하게 만드세요."
 L["ENABLE_WELCOME_MESSAGE"] = "환영 메시지 사용"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log 환영 인사를 표시합니다."
 L["ENABLE_WIDE_QUEST_LOG"] = "이 프로필에서 Pretty Wide Quest Log 사용"
@@ -34,7 +34,7 @@ L["SORT_AVERAGE_LEVEL_LOWEST"] = "평균 레벨, 낮은 순"
 L["SORT_ALPHABETICAL"] = "이름순"
 L["ZONE_GAP"] = "지역 이름 위 여백"
 L["ZONE_GAP_DESCRIPTION"] =
-	"각 지역 이름 위에 빈 줄을 추가합니다. 퀘스트가 여러 지역에 흩어져 있다면 유용합니다."
+	"각 지역 이름 위에 약간의 여백을 추가합니다. 퀘스트가 여러 지역에 흩어져 있다면 유용합니다."
 L["QUEST_ORDER"] = "퀘스트 순서"
 L["QUEST_ORDER_DESCRIPTION"] = "각 지역 아래 퀘스트의 순서를 바꿉니다."
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "레벨, 높은 순 (기본값)"
@@ -64,7 +64,11 @@ L["QUEST_SUFFIX_RAID"] = "공"
 L["QUEST_SUFFIX_PVP"] = "전"
 L["QUEST_SUFFIX_GROUP"] = "파"
 L["QUEST_SUFFIX_ELITE"] = "정"
-L["QUEST_ID"] = "ID %d"
+L["QUEST_ID"] = "퀘스트 ID %d"
+L["EXPAND_ALL"] = "모두 펼치기"
+L["COLLAPSE_ALL"] = "모두 접기"
+L["TRACK_ALL"] = "모두 추적"
+L["UNTRACK_ALL"] = "모두 추적 해제"
 L["RESIZE_TOOLTIP"] = "끌어서 퀘스트 목록 크기 조절"
 
 --------------------------------------------------------------------------------

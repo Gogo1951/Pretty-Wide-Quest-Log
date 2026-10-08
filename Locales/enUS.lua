@@ -19,7 +19,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Wide, dual-pane quest log with quest levels, dungeon, raid and elite tags, and quest IDs. See your whole quest list and every quest's details at once, sorted your way. A bigger quest log that keeps the Blizzard look."
+	"A bigger, smarter quest log that gives you more room to read, more information at a glance, and control over how your quests are organized. Keep the familiar Blizzard look, just make the quest log work better for you."
 L["ENABLE_WELCOME_MESSAGE"] = "Enable Welcome Message"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log greeting when you log in."
 L["ENABLE_WIDE_QUEST_LOG"] = "Enable Pretty Wide Quest Log for This Profile"
@@ -33,7 +33,7 @@ L["SORT_AVERAGE_LEVEL_LOWEST"] = "Average Level, Lowest First"
 L["SORT_ALPHABETICAL"] = "Alphabetical"
 L["ZONE_GAP"] = "Space Above Zone Names"
 L["ZONE_GAP_DESCRIPTION"] =
-	"Adds a blank line above each zone name. Handy when your quests are spread across lots of zones."
+	"Adds a little space above each zone name. Handy when your quests are spread across lots of zones."
 L["QUEST_ORDER"] = "Quest Order"
 L["QUEST_ORDER_DESCRIPTION"] = "Changes the order of the quests under each zone."
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "Level, Highest First (Default)"
@@ -63,7 +63,11 @@ L["QUEST_SUFFIX_RAID"] = "R"
 L["QUEST_SUFFIX_PVP"] = "P"
 L["QUEST_SUFFIX_GROUP"] = "G"
 L["QUEST_SUFFIX_ELITE"] = "E"
-L["QUEST_ID"] = "ID %d"
+L["QUEST_ID"] = "Quest ID %d"
+L["EXPAND_ALL"] = "Expand All"
+L["COLLAPSE_ALL"] = "Collapse All"
+L["TRACK_ALL"] = "Track All"
+L["UNTRACK_ALL"] = "Untrack All"
 L["RESIZE_TOOLTIP"] = "Drag to resize the quest log"
 
 --------------------------------------------------------------------------------

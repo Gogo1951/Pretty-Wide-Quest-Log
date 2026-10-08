@@ -102,23 +102,42 @@ LAYOUT.CONTENT_WIDTH = LAYOUT.REWARD_COLUMNS_WIDTH
 LAYOUT.CONTENT_TOP = LAYOUT.PANE_TOP + LAYOUT.ROW_HEIGHT
 
 --[[
-	A heading sits close to the text it introduces and well clear of the text above, so it reads as the
-	start of its section: about half a line of quest text below the quest's title and the Description and
-	Rewards headings, and nearly two lines above Description and Rewards
+	Quest text, headings included, is set with lines LINE_HEIGHT times its font size apart. Blizzard
+	leaves none between lines on Classic Era, which reads tight, and a little on WoW Forever; this makes
+	both the same
 ]]
+LAYOUT.LINE_HEIGHT = 1.2
+
+--[[
+	A heading sits close to the text it introduces and well clear of the text above, so it reads as the
+	start of its section. Below a heading is about half the heading's own size: a little more under the
+	quest's title than under the smaller Description and Rewards headings. Above Description and Rewards
+	is HEADING_LINES_ABOVE lines of quest text, well clear of the blank line between two paragraphs.
+	ns.SetTextSpacing works out QUEST_LINE (a line of quest text, in pixels), HEADING_SPACE_ABOVE and
+	QUEST_ID_GAP once the quest text's font is known, as it differs between clients and languages
+]]
+LAYOUT.TITLE_SPACE_BELOW = 8
 LAYOUT.HEADING_SPACE_BELOW = 6
-LAYOUT.HEADING_SPACE_ABOVE = 22
+LAYOUT.HEADING_LINES_ABOVE = 1.4
 local BLIZZARD_HEADING_GAP = 5 -- What Blizzard leaves under a heading
 LAYOUT.EXTRA_HEADING_GAP = LAYOUT.HEADING_SPACE_BELOW - BLIZZARD_HEADING_GAP
 
 --[[
-	A blank line between the money ("You will receive:") and experience lines of the rewards (WoW Forever;
-	the classic quest log doesn't show experience)
+	Blizzard sets the quest's title and the Description and Rewards headings all in the same font. The
+	section headings are this much smaller (18 to 15 in English) so the title reads as the one heading
+	over them, while still a step above the quest text
 ]]
-LAYOUT.MONEY_EXPERIENCE_GAP = 13
+LAYOUT.SECTION_HEADING_SHRINK = 3
 
 -- WoW Forever's Rewards heading sits 3px higher in its block than Description, so its gap is 3px more to match
-LAYOUT.REWARDS_GAP = LAYOUT.HEADING_SPACE_ABOVE + 3
+LAYOUT.REWARDS_HEADING_RISE = 3
+
+--[[
+	Reward buttons sit this far under the line that introduces them ("You will be able to choose one of
+	these rewards:"), and the next line ("You will also receive:") this far under them, clear of them
+	like the rest of the text; Blizzard leaves them nearly touching
+]]
+LAYOUT.REWARD_BUTTONS_SPACE = 10
 
 --[[
 	Blizzard's money frames keep their last coin this far inside their right edge, so a money frame
@@ -127,11 +146,11 @@ LAYOUT.REWARDS_GAP = LAYOUT.HEADING_SPACE_ABOVE + 3
 LAYOUT.MONEY_RIGHT_PADDING = 13
 
 --[[
-	The quest ID sits under everything else in the quest details, two blank lines down, right-aligned
-	two spaces in from the edge of the text column like the other numbers, in the description's font a
-	little smaller
+	The quest ID sits under everything else in the quest details, QUEST_ID_LINES lines of quest text
+	down (ns.SetTextSpacing sets QUEST_ID_GAP), right-aligned two spaces in from the edge of the text
+	column like the other numbers, in the description's font a little smaller
 ]]
-LAYOUT.QUEST_ID_GAP = 10 + 2 * 13
+LAYOUT.QUEST_ID_LINES = 2
 LAYOUT.QUEST_ID_FONT_SHRINK = 2
 
 --[[
@@ -147,20 +166,25 @@ LAYOUT.QUEST_TEXT_X = LAYOUT.CHECK_X + 16 + LAYOUT.CHECK_GAP
 
 --[[
 	The tracking mark in that slot: a teal check in front of each tracked quest, or with markUntracked
-	on, where tracking everything is the norm, a red crossed-out eye in front of each quest that isn't
+	on, where tracking everything is the norm, a red crossed-out eye in front of each quest that isn't,
+	in the deep red of the zone headers' minus buttons (as bright as their highlight, so its thin lines
+	still read)
 ]]
 ns.TRACKING_MARKS = {
 	tracked = { texture = "Interface/Buttons/UI-CheckBox-Check", r = 64 / 255, g = 224 / 255, b = 208 / 255 },
 	untracked = {
 		texture = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/PWQL_Untracked",
-		r = 1,
-		g = 0.125,
-		b = 0.125,
+		r = 160 / 255,
+		g = 16 / 255,
+		b = 12 / 255,
 	},
 }
 
--- Blank space above every zone header in the quest list except the first
-LAYOUT.HEADER_GAP = LAYOUT.ROW_HEIGHT
+--[[
+	Space above every zone header in the quest list except the first: half a row, so zones read as
+	separate groups (about three times the space between two rows' text) without a full blank line
+]]
+LAYOUT.HEADER_GAP = LAYOUT.ROW_HEIGHT / 2
 
 --[[
 	Buttons along the bottom: the outer ones' offsets from the window's corners, and the size of the
@@ -171,6 +195,14 @@ LAYOUT.BUTTON_LEFT = 17
 LAYOUT.BUTTON_RIGHT = 43
 LAYOUT.BUTTON_WIDTH = 123
 LAYOUT.BUTTON_HEIGHT = 21
+
+--[[
+	Expand All and Track All above the quest list, left to right from the quest log's own "All" spot.
+	Each is at least as wide as a bottom button, and wider where a label needs it
+]]
+LAYOUT.LIST_BUTTONS_X = 74
+LAYOUT.LIST_BUTTONS_Y = -53
+LAYOUT.LABEL_PADDING = 32
 
 -- Centre of the scroll bar slot to the right of the parchment
 LAYOUT.DETAIL_SCROLL_SLOT_X = 673 + LAYOUT.EXTRA_WIDTH

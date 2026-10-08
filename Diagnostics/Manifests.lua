@@ -53,6 +53,9 @@ local SHARED_FUNCTIONS = {
 	"Settings.OpenToCategory",
 	"hooksecurefunc",
 	"GetQuestDifficultyColor",
+	"GetQuestID",
+	"QuestFrameProgressItems_Update",
+	"QuestInfo_Display",
 }
 
 local CLASSIC_FUNCTIONS = {
@@ -72,6 +75,12 @@ local CLASSIC_FUNCTIONS = {
 	"IsQuestWatched",
 	"IsUnitOnQuest",
 	"GetNumSubgroupMembers",
+	"AutoQuestWatch_Insert",
+	"RemoveQuestWatch",
+	"GetNumQuestWatches",
+	"GetQuestIDFromLogIndex",
+	"QuestWatch_Update",
+	"QuestLogCollapseAllButton_OnClick",
 }
 
 local FOREVER_FUNCTIONS = {
@@ -98,7 +107,6 @@ local FOREVER_FUNCTIONS = {
 	"CollapseQuestHeader",
 	"GetNumQuestLeaderBoards",
 	"GetQuestLogLeaderBoard",
-	"QuestInfo_Display",
 	"QuestUtils_IsQuestWatched",
 	"QuestUtil.CanRemoveQuestWatch",
 	"QuestMapQuestOptions_AbandonQuest",
@@ -115,6 +123,9 @@ local FOREVER_FUNCTIONS = {
 	"CopyTable",
 	"IsCurrentQuestFailed",
 	"GetQuestLink",
+	"ShowUIPanel",
+	"HideUIPanel",
+	"GetUIPanel",
 }
 
 ns.DIAGNOSTIC_API_CHECKS = {}
@@ -131,15 +142,33 @@ if ns.FLAVOR == "Camelot" then
 			"QuestFrame",
 			"QuestLogPopupDetailFrame",
 			"QuestDifficultyHighlightColors",
+			"UIPanelWindows",
 		})
 	)
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "Constants.QuestWatchConsts.MAX_QUEST_WATCHES" }))
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_TITLE_FORMAT_FAILED", "PARENS_TEMPLATE" }))
 else
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", CLASSIC_FUNCTIONS))
-	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", { "QuestLogFrame", "QuestLogTitle1" }))
-	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "QUESTS_DISPLAYED", "LE_QUEST_FREQUENCY_DAILY" }))
-	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "ELITE" }))
+	Append(
+		ns.DIAGNOSTIC_API_CHECKS,
+		Rows("table", {
+			"QuestLogFrame",
+			"QuestLogTitle1",
+			"QUEST_WATCH_LIST",
+			"QuestLogCollapseAllButton",
+			"QuestLogExpandButtonFrame",
+		})
+	)
+	Append(
+		ns.DIAGNOSTIC_API_CHECKS,
+		Rows("number", {
+			"QUESTS_DISPLAYED",
+			"LE_QUEST_FREQUENCY_DAILY",
+			"MAX_WATCHABLE_QUESTS",
+			"QUEST_WATCH_NO_EXPIRE",
+		})
+	)
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "ELITE", "QUEST_WATCH_TOO_MANY" }))
 end
 
 --------------------------------------------------------------------------------
