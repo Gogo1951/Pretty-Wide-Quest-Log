@@ -93,8 +93,15 @@ local function ForSelectedQuest(action)
 	end
 end
 
-local abandonButton = CreateBottomButton(ABANDON_QUEST, 125, ForSelectedQuest(QuestMapQuestOptions_AbandonQuest))
-abandonButton:SetPoint("BOTTOMLEFT", LAYOUT.BUTTON_LEFT, LAYOUT.BUTTON_BOTTOM)
+--[[
+	Two at each end, mirrored: Track and Abandon on the left, the quest's own actions, in the art's left
+	slot and beside it; Share Quest and Exit on the right, Exit in the art's right slot
+]]
+local trackButton = CreateBottomButton(TRACK_QUEST_ABBREV, 125, ForSelectedQuest(ns.ToggleTracking))
+trackButton:SetPoint("BOTTOMLEFT", LAYOUT.BUTTON_LEFT, LAYOUT.BUTTON_BOTTOM)
+
+local abandonButton = CreateBottomButton(ABANDON_QUEST, nil, ForSelectedQuest(QuestMapQuestOptions_AbandonQuest))
+abandonButton:SetPoint("LEFT", trackButton, "RIGHT")
 
 local exitButton = CreateBottomButton(EXIT, 77, function()
 	frame:Hide()
@@ -103,9 +110,6 @@ exitButton:SetPoint("BOTTOMRIGHT", -LAYOUT.BUTTON_RIGHT, LAYOUT.BUTTON_BOTTOM)
 
 local shareButton = CreateBottomButton(SHARE_QUEST, nil, ForSelectedQuest(QuestMapQuestOptions_ShareQuest))
 shareButton:SetPoint("RIGHT", exitButton, "LEFT")
-
-local trackButton = CreateBottomButton(TRACK_QUEST_ABBREV, nil, ForSelectedQuest(ns.ToggleTracking))
-trackButton:SetPoint("RIGHT", shareButton, "LEFT")
 
 -- Say why the button is greyed out for quests Questie can't track
 trackButton:SetMotionScriptsWhileDisabled(true)
@@ -254,12 +258,44 @@ end)
 --------------------------------------------------------------------------------
 
 --[[
+	Blizzard's windows that open on the left of the screen (a quest giver, gossip, a vendor, a trainer,
+	the character pane and so on) open on top of this one, and a quest giver's takes the pieces the
+	quest details are drawn with, leaving them blank. So the two make way for each other, as Blizzard's
+	own windows do: this one closes when one of those opens, and closes any that are open when it opens
+	(out of combat, when Blizzard allows it). Bags aren't such windows, so they're left alone
+]]
+local LEFT_PANEL_AREAS = { "left", "doublewide" }
+hooksecurefunc("ShowUIPanel", function(panel)
+	if (not frame:IsShown()) or not panel or (panel == frame) then
+		return
+	end
+	local layout = UIPanelWindows[panel:GetName() or ""]
+	local area = (layout and layout.area) or panel:GetAttribute("UIPanelLayout-area")
+	if tContains(LEFT_PANEL_AREAS, area) then
+		frame:Hide()
+	end
+end)
+
+local function CloseLeftPanels()
+	if InCombatLockdown() then
+		return
+	end
+	for _, area in ipairs(LEFT_PANEL_AREAS) do
+		local panel = GetUIPanel(area)
+		if panel and panel ~= frame then
+			HideUIPanel(panel)
+		end
+	end
+end
+
+--[[
 	The saved height is applied every time the window opens rather than when it loads, because the
 	screen size and UI scale aren't settled then and the clamp to the screen would cut it short. The
 	saved value is left alone, so a smaller screen only shrinks the window, not the setting
 ]]
 local headersOpened
 frame:SetScript("OnShow", function()
+	CloseLeftPanels() -- First, so the quest details have their pieces back
 	PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
 	ApplyHeight(ns.db.global.height)
 	if not headersOpened then

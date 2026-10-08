@@ -43,6 +43,31 @@ function ns.QuestieCannotShowText(questID)
 	return L["QUESTIE_CANNOT_SHOW"]:format(GetQuestLink(questID) or C_QuestLog.GetTitleForQuestID(questID) or questID)
 end
 
+-- Whether a quest that isn't tracked can be: false once Blizzard's watch list is full
+function ns.HasRoomToTrack(questID)
+	return QuestUtils_IsQuestWatched(questID)
+		or C_QuestLog.GetNumQuestWatches() < Constants.QuestWatchConsts.MAX_QUEST_WATCHES
+end
+
+local function Untrack(questID, tracker)
+	if tracker and not QuestUtils_IsQuestWatched(questID) then
+		tracker:UntrackQuestId(questID)
+	elseif QuestUtil.CanRemoveQuestWatch() then
+		C_QuestLog.RemoveQuestWatch(questID) -- Also untracks it in Questie
+	end
+end
+
+-- Returns false, tracking nothing, when Blizzard's watch list is full
+local function Track(questID)
+	if not ns.HasRoomToTrack(questID) then
+		UIErrorsFrame:AddMessage(OBJECTIVES_WATCH_TOO_MANY, 1.0, 0.1, 0.1, 1.0)
+		return false
+	end
+	-- Adding a watch that already exists is harmless, and is what tells Questie to track it
+	C_QuestLog.AddQuestWatch(questID)
+	return true
+end
+
 local warnedUntrackable = {}
 function ns.ToggleTracking(questID)
 	local tracker = TrackerFor(questID)
@@ -55,18 +80,28 @@ function ns.ToggleTracking(questID)
 		return
 	end
 
-	local watched = QuestUtils_IsQuestWatched(questID)
 	if ns.IsTracked(questID) then
-		if tracker and not watched then
-			tracker:UntrackQuestId(questID)
-		elseif QuestUtil.CanRemoveQuestWatch() then
-			C_QuestLog.RemoveQuestWatch(questID) -- Also untracks it in Questie
-		end
-	elseif not watched and C_QuestLog.GetNumQuestWatches() >= Constants.QuestWatchConsts.MAX_QUEST_WATCHES then
-		UIErrorsFrame:AddMessage(OBJECTIVES_WATCH_TOO_MANY, 1.0, 0.1, 0.1, 1.0)
+		Untrack(questID, tracker)
 	else
-		-- Adding a watch that already exists is harmless, and is what tells Questie to track it
-		C_QuestLog.AddQuestWatch(questID)
+		Track(questID)
+	end
+	ns.RequestUpdate()
+end
+
+--[[
+	Tracks or untracks every quest given, in order, so Track All fills a nearly full watch list from the
+	top of the list down. Quests Questie can't track are skipped without a word
+]]
+function ns.SetAllTracked(questIDs, track)
+	for _, questID in ipairs(questIDs) do
+		local tracker = TrackerFor(questID)
+		if tracker ~= false and ns.IsTracked(questID) ~= track then
+			if not track then
+				Untrack(questID, tracker)
+			elseif not Track(questID) then
+				break
+			end
+		end
 	end
 	ns.RequestUpdate()
 end

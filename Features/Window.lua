@@ -127,3 +127,52 @@ function ns.CreateResizeGrip(frame, applyHeight, getHeight)
 
 	return grip
 end
+
+--------------------------------------------------------------------------------
+-- List Buttons
+--------------------------------------------------------------------------------
+
+local function CreateListButton(parent, labels)
+	local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+	button:SetSize(LAYOUT.BUTTON_WIDTH, LAYOUT.BUTTON_HEIGHT)
+	button:SetText(labels[1])
+	button.labels = labels
+	return button
+end
+
+--[[
+	Expand All / Collapse All and Track All / Untrack All, side by side above the quest list. The caller
+	anchors the first and sets their clicks and labels. Both take one width, fitting the longest label
+	in this locale, so neither changes size as its label switches. That's measured the first time they
+	show, once the font is sure to be loaded
+]]
+function ns.CreateListButtons(parent)
+	local expandButton = CreateListButton(parent, { L["EXPAND_ALL"], L["COLLAPSE_ALL"] })
+	local trackButton = CreateListButton(parent, { L["TRACK_ALL"], L["UNTRACK_ALL"] })
+	trackButton:SetPoint("LEFT", expandButton, "RIGHT")
+
+	local buttons = { expandButton, trackButton }
+	local fitted
+	local function FitWidth()
+		if fitted then
+			return
+		end
+		fitted = true
+		local width = LAYOUT.BUTTON_WIDTH
+		for _, button in ipairs(buttons) do
+			local current = button:GetText()
+			for _, label in ipairs(button.labels) do
+				button:SetText(label)
+				width = math.max(width, button:GetTextWidth() + LAYOUT.LABEL_PADDING)
+			end
+			button:SetText(current)
+		end
+		for _, button in ipairs(buttons) do
+			button:SetWidth(width)
+		end
+	end
+	expandButton:HookScript("OnShow", FitWidth)
+	trackButton:HookScript("OnShow", FitWidth)
+
+	return expandButton, trackButton
+end

@@ -19,7 +19,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Journal de quêtes large à deux volets, avec niveaux de quête, marqueurs de donjon, de raid et d'élite, et ID de quête. Voyez toute votre liste de quêtes et les détails de chaque quête à la fois, triés à votre façon. Un journal de quêtes plus grand qui garde le style de Blizzard."
+	"Un journal de quêtes plus grand et plus malin, qui vous donne plus de place pour lire, plus d'informations en un coup d'œil et le contrôle sur l'organisation de vos quêtes. Gardez le style familier de Blizzard, avec un journal de quêtes qui fonctionne tout simplement mieux pour vous."
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message d'accueil de Pretty Wide Quest Log à la connexion."
 L["ENABLE_WIDE_QUEST_LOG"] = "Activer Pretty Wide Quest Log pour ce profil"
@@ -33,7 +33,7 @@ L["SORT_AVERAGE_LEVEL_LOWEST"] = "Niveau moyen, le plus bas d'abord"
 L["SORT_ALPHABETICAL"] = "Alphabétique"
 L["ZONE_GAP"] = "Espace au-dessus des noms de zone"
 L["ZONE_GAP_DESCRIPTION"] =
-	"Ajoute une ligne vide au-dessus de chaque nom de zone. Pratique si vos quêtes sont réparties sur de nombreuses zones."
+	"Ajoute un peu d'espace au-dessus de chaque nom de zone. Pratique si vos quêtes sont réparties sur de nombreuses zones."
 L["QUEST_ORDER"] = "Ordre des quêtes"
 L["QUEST_ORDER_DESCRIPTION"] = "Change l'ordre des quêtes sous chaque zone."
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "Niveau, le plus haut d'abord (par défaut)"
@@ -63,7 +63,11 @@ L["QUEST_SUFFIX_RAID"] = "R"
 L["QUEST_SUFFIX_PVP"] = "J"
 L["QUEST_SUFFIX_GROUP"] = "G"
 L["QUEST_SUFFIX_ELITE"] = "E"
-L["QUEST_ID"] = "ID %d"
+L["QUEST_ID"] = "ID de quête %d"
+L["EXPAND_ALL"] = "Tout développer"
+L["COLLAPSE_ALL"] = "Tout réduire"
+L["TRACK_ALL"] = "Tout suivre"
+L["UNTRACK_ALL"] = "Ne rien suivre"
 L["RESIZE_TOOLTIP"] = "Faites glisser pour redimensionner le journal de quêtes"
 
 --------------------------------------------------------------------------------

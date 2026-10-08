@@ -19,7 +19,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"宽版双栏任务日志，显示任务等级、地下城、团队副本和精英标记以及任务 ID。一次看清完整任务列表和每个任务的详情，并按你的方式排序。更大的任务日志，保留暴雪原版外观。"
+	"更大、更智能的任务日志，让你有更多阅读空间、一眼看到更多信息，并能自由安排任务的排列方式。保留熟悉的暴雪外观，只是让任务日志更好用。"
 L["ENABLE_WELCOME_MESSAGE"] = "启用欢迎消息"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登录时显示 Pretty Wide Quest Log 的欢迎语。"
 L["ENABLE_WIDE_QUEST_LOG"] = "为此配置文件启用 Pretty Wide Quest Log"
@@ -33,7 +33,7 @@ L["SORT_AVERAGE_LEVEL_LOWEST"] = "平均等级，从低到高"
 L["SORT_ALPHABETICAL"] = "按名称"
 L["ZONE_GAP"] = "区域名称上方留空"
 L["ZONE_GAP_DESCRIPTION"] =
-	"在每个区域名称上方添加一个空行。如果你的任务分布在许多区域，会很方便。"
+	"在每个区域名称上方留出一点间距。如果你的任务分布在许多区域，会很方便。"
 L["QUEST_ORDER"] = "任务顺序"
 L["QUEST_ORDER_DESCRIPTION"] = "更改每个区域下任务的顺序。"
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "等级，从高到低（默认）"
@@ -63,7 +63,11 @@ L["QUEST_SUFFIX_RAID"] = "团"
 L["QUEST_SUFFIX_PVP"] = "战"
 L["QUEST_SUFFIX_GROUP"] = "组"
 L["QUEST_SUFFIX_ELITE"] = "精"
-L["QUEST_ID"] = "ID %d"
+L["QUEST_ID"] = "任务ID %d"
+L["EXPAND_ALL"] = "全部展开"
+L["COLLAPSE_ALL"] = "全部折叠"
+L["TRACK_ALL"] = "全部追踪"
+L["UNTRACK_ALL"] = "全部取消追踪"
 L["RESIZE_TOOLTIP"] = "拖动以调整任务日志大小"
 
 --------------------------------------------------------------------------------

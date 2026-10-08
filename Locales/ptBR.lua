@@ -19,7 +19,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Registro de missões largo, com dois painéis, níveis de missão, marcações de masmorra, raide e elite, e IDs de missão. Veja sua lista de missões inteira e os detalhes de cada missão ao mesmo tempo, ordenados do seu jeito. Um registro de missões maior que mantém o visual da Blizzard."
+	"Um registro de missões maior e mais inteligente, que dá mais espaço para ler, mais informações de relance e controle sobre como suas missões são organizadas. Mantenha o visual familiar da Blizzard e faça o registro de missões funcionar melhor para você."
 L["ENABLE_WELCOME_MESSAGE"] = "Ativar mensagem de boas-vindas"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra a saudação do Pretty Wide Quest Log ao entrar no jogo."
 L["ENABLE_WIDE_QUEST_LOG"] = "Ativar o Pretty Wide Quest Log para este perfil"
@@ -33,7 +33,7 @@ L["SORT_AVERAGE_LEVEL_LOWEST"] = "Nível médio, menor primeiro"
 L["SORT_ALPHABETICAL"] = "Alfabética"
 L["ZONE_GAP"] = "Espaço acima dos nomes de zona"
 L["ZONE_GAP_DESCRIPTION"] =
-	"Adiciona uma linha em branco acima de cada nome de zona. Útil se suas missões estão espalhadas por muitas zonas."
+	"Adiciona um pouco de espaço acima de cada nome de zona. Útil se suas missões estão espalhadas por muitas zonas."
 L["QUEST_ORDER"] = "Ordem das missões"
 L["QUEST_ORDER_DESCRIPTION"] = "Muda a ordem das missões dentro de cada zona."
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "Nível, maior primeiro (padrão)"
@@ -63,7 +63,11 @@ L["QUEST_SUFFIX_RAID"] = "R"
 L["QUEST_SUFFIX_PVP"] = "J"
 L["QUEST_SUFFIX_GROUP"] = "G"
 L["QUEST_SUFFIX_ELITE"] = "E"
-L["QUEST_ID"] = "ID %d"
+L["QUEST_ID"] = "ID da missão %d"
+L["EXPAND_ALL"] = "Expandir tudo"
+L["COLLAPSE_ALL"] = "Recolher tudo"
+L["TRACK_ALL"] = "Acompanhar todas"
+L["UNTRACK_ALL"] = "Não acompanhar nenhuma"
 L["RESIZE_TOOLTIP"] = "Arraste para redimensionar o registro de missões"
 
 --------------------------------------------------------------------------------

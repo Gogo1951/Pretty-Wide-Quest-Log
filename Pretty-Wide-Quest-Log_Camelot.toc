@@ -1,5 +1,5 @@
 ## Title: Pretty Wide Quest Log
-## Notes: Wide, dual-pane quest log with quest levels, dungeon, raid and elite tags, and quest IDs. See your whole quest list and every quest's details at once, sorted your way. A bigger quest log that keeps the Blizzard look.
+## Notes: A bigger, smarter quest log that gives you more room to read, more information at a glance, and control over how your quests are organized. Keep the familiar Blizzard look, just make the quest log work better for you.
 ## Author: Gogo1951
 
 ## IconTexture: 133740
@@ -61,6 +61,7 @@ Features/Core.lua
 Features/Utilities.lua
 Features/Announcements.lua
 Features/Quest-Display.lua
+Features/Quest-Giver.lua
 Features/Window.lua
 Features/Forever-Tracking.lua
 Features/Forever-Quest-Log.lua

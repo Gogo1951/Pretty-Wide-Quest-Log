@@ -1,4 +1,5 @@
 local _, ns = ...
+local L = ns.L
 
 local LAYOUT = ns.LAYOUT
 local ROW_HEIGHT, PANE_TOP = LAYOUT.ROW_HEIGHT, LAYOUT.PANE_TOP
@@ -230,20 +231,14 @@ end)
 listView:SetElementInitializer("Button", InitRow)
 ScrollUtil.InitScrollBoxListWithScrollBar(listBox, listBar, listView)
 
--- Collapse or expand every zone at once, like the classic "All" toggle
-local collapseAll = CreateFrame("Button", nil, frame)
-collapseAll:SetSize(60, 16)
-collapseAll:SetPoint("TOPLEFT", 74, -45)
-collapseAll.Icon = collapseAll:CreateTexture(nil, "ARTWORK")
-collapseAll.Icon:SetSize(16, 16)
-collapseAll.Icon:SetPoint("LEFT")
-collapseAll:SetHighlightTexture("Interface\\Buttons\\UI-PlusButton-Hilight", "ADD")
-collapseAll:GetHighlightTexture():ClearAllPoints()
-collapseAll:GetHighlightTexture():SetAllPoints(collapseAll.Icon)
-collapseAll.Text = collapseAll:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-collapseAll.Text:SetPoint("LEFT", collapseAll.Icon, "RIGHT", 2, 0)
-collapseAll.Text:SetText(ALL)
-collapseAll:SetScript("OnClick", function(self)
+--------------------------------------------------------------------------------
+-- Expand All and Track All
+--------------------------------------------------------------------------------
+
+local expandButton, trackButton = ns.CreateListButtons(frame)
+expandButton:SetPoint("LEFT", frame, "TOPLEFT", LAYOUT.LIST_BUTTONS_X, LAYOUT.LIST_BUTTONS_Y)
+
+expandButton:SetScript("OnClick", function(self)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	local collapse = not self.allCollapsed
 	for index = 1, C_QuestLog.GetNumQuestLogEntries() do
@@ -259,6 +254,35 @@ collapseAll:SetScript("OnClick", function(self)
 	ns.RequestUpdate()
 end)
 
+trackButton:SetScript("OnClick", function(self)
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	ns.SetAllTracked(self.questIDs, self.trackAll)
+end)
+
+--[[
+	Collapse All while any zone is open, Expand All once every zone is collapsed. Track All while some
+	quest Questie or the watch list can still take isn't tracked, Untrack All once none is left
+]]
+local function UpdateListButtons(quests, allCollapsed)
+	expandButton.allCollapsed = allCollapsed
+	expandButton:SetText(allCollapsed and L["EXPAND_ALL"] or L["COLLAPSE_ALL"])
+	expandButton:SetEnabled(#quests > 0)
+
+	local questIDs, anyTracked, trackAll = {}, false, false
+	for _, quest in ipairs(quests) do
+		local questID = quest.questID
+		questIDs[#questIDs + 1] = questID
+		if ns.IsTracked(questID) then
+			anyTracked = true
+		elseif ns.CanTrack(questID) and ns.HasRoomToTrack(questID) then
+			trackAll = true
+		end
+	end
+	trackButton.questIDs, trackButton.trackAll = questIDs, trackAll
+	trackButton:SetText(trackAll and L["TRACK_ALL"] or L["UNTRACK_ALL"])
+	trackButton:SetEnabled(trackAll or (anyTracked and QuestUtil.CanRemoveQuestWatch()))
+end
+
 --------------------------------------------------------------------------------
 -- Sorting
 --------------------------------------------------------------------------------
@@ -271,10 +295,10 @@ local zoneOrder
 	and zones only when something under them would show. Quests outside any zone come first, then the
 	zones in the zoneSort order, each after a blank spacer (zoneGap) but the first. Within each, quests
 	go in the questSort order. Returns the list entries, every quest that would show with its zone
-	open, and whether every zone is collapsed
+	open (in list order), and whether every zone is collapsed
 ]]
 local function BuildEntries()
-	local entries, quests, zones = {}, {}, {}
+	local entries, zones = {}, {}
 	local header
 
 	for index = 1, C_QuestLog.GetNumQuestLogEntries() do
@@ -294,7 +318,6 @@ local function BuildEntries()
 			entry.sortLevel = entry.difficultyLevel or entry.level or 0
 			entry.sortIndex = entry.questLogIndex
 			entry.sortKey = ns.NameSortKey(entry.title)
-			quests[#quests + 1] = entry
 			if header then
 				header.quests[#header.quests + 1] = entry
 			else
@@ -311,8 +334,15 @@ local function BuildEntries()
 	end
 	zoneOrder = ns.SortZones(zones, ns.db.profile.zoneSort, zoneOrder)
 
+	local quests = {}
+	for _, quest in ipairs(entries) do
+		quests[#quests + 1] = quest
+	end
 	local anyHeader, anyExpanded = false, false
 	for _, zone in ipairs(zones) do
+		for _, quest in ipairs(zone.quests) do
+			quests[#quests + 1] = quest
+		end
 		if #zone.quests > 0 then
 			if #entries > 0 and ns.db.profile.zoneGap then
 				entries[#entries + 1] = { isSpacer = true }
@@ -390,8 +420,7 @@ function ns.UpdateQuestList()
 	ValidateSelection(entries, quests)
 
 	noQuestsText:SetShown(#quests == 0)
-	collapseAll.allCollapsed = allCollapsed
-	collapseAll.Icon:SetTexture(allCollapsed and PLUS_TEXTURE or MINUS_TEXTURE)
+	UpdateListButtons(quests, allCollapsed)
 
 	UpdateList(entries)
 	return #quests

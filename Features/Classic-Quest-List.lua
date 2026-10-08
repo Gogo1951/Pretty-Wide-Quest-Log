@@ -1,4 +1,5 @@
 local _, ns = ...
+local L = ns.L
 
 -- Classic Era and TBC: the quest list (left pane) of Blizzard's widened quest log, sorted and spaced.
 
@@ -324,8 +325,66 @@ local function StyleQuestRows(order)
 	end
 end
 
--- After each QuestLog_Update() while the window is open: scroll range, sorted rows, gaps, then each row's style
+--------------------------------------------------------------------------------
+-- Expand All and Track All
+--------------------------------------------------------------------------------
+
+--[[
+	They replace Blizzard's "All" toggle, inside its frame, which Blizzard hides while the log is empty.
+	Expand All runs that toggle's own click, so Blizzard's record of whether everything is collapsed
+	stays right
+]]
+QuestLogCollapseAllButton:SetAlpha(0)
+QuestLogCollapseAllButton:EnableMouse(false)
+
+local expandButton, trackButton = ns.CreateListButtons(QuestLogExpandButtonFrame)
+expandButton:SetPoint("LEFT", QuestLogFrame, "TOPLEFT", LAYOUT.LIST_BUTTONS_X, LAYOUT.LIST_BUTTONS_Y)
+
+expandButton:SetScript("OnClick", function()
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	QuestLogCollapseAllButton_OnClick(QuestLogCollapseAllButton)
+end)
+
+-- The quest log indexes in the order the list shows them
+local function ListedIndexes(order)
+	local indexes = {}
+	for position = 1, GetNumQuestLogEntries() do
+		indexes[position] = EntryAt(order, position)
+	end
+	return indexes
+end
+
 local currentOrder
+trackButton:SetScript("OnClick", function(self)
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	local indexes = ListedIndexes(currentOrder)
+	if self.trackAll then
+		ns.TrackAllQuests(indexes)
+	else
+		ns.UntrackAllQuests(indexes)
+	end
+end)
+
+--[[
+	Collapse All while any zone is open, Expand All once every zone is collapsed. Track All while a quest
+	could still be tracked, Untrack All once none can, enabled while any listed quest is tracked by
+	Blizzard's tracker or Questie's
+]]
+local function UpdateListButtons(order)
+	expandButton:SetText(QuestLogCollapseAllButton.collapsed and L["EXPAND_ALL"] or L["COLLAPSE_ALL"])
+
+	local indexes = ListedIndexes(order)
+	local trackAll = ns.CanTrackMore(indexes)
+	trackButton.trackAll = trackAll
+	trackButton:SetText(trackAll and L["TRACK_ALL"] or L["UNTRACK_ALL"])
+	trackButton:SetEnabled(trackAll or ns.CanUntrackAny(indexes))
+end
+
+--------------------------------------------------------------------------------
+-- Updating
+--------------------------------------------------------------------------------
+
+-- After each QuestLog_Update() while the window is open: scroll range, sorted rows, gaps, then each row's style
 local function UpdateList()
 	if not QuestLogFrame:IsShown() then
 		return
@@ -336,6 +395,7 @@ local function UpdateList()
 	PositionRows(currentOrder)
 	ns.MatchVoiceOverButtons(currentOrder)
 	StyleQuestRows(currentOrder) -- Last, as VoiceOver's button functions rewrite the title and move the check
+	UpdateListButtons(currentOrder)
 end
 
 --------------------------------------------------------------------------------
