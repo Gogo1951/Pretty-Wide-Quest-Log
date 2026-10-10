@@ -1,0 +1,20 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<!--
+		WoW Forever: a map docked to the right of the quest log, built on Blizzard's map
+		canvas the way the Battlefield Map is. The canvas's OnLoad needs its ScrollContainer to exist, which
+		only XML can arrange, so the frame is declared here and set up in Forever-Quest-Map.lua
+	-->
+	<Frame name="PrettyWideQuestLogMapFrame" parent="PrettyWideQuestLogFrame" inherits="MapCanvasFrameTemplate">
+		<Size x="600" y="400"/>
+		<Frames>
+			<ScrollFrame parentKey="ScrollContainer" inherits="MapCanvasFrameScrollContainerTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+					<Anchor point="BOTTOMRIGHT"/>
+				</Anchors>
+			</ScrollFrame>
+			<!-- The canvas turns this on to block the mouse while the map is locked -->
+			<Frame parentKey="BorderFrame" setAllPoints="true"/>
+		</Frames>
+	</Frame>
+</Ui>

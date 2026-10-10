@@ -69,6 +69,8 @@ L["EXPAND_ALL"] = "Espandi tutto"
 L["COLLAPSE_ALL"] = "Comprimi tutto"
 L["TRACK_ALL"] = "Segui tutte"
 L["UNTRACK_ALL"] = "Non seguire nessuna"
+L["SHOW_MAP"] = "Mostra mappa"
+L["HIDE_MAP"] = "Nascondi mappa"
 L["RESIZE_TOOLTIP"] = "Trascina per ridimensionare il registro delle missioni"
 
 --------------------------------------------------------------------------------

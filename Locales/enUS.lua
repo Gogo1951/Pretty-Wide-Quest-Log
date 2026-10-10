@@ -68,6 +68,8 @@ L["EXPAND_ALL"] = "Expand All"
 L["COLLAPSE_ALL"] = "Collapse All"
 L["TRACK_ALL"] = "Track All"
 L["UNTRACK_ALL"] = "Untrack All"
+L["SHOW_MAP"] = "Show Map"
+L["HIDE_MAP"] = "Hide Map"
 L["RESIZE_TOOLTIP"] = "Drag to resize the quest log"
 
 --------------------------------------------------------------------------------

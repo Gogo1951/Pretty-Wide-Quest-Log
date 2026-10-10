@@ -68,6 +68,8 @@ L["EXPAND_ALL"] = "Tout développer"
 L["COLLAPSE_ALL"] = "Tout réduire"
 L["TRACK_ALL"] = "Tout suivre"
 L["UNTRACK_ALL"] = "Ne rien suivre"
+L["SHOW_MAP"] = "Afficher la carte"
+L["HIDE_MAP"] = "Masquer la carte"
 L["RESIZE_TOOLTIP"] = "Faites glisser pour redimensionner le journal de quêtes"
 
 --------------------------------------------------------------------------------
