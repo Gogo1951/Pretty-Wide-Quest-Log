@@ -68,6 +68,8 @@ L["EXPAND_ALL"] = "Expandir tudo"
 L["COLLAPSE_ALL"] = "Recolher tudo"
 L["TRACK_ALL"] = "Acompanhar todas"
 L["UNTRACK_ALL"] = "Não acompanhar nenhuma"
+L["SHOW_MAP"] = "Mostrar mapa"
+L["HIDE_MAP"] = "Ocultar mapa"
 L["RESIZE_TOOLTIP"] = "Arraste para redimensionar o registro de missões"
 
 --------------------------------------------------------------------------------

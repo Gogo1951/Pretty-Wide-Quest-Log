@@ -68,6 +68,8 @@ Features/Forever-Quest-Log.lua
 Features/Forever-Quest-List.lua
 Features/Forever-Quest-Details.lua
 Features/Forever-VoiceOver.lua
+Features/Forever-Quest-Map.xml
+Features/Forever-Quest-Map.lua
 
 # Diagnostics
 Diagnostics/Diagnostics-Core.lua

@@ -111,6 +111,9 @@ exitButton:SetPoint("BOTTOMRIGHT", -LAYOUT.BUTTON_RIGHT, LAYOUT.BUTTON_BOTTOM)
 local shareButton = CreateBottomButton(SHARE_QUEST, nil, ForSelectedQuest(QuestMapQuestOptions_ShareQuest))
 shareButton:SetPoint("RIGHT", exitButton, "LEFT")
 
+-- The map's Show Map button sits centred between these two
+ns.abandonButton, ns.shareButton = abandonButton, shareButton
+
 -- Say why the button is greyed out for quests Questie can't track
 trackButton:SetMotionScriptsWhileDisabled(true)
 trackButton:SetScript("OnEnter", function(self)

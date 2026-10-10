@@ -68,6 +68,8 @@ L["EXPAND_ALL"] = "Alle ausklappen"
 L["COLLAPSE_ALL"] = "Alle einklappen"
 L["TRACK_ALL"] = "Alle verfolgen"
 L["UNTRACK_ALL"] = "Keine verfolgen"
+L["SHOW_MAP"] = "Karte anzeigen"
+L["HIDE_MAP"] = "Karte verbergen"
 L["RESIZE_TOOLTIP"] = "Ziehen, um die Größe des Questlogs zu ändern"
 
 --------------------------------------------------------------------------------

@@ -39,7 +39,9 @@ Pretty-Wide-Quest-Log/
 │   ├── Forever-Quest-Log.lua          WoW Forever: window, buttons, refresh, quest log takeover
 │   ├── Forever-Quest-List.lua         WoW Forever: list rows, sorting, list buttons
 │   ├── Forever-Quest-Details.lua      WoW Forever: detail pane on QuestInfo_Display, quest giver rewards and quest ID
-│   └── Forever-VoiceOver.lua          WoW Forever: Spoken Quests' play buttons on the list rows
+│   ├── Forever-VoiceOver.lua          WoW Forever: Spoken Quests' play buttons on the list rows
+│   ├── Forever-Quest-Map.xml          WoW Forever: the map's canvas frame, which only XML can build
+│   └── Forever-Quest-Map.lua          WoW Forever: the map beside the window, its layers, Show Map / Hide Map
 ├── Includes/
 │   ├── Images/                        Window art (PWQL_*.blp), untracked quest mark (PWQL_Untracked.tga)
 │   └── Libraries/                     Vendored Ace3, never edited
@@ -141,6 +143,16 @@ Quest text is set the same way in both quest logs and in the quest giver window 
 - **The quest giver's own pages** (`Features/Quest-Giver.lua`) are found by font, not by name: text in the title's font is a heading, the one hung from the top of its page being the quest's title. The progress page, drawn with its own pieces on every client, also gets the details' space around its required items heading and the quest ID under the last thing on it.
 - **Skins recolor late.** ElvUI recolors objective lines in hooks that can run after the styling, so each count column matches its line's color again a frame later.
 
+## Quest Map (WoW Forever)
+
+`Features/Forever-Quest-Map.lua` docks a map to the right of the window, two thirds of the window art's height (`HEIGHT_SHARE`) and in the map art's proportions. It follows the selected quest: a hook on `ns.DisplayQuestDetails` moves it to `GetQuestUiMapID` (the player's zone when that has none) and fires the canvas's `SetFocusedQuestID`, so that quest's objective area is drawn.
+
+The map is Blizzard's map canvas (`MapCanvasFrameTemplate`) with a few of the world map's data providers on it, the way the Battlefield Map is built: exploration, fog of war, quest objective areas (`QuestBlobDataProviderMixin`), quest markers (`QuestDataProviderMixin`), dungeon entrances, flight points and group members. It is the add-on's own frame, so the world map is never opened or touched. The canvas's `OnLoad` needs its `ScrollContainer` and `BorderFrame` children to exist, which only XML can arrange, so the frame is declared in `Forever-Quest-Map.xml` and set up in the Lua file.
+
+Blizzard draws objective areas and quest markers only while the `questPOI` setting is on, and Questie turns it off when its own objectives are chosen. Questie draws on the world map and minimap only, so this map would show none. The map's own copies of the blob pin's `Refresh` and the quest provider's `RefreshAllData` are Blizzard's, less that check; the setting itself is left alone. Compare them with Blizzard's when a client update changes those providers.
+
+Show Map / Hide Map sits centred between Abandon Quest and Share Quest, and the map has its own close button. Hiding it is remembered in `global.mapHidden`.
+
 ## ElvUI, VoiceOver and Spoken Quests
 
 ### Classic Era and TBC
@@ -173,7 +185,7 @@ This add-on is the continuation of Wide Quest Log Plus (folder `WideQuestLogPlus
 
 `PrettyWideQuestLogDB`, managed by AceDB-3.0, is the only SavedVariables table and holds every setting. The add-on uses the **Simple** model: one shared Default profile, so Reset Profile restores every option on the profile.
 
-The profile holds the options panel's settings. `global` holds only the window's saved height, and on WoW Forever its position, with no defaults. They are presentation, kept out of the profile's reach so a profile reset or switch never moves or resizes the window; the General panel's Reset Size and Position button clears them. Classic saves no position, since Blizzard's panel manager places that window.
+The profile holds the options panel's settings. `global` holds only the window's saved height, and on WoW Forever its position and whether the map is hidden (`mapHidden`), with no defaults. They are presentation, kept out of the profile's reach so a profile reset or switch never moves or resizes the window; the General panel's Reset Size and Position button clears the height and position. Classic saves no position, since Blizzard's panel manager places that window.
 
 AceDB applies `ns.DATABASE_DEFAULTS` (`Data/Default-Settings.lua`) whenever a key is missing, and handles an explicit `false` correctly. No default lists are seeded.
 

@@ -126,6 +126,16 @@ local FOREVER_FUNCTIONS = {
 	"ShowUIPanel",
 	"HideUIPanel",
 	"GetUIPanel",
+	"CreateFromMixins",
+	"GetQuestUiMapID",
+	"GetQuestsOnMapCached",
+	"C_QuestLog.GetMaxNumQuests",
+	"C_QuestLog.GetNextWaypointForMap",
+	"C_Map.GetMapInfo",
+	"C_TaskQuest.DoesMapShowTaskQuestObjectives",
+	"C_SuperTrack.GetSuperTrackedQuestID",
+	"MapUtil.GetDisplayableMapForPlayer",
+	"QuestMapFrame_GetFocusedQuestID",
 }
 
 ns.DIAGNOSTIC_API_CHECKS = {}
@@ -143,6 +153,15 @@ if ns.FLAVOR == "Camelot" then
 			"QuestLogPopupDetailFrame",
 			"QuestDifficultyHighlightColors",
 			"UIPanelWindows",
+			"MapCanvasMixin",
+			"MapExplorationDataProviderMixin",
+			"FogOfWarDataProviderMixin",
+			"QuestBlobDataProviderMixin",
+			"QuestDataProviderMixin",
+			"DungeonEntranceDataProviderMixin",
+			"FlightPointDataProviderMixin",
+			"GroupMembersDataProviderMixin",
+			"POIButtonHighlightManager",
 		})
 	)
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "Constants.QuestWatchConsts.MAX_QUEST_WATCHES" }))
