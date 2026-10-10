@@ -12,6 +12,8 @@ A bigger, better quest log that gives you more room to read and more information
 
 🎯 **Know What You're Looking At** // See quest levels and useful tags for dungeons, raids, elites, groups, and PvP right where you need them.
 
+🗺️ **See Where You're Going** // On WoW Forever, a map beside the quest log follows the selected quest, showing Blizzard's objective areas and quest markers for it. Hide it with Show Map / Hide Map or its close button.
+
 🗂️ **Organize Your Quest Log** // Make it yours. Sort zones alphabetically or by quest level, then sort quests by level or name to keep your current priorities front and center.
 
 💎 **A Cleaner Aesthetic** // Slightly roomier lines, cleaner headings, aligned objective counts, and checkmarks for completed objectives make the quest log easier to scan while staying true to Blizzard's original design.
