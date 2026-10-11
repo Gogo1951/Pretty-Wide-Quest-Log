@@ -19,12 +19,12 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Ein größeres, schlaueres Questlog, das dir mehr Platz zum Lesen, mehr Informationen auf einen Blick und die Kontrolle darüber gibt, wie deine Quests geordnet sind. Behalte den vertrauten Blizzard-Look und lass das Questlog einfach besser für dich arbeiten."
+	"Ein größeres, besseres Questlog, das dir mehr Platz zum Lesen und mehr Informationen auf einen Blick gibt. Behalte Blizzards vertrauten Aufbau und sieh dabei Queststufen, nützliche Kürzel, Ziele, Belohnungen und deine gesamte Questliste nebeneinander."
 L["ENABLE_WELCOME_MESSAGE"] = "Willkommensnachricht aktivieren"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Zeigt beim Einloggen die Begrüßung von Pretty Wide Quest Log."
 L["ENABLE_WIDE_QUEST_LOG"] = "Pretty Wide Quest Log für dieses Profil aktivieren"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
-	"Sorgt dafür, dass die Questlog-Taste, die Schaltfläche im Mikromenü und Klicks auf Quests in der Zielverfolgung dieses breite Questlog öffnen. Deaktiviert öffnen sie stattdessen Blizzards Standard-Questlog, das in der Weltkarte angedockt ist. Wird nach einem Neuladen wirksam."
+	"Sorgt dafür, dass die Questlog-Taste, die Schaltfläche im Mikromenü und Klicks auf Quests in der Zielverfolgung dieses breite Questlog öffnen. Schalte es aus, um stattdessen Blizzards Standard-Questlog zu verwenden, das in der Weltkarte angedockt ist. Wird nach einem Neuladen wirksam."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log wechselt das Questlog erst nach einem Neuladen. Jetzt neu laden?"
 L["ZONE_ORDER"] = "Reihenfolge der Zonen"
 L["ZONE_ORDER_DESCRIPTION"] = "Ändert die Reihenfolge der Zonen in der Questliste."
@@ -55,7 +55,7 @@ L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------
--- Quest List and Details
+-- Quest Log Window
 --------------------------------------------------------------------------------
 
 L["QUEST_SUFFIX_DUNGEON"] = "D"
@@ -68,7 +68,6 @@ L["EXPAND_ALL"] = "Alle ausklappen"
 L["COLLAPSE_ALL"] = "Alle einklappen"
 L["TRACK_ALL"] = "Alle verfolgen"
 L["UNTRACK_ALL"] = "Keine verfolgen"
-L["SHOW_MAP"] = "Karte anzeigen"
 L["HIDE_MAP"] = "Karte verbergen"
 L["RESIZE_TOOLTIP"] = "Ziehen, um die Größe des Questlogs zu ändern"
 

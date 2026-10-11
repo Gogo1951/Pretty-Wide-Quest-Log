@@ -339,6 +339,7 @@ QuestLogCollapseAllButton:EnableMouse(false)
 
 local expandButton, trackButton = ns.CreateListButtons(QuestLogExpandButtonFrame)
 expandButton:SetPoint("LEFT", QuestLogFrame, "TOPLEFT", LAYOUT.LIST_BUTTONS_X, LAYOUT.LIST_BUTTONS_Y)
+ns.listButtons = { expandButton, trackButton } -- Styled to match under ElvUI (Classic-ElvUI.lua)
 
 expandButton:SetScript("OnClick", function()
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)

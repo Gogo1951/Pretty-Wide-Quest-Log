@@ -19,12 +19,12 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"更大、更智能的任务日志，让你有更多阅读空间、一眼看到更多信息，并能自由安排任务的排列方式。保留熟悉的暴雪外观，只是让任务日志更好用。"
+	"更大、更好的任务日志，让你有更多阅读空间，一眼看到更多信息。保留熟悉的暴雪布局，同时并排查看任务等级、实用标签、目标、奖励以及完整的任务列表。"
 L["ENABLE_WELCOME_MESSAGE"] = "启用欢迎消息"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登录时显示 Pretty Wide Quest Log 的欢迎语。"
 L["ENABLE_WIDE_QUEST_LOG"] = "为此配置文件启用 Pretty Wide Quest Log"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
-	"让任务日志快捷键、微型菜单按钮以及在任务追踪中点击任务时打开这个宽任务日志。关闭后改为打开嵌在世界地图中的暴雪默认任务日志。重新加载界面后生效。"
+	"让任务日志快捷键、微型菜单按钮以及在任务追踪中点击任务时打开这个宽任务日志。关闭此选项可改用嵌在世界地图中的暴雪默认任务日志。重新加载界面后生效。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新加载界面才能切换任务日志。现在重新加载吗？"
 L["ZONE_ORDER"] = "区域顺序"
 L["ZONE_ORDER_DESCRIPTION"] = "更改任务列表中区域的顺序。"
@@ -55,7 +55,7 @@ L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "版本 %s"
 
 --------------------------------------------------------------------------------
--- Quest List and Details
+-- Quest Log Window
 --------------------------------------------------------------------------------
 
 L["QUEST_SUFFIX_DUNGEON"] = "副"
@@ -68,7 +68,6 @@ L["EXPAND_ALL"] = "全部展开"
 L["COLLAPSE_ALL"] = "全部折叠"
 L["TRACK_ALL"] = "全部追踪"
 L["UNTRACK_ALL"] = "全部取消追踪"
-L["SHOW_MAP"] = "显示地图"
 L["HIDE_MAP"] = "隐藏地图"
 L["RESIZE_TOOLTIP"] = "拖动以调整任务日志大小"
 

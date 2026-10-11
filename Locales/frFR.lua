@@ -19,7 +19,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Un journal de quêtes plus grand et plus malin, qui vous donne plus de place pour lire, plus d'informations en un coup d'œil et le contrôle sur l'organisation de vos quêtes. Gardez le style familier de Blizzard, avec un journal de quêtes qui fonctionne tout simplement mieux pour vous."
+	"Un journal de quêtes plus grand et plus efficace, qui vous donne plus de place pour lire et plus d'informations en un coup d'œil. Gardez la disposition familière de Blizzard tout en voyant côte à côte le niveau des quêtes, des repères utiles, les objectifs, les récompenses et toute votre liste de quêtes."
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message d'accueil de Pretty Wide Quest Log à la connexion."
 L["ENABLE_WIDE_QUEST_LOG"] = "Activer Pretty Wide Quest Log pour ce profil"
@@ -55,7 +55,7 @@ L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------
--- Quest List and Details
+-- Quest Log Window
 --------------------------------------------------------------------------------
 
 L["QUEST_SUFFIX_DUNGEON"] = "D"
@@ -68,7 +68,6 @@ L["EXPAND_ALL"] = "Tout développer"
 L["COLLAPSE_ALL"] = "Tout réduire"
 L["TRACK_ALL"] = "Tout suivre"
 L["UNTRACK_ALL"] = "Ne rien suivre"
-L["SHOW_MAP"] = "Afficher la carte"
 L["HIDE_MAP"] = "Masquer la carte"
 L["RESIZE_TOOLTIP"] = "Faites glisser pour redimensionner le journal de quêtes"
 

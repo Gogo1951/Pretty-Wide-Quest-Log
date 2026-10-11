@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<!--
+		One of Questie's quest icons, drawn again on the map. The canvas makes its pins from a named
+		template, which only XML can declare
+	-->
+	<Frame name="PrettyWideQuestLogQuestiePinTemplate" mixin="MapCanvasPinMixin" enableMouse="true" virtual="true">
+		<Size x="12" y="12"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Texture" setAllPoints="true"/>
+			</Layer>
+		</Layers>
+	</Frame>
+</Ui>
