@@ -6,7 +6,7 @@ A bigger, better quest log that gives you more room to read and more information
 
 # Forever
 
-<img width="800" src="https://github.com/user-attachments/assets/8504eb11-37e7-46c6-aeb9-7299b35bf1ab" />
+<img width="800" src="https://github.com/user-attachments/assets/749f6c5a-fbc9-4182-ba15-aa2e19318384" />
 
 ### TBC & Era
 
