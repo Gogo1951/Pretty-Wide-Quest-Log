@@ -4,7 +4,16 @@ A bigger, better quest log that gives you more room to read and more information
 
 **TL;DR**: Get more out of your quest log. See more quests, know what you're taking on, and organize everything by zone, level, or name, all while keeping the familiar Blizzard experience.
 
+# Forever
+
 <img width="800" src="https://github.com/user-attachments/assets/8504eb11-37e7-46c6-aeb9-7299b35bf1ab" />
+
+### TBC & Era
+
+--todo we use Questie data
+
+<img width="800" src="https://github.com/user-attachments/assets/5ad4307b-0489-4efb-ae9a-57168b0b94fc" />
+
 
 ## Features
 
