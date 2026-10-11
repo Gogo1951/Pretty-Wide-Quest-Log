@@ -19,7 +19,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Un registro de misiones más grande e inteligente que te da más espacio para leer, más información a simple vista y control sobre cómo se organizan tus misiones. Mantén el estilo familiar de Blizzard y haz que el registro de misiones funcione mejor para ti."
+	"Un registro de misiones más grande y mejor que te da más espacio para leer y más información a simple vista. Mantén el diseño de siempre de Blizzard mientras ves, lado a lado, los niveles de las misiones, etiquetas útiles, objetivos, recompensas y toda tu lista de misiones."
 L["ENABLE_WELCOME_MESSAGE"] = "Activar mensaje de bienvenida"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Muestra el saludo de Pretty Wide Quest Log al iniciar sesión."
 L["ENABLE_WIDE_QUEST_LOG"] = "Activar Pretty Wide Quest Log para este perfil"
@@ -55,7 +55,7 @@ L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Versión %s"
 
 --------------------------------------------------------------------------------
--- Quest List and Details
+-- Quest Log Window
 --------------------------------------------------------------------------------
 
 L["QUEST_SUFFIX_DUNGEON"] = "C"
@@ -68,7 +68,6 @@ L["EXPAND_ALL"] = "Expandir todo"
 L["COLLAPSE_ALL"] = "Contraer todo"
 L["TRACK_ALL"] = "Seguir todas"
 L["UNTRACK_ALL"] = "Dejar de seguir todas"
-L["SHOW_MAP"] = "Mostrar mapa"
 L["HIDE_MAP"] = "Ocultar mapa"
 L["RESIZE_TOOLTIP"] = "Arrastra para cambiar el tamaño del registro de misiones"
 

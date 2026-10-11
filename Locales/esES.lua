@@ -19,12 +19,12 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Un registro de misiones más grande e inteligente que te da más espacio para leer, más información de un vistazo y control sobre cómo se organizan tus misiones. Conserva el aspecto familiar de Blizzard y haz que el registro de misiones funcione mejor para ti."
+	"Un registro de misiones más grande y mejor que te da más espacio para leer y más información de un vistazo. Conserva el diseño habitual de Blizzard mientras ves, lado a lado, los niveles de las misiones, etiquetas útiles, objetivos, recompensas y toda tu lista de misiones."
 L["ENABLE_WELCOME_MESSAGE"] = "Activar mensaje de bienvenida"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Muestra el saludo de Pretty Wide Quest Log al iniciar sesión."
 L["ENABLE_WIDE_QUEST_LOG"] = "Activar Pretty Wide Quest Log para este perfil"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
-	"Hace que la tecla del registro de misiones, el botón del micromenú y los clics en misiones del seguimiento de objetivos abran este registro de misiones ancho. Desactívalo para usar en su lugar el registro de misiones predeterminado de Blizzard, integrado en el mapa del mundo. Se aplica tras recargar."
+	"Hace que la tecla del registro de misiones, el botón del micromenú y los clics en misiones del seguimiento de objetivos abran este registro de misiones ancho. Desactívalo para usar en su lugar el registro de misiones predeterminado de Blizzard, integrado en el mapa del mundo. Surte efecto tras recargar."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia de registro de misiones tras recargar. ¿Recargar ahora?"
 L["ZONE_ORDER"] = "Orden de zonas"
 L["ZONE_ORDER_DESCRIPTION"] = "Cambia el orden de las zonas en la lista de misiones."
@@ -55,7 +55,7 @@ L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Versión %s"
 
 --------------------------------------------------------------------------------
--- Quest List and Details
+-- Quest Log Window
 --------------------------------------------------------------------------------
 
 L["QUEST_SUFFIX_DUNGEON"] = "M"
@@ -68,7 +68,6 @@ L["EXPAND_ALL"] = "Expandir todo"
 L["COLLAPSE_ALL"] = "Contraer todo"
 L["TRACK_ALL"] = "Seguir todas"
 L["UNTRACK_ALL"] = "Dejar de seguir todas"
-L["SHOW_MAP"] = "Mostrar mapa"
 L["HIDE_MAP"] = "Ocultar mapa"
 L["RESIZE_TOOLTIP"] = "Arrastra para cambiar el tamaño del registro de misiones"
 

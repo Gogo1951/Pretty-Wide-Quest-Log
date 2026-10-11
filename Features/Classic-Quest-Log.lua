@@ -27,6 +27,10 @@ end
 
 QuestLogFrame:SetWidth(BASE_WIDTH)
 SetPanelAttribute("width", BASE_WIDTH)
+ns.questLogFrame = QuestLogFrame
+
+-- The map's Show Map button sits centred between these two
+ns.abandonButton, ns.shareButton = QuestLogFrameAbandonButton, QuestFramePushQuestButton
 
 QuestLogTitleText:ClearAllPoints()
 QuestLogTitleText:SetPoint("TOP", QuestLogFrame, "TOP", 0, -17)

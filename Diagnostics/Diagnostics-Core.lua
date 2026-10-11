@@ -18,11 +18,12 @@ local _, ns = ...
 
 --[[
     Runtime-only state. NOT a SavedVariable. File-scope init is correct here --
-    the SavedVariables init-point rule applies only to SavedVariables, which
+    the "initialize on PLAYER_LOGIN" rule applies only to SavedVariables, which
     don't exist until the client loads them. This is a plain namespace table, so
     it starts false at every login and is never persisted.
 
-    outputs holds each report tab's one output box (settings, code, data),
+    outputs holds each report tab's one output box (settings, code, data,
+    localization),
     status each report's last run state, and running the tab whose run is in
     flight, or nil.
 ]]
@@ -59,8 +60,12 @@ ns.DiagnosticsStrings = {
 	TAB_RUN_TESTS = "Run Tests",
 	TAB_SETTINGS = "Settings",
 	TAB_CODE = "Code",
+	TAB_DATA = "Data",
+	TAB_LOCALIZATION = "Localization",
 	SECTION_SETTINGS = "Settings & Configuration",
 	SECTION_CODE = "Code",
+	SECTION_DATA = "Data",
+	SECTION_LOCALIZATION = "Localization",
 
 	RUN_TESTS_INTRO = "Live tools for catching a problem as it happens. Turn on what you need, reproduce the problem, then copy what they caught.",
 	EVENT_LOG_TITLE = "Event Log",
@@ -113,6 +118,12 @@ ns.DiagnosticsStrings = {
 		.. TITLE
 		.. " relies on is present on this client.",
 	CODE_RUN_ALL = "Run All Code Reports",
+	DATA_INTRO = "Checks every item and quest the add-on ships against this client. Paste a result into a spreadsheet and sort by STATUS to find what needs pruning.",
+	DATA_RUN_ALL = "Validate All Data Files",
+	LOCALIZATION_INTRO = "Playing in a language other than English and a name or prompt reads wrong? These show what your client calls everything "
+		.. TITLE
+		.. " names.",
+	LOCALIZATION_RUN_ALL = "Run All Localization Reports",
 	RUN_ALL_DESCRIPTION = "Runs %s, one after another.",
 
 	EVENTS_TITLE = "Event Registration",
@@ -124,7 +135,15 @@ ns.DiagnosticsStrings = {
 	API_ALL_PASS = "all present",
 	API_SOME_FAIL = "%d missing",
 	QUEST_LOG_CONTEXT_TITLE = "Quest Log Context",
-	QUEST_LOG_CONTEXT_DESCRIPTION = "Shows which quest log loaded, your settings, and the quest add-ons around it.",
+	QUEST_LOG_CONTEXT_DESCRIPTION = "Shows which quest log loaded, your settings, the selected quest, and every add-on or open window that can change what the quest log shows.",
+	TRACKING_CONTEXT_TITLE = "Tracking Context",
+	TRACKING_CONTEXT_DESCRIPTION = "Shows the tracking marks setting, how full the watch list is, and whether Questie's tracker is in charge of tracking.",
+	MAP_CONTEXT_TITLE = "Quest Map Context",
+	MAP_CONTEXT_DESCRIPTION = "Shows whether the map beside the quest log is open, the zone it shows, and whether Questie has icons for the selected quest.",
+	VALIDATE_TITLE = "Validate Data: %s",
+	VALIDATE_DESCRIPTION = "Checks every id in this data file against this client and exports the results as tab-separated text.",
+	VALIDATE_PROGRESS = "%s / %s IDs",
+	VALIDATE_HINT = "Checks every item and quest id a data file ships against this client and exports what the client knows about each one as tab-separated text, ready to paste into a spreadsheet. Item rows carry every item API return, the file's own values in the DATA columns so you can sort for mismatches, everything the client knows about the item's spell including its tooltip in SPELL_TOOLTIP, and the whole item tooltip in one TOOLTIP cell, its lines joined by // and a right-hand text after >>. Quest rows carry every quest API return the client has. STATUS reads OK, NOT ON CLIENT for an id this client does not have or never answers for, INCOMPLETE when an item loaded but its tooltip or its spell never did (a spell with no description of its own is fine), NO TITLE when a quest's title never loaded (not grounds to prune), ERROR with the message in the name cell when a read throws, or TABLE MISSING when this client's folder never built a table. Quest ids follow in a block of their own.",
 	DISPLAY_TITLE = "Display Context",
 	DISPLAY_DESCRIPTION = "Shows your screen size, UI scale and the quest log's saved size and position.",
 	ADDONS_TITLE = "Other Add-ons",
@@ -134,7 +153,15 @@ ns.DiagnosticsStrings = {
 		.. TITLE
 		.. "'s saved settings and the quest log window's saved size and position as readable text.",
 	LIBS_TITLE = "Library Versions",
-	LIBS_DESCRIPTION = "Lists the version of every library " .. TITLE .. " bundles, as loaded this session.",
+	LIBS_DESCRIPTION = "Lists the version of every library " .. TITLE .. " loaded.",
+	LOCALE_TITLE = "Locale Context",
+	LOCALE_DESCRIPTION = "Shows your client's language, its text and audio language settings, and how many of "
+		.. TITLE
+		.. "'s own strings loaded.",
+	NAMES_TITLE = "Game Names",
+	NAMES_DESCRIPTION = "Shows the name your client gives every game string " .. TITLE .. " shows or matches.",
+	NAMES_ALL_FOUND = "all found",
+	NAMES_SOME_NIL = "%d NIL",
 
 	STATUS_WAITING = "Waiting",
 	STATUS_RUNNING = "Running",
@@ -145,6 +172,7 @@ ns.DiagnosticsStrings = {
 	PROGRESS_DONE_ONE = "Finished 1 report.",
 	PROGRESS_STOPPED = "Stopped.",
 	REPORT_RUN = "Run",
+	REPORT_VALIDATE = "Validate",
 	REPORT_ERROR = "ERROR: %s",
 	REPORT_ERROR_NOTE = "threw an error, see below",
 	REPORT_STOPPED = "(stopped before finishing)",
@@ -202,6 +230,26 @@ end
 ns.GetDiagnosticClientHeader = GetClientHeader
 ns.CountDiagnosticKeys = CountKeys
 
+-- Magic Eraser has this in its feature utilities; no feature here prints counts, so diagnostics keeps its own.
 function ns:FormatCommaNumber(number)
 	return (tostring(number):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""))
 end
+
+--------------------------------------------------------------------------------
+-- Tooltip Lines
+--------------------------------------------------------------------------------
+
+--[[
+    An item's or spell's tooltip lines through ns.GetTooltipLines, protected,
+    because one id the client chokes on must not end a run of a thousand. A
+    throw comes back as its message, so the caller can report it.
+]]
+local function TooltipLines(kind, id)
+	local ok, lines = pcall(ns.GetTooltipLines, kind, id)
+	if ok then
+		return lines, nil
+	end
+	return {}, tostring(lines)
+end
+
+ns.DiagnosticTooltipLines = TooltipLines

@@ -19,12 +19,12 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"A bigger, smarter quest log that gives you more room to read, more information at a glance, and control over how your quests are organized. Keep the familiar Blizzard look, just make the quest log work better for you."
+	"A bigger, better quest log that gives you more room to read and more information at a glance. Keep Blizzard's familiar layout while seeing quest levels, useful tags, objectives, rewards, and your entire quest list side by side."
 L["ENABLE_WELCOME_MESSAGE"] = "Enable Welcome Message"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log greeting when you log in."
 L["ENABLE_WIDE_QUEST_LOG"] = "Enable Pretty Wide Quest Log for This Profile"
 L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
-	"Makes the quest log key, the micro menu button and quest clicks in the objective tracker open this wide quest log. Turn it off to use Blizzard's default quest log, docked in the world map, instead. Takes effect after a reload."
+	"Makes the quest log key, the micro menu button, and quest clicks in the objective tracker open this wide quest log. Turn it off to use Blizzard's default quest log, docked in the world map, instead. Takes effect after a reload."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
 L["ZONE_ORDER"] = "Zone Order"
 L["ZONE_ORDER_DESCRIPTION"] = "Changes the order of the zones in the quest list."
@@ -55,7 +55,7 @@ L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------
--- Quest List and Details
+-- Quest Log Window
 --------------------------------------------------------------------------------
 
 L["QUEST_SUFFIX_DUNGEON"] = "D"
@@ -68,7 +68,6 @@ L["EXPAND_ALL"] = "Expand All"
 L["COLLAPSE_ALL"] = "Collapse All"
 L["TRACK_ALL"] = "Track All"
 L["UNTRACK_ALL"] = "Untrack All"
-L["SHOW_MAP"] = "Show Map"
 L["HIDE_MAP"] = "Hide Map"
 L["RESIZE_TOOLTIP"] = "Drag to resize the quest log"
 
