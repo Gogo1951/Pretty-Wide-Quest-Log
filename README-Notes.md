@@ -4,12 +4,6 @@
 
 ## Exceptions
 
-### Stock quest log icon
-
-- **Departs from:** TOC FILE FORMAT, `IconTexture` pointing into `Includes/Images/`.
-- **Instead:** Every TOC's `IconTexture` is Blizzard's quest log book icon, by file ID.
-- **Why:** The add-on has no icon art of its own, and the stock quest log icon says what it is.
-
 ### Quest tag IDs in code
 
 - **Departs from:** GAME NAMES, IDs living in the flavor folders.
@@ -44,3 +38,4 @@
 - The options panel carries a WoW Forever-only Enable Pretty Wide Quest Log for This Profile toggle, on by default, under Enable Welcome Message; with it off, the whole Quest Log section is hidden. The Reset Size and Position button sits right-aligned, a quarter wider than a standard button for longer translations.
 - `LICENSE` carries only the Gogo1951 line, dated from 2026, the year the add-on became Pretty Wide Quest Log.
 - The Track All and Untrack All buttons use the add-on's own strings on every client, although WoW Forever has Blizzard labels for them, so the buttons read the same everywhere.
+- The map beside the quest log draws the selected quest from Questie's icons whenever Questie has any for it, on every client; on WoW Forever, Blizzard's objective area and marker for that quest show only when Questie has none, such as for new Forever content.
