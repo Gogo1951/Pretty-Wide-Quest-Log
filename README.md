@@ -10,9 +10,9 @@ A bigger, better quest log that gives you more room to read and more information
 
 ### TBC & Era
 
-🗺️ **Just the Quest You Picked** // Questie is the best thing to happen to Classic questing, but with a dozen quests in a zone the map turns into icon soup. The map beside your log pulls Questie's data for the selected quest only, so you can see exactly where to go.
+🔎 **A Map Without the Icon Soup** // Questie is the best thing to happen to Classic questing, but with a dozen quests in a zone, the map turns into icon soup. The map beside your log shows Questie's data for the selected quest, so you can focus on exactly where you need to go.
 
-🧭 **Every Zone It Touches** // Quest sending you across three zones? Switch between them right on the map.
+🌍 **Follow Quests Across Zones** // Some quests take you all over the world. Switch between every zone a quest visits, right from the map, and keep the whole journey in view.
 
 🎧 **Keeps Your Quest-Givers Talking** // Works with VoiceOver and Spoken, so the narration doesn't skip a beat.
 
@@ -22,7 +22,7 @@ A bigger, better quest log that gives you more room to read and more information
 
 📖 **Read More at Once** // See your entire quest list and the full details of the selected quest side by side. Objectives, rewards, descriptions, and everything else stay on screen together.
 
-🎯 **Know What You're Looking At** // See quest levels and useful tags for dungeons, raids, elites, groups, and PvP right where you need them.
+🏷️ **All the Details, at a Glance** // Quest levels, dungeon and raid indicators, elite and group tags, and PvP information help you size up a quest before diving in.
 
 🗂️ **Organize Your Quest Log** // Make it yours. Sort zones alphabetically or by quest level, then sort quests by level or name to keep your current priorities front and center.
 
@@ -93,4 +93,4 @@ A bigger, better quest log that gives you more room to read and more information
 
 * DarrenKosick's [BetterQuestLog](https://www.curseforge.com/wow/addons/betterquestlog)
 * swordforhire's [MyQuestLog](https://www.curseforge.com/wow/addons/myquestlog)
-* StreamBuddiesApp's [StBu-MasterQuestLog](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
+* StreamBuddiesApp's [StBu-MasterQuest](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
