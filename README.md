@@ -4,13 +4,17 @@ A bigger, better quest log that gives you more room to read and more information
 
 **TL;DR**: Get more out of your quest log. See more quests, know what you're taking on, and organize everything by zone, level, or name, all while keeping the familiar Blizzard experience.
 
-# Forever
+### Forever
 
 <img width="800" src="https://github.com/user-attachments/assets/749f6c5a-fbc9-4182-ba15-aa2e19318384" />
 
 ### TBC & Era
 
---todo we use Questie data
+🗺️ **Just the Quest You Picked** // Questie is the best thing to happen to Classic questing, but with a dozen quests in a zone the map turns into icon soup. The map beside your log pulls Questie's data for the selected quest only, so you can see exactly where to go.
+
+🧭 **Every Zone It Touches** // Quest sending you across three zones? Switch between them right on the map.
+
+🎧 **Keeps Your Quest-Givers Talking** // Works with VoiceOver and Spoken, so the narration doesn't skip a beat.
 
 <img width="800" src="https://github.com/user-attachments/assets/111391a5-afd2-4051-b1b7-343931bff591" />
 

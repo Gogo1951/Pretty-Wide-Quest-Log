@@ -22,7 +22,7 @@ Pretty-Wide-Quest-Log/
 │   ├── Data.lua                       Locale, palette, registry names, URLs, ns.LAYOUT geometry, tracking marks
 │   └── Default-Settings.lua           AceDB defaults
 ├── Diagnostics/                       Diagnostic Tools from Magic Eraser, with no Data tab
-│   └── Manifests.lua                  Per-client API checks and the Quest Log Context probe
+│   └── Manifests.lua                  Per-client API and Game Names rows; the Quest Log, Tracking and Map Context probes
 ├── Features/
 │   ├── Core.lua                       Version, event dispatcher, AceDB, welcome
 │   ├── Utilities.lua                  Colors, Questie and VoiceOver lookups, sorting
@@ -35,13 +35,18 @@ Pretty-Wide-Quest-Log/
 │   ├── Classic-VoiceOver.lua          Classic Era and TBC: VoiceOver's play buttons on the sorted rows
 │   ├── Classic-Quest-Details.lua      Classic Era and TBC: detail pane layout, objectives, rewards, quest ID
 │   ├── Classic-Quest-Log.lua          Classic Era and TBC: widens Blizzard's window, art, resizing
+│   ├── Quest-Map.xml                  The map's canvas frame, which only XML can build
+│   ├── Quest-Map.lua                  The map beside the window, its layout, Show Map / Hide Map
+│   ├── Questie-Map.xml                The pin template for Questie's icons on the map
+│   ├── Questie-Map.lua                Questie's icons on the map, their tooltip, the zone dropdown, refreshing
+│   ├── Classic-Quest-Map.lua          Classic Era and TBC: the map's layers and following the selection
+│   ├── Classic-ElvUI.lua              Classic Era and TBC: opaque ElvUI backdrop, ElvUI-styled buttons and map
 │   ├── Forever-Tracking.lua           WoW Forever: tracking and Track All, deferring to Questie's tracker
 │   ├── Forever-Quest-Log.lua          WoW Forever: window, buttons, refresh, quest log takeover
 │   ├── Forever-Quest-List.lua         WoW Forever: list rows, sorting, list buttons
 │   ├── Forever-Quest-Details.lua      WoW Forever: detail pane on QuestInfo_Display, quest giver rewards and quest ID
 │   ├── Forever-VoiceOver.lua          WoW Forever: Spoken Quests' play buttons on the list rows
-│   ├── Forever-Quest-Map.xml          WoW Forever: the map's canvas frame, which only XML can build
-│   └── Forever-Quest-Map.lua          WoW Forever: the map beside the window, its layers, Show Map / Hide Map
+│   └── Forever-Quest-Map.lua          WoW Forever: the map's layers, Blizzard's quest layers as the fallback, following the selection
 ├── Includes/
 │   ├── Images/                        Window art (PWQL_*.blp), untracked quest mark (PWQL_Untracked.tga)
 │   └── Libraries/                     Vendored Ace3, never edited
@@ -61,7 +66,7 @@ Pretty-Wide-Quest-Log/
 └── README-Testing.md                  Manual test plan
 ```
 
-An unsuffixed TOC and the root-level `Legacy.lua`, `Modern.lua`, `Common.lua`, `Layout.lua` and `img/` are retired. Don't bring them back: their code lives in `Features/` and their art in `Includes/Images/`.
+An unsuffixed TOC and the root-level `Legacy.lua`, `Modern.lua`, `Common.lua`, `Layout.lua` and `img/` are retired. Don't bring them back: their code lives in `Features/` and their art in `Includes/Images/`. `Features/Forever-Quest-Map.xml` is retired too: the map frame is now `Features/Quest-Map.xml`, which every client loads.
 
 ## Architecture
 
@@ -143,15 +148,29 @@ Quest text is set the same way in both quest logs and in the quest giver window 
 - **The quest giver's own pages** (`Features/Quest-Giver.lua`) are found by font, not by name: text in the title's font is a heading, the one hung from the top of its page being the quest's title. The progress page, drawn with its own pieces on every client, also gets the details' space around its required items heading and the quest ID under the last thing on it.
 - **Skins recolor late.** ElvUI recolors objective lines in hooks that can run after the styling, so each count column matches its line's color again a frame later.
 
-## Quest Map (WoW Forever)
+## Quest Map
 
-`Features/Forever-Quest-Map.lua` docks a map to the right of the window, two thirds of the window art's height (`HEIGHT_SHARE`) and in the map art's proportions. It follows the selected quest: a hook on `ns.DisplayQuestDetails` moves it to `GetQuestUiMapID` (the player's zone when that has none) and fires the canvas's `SetFocusedQuestID`, so that quest's objective area is drawn.
+`Features/Quest-Map.lua` docks a map to the right of the window on every client, two thirds of the window art's height (`HEIGHT_SHARE`) and in the map art's proportions. The map is Blizzard's map canvas (`MapCanvasFrameTemplate`) with a few of the world map's data providers on it, the way the Battlefield Map is built. It is the add-on's own frame, so the world map is never opened or touched. The canvas's `OnLoad` needs its `ScrollContainer` and `BorderFrame` children to exist, which only XML can arrange, so the frame is declared in `Quest-Map.xml` and set up in the Lua file. Both quest log files set `ns.questLogFrame`, `ns.abandonButton` and `ns.shareButton` before it loads.
 
-The map is Blizzard's map canvas (`MapCanvasFrameTemplate`) with a few of the world map's data providers on it, the way the Battlefield Map is built: exploration, fog of war, quest objective areas (`QuestBlobDataProviderMixin`), quest markers (`QuestDataProviderMixin`), dungeon entrances, flight points and group members. It is the add-on's own frame, so the world map is never opened or touched. The canvas's `OnLoad` needs its `ScrollContainer` and `BorderFrame` children to exist, which only XML can arrange, so the frame is declared in `Forever-Quest-Map.xml` and set up in the Lua file.
+Each client's own map file adds the layers and defines `ns.questMap.FollowQuest`, which the canvas calls as it shows to put the map on the selected quest. On every client that goes through `ns.questMap.FollowQuestieQuest` first (Questie's Icons below), with the client's own fallback map for a quest Questie has no icons for. `ns.questMap.SetStyle` moves the map and changes its border inset, for a skin that draws the window differently.
 
-Blizzard draws objective areas and quest markers only while the `questPOI` setting is on, and Questie turns it off when its own objectives are chosen. Questie draws on the world map and minimap only, so this map would show none. The map's own copies of the blob pin's `Refresh` and the quest provider's `RefreshAllData` are Blizzard's, less that check; the setting itself is left alone. Compare them with Blizzard's when a client update changes those providers.
+Show Map / Hide Map sits centred between Abandon Quest and Share Quest, and the map has its own close button. Hiding it is remembered in `global.mapHidden`, one setting for every client.
 
-Show Map / Hide Map sits centred between Abandon Quest and Share Quest, and the map has its own close button. Hiding it is remembered in `global.mapHidden`.
+### WoW Forever
+
+`Features/Forever-Quest-Map.lua` adds exploration, fog of war, quest objective areas (`QuestBlobDataProviderMixin`), quest markers (`QuestDataProviderMixin`), dungeon entrances, flight points and group members. A hook on `ns.DisplayQuestDetails` puts the map on the selected quest. When Questie has icons for it, the map follows them, as on Classic. Otherwise it goes to `GetQuestUiMapID` (the player's zone when that has none) and fires the canvas's `SetFocusedQuestID`, so that quest's objective area is drawn. The same hook asks for a Questie refresh, since Questie's icons can arrive after the quest log changes.
+
+Blizzard draws objective areas and quest markers only while the `questPOI` setting is on, and Questie turns it off when its own objectives are chosen, so this map would show none for a quest Questie has no icons for. The map's own copies of the blob pin's `Refresh` and the quest provider's `RefreshAllData` are Blizzard's, less that check; the setting itself is left alone. Both also leave out the quest Questie's icons are drawing (`ns.questMap.questieQuestID`), so it is never drawn twice; other quests' Blizzard markers stay. Compare them with Blizzard's when a client update changes those providers.
+
+### Classic Era and TBC
+
+These clients' world maps draw no quest objective areas or quest markers of Blizzard's, and the clients have no quest objective data to draw them from, so `Features/Classic-Quest-Map.lua` adds only exploration and group members of Blizzard's layers. The quest itself comes from Questie's icons alone, and without them the map shows the player's zone. It follows the selection through a hook on `QuestLog_UpdateQuestDetails`.
+
+### Questie's Icons (Every Client)
+
+`Features/Questie-Map.lua` adds a data provider that draws the selected quest's icons from Questie's world map, its objectives and turn-in, again as pins on this map (`PrettyWideQuestLogQuestiePinTemplate`, in `Questie-Map.xml`), in Questie's textures and colours at `ICON_SCALE` times Questie's size. Questie never draws on this map and isn't told it exists. The add-on reads Questie's own copy of HereBeDragons-Pins (`HereBeDragonsQuestie-Pins-2.0`, the same name in every one of Questie's TOCs), whose `worldmapPins` maps each icon frame to its `uiMapID` and world position, which Questie's copy of HereBeDragons turns into the zone's coordinates. Route lines (`type == "line"`) and icons Questie's settings hide (`hidden`, or faded to nothing) are left out. The canvas draws pins at its own zoom, which would shrink them with this smaller map, so each pin takes the scaling limits Questie's world map pins use and keeps its size on screen. Questie's tooltips can't be reused, because they gather their neighbours from the world map's own pins, so hovering a pin shows the add-on's own: the quest, then every NPC or object within `CLUSTER_DISTANCE` with its objective progress.
+
+`ns.questMap.FollowQuestieQuest` shows the player's zone if the selected quest has an icon there, otherwise the zone with the most of its icons, otherwise the client's fallback map. It sets `ns.questMap.questieQuestID` while Questie has icons for the quest, and returns whether it has any. When the quest has icons in more than one zone, a dropdown (`WowStyle2DropdownTemplate`, Blizzard's menu system) sits in the map's top-left corner listing them, most icons first; the zone picked there holds until another quest is selected or that zone has no icons left. Questie's icons are followed through hooks on its pin library's `AddWorldMapIconMap`, `AddWorldMapIconWorld`, `RemoveWorldMapIcon` and `RemoveAllWorldMapIcons`, because Questie draws a little after the quest log changes and a batch at a time. They, and each client's selection hook, only ask for a refresh (`ns.questMap.RequestRefresh`), done at most once per `REFRESH_DELAY` and only while the map is showing.
 
 ## ElvUI, VoiceOver and Spoken Quests
 
@@ -160,6 +179,8 @@ Show Map / Hide Map sits centred between Abandon Quest and Share Quest, and the 
 ElvUI and VoiceOver work on Blizzard's own quest log frames, so the Classic files make room for them rather than replacing what they draw.
 
 - **ElvUI** skins the window but can't know about this add-on's art. With ElvUI loaded, `Features/Classic-Quest-Log.lua` hides Blizzard's art and the "no active quests" parchment and draws none of its own, leaving the skin's backdrop.
+- ElvUI skins the window at login, after this add-on loads, so `Features/Classic-ElvUI.lua` waits for the window's first `OnShow` and acts only if the skin left a backdrop (`QuestLogFrame.backdrop`). The skin's backdrop is ElvUI's see-through Transparent template, which lets Questie's tracker behind the window show through the quest text, so it is made opaque in the same colour; `customBackdropAlpha` is ElvUI's own field for that and survives its colour updates. Expand All, Track All and Show Map get ElvUI's `HandleButton`, the map's close button `HandleCloseButton`, the zone dropdown `HandleDropDownBox`, and the map an opaque ElvUI backdrop, moved beside the skin's backdrop rather than the art.
+- **Tukui** doesn't skin Blizzard's quest log, so under Tukui the window and its buttons stay Blizzard's and the add-on changes nothing.
 - **VoiceOver** puts a play button over the start of each quest title. With it loaded, `Features/Classic-VoiceOver.lua` starts each title with as many spaces as clear 24px (spaces only, since a tab draws as a missing glyph in some fonts, ElvUI's among them).
 - VoiceOver hands out its buttons by Blizzard's order, row *i* to entry *i* + scroll offset. With sorting on, `MatchVoiceOverButtons` deals them out again by what each row now shows, through VoiceOver's own button functions. Those functions rewrite the title and move the check, so the row styling runs last, and the list's update (`ns.UpdateClassicQuestList`) also runs after VoiceOver's overlay `Update`, which can come after the `QuestLog_Update` hook.
 
@@ -185,7 +206,7 @@ This add-on is the continuation of Wide Quest Log Plus (folder `WideQuestLogPlus
 
 `PrettyWideQuestLogDB`, managed by AceDB-3.0, is the only SavedVariables table and holds every setting. The add-on uses the **Simple** model: one shared Default profile, so Reset Profile restores every option on the profile.
 
-The profile holds the options panel's settings. `global` holds only the window's saved height, and on WoW Forever its position and whether the map is hidden (`mapHidden`), with no defaults. They are presentation, kept out of the profile's reach so a profile reset or switch never moves or resizes the window; the General panel's Reset Size and Position button clears the height and position. Classic saves no position, since Blizzard's panel manager places that window.
+The profile holds the options panel's settings. `global` holds only the window's saved height, whether the map is hidden (`mapHidden`), and on WoW Forever the window's position, with no defaults. They are presentation, kept out of the profile's reach so a profile reset or switch never moves or resizes the window; the General panel's Reset Size and Position button clears the height and position. Classic saves no position, since Blizzard's panel manager places that window.
 
 AceDB applies `ns.DATABASE_DEFAULTS` (`Data/Default-Settings.lua`) whenever a key is missing, and handles an explicit `false` correctly. No default lists are seeded.
 
@@ -198,7 +219,7 @@ None. `PrettyWideQuestLogDB` started fresh with the move from Wide Quest Log Plu
 1. Add the key and its default to `ns.DATABASE_DEFAULTS.profile` in `Data/Default-Settings.lua`. Only window state that a profile reset must not touch goes in `global`.
 2. Add its control to `Options/Options-General.lua`, or to `Options/Options-Forever-Quest-Log.lua` when it only applies on WoW Forever, with its label and `desc` in `Locales/enUS.lua`. A control in the Quest Log section takes `hidden = questLogHidden`, so the section goes as a whole when the wide quest log is off on WoW Forever.
 3. Read it live where it applies. If it changes what's on screen, call `ns.RefreshQuestLog()` from the control's `set`; `ns:ApplyProfile` already calls it on profile changes.
-4. Add it to the Quest Log Context report in `Diagnostics/Manifests.lua`.
+4. Add it to the context report it explains in `Diagnostics/Manifests.lua`: Quest Log Context for the list and window, Tracking Context for tracking, Map Context for the map.
 
 ## Adding a New Event
 
@@ -207,15 +228,14 @@ Add `{ "EVENT_NAME", "OnEventName" }` to `EVENTS` in `Features/Core.lua` and def
 ## Adding a New API Call
 
 1. Confirm the client has it: its branch of [wow-ui-source](https://github.com/Gethe/wow-ui-source), or an existing Diagnostics row. Don't gate on a client difference nobody has shown.
-2. Add its path to `SHARED_FUNCTIONS`, `CLASSIC_FUNCTIONS` or `FOREVER_FUNCTIONS` in `Diagnostics/Manifests.lua` (tables, strings and numbers have their own `Rows` lines there).
+2. Add its path to `SHARED_FUNCTIONS`, `CLASSIC_FUNCTIONS` or `FOREVER_FUNCTIONS` in `Diagnostics/Manifests.lua`. A Blizzard frame, mixin or table a file reaches for at load goes in the matching `_TABLES` list; numbers and strings have their own `Rows` lines.
 3. Add the global to `read_globals` in `.luacheckrc`.
 
 ## Localization
 
-- **`enUS.lua` is the source of truth** and the only locale passing the default-fallback flag. The other locale files belong to the Localization pass (`3 - Copy Cleanup & Localization Prompt.md`); never hand-edit them.
+- **`enUS.lua` is the source of truth** and the only locale passing the default-fallback flag. The other locale files belong to the Localization Review (`07 - Localization Review.md`); never hand-edit them.
 - **Placeholders** (`%s`, `%d`) must match `enUS` in count, type and order in every locale, or the string errors at runtime.
-- **Game names never go in `Locales/`.** Zone names come from the quest log headers the client supplies. The tag at the right of a row (Elite, Dungeon) comes from the client's quest tag, or from Blizzard's `FAILED`, `COMPLETE`, `ELITE` and `DAILY`. Window labels such as Abandon Quest, Track, Share and Exit are Blizzard's GlobalStrings too. The quest-type letters (D, R, P, G, E) are the add-on's own words, so they are locale keys, picked by `QUEST_TAG_SUFFIX` in `Features/Quest-Display.lua` from the tag ID that `GetQuestTagInfo` (Classic) or `C_QuestLog.GetQuestTagInfo` (WoW Forever) returns.
-
+- **Game names never go in `Locales/`.** Zone names in the list come from the quest log headers the client supplies, and the map's zone dropdown names each zone with `C_Map.GetMapInfo(uiMapID).name`. The map's pin tooltips show the quest, NPC and object names from Questie's own data. The tag at the right of a row (Elite, Dungeon) comes from the client's quest tag, or from Blizzard's `FAILED`, `COMPLETE`, `ELITE` and `DAILY`. Window labels such as Abandon Quest, Track, Share, Exit and Show Map (`SHOW_MAP`) are Blizzard's GlobalStrings too. Every one the add-on shows is a row in the `_LABELS` lists in `Diagnostics/Manifests.lua`, which feed the Localization tab's Game Names report, so a new one gets a row there. The quest-type letters (D, R, P, G, E) are the add-on's own words, so they are locale keys, picked by `QUEST_TAG_SUFFIX` in `Features/Quest-Display.lua` from the tag ID that `GetQuestTagInfo` (Classic) or `C_QuestLog.GetQuestTagInfo` (WoW Forever) returns.
 ## Common Pitfalls
 
 - **Reading `ns.db` at file scope**: it doesn't exist until `ADDON_LOADED`, and Blizzard can redraw the Classic quest log before then. Read settings at use (the Classic sorting and gap code checks `ns.db` first), or in `ns:OnDatabaseReady` on WoW Forever.
@@ -233,11 +253,15 @@ Add `{ "EVENT_NAME", "OnEventName" }` to `EVENTS` in `Features/Core.lua` and def
 - **Hiding Blizzard's side windows in combat**: some are protected, so `HideUIPanel` on them is blocked. `CloseLeftPanels` does nothing in combat.
 - **Styling Blizzard's quest text after it has been laid out**: Blizzard's measurements no longer match what's drawn. Style shared text at file load, as `Quest-Display.lua` and `Quest-Giver.lua` do.
 - **Registering an event a client lacks**: throws. Add events through `EVENTS` in Core, never `RegisterEvent` in a feature file.
+- **Loading the map before the quest log**: `Quest-Map.lua` reads `ns.questLogFrame`, `ns.abandonButton` and `ns.shareButton` at load. Each TOC lists the client's quest log file before `Features/Quest-Map.xml`.
+- **Building the map canvas in Lua**: `MapCanvasFrameTemplate`'s `OnLoad` runs before Lua could add the `ScrollContainer` and `BorderFrame` it needs. The frame stays in `Quest-Map.xml`.
+- **Styling for ElvUI at load**: ElvUI skins the quest log after this add-on loads, so there's no backdrop yet. `Classic-ElvUI.lua` waits for the window's first `OnShow`.
+- **Drawing Questie's quest twice on WoW Forever**: Blizzard's objective area and marker would sit under Questie's icons. The map's copies of those providers skip `ns.questMap.questieQuestID`.
 
 ## Contributing
 
 - **Issues**: [GitHub Issues](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/issues).
-- **Bug reports**: game client and version, locale, the character's class and level, which other quest add-ons are installed (Questie, ElvUI, VoiceOver, Spoken Quests), steps to reproduce, and the Diagnostic Tools' Quest Log Context and Display Context reports (plus the Event Log when the quest log didn't update).
+- **Bug reports**: game client and version, locale, the character's class and level, which other quest add-ons are installed (Questie, ElvUI, VoiceOver, Spoken Quests), steps to reproduce, and the Diagnostic Tools' Settings tab output from Run All (Quest Log, Tracking and Map Context, Display Context and the rest), plus the Event Log when the quest log didn't update.
 - **Discord**: [Pretty Wide Quest Log on Discord](https://discord.gg/eh8hKq992Q).
 - **PR guidelines**: keep each PR to one change; run `stylua --syntax lua51`, `luac -p` and `luacheck .` before pushing (CI runs all three). Any change to the shape of saved data ships its own migration, tagged `MIGRATION (remove after YYYY-MM-DD)` 30 days past its release. The add-on sends no chat and writes no macros, so the 255-byte limits don't apply yet; a change that starts sending chat measures in bytes against ruRU. Update this document if the architecture, File Map or Saved Variables change.
 - **PR descriptions say what a player will notice**, in plain language, the way release notes do; commit messages carry the developer detail.
