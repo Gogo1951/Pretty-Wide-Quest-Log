@@ -12,7 +12,7 @@ A bigger, better quest log that gives you more room to read and more information
 
 --todo we use Questie data
 
-<img width="800" src="https://github.com/user-attachments/assets/5ad4307b-0489-4efb-ae9a-57168b0b94fc" />
+<img width="800" src="https://github.com/user-attachments/assets/c9ab7a41-4376-4480-b9c9-10678aa5d6b2" />
 
 
 ## Features
