@@ -23,6 +23,8 @@ function ns:BuildDisplayContextReport()
 		lines[#lines + 1] = string.format("Quest log shown: %s", tostring(window:IsShown()))
 		lines[#lines + 1] =
 			string.format("Quest log size: %s x %s", tostring(window:GetWidth()), tostring(window:GetHeight()))
+		-- A narrower window means something resized it after the add-on widened it
+		lines[#lines + 1] = string.format("Quest log width expected: %s", tostring(ns.LAYOUT.BASE_WIDTH))
 		lines[#lines + 1] = string.format("Quest log effective scale: %s", tostring(window:GetEffectiveScale()))
 		local point, _, relativePoint, x, y = window:GetPoint(1)
 		lines[#lines + 1] = string.format(
@@ -66,8 +68,7 @@ function ns:BuildAddOnReport()
 	local count = C_AddOns.GetNumAddOns()
 	for index = 1, count do
 		local name, _, _, loadable = C_AddOns.GetAddOnInfo(index)
-		-- Many add-ons already prefix their version with "v"; drop it so we don't print "vv".
-		local version = (C_AddOns.GetAddOnMetadata(index, "Version") or "?"):gsub("^[vV]", "")
+		local version = C_AddOns.GetAddOnMetadata(index, "Version") or "?"
 		lines[#lines + 1] = string.format("%s v%s [%s]", name, version, loadable and "loadable" or "disabled")
 	end
 	return table.concat(lines, "\n")
