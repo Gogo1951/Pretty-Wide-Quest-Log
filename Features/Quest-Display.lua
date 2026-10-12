@@ -1,7 +1,7 @@
 local _, ns = ...
 local L = ns.L
 
--- How both quest logs draw a quest: its title and tracking mark in the list, its text's styling, objective lines and quest ID.
+-- How both quest logs draw a quest: its title in the list, its text's styling, objective lines and quest ID.
 
 --------------------------------------------------------------------------------
 -- Quest Text
@@ -26,47 +26,22 @@ function ns.QuestSuffix(tagID, isElite)
 	return (tagID and QUEST_TAG_SUFFIX[tagID]) or (isElite and ELITE_SUFFIX) or ""
 end
 
+-- "[13]", or "[13D]" for a dungeon quest, and so on
+function ns.LevelTag(level, suffix)
+	return format("[%d%s]", level or 0, suffix or "")
+end
+
 -- "[13] Quest Name", or "[13D] Quest Name" for a dungeon quest, and so on
 function ns.LevelTitle(level, title, suffix)
-	return format("[%d%s] %s", level or 0, suffix or "", title or "")
+	return ns.LevelTag(level, suffix) .. " " .. (title or "")
 end
 
---[[
-	Questie's tracker takes over tracking a few seconds after login, once Questie's startup reaches it.
-	Until then every quest reads as untracked, which would flash an eye on every row with markUntracked
-	on. So while it's pending no marks are drawn, and the quest log redraws the moment it starts
-]]
-local questieTracker, redrawOnTrackerStart
-local function IsQuestieTrackerPending()
-	if not (Questie and Questie.db and Questie.db.profile and Questie.db.profile.trackerEnabled) then
-		return false
+-- A quest's line in the quest list: tagged as above while showQuestLevels is on, else the title alone
+function ns.QuestListTitle(level, title, suffix)
+	if ns.db.profile.showQuestLevels then
+		return ns.LevelTitle(level, title, suffix)
 	end
-	questieTracker = questieTracker or ns.ImportQuestieModule("QuestieTracker")
-	if not questieTracker or questieTracker.started then
-		return false
-	end
-	if not redrawOnTrackerStart and type(questieTracker.HookBaseTracker) == "function" then
-		redrawOnTrackerStart = true
-		hooksecurefunc(questieTracker, "HookBaseTracker", function()
-			ns.RefreshQuestLog()
-		end)
-	end
-	return true
-end
-
---[[
-	Draws the tracking mark for a quest in its slot texture: the check when it's tracked, or with
-	markUntracked on, the crossed-out eye when it isn't. Hidden otherwise, and while Questie's tracker
-	is still starting up
-]]
-function ns.ShowTrackingMark(texture, isTracked)
-	local markUntracked = ns.db and ns.db.profile.markUntracked
-	local mark = markUntracked and ns.TRACKING_MARKS.untracked or ns.TRACKING_MARKS.tracked
-	texture:SetTexture(mark.texture)
-	texture:SetVertexColor(mark.r, mark.g, mark.b)
-	texture:SetShown(
-		(isTracked and true or false) ~= (markUntracked and true or false) and not IsQuestieTrackerPending()
-	)
+	return title or ""
 end
 
 local function QuestIDText(questID)
@@ -75,15 +50,21 @@ end
 
 --[[
 	Shows a quest ID in a FontString, in the same font and colour as source (the description) but
-	smaller
+	smaller. One that links to Wowhead starts with a chain link, in the same colour
 ]]
 function ns.StyleQuestID(text, questID, source)
 	local file, size, flags = source:GetFont()
 	if file and size then
 		text:SetFont(file, size - ns.LAYOUT.QUEST_ID_FONT_SHRINK, flags)
 	end
-	text:SetTextColor(source:GetTextColor())
-	text:SetText(QuestIDText(questID))
+	local r, g, b = source:GetTextColor()
+	text:SetTextColor(r, g, b)
+	local label = QuestIDText(questID)
+	if text.linksToWowhead then
+		label =
+			format("|T%s:0:0:0:0:32:32:0:32:0:32:%d:%d:%d|t %s", ns.WOWHEAD_LINK_ICON, r * 255, g * 255, b * 255, label)
+	end
+	text:SetText(label)
 end
 
 --[[
@@ -93,6 +74,7 @@ end
 ]]
 local CHECK = "|TInterface\\RaidFrame\\ReadyCheck-Ready:0|t"
 local NO_CHECK = "|TInterface\\Common\\spacer:0|t"
+ns.CHECK_ICON, ns.NO_CHECK_ICON = CHECK, NO_CHECK -- The quest chain's turned-in parts use them too (Quest-Chain.lua)
 local COUNT_GAP = 8 -- Between a name and its count
 
 --[[
@@ -172,12 +154,25 @@ function ns.SetTextSpacing(questText)
 	LAYOUT.QUEST_ID_GAP = Lines(LAYOUT.QUEST_ID_LINES)
 end
 
--- The Description and Rewards headings: the title's font, LAYOUT.SECTION_HEADING_SHRINK smaller
+--[[
+	The Description and Rewards headings: the title's font, LAYOUT.SECTION_HEADING_SHRINK smaller, or
+	the title's size under ElvUI, whose plain title font is already small beside Blizzard's.
+	Skins (ElvUI) set QuestTitleFont after the headings are styled, and again when their font options
+	change, so it follows every change to QuestTitleFont's font and shadow
+]]
 local sectionHeadingFont = CreateFont("PrettyWideQuestLogSectionHeadingFont")
-sectionHeadingFont:CopyFontObject(QuestTitleFont)
-do
+local headingShrink = C_AddOns.IsAddOnLoaded("ElvUI") and 0 or ns.LAYOUT.SECTION_HEADING_SHRINK
+
+local function SyncSectionHeadingFont()
 	local file, size, flags = QuestTitleFont:GetFont()
-	sectionHeadingFont:SetFont(file, size - ns.LAYOUT.SECTION_HEADING_SHRINK, flags)
+	if file and size then
+		sectionHeadingFont:CopyFontObject(QuestTitleFont)
+		sectionHeadingFont:SetFont(file, size - headingShrink, flags)
+	end
+end
+SyncSectionHeadingFont()
+for _, method in ipairs({ "SetFont", "SetShadowColor", "SetShadowOffset" }) do
+	hooksecurefunc(QuestTitleFont, method, SyncSectionHeadingFont)
 end
 
 -- Sets a FontString's font object, keeping its colour
@@ -214,8 +209,8 @@ local function StyleQuestNumber(region, source)
 end
 
 --[[
-	Blizzard's QuestInfo pieces: the quest giver window's on every client, and on WoW Forever the quest
-	details' too (and the map's), so a quest reads the same wherever it's shown
+	WoW Forever's QuestInfo pieces, shared by the quest giver window, the quest details and the map's
+	details, so a quest reads the same wherever it's shown. The other clients don't have them
 ]]
 local QUEST_INFO_TEXT = {
 	"QuestInfoTitleHeader",
@@ -250,12 +245,19 @@ end
 -- Styled once, before Blizzard first lays any of it out, so its measurements match
 ns.StyleQuestInfo()
 
--- The experience reward, each time QuestInfo shows one, in the description's font and colour
+--[[
+	The experience reward, each time QuestInfo shows one (the quest details, the quest giver window and the
+	map's details), in the description's font and colour, its thousands grouped like the turn-in line's
+]]
 local experienceFrame = QuestInfoRewardsFrame and QuestInfoRewardsFrame.XPFrame
 local experienceValue = experienceFrame and experienceFrame.ValueText
 if experienceValue and QuestInfo_Display then
 	hooksecurefunc("QuestInfo_Display", function()
 		StyleQuestNumber(experienceValue, QuestInfoDescriptionText)
+		local experience = tonumber((experienceValue:GetText() or ""):gsub("%D", ""), 10)
+		if experience then
+			experienceValue:SetText(ns.FormatNumber(experience))
+		end
 	end)
 end
 

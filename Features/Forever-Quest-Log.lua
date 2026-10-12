@@ -111,7 +111,7 @@ exitButton:SetPoint("BOTTOMRIGHT", -LAYOUT.BUTTON_RIGHT, LAYOUT.BUTTON_BOTTOM)
 local shareButton = CreateBottomButton(SHARE_QUEST, nil, ForSelectedQuest(QuestMapQuestOptions_ShareQuest))
 shareButton:SetPoint("RIGHT", exitButton, "LEFT")
 
--- The map's Show Map button sits centred between these two
+-- The Ready to Turn In line sits centred between these two (Turn-In-Line.lua)
 ns.abandonButton, ns.shareButton = abandonButton, shareButton
 
 -- Say why the button is greyed out for quests Questie can't track
@@ -234,6 +234,18 @@ function ns:OnPlayerLevelUp()
 	ns.RequestUpdate()
 end
 
+-- The current zone's mark moves; the zones keep their order until the window closes
+function ns:OnZoneChangedNewArea()
+	ns.RequestUpdate()
+end
+
+-- Close When Combat Starts. The window isn't protected, so it can close in combat
+function ns:OnPlayerRegenDisabled()
+	if ns.db.profile.closeInCombat and frame:IsShown() then
+		frame:Hide()
+	end
+end
+
 --------------------------------------------------------------------------------
 -- Resizing
 --------------------------------------------------------------------------------
@@ -300,6 +312,7 @@ local headersOpened
 frame:SetScript("OnShow", function()
 	CloseLeftPanels() -- First, so the quest details have their pieces back
 	PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
+	frame:SetScale(ns.db.global.scale)
 	ApplyHeight(ns.db.global.height)
 	if not headersOpened then
 		headersOpened = true
@@ -322,9 +335,22 @@ end
 
 function ns.ResetWindow()
 	ns.db.global.height, ns.db.global.point = nil, nil
+	ns.db.global.scale = ns.DATABASE_DEFAULTS.global.scale
+	ns.db.global.mapScale = ns.DATABASE_DEFAULTS.global.mapScale
+	frame:SetScale(ns.db.global.scale)
+	ns.ApplyMapScale()
 	frame:ClearAllPoints()
 	frame:SetPoint(unpack(DEFAULT_POINT))
 	ApplyHeight(BASE_HEIGHT)
+end
+
+-- The docked map is the window's child, so it scales with it; the height is clamped to the screen again
+function ns.ApplyWindowScale()
+	frame:SetScale(ns.db.global.scale)
+	if frame:IsShown() then
+		currentHeight = nil
+		ApplyHeight(ns.db.global.height)
+	end
 end
 
 -- After a settings change: zones re-sort rather than keeping the order the window opened with
@@ -367,9 +393,10 @@ end
 	variables have loaded
 ]]
 function ns:OnDatabaseReady()
+	frame:SetScale(ns.db.global.scale)
 	ApplyHeight(BASE_HEIGHT)
 
-	if ns.db.profile.enableWideQuestLog then
+	if ns.wideQuestLogActive then
 		TakeOverQuestLog()
 	end
 

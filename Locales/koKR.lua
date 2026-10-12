@@ -8,45 +8,36 @@ end
 --------------------------------------------------------------------------------
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
+L["ADDON_SHORT"] = "PWQL"
 L["CHAT_LOADED"] =
 	"버전 %s. 설정(이 메시지를 끄는 옵션 포함)은 설정 > 애드온 > Pretty Wide Quest Log에서 찾을 수 있습니다. 애드온이 마음에 드시나요? 친구에게도 알려 주세요! (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "안전을 위해 전투 중에는 설정 창을 열 수 없습니다."
+L["CHAT_QUESTIE_MISSING"] =
+	"이 애드온의 많은 기능이 Questie 데이터를 사용합니다. Questie가 없으면 일부 기능만 사용할 수 있습니다."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus도 켜져 있어 두 애드온이 퀘스트 목록을 두고 충돌합니다. 애드온 목록에서 Wide Quest Log Plus를 끈 다음 UI를 다시 불러오세요."
 
 --------------------------------------------------------------------------------
--- Options
+-- General Panel
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
 	"읽을 공간은 더 넓고 한눈에 보이는 정보는 더 많은, 더 크고 더 나은 퀘스트 목록입니다. 익숙한 블리자드 화면 구성은 그대로 유지하면서 퀘스트 레벨, 유용한 태그, 목표, 보상, 전체 퀘스트 목록을 나란히 볼 수 있습니다."
 L["ENABLE_WELCOME_MESSAGE"] = "환영 메시지 사용"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log 환영 인사를 표시합니다."
-L["ENABLE_WIDE_QUEST_LOG"] = "이 프로필에서 Pretty Wide Quest Log 사용"
-L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
-	"퀘스트 목록 단축키, 마이크로 메뉴 버튼, 목표 추적기의 퀘스트 클릭이 이 넓은 퀘스트 목록을 열도록 합니다. 끄면 세계 지도에 붙어 있는 블리자드 기본 퀘스트 목록을 대신 사용합니다. UI를 다시 불러온 후에 적용됩니다."
+L["OPTIONS_FEATURES_HEADER"] = "기능"
+L["ENABLE_QUEST_LOG_CLEANUP"] = "퀘스트 목록 정리 사용"
+L["FEATURE_QUEST_LOG_DESCRIPTION"] =
+	"블리자드 퀘스트 목록을 지도가 옆에 붙은 넓은 퀘스트 목록으로 바꿉니다. 끄면 블리자드 퀘스트 목록을 대신 사용합니다. UI를 다시 불러온 후에 적용됩니다."
+L["ENABLE_QUALITY_OF_LIFE"] = "편의 기능 사용"
+L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
+	"퀘스트 NPC 창 정리, 원하는 속도로 퀘스트 공유하기, 퀘스트 공유 실패 시 귓속말을 켭니다. 끄면 블리자드 퀘스트 NPC 창으로 돌아가고 기본 속도로 공유합니다."
+L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
+	"퀘스트 목록 정리 사용은 UI를 다시 불러온 후에 적용되며, 설정 창을 닫을 때 다시 불러오기를 안내합니다."
 L["RELOAD_PROMPT"] =
 	"Pretty Wide Quest Log는 UI를 다시 불러온 후에 퀘스트 목록을 전환합니다. 지금 다시 불러오시겠습니까?"
-L["ZONE_ORDER"] = "지역 순서"
-L["ZONE_ORDER_DESCRIPTION"] = "퀘스트 목록에서 지역의 순서를 바꿉니다."
-L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "평균 레벨, 높은 순 (기본값)"
-L["SORT_AVERAGE_LEVEL_LOWEST"] = "평균 레벨, 낮은 순"
-L["SORT_ALPHABETICAL"] = "이름순"
-L["ZONE_GAP"] = "지역 이름 위 여백"
-L["ZONE_GAP_DESCRIPTION"] =
-	"각 지역 이름 위에 약간의 여백을 추가합니다. 퀘스트가 여러 지역에 흩어져 있다면 유용합니다."
-L["QUEST_ORDER"] = "퀘스트 순서"
-L["QUEST_ORDER_DESCRIPTION"] = "각 지역 아래 퀘스트의 순서를 바꿉니다."
-L["SORT_LEVEL_HIGHEST_DEFAULT"] = "레벨, 높은 순 (기본값)"
-L["SORT_LEVEL_LOWEST"] = "레벨, 낮은 순"
-L["MARK_UNTRACKED"] = "추적하지 않는 퀘스트 표시"
-L["MARK_UNTRACKED_DESCRIPTION"] =
-	"추적 중인 퀘스트의 체크 %s 표시가 사라지고, 대신 추적하지 않는 퀘스트에 눈 %s 표시가 붙습니다. 거의 모든 퀘스트를 추적한다면 유용합니다."
-L["RESET_WINDOW"] = "크기 및 위치 초기화"
-L["RESET_WINDOW_DESCRIPTION"] = "퀘스트 목록을 기본 크기와 위치로 되돌립니다."
-L["RESET_WINDOW_CONFIRM"] = "퀘스트 목록을 기본 크기와 위치로 초기화할까요?"
 L["OPTIONS_COMMANDS_HEADER"] = "/명령어"
-L["OPTIONS_COMMAND"] = "/wide"
+L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "이 애드온의 설정 창을 엽니다."
 L["FEEDBACK_HEADER"] = "피드백 및 지원"
 L["FEEDBACK_DISCORD"] = "Discord"
@@ -54,6 +45,80 @@ L["FEEDBACK_GITHUB"] = "GitHub"
 L["FEEDBACK_CURSEFORGE"] = "CurseForge"
 L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "버전 %s"
+
+--------------------------------------------------------------------------------
+-- Quest Log Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_LOG"] = "퀘스트 목록"
+L["TAB_QUEST_LOG_DESCRIPTION"] =
+	"블리자드 퀘스트 목록을 넓은 목록으로 바꿉니다. 퀘스트가 지역별로 나열되고, 옆에 선택한 퀘스트의 세부 정보와 지도가 표시됩니다."
+L["QUEST_LOG_LAYOUT_HEADER"] = "퀘스트 목록 구성"
+L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
+	"플레이 방식에 맞게 퀘스트를 정렬하고, 각 줄에 표시할 내용을 고르고, 창과 지도 크기를 화면에 맞게 조절하세요."
+L["ZONE_ORDER"] = "지역 순서"
+L["ZONE_ORDER_DESCRIPTION"] = "퀘스트 목록에서 지역의 순서를 바꿉니다."
+L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "평균 레벨, 높은 순 (기본값)"
+L["SORT_AVERAGE_LEVEL_LOWEST"] = "평균 레벨, 낮은 순"
+L["SORT_ALPHABETICAL"] = "이름순"
+L["CURRENT_ZONE_FIRST"] = "현재 지역 먼저 표시"
+L["CURRENT_ZONE_FIRST_DESCRIPTION"] =
+	"지역 순서와 관계없이 지금 있는 지역을 목록 맨 위에 둡니다."
+L["ZONE_GAP"] = "지역 이름 위 여백"
+L["ZONE_GAP_DESCRIPTION"] =
+	"각 지역 이름 위에 약간의 여백을 추가합니다. 퀘스트가 여러 지역에 흩어져 있다면 유용합니다."
+L["QUEST_ORDER"] = "퀘스트 순서"
+L["QUEST_ORDER_DESCRIPTION"] = "각 지역 아래 퀘스트의 순서를 바꿉니다."
+L["SORT_LEVEL_HIGHEST_DEFAULT"] = "레벨, 높은 순 (기본값)"
+L["SORT_LEVEL_LOWEST"] = "레벨, 낮은 순"
+L["COMPLETED_FIRST"] = "완료한 퀘스트 먼저"
+L["COMPLETED_FIRST_DESCRIPTION"] = "완료 보고할 수 있는 퀘스트를 해당 지역의 맨 위로 옮깁니다."
+L["SHOW_QUEST_LEVELS"] = "퀘스트 레벨 표시"
+L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
+	"목록에서 각 퀘스트 이름 앞에 레벨과 유형을 붙입니다. 예를 들어 40레벨 던전 퀘스트는 [40던]으로 표시됩니다."
+L["MARK_UNTRACKED"] = "추적하지 않는 퀘스트 표시"
+L["MARK_UNTRACKED_DESCRIPTION"] =
+	"추적 중인 퀘스트의 체크 %s 표시가 사라지고, 대신 추적하지 않는 퀘스트에 눈 %s 표시가 붙습니다. 거의 모든 퀘스트를 추적한다면 유용합니다."
+L["CLOSE_IN_COMBAT"] = "전투 시작 시 닫기"
+L["CLOSE_IN_COMBAT_DESCRIPTION"] =
+	"전투가 시작되면 퀘스트 목록을 닫아 화면을 가리지 않게 합니다."
+L["WINDOW_SCALE"] = "퀘스트 목록 크기 비율"
+L["WINDOW_SCALE_DESCRIPTION"] =
+	"퀘스트 목록을 크게 또는 작게 만듭니다. 옆의 지도도 함께 커지고 작아집니다."
+L["MAP_SCALE"] = "지도 크기 비율"
+L["MAP_SCALE_DESCRIPTION"] =
+	"퀘스트 목록 옆의 지도를 크게 또는 작게 만듭니다. 퀘스트 목록 크기 비율에 더해 적용됩니다."
+L["RESET_WINDOW"] = "크기 및 위치 초기화"
+L["RESET_WINDOW_DESCRIPTION"] = "퀘스트 목록을 기본 크기와 위치로 되돌립니다."
+L["RESET_WINDOW_CONFIRM"] = "퀘스트 목록을 기본 크기와 위치로 초기화할까요?"
+
+--------------------------------------------------------------------------------
+-- Quality of Life Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUALITY_OF_LIFE"] = "편의 기능"
+L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
+	"퀘스트 목록 밖에서 돕는 작은 기능들로, 퀘스트 NPC 창과 파티원과의 퀘스트 공유를 위한 것입니다."
+L["QUEST_GIVERS_HEADER"] = "퀘스트 NPC"
+L["QUEST_GIVERS_DESCRIPTION"] =
+	"퀘스트 NPC가 여는 창으로, 여기서 퀘스트를 받고 완료 보고합니다."
+L["GIVER_CLEANUP"] = "퀘스트 NPC 창 정리 사용"
+L["GIVER_CLEANUP_DESCRIPTION"] =
+	"퀘스트 NPC 창의 글을 퀘스트 목록과 같은 제목과 줄 간격으로 맞추고, 퀘스트 아래에 Wowhead로 연결되는 퀘스트 ID를 표시합니다."
+L["GIVER_LEVELS"] = "퀘스트 레벨 표시"
+L["GIVER_LEVELS_DESCRIPTION"] =
+	"퀘스트 NPC의 퀘스트 목록에 [40던] 같은 퀘스트 목록의 레벨 태그를 붙입니다."
+L["QUEST_SHARING_HEADER"] = "퀘스트 공유"
+L["QUEST_SHARING_DESCRIPTION"] =
+	"퀘스트 목록에서 지역을 오른쪽 클릭하면 나오는 메뉴의 퀘스트 공유는 그 지역에서 파티원이 받을 수 있는 모든 퀘스트를 하나씩 차례로 제안합니다. 여기서 그 속도와 파티원이 퀘스트를 놓쳤을 때 어떻게 할지 정합니다."
+L["SHARE_INTERVAL"] = "공유 간격(초)"
+L["SHARE_INTERVAL_DESCRIPTION"] =
+	"지역의 오른쪽 클릭 메뉴에 있는 퀘스트 공유가 퀘스트 하나와 다음 퀘스트 사이에 기다리는 시간입니다. 길수록 파티원이 각 퀘스트를 수락할 시간이 늘어납니다."
+L["SHARE_WHISPERS"] = "공유 실패 시 귓속말"
+L["SHARE_WHISPERS_DESCRIPTION"] =
+	"파티원이 다른 일을 하고 있거나, 너무 멀리 있거나, 퀘스트 목록이 가득 찼을 때 공유하려던 퀘스트를 귓속말로 알려 주고 다시 말해 달라고 부탁합니다. 파티원이 받을 수 없는 퀘스트라면 아무것도 보내지 않습니다."
+L["SHARE_WHISPER_EXAMPLE"] = "예시:"
+L["SHARE_WHISPER_EXAMPLE_QUEST_NAME"] = "퀘스트 이름"
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -65,12 +130,44 @@ L["QUEST_SUFFIX_PVP"] = "전"
 L["QUEST_SUFFIX_GROUP"] = "파"
 L["QUEST_SUFFIX_ELITE"] = "정"
 L["QUEST_ID"] = "퀘스트 ID %d"
+L["QUEST_CHAIN"] = "연계 퀘스트"
+L["DAILY_RESET"] = "일일 퀘스트 초기화까지 %s 남았습니다."
+L["WOWHEAD_LINK_TOOLTIP"] = "클릭하면 Wowhead 링크를 받습니다."
+L["WOWHEAD_LINK_COPY"] = "Ctrl+C(Mac에서는 Cmd+C)를 눌러 Wowhead 링크를 복사하세요."
 L["EXPAND_ALL"] = "모두 펼치기"
 L["COLLAPSE_ALL"] = "모두 접기"
 L["TRACK_ALL"] = "모두 추적"
 L["UNTRACK_ALL"] = "모두 추적 해제"
 L["HIDE_MAP"] = "지도 숨기기"
-L["RESIZE_TOOLTIP"] = "끌어서 퀘스트 목록 크기 조절"
+L["TURN_IN_XP"] = "경험치 %s"
+L["TURN_IN_SEPARATOR"] = " / "
+L["TURN_IN_SUMMARY"] = "완료 보상: %s"
+L["TURN_IN_TOOLTIP"] = "완료 보고 가능"
+L["RESIZE_TOOLTIP"] = "끌어서 퀘스트 목록 크기를 조절합니다."
+
+--------------------------------------------------------------------------------
+-- Zone Menu
+--------------------------------------------------------------------------------
+
+L["ZONE_MENU_HINT"] = "오른쪽 클릭으로 추가 옵션"
+L["SHARE_ZONE_QUESTS"] = "퀘스트 %d개 공유"
+L["SHARE_ZONE_QUEST"] = "퀘스트 1개 공유"
+L["SHARE_ZONE_TOOLTIP"] =
+	"공유할 수 있는 퀘스트: %d개 (이 지역 전체 %d개). %d초마다 하나씩 보냅니다."
+L["CHAT_SHARING_ZONE_ONE"] = "%s의 퀘스트 1개를 공유합니다."
+L["CHAT_SHARING_ZONE"] = "퀘스트 %d개를 공유합니다 (%s), %d초마다 하나씩."
+L["WHISPER_SHARE_BUSY"] =
+	"%s 퀘스트를 공유하려고 했는데 바빠 보였어요. 필요하면 여유 있을 때 말해 주세요. 다시 보내 드릴게요."
+L["WHISPER_SHARE_TOO_FAR"] =
+	"%s 퀘스트를 공유하려고 했는데 서로 너무 멀리 있었어요. 필요하면 가까워졌을 때 말해 주세요. 다시 보내 드릴게요."
+L["WHISPER_SHARE_LOG_FULL"] =
+	"%s 퀘스트를 공유하려고 했는데 퀘스트 목록이 가득 차 있었어요. 필요하면 자리를 비운 뒤 말해 주세요. 다시 보내 드릴게요."
+L["ABANDON_GRAY_QUESTS"] = "회색 퀘스트 포기"
+L["ABANDON_GRAY_NONE"] = "이 지역에는 포기할 회색 퀘스트가 없습니다."
+L["ABANDON_GRAY_CONFIRM"] = "회색 퀘스트 %d개를 포기할까요?"
+L["ABANDON_GRAY_CONFIRM_ONE"] = "이 회색 퀘스트를 포기할까요?"
+L["CHAT_ABANDONED_GRAY"] = "회색 퀘스트 %d개를 포기했습니다."
+L["CHAT_ABANDONED_GRAY_ONE"] = "회색 퀘스트 1개를 포기했습니다."
 
 --------------------------------------------------------------------------------
 -- Questie Tracking
@@ -78,4 +175,4 @@ L["RESIZE_TOOLTIP"] = "끌어서 퀘스트 목록 크기 조절"
 
 L["QUESTIE_CANNOT_SHOW"] =
 	"Questie 데이터베이스에 없는 퀘스트라서 Questie 추적기에 %s 퀘스트를 표시할 수 없습니다."
-L["QUESTIE_CANNOT_TRACK"] = "Questie가 아직 이 퀘스트를 추적할 수 없습니다"
+L["QUESTIE_CANNOT_TRACK"] = "Questie가 아직 이 퀘스트를 추적할 수 없습니다."

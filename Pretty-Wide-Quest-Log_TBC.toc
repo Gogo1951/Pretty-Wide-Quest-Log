@@ -61,13 +61,20 @@ Features/Core.lua
 Features/Utilities.lua
 Features/Announcements.lua
 Features/Quest-Display.lua
+Features/Tracking-Mark.lua
+Features/Wowhead-Link.lua
+Features/Quest-Chain.lua
 Features/Quest-Giver.lua
 Features/Window.lua
+Features/Turn-In-Line.lua
 Features/Classic-Tracking.lua
 Features/Classic-Quest-List.lua
 Features/Classic-VoiceOver.lua
 Features/Classic-Quest-Details.lua
 Features/Classic-Quest-Log.lua
+Features/Classic-Zone-Actions.lua
+Features/Zone-Menu.lua
+Features/Share-Reminders.lua
 Features/Quest-Map.xml
 Features/Quest-Map.lua
 Features/Questie-Map.xml
@@ -87,6 +94,8 @@ Diagnostics/Report-Runner.lua
 # Options
 Options/Options-Utilities.lua
 Options/Options-General.lua
+Options/Options-Quest-Log.lua
+Options/Options-Quality-of-Life.lua
 Options/Options-Profiles.lua
 Diagnostics/Options-Diagnostics.lua
 Options/Options.lua

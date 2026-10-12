@@ -65,6 +65,21 @@ local function GetQuestTag(questID)
 	end
 end
 
+--[[
+	The color the game's own quest log gives a quest: how hard the server rates it for the player, which
+	can differ from what the quest's level alone suggests. Falls back to the level, which also grays out a
+	quest disabled for the session, when the server gives no rating
+]]
+local function GetQuestColor(data)
+	local difficulty = not C_QuestLog.IsQuestDisabledForSession(data.questID)
+		and C_PlayerInfo.GetContentDifficultyQuestForPlayer
+		and C_PlayerInfo.GetContentDifficultyQuestForPlayer(data.questID)
+	if difficulty and GetDifficultyColor then
+		return GetDifficultyColor(difficulty)
+	end
+	return GetQuestDifficultyColor(data.difficultyLevel or data.level, data.isScaling, data.questID)
+end
+
 local function ColorRow(row, highlighted)
 	local data = row.data
 	if (not data) or data.isSpacer then
@@ -74,7 +89,7 @@ local function ColorRow(row, highlighted)
 	if data.isHeader then
 		color, highlight = QuestDifficultyColors.header, QuestDifficultyHighlightColors.header
 	else
-		color, highlight = GetQuestDifficultyColor(data.difficultyLevel or data.level, data.isScaling, data.questID)
+		color, highlight = GetQuestColor(data)
 	end
 	local text = (highlighted or (data.questID and data.questID == state.selectedQuestID)) and highlight or color
 	row.Text:SetTextColor(text.r, text.g, text.b)
@@ -106,7 +121,10 @@ local function Row_OnClick(self, button)
 		return
 	end
 
-	if data.isHeader then
+	if data.isHeader and button == "RightButton" then
+		ns.HideZoneMenuHint(self)
+		ns.OpenZoneMenu(self, data.title)
+	elseif data.isHeader then
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		ToggleHeader(data.questLogIndex)
 	elseif ChatFrameUtil and ChatFrameUtil.TryInsertQuestLinkForQuestID(data.questID) then
@@ -121,12 +139,17 @@ local function Row_OnClick(self, button)
 	end
 end
 
+-- A zone name says on hover that a right-click opens the zone menu (Zone-Menu.lua)
 local function Row_OnEnter(self)
 	ColorRow(self, true)
+	if self.data and self.data.isHeader then
+		ns.ShowZoneMenuHint(self)
+	end
 end
 
 local function Row_OnLeave(self)
 	ColorRow(self, false)
+	ns.HideZoneMenuHint(self)
 end
 
 local function SetupRow(row)
@@ -190,7 +213,7 @@ local function InitRow(row, data)
 		row.Text:SetPoint("LEFT", LAYOUT.HEADER_TEXT_X, 0)
 		row.Icon:SetTexture(data.isCollapsed and PLUS_TEXTURE or MINUS_TEXTURE)
 		row.Icon:Show()
-		row.Text:SetText(data.title)
+		row.Text:SetText(ns.ZoneHeaderText(data.title))
 		row.Selected:Hide()
 	else
 		local questID = data.questID
@@ -200,7 +223,7 @@ local function InitRow(row, data)
 		row.Text:SetPoint("LEFT", textX, 0)
 		row.Icon:Hide()
 		row.Text:SetText(
-			ns.LevelTitle(
+			ns.QuestListTitle(
 				data.difficultyLevel or data.level,
 				data.title,
 				ns.QuestSuffix(tagDetails and tagDetails.tagID, elite)
@@ -237,6 +260,7 @@ ScrollUtil.InitScrollBoxListWithScrollBar(listBox, listBar, listView)
 
 local expandButton, trackButton = ns.CreateListButtons(frame)
 expandButton:SetPoint("LEFT", frame, "TOPLEFT", LAYOUT.LIST_BUTTONS_X, LAYOUT.LIST_BUTTONS_Y)
+ns.listButtons = { expandButton, trackButton } -- The map's Show Map button follows them (Quest-Map.lua)
 
 expandButton:SetScript("OnClick", function(self)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -318,6 +342,8 @@ local function BuildEntries()
 			entry.sortLevel = entry.difficultyLevel or entry.level or 0
 			entry.sortIndex = entry.questLogIndex
 			entry.sortKey = ns.NameSortKey(entry.title)
+			entry.isComplete = C_QuestLog.IsComplete(entry.questID)
+			entry.zone = header and header.title
 			if header then
 				header.quests[#header.quests + 1] = entry
 			else
@@ -326,13 +352,13 @@ local function BuildEntries()
 		end
 	end
 
-	local questSort = ns.db.profile.questSort
-	ns.SortQuests(entries, questSort) -- Quests outside any zone
+	local questSort, completedFirst = ns.db.profile.questSort, ns.db.profile.completedFirst
+	ns.SortQuests(entries, questSort, completedFirst) -- Quests outside any zone
 	for _, zone in ipairs(zones) do
 		zone.averageLevel = ns.AverageLevel(zone.quests)
-		ns.SortQuests(zone.quests, questSort)
+		ns.SortQuests(zone.quests, questSort, completedFirst)
 	end
-	zoneOrder = ns.SortZones(zones, ns.db.profile.zoneSort, zoneOrder)
+	zoneOrder = ns.SortZones(zones, ns.db.profile.zoneSort, ns.db.profile.currentZoneFirst, zoneOrder)
 
 	local quests = {}
 	for _, quest in ipairs(entries) do
@@ -414,10 +440,20 @@ function ns.SetQuestListHeight(height)
 	listBox:SetHeight(height)
 end
 
+local turnInLine = ns.CreateTurnInLine(frame)
+
 -- Rebuilds the list and settles the selection; returns how many quests the log holds
 function ns.UpdateQuestList()
 	local entries, quests, allCollapsed = BuildEntries()
 	ValidateSelection(entries, quests)
+
+	local ready = {}
+	for _, quest in ipairs(quests) do
+		if quest.isComplete then
+			ready[#ready + 1] = quest
+		end
+	end
+	ns.UpdateTurnInLine(turnInLine, ready)
 
 	noQuestsText:SetShown(#quests == 0)
 	UpdateListButtons(quests, allCollapsed)

@@ -20,13 +20,11 @@ A bigger, better quest log that gives you more room to read and more information
 
 ## Features
 
-📖 **Read More at Once** // See your entire quest list and the full details of the selected quest side by side. Objectives, rewards, descriptions, and everything else stay on screen together.
+📖 **Everything at a Glance** // See your whole quest list and every detail of the selected quest side by side, with level, dungeon, raid, elite, group, and PvP tags to size up a quest before diving in.
 
-🏷️ **All the Details, at a Glance** // Quest levels, dungeon and raid indicators, elite and group tags, and PvP information help you size up a quest before diving in.
+🗂️ **Organized and Easy to Scan** // Sort zones and quests by level or name, with roomier lines, cleaner headings, and checkmarks on finished objectives, all true to Blizzard's look.
 
-🗂️ **Organize Your Quest Log** // Make it yours. Sort zones alphabetically or by quest level, then sort quests by level or name to keep your current priorities front and center.
-
-💎 **A Cleaner Aesthetic** // Slightly roomier lines, cleaner headings, aligned objective counts, and checkmarks for completed objectives make the quest log easier to scan while staying true to Blizzard's original design.
+⚡ **Quality of Life Automation** // Share a whole zone's quests with your party, drop a zone's gray quests in one click, and automatically whisper anyone who misses a share.
 
 🤝 **Plays Nice With Other Addons** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken while keeping the quest log feeling like part of the default UI.
 
@@ -35,18 +33,26 @@ A bigger, better quest log that gives you more room to read and more information
 1. Install the add-on, ideally using [CurseForge](https://www.curseforge.com/wow/addons/pretty-wide-quest-log) or [Wago](https://addons.wago.io/addons/pretty-wide-quest-log).
 2. Press your quest log key (L) or click the quest log button on the micro menu.
 3. Drag the grip in the bottom-right corner to make the window as tall as you like.
-4. Type `/wide` to pick how zones and quests are sorted.
+4. Type `/pwql` to pick how zones and quests are sorted.
 5. _"Your quest log's sorted. Now go find Mankrik's wife."_
+
+## How It Works
 
 ### Quest Chains
 
-Supports quest chains!
+Never lose your place in a long chain again. With Questie installed, the selected quest's details list every step of its chain, so you know what came before and what's still ahead.
+
+* ✅ Steps you've turned in are checked off.
+* 📍 The step you're on is highlighted.
+* 🔍 Hover any step for Questie's tooltip on it.
 
 <img width="800" src="https://github.com/user-attachments/assets/b36f0e4d-5cb5-42b3-80ad-10655b2e08e3" />
 
 ### Options
 
-* **Pretty Wide Quest Log** // Zone and quest order, a space above zone names, marking untracked quests instead of tracked ones, the welcome message, Reset Size and Position, and on WoW Forever, which quest log the key opens.
+* **Pretty Wide Quest Log** // Turn the quest log and the quality of life helpers on or off, plus the welcome message.
+* **Quest Log** // Sort zones and quests your way, choose what each row shows, and size the window and map to fit your screen.
+* **Quality of Life** // A cleaner quest giver window and an easier way to share a whole zone's quests with your party.
 * **Profiles** // Reset or swap your settings.
 * **Diagnostic Tools** // Reports to attach when you file a bug.
 

@@ -57,6 +57,7 @@ questIDRow:SetSize(LAYOUT.CONTENT_WIDTH, 14)
 questIDRow.Text = questIDRow:CreateFontString(nil, "ARTWORK", "QuestFontNormalSmall")
 questIDRow.Text:SetPoint("RIGHT")
 questIDRow.Text:SetJustifyH("RIGHT")
+ns.LinkQuestIDToWowhead(questIDRow, questIDRow.Text, C_QuestLog.GetSelectedQuest)
 
 local function QuestInfo_ShowQuestID()
 	ns.StyleQuestID(questIDRow.Text, C_QuestLog.GetSelectedQuest(), QuestInfoDescriptionText)
@@ -64,6 +65,15 @@ local function QuestInfo_ShowQuestID()
 	questIDRow.Text:SetPoint("RIGHT", -ns.TwoSpacesWide(QuestInfoDescriptionText), 0)
 	questIDRow:Show()
 	return questIDRow
+end
+
+-- The quest chain (Quest-Chain.lua), shown between the rewards and the quest ID when there is one
+local chainSection = ns.CreateQuestChainSection(detailChild)
+local function QuestInfo_ShowQuestChain()
+	local questID = C_QuestLog.GetSelectedQuest()
+	if ns.UpdateQuestChainSection(chainSection, questID, QuestInfoDescriptionHeader, QuestInfoDescriptionText) then
+		return chainSection
+	end
 end
 
 --[[
@@ -98,10 +108,18 @@ do
 			break
 		end
 	end
+	for index = 1, #elements, 3 do
+		if elements[index] == QuestInfo_ShowQuestID then
+			tinsert(elements, index, -LAYOUT.HEADING_SPACE_ABOVE)
+			tinsert(elements, index, 0)
+			tinsert(elements, index, QuestInfo_ShowQuestChain)
+			break
+		end
+	end
 end
 
 -- Gold and experience right-aligned two spaces in from the right edge of a text column width wide, like the objective counts
-local function AlignRewardNumbers(width)
+function ns.AlignRewardNumbers(width)
 	local rewardsFrame = QuestInfoRewardsFrame
 	local right = width - ns.TwoSpacesWide(QuestInfoDescriptionText)
 	rewardsFrame.MoneyFrame:ClearAllPoints()
@@ -117,74 +135,11 @@ local function AlignRewardNumbers(width)
 end
 
 --[[
-	The quest giver window gets the quest ID too, right-aligned under its last section the way the quest
-	details have it. It lives on whichever of the window's pages is showing
-]]
-local questGiverID = QuestDetailScrollChildFrame:CreateFontString(nil, "ARTWORK")
-questGiverID:SetJustifyH("RIGHT")
-
-local function IsQuestGiverPage(parentFrame)
-	return parentFrame == QuestDetailScrollChildFrame or parentFrame == QuestRewardScrollChildFrame
-end
-
-local function IsOn(region, page)
-	local parent = region:GetParent()
-	while parent and parent ~= page do
-		parent = parent:GetParent()
-	end
-	return parent == page
-end
-
---[[
-	The last of the page's pieces Blizzard showed, which the quest ID goes under. A piece left showing
-	from the quest details (the spacer, say) is on the quest log, not this page, so it doesn't count
-]]
-local LAST_PIECES = {
-	"QuestInfoSpacerFrame",
-	"QuestInfoRewardsFrame",
-	"QuestInfoObjectivesText",
-	"QuestInfoRewardText",
-	"QuestInfoDescriptionText",
-}
-local function LastShown(page)
-	for _, name in ipairs(LAST_PIECES) do
-		local region = _G[name]
-		if region and region:IsShown() and IsOn(region, page) then
-			return region
-		end
-	end
-end
-
-local function ShowQuestGiverID(parentFrame, width)
-	local questID = GetQuestID()
-	local above = LastShown(parentFrame)
-	if (not questID) or (questID == 0) or not above then
-		questGiverID:Hide()
-		return
-	end
-	questGiverID:SetParent(parentFrame)
-	ns.StyleQuestID(questGiverID, questID, QuestInfoDescriptionText)
-	questGiverID:ClearAllPoints()
-	questGiverID:SetPoint(
-		"TOPRIGHT",
-		above,
-		"BOTTOMLEFT",
-		width - ns.TwoSpacesWide(QuestInfoDescriptionText),
-		-LAYOUT.QUEST_ID_GAP
-	)
-	questGiverID:Show()
-	local scrollFrame = parentFrame:GetParent()
-	if scrollFrame and scrollFrame.UpdateScrollChildRect then
-		scrollFrame:UpdateScrollChildRect() -- So the quest ID scrolls into view
-	end
-end
-
---[[
 	The quest giver window and the map's quest details use the same objective lines and reward frames,
 	laid out Blizzard's way, so the objective lines go back to Blizzard's font, without this add-on's
 	count column, whenever anything else calls QuestInfo_Display. The rest of the text is set the same
-	way everywhere (ns.StyleQuestInfo), and the quest giver window gets the quest details' gold,
-	experience and quest ID; the map keeps Blizzard's
+	way everywhere (ns.StyleQuestInfo). The quest giver window gets the quest details' gold, experience
+	and quest ID (Forever-Quest-Giver.lua); the map keeps Blizzard's
 ]]
 local function LayOutSharedPieces(template, parentFrame)
 	if parentFrame == detailChild then
@@ -196,13 +151,9 @@ local function LayOutSharedPieces(template, parentFrame)
 		line:SetFontObject(QuestFontNormalSmall)
 		line:SetTextColor(red, green, blue, alpha)
 	end
-	local width = template and template.contentWidth
-	if IsQuestGiverPage(parentFrame) and width then
-		AlignRewardNumbers(width)
-		ShowQuestGiverID(parentFrame, width)
+	if ns.LayOutQuestGiverPage(template, parentFrame) then
 		return
 	end
-	questGiverID:Hide()
 	local rewardsFrame = QuestInfoRewardsFrame
 	rewardsFrame.MoneyFrame:ClearAllPoints()
 	rewardsFrame.MoneyFrame:SetPoint("LEFT", rewardsFrame.ItemReceiveText, "RIGHT", 15, 0)
@@ -266,7 +217,7 @@ function ns.DisplayQuestDetails(resetScroll)
 		end
 	end
 
-	AlignRewardNumbers(LAYOUT.CONTENT_WIDTH) -- See LayOutSharedPieces
+	ns.AlignRewardNumbers(LAYOUT.CONTENT_WIDTH) -- See LayOutSharedPieces
 
 	--[[
 		The same space under the Rewards heading as under Description. Blizzard hangs the first reward line
