@@ -56,6 +56,8 @@ Never lose your place in a long chain again. With Questie installed, the selecte
 * **Profiles** // Reset or swap your settings.
 * **Diagnostic Tools** // Reports to attach when you file a bug.
 
+<img width="800" src="https://github.com/user-attachments/assets/2da25427-8945-488e-b4de-a728aac1216e" />
+
 ## Testing & Localization Status
 
 🔴 World of Warcraft // 12.1.0
