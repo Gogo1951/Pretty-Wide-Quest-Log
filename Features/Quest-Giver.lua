@@ -7,11 +7,18 @@ local _, ns = ...
 
 --[[
 	The quest giver window's styling, here and in Forever-Quest-Giver.lua, runs while the Quality of Life
-	switch and giverCleanup are both on
+	switch and giverCleanup are both on. It never follows the Quest Log switch, so it works alongside
+	Blizzard's quest log too
 ]]
 function ns.IsQuestGiverCleanupOn()
 	local profile = ns.db and ns.db.profile
 	return profile and profile.enableQualityOfLife and profile.giverCleanup or false
+end
+
+-- Whether a QuestInfo_Display parent is one of the quest giver window's pages
+function ns.IsQuestGiverPage(parentFrame)
+	return parentFrame ~= nil
+		and (parentFrame == QuestDetailScrollChildFrame or parentFrame == QuestRewardScrollChildFrame)
 end
 
 --------------------------------------------------------------------------------
@@ -30,24 +37,6 @@ local QUEST_GIVER_PAGES = {
 	"QuestRewardScrollChildFrame",
 }
 
--- Each piece of text's font and line spacing as Blizzard left it, kept the first time it's styled
-local blizzardStyle = {}
-
-local function RestoreBlizzardStyle(region)
-	local style = blizzardStyle[region]
-	if not style then
-		return
-	end
-	local red, green, blue, alpha = region:GetTextColor()
-	if style.fontObject then
-		region:SetFontObject(style.fontObject)
-	else
-		region:SetFont(style.file, style.size, style.flags)
-	end
-	region:SetTextColor(red, green, blue, alpha)
-	region:SetSpacing(style.spacing)
-end
-
 local function StyleQuestGiverPages(on)
 	local headingFile = QuestTitleFont:GetFont()
 	for _, name in ipairs(QUEST_GIVER_PAGES) do
@@ -55,22 +44,13 @@ local function StyleQuestGiverPages(on)
 		for _, region in ipairs(page and { page:GetRegions() } or {}) do
 			if region:GetObjectType() == "FontString" then
 				if on then
-					if not blizzardStyle[region] then
-						local file, size, flags = region:GetFont()
-						blizzardStyle[region] = {
-							fontObject = region:GetFontObject(),
-							file = file,
-							size = size,
-							flags = flags,
-							spacing = region:GetSpacing(),
-						}
-					end
+					ns.RememberBlizzardStyle(region)
 					local _, relativeTo = region:GetPoint(1)
 					local isHeading = region:GetFont() == headingFile
 					local isTitle = isHeading and ((not relativeTo) or (relativeTo == page))
 					ns.StyleQuestText(region, isHeading and not isTitle)
 				else
-					RestoreBlizzardStyle(region)
+					ns.RestoreBlizzardStyle(region)
 				end
 			end
 		end
@@ -78,12 +58,23 @@ local function StyleQuestGiverPages(on)
 end
 
 --[[
-	Styled as the saved settings load, before Blizzard first lays any of them out, so its measurements
-	match, and again when the switch or the profile changes. A window already open is laid out to match
-	the next time it opens
+	The window's own pages and WoW Forever's shared QuestInfo text, styled with the cleanup on and put
+	back to Blizzard's with it off. Done as the saved settings load, before Blizzard first lays any of
+	them out, so its measurements match, and again when the switch or the profile changes. A window
+	already open is laid out to match the next time it opens; WoW Forever's quest log, which restyles
+	the shared text before every repaint, repaints at once
 ]]
 function ns.ApplyQuestGiverCleanup()
-	StyleQuestGiverPages(ns.IsQuestGiverCleanupOn())
+	local on = ns.IsQuestGiverCleanupOn()
+	StyleQuestGiverPages(on)
+	if on then
+		ns.StyleQuestInfo()
+	else
+		ns.RestoreQuestInfoStyle()
+	end
+	if ns.RequestUpdate then
+		ns.RequestUpdate()
+	end
 end
 
 --------------------------------------------------------------------------------
@@ -241,6 +232,10 @@ if progressPage and QuestFrameProgressItems_Update then
 			end
 			questID:Hide()
 			return
+		end
+		-- The quest log files set this spacing, and on Classic Era and TBC they don't run with the Quest Log switch off
+		if not LAYOUT.QUEST_ID_GAP then
+			ns.SetTextSpacing(QuestProgressText)
 		end
 		if heading:IsShown() and heading:GetNumPoints() > 0 then
 			MoveTo(heading, -LAYOUT.HEADING_SPACE_ABOVE)

@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"A bigger, better quest log that gives you more room to read and more information at a glance. Keep Blizzard's familiar layout while seeing quest levels, useful tags, objectives, rewards, and your entire quest list side by side."
+	"A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, VoiceOver, and ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Enable Welcome Message"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log greeting when you log in."
 L["OPTIONS_FEATURES_HEADER"] = "Features"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Swaps Blizzard's quest log for the wide one, with the map beside it. Turn it off to use Blizzard's quest log instead. Takes effect after a reload."
 L["ENABLE_QUALITY_OF_LIFE"] = "Enable Quality of Life"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Turns on the quest giver window cleanup, your own pace for shared quests, and whispers when a quest share fails. Turn it off to get Blizzard's quest giver window back and share at the default pace."
+	"Turns on the quest giver window cleanup, your own pace for shared quests, whispers when a quest share fails, and dungeon quest announcements and sharing. Turn it off to get Blizzard's quest giver window back and share at the default pace."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Enable Quest Log Cleanup takes effect after a reload, offered when you close the Options Interface."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
@@ -69,7 +69,7 @@ L["QUEST_ORDER"] = "Quest Order"
 L["QUEST_ORDER_DESCRIPTION"] = "Changes the order of the quests under each zone."
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "Level, Highest First (Default)"
 L["SORT_LEVEL_LOWEST"] = "Level, Lowest First"
-L["COMPLETED_FIRST"] = "Completed Quests First"
+L["COMPLETED_FIRST"] = "Show Completed Quests First"
 L["COMPLETED_FIRST_DESCRIPTION"] = "Moves quests that are ready to turn in to the top of their zone."
 L["SHOW_QUEST_LEVELS"] = "Show Quest Levels"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
@@ -93,10 +93,10 @@ L["RESET_WINDOW_CONFIRM"] = "Reset the quest log to its default size and positio
 
 L["TAB_QUALITY_OF_LIFE"] = "Quality of Life"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Small helpers outside the quest log itself, for the quest giver window and for sharing quests with your party."
+	"Small helpers outside the quest log itself, for the quest giver window, for sharing quests with your party, and for dungeons."
 L["QUEST_GIVERS_HEADER"] = "Quest Givers"
 L["QUEST_GIVERS_DESCRIPTION"] = "The window a quest giver opens, where you pick up quests and turn them in."
-L["GIVER_CLEANUP"] = "Enable Quest Giver Window Cleanup"
+L["GIVER_CLEANUP"] = "Quest Giver Window Cleanup"
 L["GIVER_CLEANUP_DESCRIPTION"] =
 	"Sets the quest giver window's text like the quest log's, with the same headings and line spacing, and shows the quest ID, linked to Wowhead, under the quest."
 L["GIVER_LEVELS"] = "Show Quest Levels"
@@ -106,12 +106,21 @@ L["QUEST_SHARING_DESCRIPTION"] =
 	"Share Quests, on a zone's right-click menu in the quest log, offers your party every quest in that zone they can take, one after another. These set the pace, and what happens when a party member misses one."
 L["SHARE_INTERVAL"] = "Seconds Between Shares"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"How long Share Quests, on a zone's right-click menu, waits between one quest and the next. Longer gives your party more time to accept each one."
+	"How long to wait between one shared quest and the next, for Share Quests and dungeon quest sharing. Longer gives your party more time to accept each one."
 L["SHARE_WHISPERS"] = "Whisper When a Share Fails"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"When a party member is busy, too far away, or has a full quest log, whispers them which quest you tried to share and asks them to remind you. Nothing is sent when they can't take the quest."
-L["SHARE_WHISPER_EXAMPLE"] = "Example:"
-L["SHARE_WHISPER_EXAMPLE_QUEST_NAME"] = "Quest Name"
+L["OPTIONS_EXAMPLE"] = "Example:"
+L["OPTIONS_EXAMPLE_QUEST_NAME"] = "Quest Name"
+L["DUNGEON_QUESTS_HEADER"] = "Dungeon Quests"
+L["DUNGEON_QUESTS_DESCRIPTION"] =
+	"These kick in when you enter a dungeon or raid with your group, once per group for each dungeon. A quest counts if it's listed under the dungeon in your quest log or, with Questie, if any of its objectives are inside, which catches class quests too."
+L["DUNGEON_ANNOUNCE"] = "Automatic Dungeon Quest Announcements"
+L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
+	"Tells your group which of your quests still need doing in the dungeon you just entered, so everyone knows what to look out for. Quests ready to turn in are left out."
+L["DUNGEON_SHARE"] = "Automatic Dungeon Quest Sharing"
+L["DUNGEON_SHARE_DESCRIPTION"] =
+	"Shares every quest for the dungeon that the game lets you share, at the pace set under Quest Sharing. Anyone a share misses gets the usual whisper, so they can ask again. Shares again whenever someone joins or leaves the group."
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -145,21 +154,32 @@ L["RESIZE_TOOLTIP"] = "Drag to resize the quest log."
 L["ZONE_MENU_HINT"] = "Right-Click for More Options"
 L["SHARE_ZONE_QUESTS"] = "Share %d Quests"
 L["SHARE_ZONE_QUEST"] = "Share 1 Quest"
-L["SHARE_ZONE_TOOLTIP"] = "%d of the %d quests in this zone can be shared. They go out one every %d seconds."
+L["SHARE_ZONE_QUESTS_TOOLTIP"] =
+	"Offers your party the quests in this zone the game lets you share, one every %d seconds."
+L["SHARE_ZONE_QUEST_TOOLTIP"] = "Offers your party the one quest in this zone the game lets you share."
 L["CHAT_SHARING_ZONE_ONE"] = "Sharing 1 quest from %s."
 L["CHAT_SHARING_ZONE"] = "Sharing %d quests from %s, one every %d seconds."
-L["WHISPER_SHARE_BUSY"] =
-	"I tried to share %s with you, but you looked busy. If you'd like it, just give me a shout when you're free and I'll send it again."
-L["WHISPER_SHARE_TOO_FAR"] =
-	"I tried to share %s with you, but we were too far apart. If you'd like it, just give me a shout when we're closer and I'll send it again."
-L["WHISPER_SHARE_LOG_FULL"] =
-	"I tried to share %s with you, but your quest log was full. If you'd like it, just give me a shout once you've made room and I'll send it again."
 L["ABANDON_GRAY_QUESTS"] = "Abandon Gray Quests"
 L["ABANDON_GRAY_NONE"] = "This zone has no gray quests to abandon."
 L["ABANDON_GRAY_CONFIRM"] = "Abandon these %d gray quests?"
 L["ABANDON_GRAY_CONFIRM_ONE"] = "Abandon this gray quest?"
 L["CHAT_ABANDONED_GRAY"] = "Abandoned %d gray quests."
 L["CHAT_ABANDONED_GRAY_ONE"] = "Abandoned 1 gray quest."
+
+--------------------------------------------------------------------------------
+-- Messages to Other Players
+--------------------------------------------------------------------------------
+
+L["WHISPER_SHARE_BUSY"] =
+	"I tried to share %s with you, but you looked busy. If you'd like it, just give me a shout when you're free and I'll send it again."
+L["WHISPER_SHARE_TOO_FAR"] =
+	"I tried to share %s with you, but we were too far apart. If you'd like it, just give me a shout when we're closer and I'll send it again."
+L["WHISPER_SHARE_LOG_FULL"] =
+	"I tried to share %s with you, but your quest log was full. If you'd like it, just give me a shout once you've made room and I'll send it again."
+L["DUNGEON_QUESTS_ANNOUNCE"] = "I have %d quests to do here: %s"
+L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "I have 1 quest to do here: %s"
+L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"
+L["DUNGEON_QUESTS_SEPARATOR"] = ", "
 
 --------------------------------------------------------------------------------
 -- Questie Tracking

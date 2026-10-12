@@ -3,7 +3,7 @@ local _, ns = ...
 --[[
 	Every client: when a quest share fails for a reason the party member can fix, a whisper telling them
 	which quest it was and asking them to remind you. Failures they can't fix (not eligible, already on it,
-	already done) get none.
+	already done) get none. Party only: nothing is whispered in a raid, a battleground or an arena.
 ]]
 
 --------------------------------------------------------------------------------
@@ -67,6 +67,15 @@ end)
 -- Whispers
 --------------------------------------------------------------------------------
 
+-- Whispers go out in a party only: never in a raid, a battleground or an arena
+local function InPartyOnly()
+	if not IsInGroup() or IsInRaid() then
+		return false
+	end
+	local _, instanceType = IsInInstance()
+	return instanceType ~= "pvp" and instanceType ~= "arena"
+end
+
 -- Cuts text to at most maxBytes without splitting a character, the chat limit being in bytes
 local function TrimToBytes(text, maxBytes)
 	if #text <= maxBytes then
@@ -77,7 +86,7 @@ local function TrimToBytes(text, maxBytes)
 end
 
 --[[
-	The ways a whisper can name a quest, best first: Questie's quest link (the game's own, clickable for
+	The ways a message can name a quest, best first: Questie's quest link (the game's own, clickable for
 	anyone), then Questie's bracketed text, which Questie turns into a link for players who run it
 ]]
 local function QuestReferences(questID)
@@ -95,21 +104,29 @@ local function QuestReferences(questID)
 end
 
 --[[
-	How the whisper names a quest: the best way that fits the chat limit; without Questie, or when nothing
-	else fits, its title in brackets, shortened if need be, so the whisper is never rejected
+	How a message names a quest, build(reference) being the message with it: the best way that fits the
+	chat limit; without Questie, or when nothing else fits, its title in brackets, shortened if need be,
+	so the message is never rejected. The dungeon announcement names its quests this way too
 ]]
-function ns.ShareWhisperQuestReference(whisperKey, questID, title)
+function ns.FittingQuestReference(build, questID, title)
 	for _, reference in ipairs(QuestReferences(questID)) do
-		if #ns:BuildAnnounceMessage(whisperKey, reference) <= ns.CHAT_MESSAGE_MAX_LENGTH then
+		if #build(reference) <= ns.CHAT_MESSAGE_MAX_LENGTH then
 			return reference
 		end
 	end
 	local reference = "[" .. title .. "]"
-	local over = #ns:BuildAnnounceMessage(whisperKey, reference) - ns.CHAT_MESSAGE_MAX_LENGTH
+	local over = #build(reference) - ns.CHAT_MESSAGE_MAX_LENGTH
 	if over > 0 then
 		reference = "[" .. TrimToBytes(title, #title - over - 3) .. "...]"
 	end
 	return reference
+end
+
+-- How the whisper names a quest
+function ns.ShareWhisperQuestReference(whisperKey, questID, title)
+	return ns.FittingQuestReference(function(reference)
+		return ns:BuildAnnounceMessage(whisperKey, reference)
+	end, questID, title)
 end
 
 -- The whisper for a quest, as sent
@@ -126,7 +143,7 @@ function ns:OnChatMsgSystem(message)
 	if not (profile.enableQualityOfLife and profile.shareWhispers and lastShare.time and message) then
 		return
 	end
-	if GetTime() - lastShare.time > ns.GetShareInterval() then
+	if GetTime() - lastShare.time > ns.GetShareInterval() or not InPartyOnly() then
 		return
 	end
 	for _, result in ipairs(resultPatterns) do

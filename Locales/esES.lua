@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Un registro de misiones más grande y mejor que te da más espacio para leer y más información de un vistazo. Conserva el diseño habitual de Blizzard mientras ves, lado a lado, los niveles de las misiones, etiquetas útiles, objetivos, recompensas y toda tu lista de misiones."
+	"Un registro de misiones ancho, redimensionable y de doble panel, con niveles de misión, etiquetas de mazmorra y élite, recompensas, cadenas de misiones y un mapa para cada misión. Comparte misiones con tu grupo y anuncia automáticamente las misiones de mazmorra. Funciona con Questie, VoiceOver y ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activar mensaje de bienvenida"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Muestra el saludo de Pretty Wide Quest Log al iniciar sesión."
 L["OPTIONS_FEATURES_HEADER"] = "Funciones"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Cambia el registro de misiones de Blizzard por el ancho, con el mapa al lado. Desactívalo para usar el registro de misiones de Blizzard. Surte efecto tras recargar."
 L["ENABLE_QUALITY_OF_LIFE"] = "Activar mejoras de comodidad"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Activa la ventana de misiones del PNJ ordenada, tu propio ritmo al compartir misiones y los susurros cuando falla un envío. Desactívalo para recuperar la ventana de misiones del PNJ de Blizzard y compartir al ritmo predeterminado."
+	"Activa la ventana de misiones del PNJ ordenada, tu propio ritmo al compartir misiones, los susurros cuando falla un envío y el anuncio y envío de misiones de mazmorra. Desactívalo para recuperar la ventana de misiones del PNJ de Blizzard y compartir al ritmo predeterminado."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activar registro de misiones ordenado surte efecto tras recargar, algo que se te ofrecerá al cerrar la interfaz de opciones."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia de registro de misiones tras recargar. ¿Recargar ahora?"
@@ -70,7 +70,7 @@ L["QUEST_ORDER"] = "Orden de misiones"
 L["QUEST_ORDER_DESCRIPTION"] = "Cambia el orden de las misiones dentro de cada zona."
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "Nivel, el más alto primero (predeterminado)"
 L["SORT_LEVEL_LOWEST"] = "Nivel, el más bajo primero"
-L["COMPLETED_FIRST"] = "Misiones completadas primero"
+L["COMPLETED_FIRST"] = "Mostrar primero las misiones completadas"
 L["COMPLETED_FIRST_DESCRIPTION"] = "Sube al principio de su zona las misiones que ya puedes entregar."
 L["SHOW_QUEST_LEVELS"] = "Mostrar niveles de misión"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
@@ -97,10 +97,10 @@ L["RESET_WINDOW_CONFIRM"] = "¿Restablecer el registro de misiones a su tamaño 
 
 L["TAB_QUALITY_OF_LIFE"] = "Mejoras de comodidad"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Pequeñas ayudas fuera del propio registro de misiones, para la ventana de misiones del PNJ y para compartir misiones con tu grupo."
+	"Pequeñas ayudas fuera del propio registro de misiones, para la ventana de misiones del PNJ, para compartir misiones con tu grupo y para las mazmorras."
 L["QUEST_GIVERS_HEADER"] = "PNJ de misiones"
 L["QUEST_GIVERS_DESCRIPTION"] = "La ventana que abre un PNJ de misiones, donde aceptas y entregas misiones."
-L["GIVER_CLEANUP"] = "Activar ventana de misiones del PNJ ordenada"
+L["GIVER_CLEANUP"] = "Ventana de misiones del PNJ ordenada"
 L["GIVER_CLEANUP_DESCRIPTION"] =
 	"Da al texto de la ventana de misiones del PNJ el mismo formato que el del registro de misiones, con los mismos títulos e interlineado, y muestra bajo la misión su ID, enlazado a Wowhead."
 L["GIVER_LEVELS"] = "Mostrar niveles de misión"
@@ -111,12 +111,21 @@ L["QUEST_SHARING_DESCRIPTION"] =
 	"Compartir misiones, en el menú de clic derecho de una zona del registro de misiones, ofrece a tu grupo una tras otra todas las misiones de esa zona que pueden aceptar. Estas opciones fijan el ritmo y lo que pasa cuando a un miembro del grupo se le escapa una."
 L["SHARE_INTERVAL"] = "Segundos entre envíos"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"Cuánto espera Compartir misiones, en el menú de clic derecho de una zona, entre una misión y la siguiente. Cuanto más largo, más tiempo tiene tu grupo para aceptar cada una."
+	"Cuánto esperar entre una misión compartida y la siguiente, tanto en Compartir misiones como en el envío automático de misiones de mazmorra. Cuanto más largo, más tiempo tiene tu grupo para aceptar cada una."
 L["SHARE_WHISPERS"] = "Susurrar cuando falle un envío"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Cuando un miembro del grupo está ocupado, demasiado lejos o tiene el registro de misiones lleno, le susurra qué misión intentaste compartir y le pide que te lo recuerde. No se envía nada si no puede aceptar la misión."
-L["SHARE_WHISPER_EXAMPLE"] = "Ejemplo:"
-L["SHARE_WHISPER_EXAMPLE_QUEST_NAME"] = "Nombre de la misión"
+L["OPTIONS_EXAMPLE"] = "Ejemplo:"
+L["OPTIONS_EXAMPLE_QUEST_NAME"] = "Nombre de la misión"
+L["DUNGEON_QUESTS_HEADER"] = "Misiones de mazmorra"
+L["DUNGEON_QUESTS_DESCRIPTION"] =
+	"Se activan al entrar en una mazmorra o banda con tu grupo, una vez por grupo en cada mazmorra. Una misión cuenta si aparece bajo la mazmorra en tu registro de misiones o, con Questie, si alguno de sus objetivos está dentro, lo que incluye también las misiones de clase."
+L["DUNGEON_ANNOUNCE"] = "Anuncios automáticos de misiones de mazmorra"
+L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
+	"Le dice a tu grupo qué misiones te quedan por hacer en la mazmorra en la que acabas de entrar, para que todos sepan qué buscar. Se omiten las misiones listas para entregar."
+L["DUNGEON_SHARE"] = "Envío automático de misiones de mazmorra"
+L["DUNGEON_SHARE_DESCRIPTION"] =
+	"Comparte cada misión de la mazmorra que el juego te deja compartir, al ritmo fijado en Compartir misiones. Quien se pierda un envío recibe el susurro de siempre, para que pueda volver a pedirla. Vuelve a compartir cada vez que alguien se une al grupo o lo deja."
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -150,22 +159,32 @@ L["RESIZE_TOOLTIP"] = "Arrastra para cambiar el tamaño del registro de misiones
 L["ZONE_MENU_HINT"] = "Clic derecho para más opciones"
 L["SHARE_ZONE_QUESTS"] = "Compartir %d misiones"
 L["SHARE_ZONE_QUEST"] = "Compartir 1 misión"
-L["SHARE_ZONE_TOOLTIP"] =
-	"Se pueden compartir %d de las %d misiones de esta zona. Se envían de una en una cada %d segundos."
+L["SHARE_ZONE_QUESTS_TOOLTIP"] =
+	"Ofrece a tu grupo las misiones de esta zona que el juego te deja compartir, una cada %d segundos."
+L["SHARE_ZONE_QUEST_TOOLTIP"] = "Ofrece a tu grupo la única misión de esta zona que el juego te deja compartir."
 L["CHAT_SHARING_ZONE_ONE"] = "Compartiendo 1 misión de %s."
 L["CHAT_SHARING_ZONE"] = "Compartiendo %d misiones de %s, una cada %d segundos."
-L["WHISPER_SHARE_BUSY"] =
-	"Intenté compartir %s contigo, pero parecía que estabas con otra cosa. Si la quieres, avísame cuando estés libre y te la vuelvo a enviar."
-L["WHISPER_SHARE_TOO_FAR"] =
-	"Intenté compartir %s contigo, pero estábamos demasiado lejos. Si la quieres, avísame cuando estemos más cerca y te la vuelvo a enviar."
-L["WHISPER_SHARE_LOG_FULL"] =
-	"Intenté compartir %s contigo, pero tu registro de misiones estaba lleno. Si la quieres, avísame cuando hayas hecho sitio y te la vuelvo a enviar."
 L["ABANDON_GRAY_QUESTS"] = "Abandonar misiones grises"
 L["ABANDON_GRAY_NONE"] = "Esta zona no tiene misiones grises que abandonar."
 L["ABANDON_GRAY_CONFIRM"] = "¿Abandonar estas %d misiones grises?"
 L["ABANDON_GRAY_CONFIRM_ONE"] = "¿Abandonar esta misión gris?"
 L["CHAT_ABANDONED_GRAY"] = "Has abandonado %d misiones grises."
 L["CHAT_ABANDONED_GRAY_ONE"] = "Has abandonado 1 misión gris."
+
+--------------------------------------------------------------------------------
+-- Messages to Other Players
+--------------------------------------------------------------------------------
+
+L["WHISPER_SHARE_BUSY"] =
+	"Intenté compartir %s contigo, pero parecía que estabas con otra cosa. Si la quieres, avísame cuando estés libre y te la vuelvo a enviar."
+L["WHISPER_SHARE_TOO_FAR"] =
+	"Intenté compartir %s contigo, pero estábamos demasiado lejos. Si la quieres, avísame cuando estemos más cerca y te la vuelvo a enviar."
+L["WHISPER_SHARE_LOG_FULL"] =
+	"Intenté compartir %s contigo, pero tu registro de misiones estaba lleno. Si la quieres, avísame cuando hayas hecho sitio y te la vuelvo a enviar."
+L["DUNGEON_QUESTS_ANNOUNCE"] = "Tengo %d misiones por hacer aquí: %s"
+L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "Tengo 1 misión por hacer aquí: %s"
+L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"
+L["DUNGEON_QUESTS_SEPARATOR"] = ", "
 
 --------------------------------------------------------------------------------
 -- Questie Tracking

@@ -85,7 +85,16 @@ local SHARED_FUNCTIONS = {
 	"C_ChatInfo.InChatMessagingLockdown",
 	"GetTime",
 	"UnitGUID",
+	"UnitIsUnit",
+	"GetNumGroupMembers",
+	"GetNumSubgroupMembers",
 	"IsInGroup",
+	"IsInRaid",
+	"GetInstanceInfo",
+	"C_Map.GetAreaInfo",
+	"C_Map.GetMapArtID",
+	"C_Map.GetMapArtLayers",
+	"C_MapExplorationInfo.GetExploredMapTextures",
 	"QuestLogPushQuest",
 	"ExpandQuestHeader",
 	"C_QuestLog.IsQuestFlaggedCompleted",
@@ -147,7 +156,6 @@ local CLASSIC_FUNCTIONS = {
 	"QuestLog_SetSelection",
 	"IsQuestWatched",
 	"IsUnitOnQuest",
-	"GetNumSubgroupMembers",
 	"AutoQuestWatch_Insert",
 	"RemoveQuestWatch",
 	"GetNumQuestWatches",
@@ -291,6 +299,8 @@ ns.DIAGNOSTIC_API_CHECKS = {}
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", SHARED_FUNCTIONS))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", SHARED_TABLES))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_LOG" }))
+-- Group chat goes to the instance group only where this exists; without it, raid or party (Announcements.lua)
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "LE_PARTY_CATEGORY_INSTANCE" }))
 if IS_FOREVER then
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", FOREVER_FUNCTIONS))
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", FOREVER_TABLES))
@@ -327,7 +337,7 @@ end
 -- Data Sources
 --------------------------------------------------------------------------------
 
--- The add-on ships no static game data, so there is nothing to validate (README-Notes: No Data tab).
+-- The map reveal tables are the only static data, and Validate Data has no check for them (README-Notes: No Data tab).
 ns.DIAGNOSTIC_DATA_SOURCES = {}
 
 --------------------------------------------------------------------------------
@@ -461,6 +471,72 @@ local function SelectedQuestLine(lines)
 	else
 		lines[#lines + 1] = "Selected quest: (none)"
 	end
+end
+
+--[[
+	Every quest in the log as ns.LogQuests lists them, read without touching the quest log, and how many
+	zones are collapsed. On Classic Era and TBC ns.LogQuests opens every zone and selects each quest in
+	turn to ask whether it can be shared, which a probe must never do, so this lists only the open zones'
+	quests and knows only the selected quest's pushable (nil for the rest)
+]]
+local function LogQuests()
+	if IS_FOREVER then
+		return ns.LogQuests(), 0
+	end
+	local quests, zoneTitle, collapsed = {}, nil, 0
+	local selected = GetQuestLogSelection()
+	for index = 1, GetNumQuestLogEntries() do
+		local title, _, _, isHeader, isCollapsed, isComplete, _, questID = GetQuestLogTitle(index)
+		if isHeader then
+			zoneTitle = title
+			if isCollapsed then
+				collapsed = collapsed + 1
+			end
+		elseif questID then
+			local pushable
+			if index == selected then
+				pushable = GetQuestLogPushable() and true or false
+			end
+			quests[#quests + 1] = {
+				questID = questID,
+				title = title,
+				zoneTitle = zoneTitle,
+				isComplete = (isComplete or 0) > 0,
+				isFailed = (isComplete or 0) < 0,
+				pushable = pushable,
+			}
+		end
+	end
+	return quests, collapsed
+end
+
+ns.DiagnosticLogQuests = LogQuests
+
+--[[
+	ns.DungeonQuests, matching exactly as the feature does, over LogQuests above: on Classic Era and TBC
+	the feature's own list, which selects every quest, is swapped out for the length of the call
+]]
+local function DungeonQuests(dungeon)
+	if IS_FOREVER then
+		return ns.DungeonQuests(dungeon)
+	end
+	local featureLogQuests = ns.LogQuests
+	ns.LogQuests = function()
+		return (LogQuests())
+	end
+	local found, quests = pcall(ns.DungeonQuests, dungeon)
+	ns.LogQuests = featureLogQuests
+	if not found then
+		error(quests, 0)
+	end
+	return quests
+end
+
+local function Shareable(pushable)
+	if pushable == nil then
+		return "sharing not checked (select it to check)"
+	end
+	return pushable and "can be shared" or "can't be shared"
 end
 
 -- Questie's settings and modules, read the way the features read them; nil where Questie isn't loaded
@@ -664,6 +740,8 @@ function ns:BuildQuestLogContextReport()
 	Setting(lines, "Quality of Life switch", "enableQualityOfLife")
 	Setting(lines, "Quest giver window cleanup", "giverCleanup")
 	Setting(lines, "Quest levels at quest givers", "giverLevels")
+	-- Both switches above have to be on (Quest-Giver.lua)
+	lines[#lines + 1] = string.format("Quest giver window cleanup in effect: %s", YesNo(ns.IsQuestGiverCleanupOn()))
 	-- Quest ID lines link to Wowhead only on a client with a Wowhead address (Wowhead-Link.lua)
 	lines[#lines + 1] = string.format("Wowhead quest address: %s", tostring(ns.WOWHEAD_QUEST_URL or "(none)"))
 
@@ -687,6 +765,18 @@ function ns:BuildQuestLogContextReport()
 	)
 	-- At the level cap the turn-in line leaves out the XP, as quest XP stops there
 	lines[#lines + 1] = string.format("Level: %d of %d", UnitLevel("player"), GetMaxPlayerLevel())
+	local logQuests, collapsed = LogQuests()
+	local ready = 0
+	for _, quest in ipairs(logQuests) do
+		if quest.isComplete then
+			ready = ready + 1
+		end
+	end
+	lines[#lines + 1] = string.format(
+		"Quests ready to turn in: %d%s",
+		ready,
+		collapsed > 0 and string.format(" (not counting %d collapsed zones)", collapsed) or ""
+	)
 	-- The Quest Chain section reads Questie's database; it's hidden without it (Quest-Chain.lua)
 	local questieDB = ns.ImportQuestieModule("QuestieDB")
 	lines[#lines + 1] = string.format(
@@ -805,9 +895,133 @@ end
 -- The share results a whisper answers; Share-Reminders.lua skips any this client lacks
 local SHARE_RESULTS = { "ERR_QUEST_PUSH_BUSY_S", "ERR_QUEST_PUSH_TOO_FAR_S", "ERR_QUEST_PUSH_LOG_FULL_S" }
 
+local function QuestState(quest)
+	if quest.isComplete then
+		return "ready to turn in, so not announced"
+	elseif quest.isFailed then
+		return "failed, so not announced"
+	end
+	return "to do"
+end
+
 --[[
-	The state behind "Share is greyed out in the zone menu" and "no whisper went
-	out when a share failed" reports. Reads only: nothing is shared or sent.
+	The state behind "the dungeon quests weren't announced or shared" reports
+	(Dungeon-Quests.lua): the switches, the dungeon as Questie knows it, which
+	quests count and why, and the announcement as it would go out
+]]
+local function DungeonQuestLines(lines)
+	lines[#lines + 1] = ""
+	Setting(lines, "Announce dungeon quests", "dungeonAnnounce")
+	Setting(lines, "Share dungeon quests", "dungeonShare")
+	lines[#lines + 1] = string.format("Group chat channel: %s", tostring(ns:GetGroupChatChannel()))
+	local dungeon = ns.CurrentDungeon()
+	if not dungeon then
+		-- Only "party" and "raid" count (Dungeon-Quest-Lookup.lua)
+		local _, instanceType = GetInstanceInfo()
+		lines[#lines + 1] = string.format("In a dungeon or raid: no (instance type %s)", tostring(instanceType))
+		return
+	end
+
+	local areaIDs = {}
+	for areaID in pairs(dungeon.areaIDs) do
+		areaIDs[#areaIDs + 1] = areaID
+	end
+	table.sort(areaIDs)
+	lines[#lines + 1] = string.format("Dungeon: %s (key %s)", tostring(dungeon.name), tostring(dungeon.key))
+	lines[#lines + 1] = string.format(
+		"Questie zone IDs: %s",
+		#areaIDs > 0 and table.concat(areaIDs, ", ") or "none, so only the quest log header decides"
+	)
+	lines[#lines + 1] = string.format("Already done for this group: %s", YesNo(ns.IsDungeonDone(dungeon)))
+
+	local quests = DungeonQuests(dungeon)
+	lines[#lines + 1] = string.format("Quests for this dungeon: %d", #quests)
+	local _, collapsed = LogQuests()
+	if collapsed > 0 then
+		lines[#lines + 1] = string.format(
+			"  Not counting the quests in %d collapsed zones, which the run on arrival opens to look in",
+			collapsed
+		)
+	end
+	for _, quest in ipairs(quests) do
+		lines[#lines + 1] = string.format(
+			"  %d %s: found by %s, %s, %s",
+			quest.questID,
+			tostring(quest.title),
+			quest.matchedBy,
+			QuestState(quest),
+			Shareable(quest.pushable)
+		)
+	end
+	local messages = ns.BuildDungeonAnnouncement(quests)
+	lines[#lines + 1] = string.format("Announcement (%d messages):", #messages)
+	for _, message in ipairs(messages) do
+		lines[#lines + 1] = string.format("  %s (%d bytes)", message, #message)
+	end
+end
+
+-- The zone header a quest is listed under, or nil; index is its quest log index on Classic Era and TBC
+local function QuestZone(questID, index)
+	if IS_FOREVER then
+		local headerIndex = C_QuestLog.GetHeaderIndexForQuest(questID)
+		local header = headerIndex and C_QuestLog.GetInfo(headerIndex)
+		return header and header.title
+	end
+	for entry = index or 0, 1, -1 do
+		local title, _, _, isHeader = GetQuestLogTitle(entry)
+		if isHeader then
+			return title
+		end
+	end
+end
+
+--[[
+	What the zone menu offers for a zone (Zone-Menu.lua): Share is left out with nothing to share, and
+	Abandon Gray Quests greyed out with nothing gray. On Classic Era and TBC the menu selects each quest to
+	ask whether it can be shared, so only the zone's gray quests are counted here, with the list's own test
+]]
+local function ZoneMenuLines(lines, zoneTitle)
+	lines[#lines + 1] = string.format("  Its zone: %s", tostring(zoneTitle))
+	if not zoneTitle then
+		return
+	end
+	if IS_FOREVER then
+		local shareable, total = ns.ShareableZoneQuests(zoneTitle)
+		lines[#lines + 1] = string.format(
+			"  Zone menu: %d of %d quests can be shared, %d gray",
+			#shareable,
+			total,
+			#ns.GrayQuests(zoneTitle)
+		)
+		return
+	end
+	local inZone, total, gray = false, 0, 0
+	for entry = 1, GetNumQuestLogEntries() do
+		local title, level, _, isHeader, _, _, _, entryID = GetQuestLogTitle(entry)
+		if isHeader then
+			if inZone then
+				break
+			end
+			inZone = title == zoneTitle
+		elseif inZone and entryID then
+			total = total + 1
+			if GetQuestDifficultyColor(level) == QuestDifficultyColors.trivial then
+				gray = gray + 1
+			end
+		end
+	end
+	lines[#lines + 1] = string.format(
+		"  Zone menu: %d quests, %d gray; which can be shared is only checked as the menu opens",
+		total,
+		gray
+	)
+end
+
+--[[
+	The state behind "Share is greyed out or missing in the zone menu",
+	"Abandon Gray Quests is greyed out", "no whisper went out when a share
+	failed" and dungeon quest reports. Reads only: nothing is shared or sent,
+	and the quest log's selection and zones are left as they are.
 ]]
 function ns:BuildSharingContextReport()
 	local lines = { GetClientHeader(), "" }
@@ -816,7 +1030,7 @@ function ns:BuildSharingContextReport()
 	lines[#lines + 1] = string.format("In a group: %s", YesNo(IsInGroup()))
 	lines[#lines + 1] = string.format("Share run in progress: %s", YesNo(ns.sharingQuests))
 	lines[#lines + 1] = string.format("Seconds between shares in use: %s", tostring(ns.db and ns.GetShareInterval()))
-	local questID = SelectedQuest()
+	local questID, _, index = SelectedQuest()
 	SelectedQuestLine(lines)
 	if questID then
 		local pushable
@@ -826,6 +1040,7 @@ function ns:BuildSharingContextReport()
 			pushable = GetQuestLogPushable() -- Reads the selected quest, the one above
 		end
 		lines[#lines + 1] = string.format("  The game lets you share it: %s", YesNo(pushable))
+		ZoneMenuLines(lines, QuestZone(questID, index))
 	end
 
 	-- A whisper goes out only with both switches on, for a result within the share interval of the share
@@ -854,6 +1069,8 @@ function ns:BuildSharingContextReport()
 		)
 	lines[#lines + 1] = string.format("Questie quest links: %s", hasLinks and "found" or "not found")
 
+	DungeonQuestLines(lines)
+
 	return table.concat(lines, "\n")
 end
 
@@ -864,6 +1081,21 @@ end
 local function MapLine(label, mapID)
 	local info = mapID and C_Map.GetMapInfo(mapID)
 	return string.format("%s: %s (%s)", label, tostring(mapID), tostring(info and info.name))
+end
+
+-- The areas Quest-Map-Reveal.lua can draw for the map's art, and how many of them the character has explored
+local function MapRevealLine(mapID)
+	local artID = mapID and C_Map.GetMapArtID(mapID)
+	local areas = artID and ns.MAP_REVEAL_OVERLAYS and ns.MAP_REVEAL_OVERLAYS[artID]
+	if not areas then
+		return string.format("Map art: %s, no unexplored areas listed for it", tostring(artID))
+	end
+	local listed = 0
+	for _ in pairs(areas) do
+		listed = listed + 1
+	end
+	local explored = C_MapExplorationInfo.GetExploredMapTextures(mapID)
+	return string.format("Map art: %s, areas listed: %d, explored: %d", artID, listed, explored and #explored or 0)
 end
 
 -- The map draws only these: no route lines, and nothing Questie's settings hide or fade out (Questie-Map.lua)
@@ -901,8 +1133,8 @@ local QUESTIE_PIN_CALLS =
 	{ "AddWorldMapIconMap", "AddWorldMapIconWorld", "RemoveWorldMapIcon", "RemoveAllWorldMapIcons" }
 
 --[[
-	The state behind "the map is missing" and "the map shows the wrong zone"
-	reports. The map follows the selected quest through Questie's world map
+	The state behind "the map is missing", "the map shows the wrong zone" and
+	"the zone is bare parchment" reports. The map follows the selected quest through Questie's world map
 	icons, and on WoW Forever falls back to Blizzard's own quest areas. Reads
 	only.
 ]]
@@ -918,8 +1150,24 @@ function ns:BuildMapContextReport()
 		lines[#lines + 1] = string.format("Map: %s", Shown(questMap.holder))
 		lines[#lines + 1] = string.format("Map visible on screen: %s", YesNo(canvas and canvas:IsVisible()))
 		lines[#lines + 1] = MapLine("Map showing", canvas and canvas:GetMapID())
+		lines[#lines + 1] = MapRevealLine(canvas and canvas:GetMapID())
 		lines[#lines + 1] = string.format("Zone picker: %s", Shown(questMap.zoneDropdown))
+		-- Quest-Map-Reveal.lua hooks these as the map is built; with none, unexplored areas stay bare
+		local pins, withRefresh = 0, 0
+		for pin in canvas:EnumeratePinsByTemplate("MapExplorationPinTemplate") do
+			pins = pins + 1
+			if type(pin.RefreshOverlays) == "function" then
+				withRefresh = withRefresh + 1
+			end
+		end
+		lines[#lines + 1] = string.format("Exploration pins: %d, with RefreshOverlays: %d", pins, withRefresh)
 	end
+	lines[#lines + 1] = string.format(
+		"Map reveal table: %s",
+		type(ns.MAP_REVEAL_OVERLAYS) == "table"
+				and string.format("%d map arts listed", CountKeys(ns.MAP_REVEAL_OVERLAYS))
+			or "missing"
+	)
 	lines[#lines + 1] = MapLine("Your zone", MapUtil.GetDisplayableMapForPlayer())
 
 	lines[#lines + 1] = ""

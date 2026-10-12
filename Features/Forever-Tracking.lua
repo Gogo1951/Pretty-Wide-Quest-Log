@@ -18,7 +18,7 @@ local function TrackerFor(questID)
 	end
 	questieTracker = questieTracker or ns.ImportQuestieModule("QuestieTracker")
 	questiePlayer = questiePlayer or ns.ImportQuestieModule("QuestiePlayer")
-	if not (questieTracker and questieTracker.IsTrackedByQuestie and questiePlayer) then
+	if not (questieTracker and type(questieTracker.IsTrackedByQuestie) == "function" and questiePlayer) then
 		return nil
 	end
 	local log = questiePlayer.currentQuestlog
@@ -32,7 +32,11 @@ end
 function ns.IsTracked(questID)
 	local tracker = TrackerFor(questID)
 	if tracker then
-		return tracker.IsTrackedByQuestie(questID) and true or false
+		local found, tracked = pcall(tracker.IsTrackedByQuestie, questID)
+		if found then
+			return tracked and true or false
+		end
+		return QuestUtils_IsQuestWatched(questID)
 	elseif tracker == false then
 		return false
 	end
@@ -50,9 +54,15 @@ function ns.HasRoomToTrack(questID)
 end
 
 local function Untrack(questID, tracker)
-	if tracker and not QuestUtils_IsQuestWatched(questID) then
-		tracker:UntrackQuestId(questID)
-	elseif QuestUtil.CanRemoveQuestWatch() then
+	if
+		tracker
+		and not QuestUtils_IsQuestWatched(questID)
+		and type(tracker.UntrackQuestId) == "function"
+		and pcall(tracker.UntrackQuestId, tracker, questID)
+	then
+		return
+	end
+	if QuestUtil.CanRemoveQuestWatch() then
 		C_QuestLog.RemoveQuestWatch(questID) -- Also untracks it in Questie
 	end
 end

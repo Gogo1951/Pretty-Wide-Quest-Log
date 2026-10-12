@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"읽을 공간은 더 넓고 한눈에 보이는 정보는 더 많은, 더 크고 더 나은 퀘스트 목록입니다. 익숙한 블리자드 화면 구성은 그대로 유지하면서 퀘스트 레벨, 유용한 태그, 목표, 보상, 전체 퀘스트 목록을 나란히 볼 수 있습니다."
+	"퀘스트 레벨, 던전 및 정예 태그, 보상, 연계 퀘스트, 퀘스트별 지도를 보여 주는 넓고 크기 조절이 가능한 2단 퀘스트 목록입니다. 파티에 퀘스트를 공유하고 던전 퀘스트를 자동으로 알립니다. Questie, VoiceOver, ElvUI와 함께 작동합니다."
 L["ENABLE_WELCOME_MESSAGE"] = "환영 메시지 사용"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log 환영 인사를 표시합니다."
 L["OPTIONS_FEATURES_HEADER"] = "기능"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"블리자드 퀘스트 목록을 지도가 옆에 붙은 넓은 퀘스트 목록으로 바꿉니다. 끄면 블리자드 퀘스트 목록을 대신 사용합니다. UI를 다시 불러온 후에 적용됩니다."
 L["ENABLE_QUALITY_OF_LIFE"] = "편의 기능 사용"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"퀘스트 NPC 창 정리, 원하는 속도로 퀘스트 공유하기, 퀘스트 공유 실패 시 귓속말을 켭니다. 끄면 블리자드 퀘스트 NPC 창으로 돌아가고 기본 속도로 공유합니다."
+	"퀘스트 NPC 창 정리, 원하는 속도로 퀘스트 공유하기, 퀘스트 공유 실패 시 귓속말, 던전 퀘스트 알림과 공유를 켭니다. 끄면 블리자드 퀘스트 NPC 창으로 돌아가고 기본 속도로 공유합니다."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"퀘스트 목록 정리 사용은 UI를 다시 불러온 후에 적용되며, 설정 창을 닫을 때 다시 불러오기를 안내합니다."
 L["RELOAD_PROMPT"] =
@@ -71,7 +71,7 @@ L["QUEST_ORDER"] = "퀘스트 순서"
 L["QUEST_ORDER_DESCRIPTION"] = "각 지역 아래 퀘스트의 순서를 바꿉니다."
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "레벨, 높은 순 (기본값)"
 L["SORT_LEVEL_LOWEST"] = "레벨, 낮은 순"
-L["COMPLETED_FIRST"] = "완료한 퀘스트 먼저"
+L["COMPLETED_FIRST"] = "완료한 퀘스트 먼저 표시"
 L["COMPLETED_FIRST_DESCRIPTION"] = "완료 보고할 수 있는 퀘스트를 해당 지역의 맨 위로 옮깁니다."
 L["SHOW_QUEST_LEVELS"] = "퀘스트 레벨 표시"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
@@ -98,11 +98,11 @@ L["RESET_WINDOW_CONFIRM"] = "퀘스트 목록을 기본 크기와 위치로 초�
 
 L["TAB_QUALITY_OF_LIFE"] = "편의 기능"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"퀘스트 목록 밖에서 돕는 작은 기능들로, 퀘스트 NPC 창과 파티원과의 퀘스트 공유를 위한 것입니다."
+	"퀘스트 목록 밖에서 돕는 작은 기능들로, 퀘스트 NPC 창, 파티원과의 퀘스트 공유, 던전을 위한 것입니다."
 L["QUEST_GIVERS_HEADER"] = "퀘스트 NPC"
 L["QUEST_GIVERS_DESCRIPTION"] =
 	"퀘스트 NPC가 여는 창으로, 여기서 퀘스트를 받고 완료 보고합니다."
-L["GIVER_CLEANUP"] = "퀘스트 NPC 창 정리 사용"
+L["GIVER_CLEANUP"] = "퀘스트 NPC 창 정리"
 L["GIVER_CLEANUP_DESCRIPTION"] =
 	"퀘스트 NPC 창의 글을 퀘스트 목록과 같은 제목과 줄 간격으로 맞추고, 퀘스트 아래에 Wowhead로 연결되는 퀘스트 ID를 표시합니다."
 L["GIVER_LEVELS"] = "퀘스트 레벨 표시"
@@ -113,12 +113,21 @@ L["QUEST_SHARING_DESCRIPTION"] =
 	"퀘스트 목록에서 지역을 오른쪽 클릭하면 나오는 메뉴의 퀘스트 공유는 그 지역에서 파티원이 받을 수 있는 모든 퀘스트를 하나씩 차례로 제안합니다. 여기서 그 속도와 파티원이 퀘스트를 놓쳤을 때 어떻게 할지 정합니다."
 L["SHARE_INTERVAL"] = "공유 간격(초)"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"지역의 오른쪽 클릭 메뉴에 있는 퀘스트 공유가 퀘스트 하나와 다음 퀘스트 사이에 기다리는 시간입니다. 길수록 파티원이 각 퀘스트를 수락할 시간이 늘어납니다."
+	"공유한 퀘스트 하나와 다음 퀘스트 사이에 기다리는 시간으로, 퀘스트 공유와 던전 퀘스트 공유에 적용됩니다. 길수록 파티원이 각 퀘스트를 수락할 시간이 늘어납니다."
 L["SHARE_WHISPERS"] = "공유 실패 시 귓속말"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"파티원이 다른 일을 하고 있거나, 너무 멀리 있거나, 퀘스트 목록이 가득 찼을 때 공유하려던 퀘스트를 귓속말로 알려 주고 다시 말해 달라고 부탁합니다. 파티원이 받을 수 없는 퀘스트라면 아무것도 보내지 않습니다."
-L["SHARE_WHISPER_EXAMPLE"] = "예시:"
-L["SHARE_WHISPER_EXAMPLE_QUEST_NAME"] = "퀘스트 이름"
+L["OPTIONS_EXAMPLE"] = "예시:"
+L["OPTIONS_EXAMPLE_QUEST_NAME"] = "퀘스트 이름"
+L["DUNGEON_QUESTS_HEADER"] = "던전 퀘스트"
+L["DUNGEON_QUESTS_DESCRIPTION"] =
+	"아래 기능은 파티와 함께 던전이나 공격대에 들어갈 때 던전마다 파티당 한 번 작동합니다. 퀘스트 목록에서 그 던전 아래에 있는 퀘스트와, Questie가 있으면 목표가 던전 안에 있는 퀘스트도 포함되므로 직업 퀘스트도 잡아냅니다."
+L["DUNGEON_ANNOUNCE"] = "던전 퀘스트 자동 알림"
+L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
+	"방금 들어간 던전에서 아직 해야 할 퀘스트를 파티에 알려, 모두가 무엇을 챙겨야 할지 알 수 있게 합니다. 완료 보고만 남은 퀘스트는 빠집니다."
+L["DUNGEON_SHARE"] = "던전 퀘스트 자동 공유"
+L["DUNGEON_SHARE_DESCRIPTION"] =
+	"게임이 공유를 허용하는 그 던전의 퀘스트를 모두 퀘스트 공유에서 정한 속도로 공유합니다. 공유를 놓친 파티원에게는 평소처럼 귓속말이 가서 다시 요청할 수 있습니다. 누군가 파티에 들어오거나 나가면 다시 공유합니다."
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -152,22 +161,33 @@ L["RESIZE_TOOLTIP"] = "끌어서 퀘스트 목록 크기를 조절합니다."
 L["ZONE_MENU_HINT"] = "오른쪽 클릭으로 추가 옵션"
 L["SHARE_ZONE_QUESTS"] = "퀘스트 %d개 공유"
 L["SHARE_ZONE_QUEST"] = "퀘스트 1개 공유"
-L["SHARE_ZONE_TOOLTIP"] =
-	"공유할 수 있는 퀘스트: %d개 (이 지역 전체 %d개). %d초마다 하나씩 보냅니다."
+L["SHARE_ZONE_QUESTS_TOOLTIP"] =
+	"이 지역에서 게임이 공유를 허용하는 퀘스트를 %d초마다 하나씩 파티에 제안합니다."
+L["SHARE_ZONE_QUEST_TOOLTIP"] =
+	"이 지역에서 게임이 공유를 허용하는 퀘스트 하나를 파티에 제안합니다."
 L["CHAT_SHARING_ZONE_ONE"] = "%s의 퀘스트 1개를 공유합니다."
 L["CHAT_SHARING_ZONE"] = "퀘스트 %d개를 공유합니다 (%s), %d초마다 하나씩."
-L["WHISPER_SHARE_BUSY"] =
-	"%s 퀘스트를 공유하려고 했는데 바빠 보였어요. 필요하면 여유 있을 때 말해 주세요. 다시 보내 드릴게요."
-L["WHISPER_SHARE_TOO_FAR"] =
-	"%s 퀘스트를 공유하려고 했는데 서로 너무 멀리 있었어요. 필요하면 가까워졌을 때 말해 주세요. 다시 보내 드릴게요."
-L["WHISPER_SHARE_LOG_FULL"] =
-	"%s 퀘스트를 공유하려고 했는데 퀘스트 목록이 가득 차 있었어요. 필요하면 자리를 비운 뒤 말해 주세요. 다시 보내 드릴게요."
 L["ABANDON_GRAY_QUESTS"] = "회색 퀘스트 포기"
 L["ABANDON_GRAY_NONE"] = "이 지역에는 포기할 회색 퀘스트가 없습니다."
 L["ABANDON_GRAY_CONFIRM"] = "회색 퀘스트 %d개를 포기할까요?"
 L["ABANDON_GRAY_CONFIRM_ONE"] = "이 회색 퀘스트를 포기할까요?"
 L["CHAT_ABANDONED_GRAY"] = "회색 퀘스트 %d개를 포기했습니다."
 L["CHAT_ABANDONED_GRAY_ONE"] = "회색 퀘스트 1개를 포기했습니다."
+
+--------------------------------------------------------------------------------
+-- Messages to Other Players
+--------------------------------------------------------------------------------
+
+L["WHISPER_SHARE_BUSY"] =
+	"%s 퀘스트를 공유하려고 했는데 바빠 보였어요. 필요하면 여유 있을 때 말해 주세요. 다시 보내 드릴게요."
+L["WHISPER_SHARE_TOO_FAR"] =
+	"%s 퀘스트를 공유하려고 했는데 서로 너무 멀리 있었어요. 필요하면 가까워졌을 때 말해 주세요. 다시 보내 드릴게요."
+L["WHISPER_SHARE_LOG_FULL"] =
+	"%s 퀘스트를 공유하려고 했는데 퀘스트 목록이 가득 차 있었어요. 필요하면 자리를 비운 뒤 말해 주세요. 다시 보내 드릴게요."
+L["DUNGEON_QUESTS_ANNOUNCE"] = "여기서 할 퀘스트가 %d개 있어요: %s"
+L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "여기서 할 퀘스트가 1개 있어요: %s"
+L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"
+L["DUNGEON_QUESTS_SEPARATOR"] = ", "
 
 --------------------------------------------------------------------------------
 -- Questie Tracking

@@ -39,10 +39,9 @@ end
 --[[
 	The quests in a zone the game lets you share, as quest IDs, and how many quests the zone holds. Only
 	the selected quest can be asked about, so each is selected in turn and the player's selection put back.
-	The quest log lists no quests under a collapsed zone, so the zone is opened to look, and closed again
-	unless leaveOpen, which sharing needs to select them
+	The quest log lists no quests under a collapsed zone, so the zone is opened to look and closed again
 ]]
-function ns.ShareableZoneQuests(zoneTitle, leaveOpen)
+function ns.ShareableZoneQuests(zoneTitle)
 	local headerIndex, collapsed = FindZoneHeader(zoneTitle)
 	if not headerIndex then
 		return {}, 0
@@ -65,7 +64,7 @@ function ns.ShareableZoneQuests(zoneTitle, leaveOpen)
 		end
 	end
 
-	if collapsed and not leaveOpen then
+	if collapsed then
 		CollapseQuestHeader(headerIndex)
 	end
 	SelectQuest(selectedID)
@@ -102,6 +101,33 @@ local function WithEveryZoneOpen(work)
 	end
 	SelectQuest(selectedID)
 	return result
+end
+
+--[[
+	Every quest in the log, wherever its zone, as { questID, title, zoneTitle, isComplete, isFailed,
+	pushable }, pushable being whether the game lets you share it
+]]
+function ns.LogQuests()
+	return WithEveryZoneOpen(function()
+		local quests, zoneTitle = {}, nil
+		for index = 1, GetNumQuestLogEntries() do
+			local title, _, _, isHeader, _, isComplete, _, questID = GetQuestLogTitle(index)
+			if isHeader then
+				zoneTitle = title
+			elseif questID then
+				SelectQuestLogEntry(index)
+				quests[#quests + 1] = {
+					questID = questID,
+					title = title,
+					zoneTitle = zoneTitle,
+					isComplete = (isComplete or 0) > 0,
+					isFailed = (isComplete or 0) < 0,
+					pushable = GetQuestLogPushable() and true or false,
+				}
+			end
+		end
+		return quests
+	end)
 end
 
 --[[
@@ -147,17 +173,11 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-	The share and abandon calls act on the selected quest, so each quest is selected in turn and the
-	player's own selection is put back afterwards
-]]
-local function RestoreSelection(questID)
-	SelectQuest(questID)
-	if QuestLogFrame:IsShown() then
-		QuestLog_Update()
-	end
-end
+	The share and abandon calls act on the selected quest, so each quest is selected in turn, with every
+	zone open so it can be found, and the player's own selection is put back afterwards.
 
--- Abandons each quest still in the log, wherever its zone is; returns how many
+	Abandons each quest still in the log, wherever its zone is; returns how many
+]]
 function ns.AbandonQuests(questIDs)
 	local count = WithEveryZoneOpen(function()
 		local abandoned = 0
@@ -179,22 +199,26 @@ function ns.AbandonQuests(questIDs)
 end
 
 --[[
-	Shares each quest, ns.GetShareInterval() apart as it was when the run began; the game reports each
-	result in chat. ns.sharingQuests is set until the last one goes, so a second run can't start alongside
+	Shares each quest still in the log, wherever its zone is, ns.GetShareInterval() apart as it was when
+	the run began; the game reports each result in chat. ns.sharingQuests is set until the last one goes,
+	so a second run can't start alongside
 ]]
 function ns.ShareQuests(questIDs)
 	ns.sharingQuests = true
 	local interval = ns.GetShareInterval()
 	local function Share(position)
 		local questID = questIDs[position]
-		local index = questID and IndexForQuestID(questID)
-		if index then
-			local selectedID = SelectedQuestID()
-			SelectQuestLogEntry(index)
-			if GetQuestLogPushable() then
-				QuestLogPushQuest()
+		WithEveryZoneOpen(function()
+			local index = questID and IndexForQuestID(questID)
+			if index then
+				SelectQuestLogEntry(index)
+				if GetQuestLogPushable() then
+					QuestLogPushQuest()
+				end
 			end
-			RestoreSelection(selectedID)
+		end)
+		if QuestLogFrame:IsShown() then
+			QuestLog_Update()
 		end
 		if position < #questIDs then
 			C_Timer.After(interval, function()

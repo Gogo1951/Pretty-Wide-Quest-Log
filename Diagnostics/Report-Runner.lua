@@ -12,8 +12,9 @@ local STATUS_OK = ns.DIAGNOSTIC_STATUS_OK
     Every report the panel runs, by id, and the three tabs that group them.
     Each tab's Run All runs its reports in this order, and each report's own
     button runs just that one. The Event Log and the Taint Log are live tools
-    rather than reports, so neither is here. The add-on ships no static game
-    data, so ns.DIAGNOSTIC_DATA_SOURCES is empty and there is no Data tab
+    rather than reports, so neither is here. The map reveal tables are the
+    add-on's only static data, and Validate Data has no check for them, so
+    ns.DIAGNOSTIC_DATA_SOURCES is empty and there is no Data tab
     (README-Notes); a data file added later still reaches every list by its
     manifest row alone, once the Data tab and Validate-Data.lua come back.
 

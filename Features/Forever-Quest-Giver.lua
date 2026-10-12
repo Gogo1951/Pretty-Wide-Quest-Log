@@ -17,10 +17,6 @@ questGiverID:SetJustifyH("RIGHT")
 -- Its Wowhead button follows it from page to page
 local questGiverIDButton = ns.LinkQuestIDToWowhead(QuestDetailScrollChildFrame, questGiverID, GetQuestID)
 
-local function IsQuestGiverPage(parentFrame)
-	return parentFrame == QuestDetailScrollChildFrame or parentFrame == QuestRewardScrollChildFrame
-end
-
 local function IsOn(region, page)
 	local parent = region:GetParent()
 	while parent and parent ~= page do
@@ -82,7 +78,7 @@ end
 ]]
 function ns.LayOutQuestGiverPage(template, parentFrame)
 	local width = template and template.contentWidth
-	if IsQuestGiverPage(parentFrame) and width and ns.IsQuestGiverCleanupOn() then
+	if ns.IsQuestGiverPage(parentFrame) and width and ns.IsQuestGiverCleanupOn() then
 		ns.AlignRewardNumbers(width)
 		ShowQuestGiverID(parentFrame, width)
 		return true

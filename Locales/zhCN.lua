@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"更大、更好的任务日志，让你有更多阅读空间，一眼看到更多信息。保留熟悉的暴雪布局，同时并排查看任务等级、实用标签、目标、奖励以及完整的任务列表。"
+	"宽版双栏任务日志，可调整大小，显示任务等级、地下城与精英标签、奖励、任务链，并为每个任务显示地图。与队伍分享任务，自动通报地下城任务。兼容 Questie、VoiceOver 和 ElvUI。"
 L["ENABLE_WELCOME_MESSAGE"] = "启用欢迎消息"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登录时显示 Pretty Wide Quest Log 的欢迎语。"
 L["OPTIONS_FEATURES_HEADER"] = "功能"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"将暴雪任务日志换成宽版任务日志，地图就在旁边。关闭此选项可改用暴雪任务日志。重新加载界面后生效。"
 L["ENABLE_QUALITY_OF_LIFE"] = "启用便利功能"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"开启任务NPC窗口整理、自定义分享任务的节奏，以及分享任务失败时的密语。关闭后恢复暴雪的任务NPC窗口，并按默认节奏分享。"
+	"开启任务NPC窗口整理、自定义分享任务的节奏、分享任务失败时的密语，以及地下城任务的通报和分享。关闭后恢复暴雪的任务NPC窗口，并按默认节奏分享。"
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"启用任务日志整理需要重新加载界面才能生效，关闭设置界面时会提示你重新加载。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新加载界面才能切换任务日志。现在重新加载吗？"
@@ -69,7 +69,7 @@ L["QUEST_ORDER"] = "任务顺序"
 L["QUEST_ORDER_DESCRIPTION"] = "更改每个区域下任务的顺序。"
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "等级，从高到低（默认）"
 L["SORT_LEVEL_LOWEST"] = "等级，从低到高"
-L["COMPLETED_FIRST"] = "已完成任务优先"
+L["COMPLETED_FIRST"] = "优先显示已完成任务"
 L["COMPLETED_FIRST_DESCRIPTION"] = "将可以交付的任务移到所在区域的顶部。"
 L["SHOW_QUEST_LEVELS"] = "显示任务等级"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
@@ -93,10 +93,10 @@ L["RESET_WINDOW_CONFIRM"] = "将任务日志重置为默认大小和位置？"
 
 L["TAB_QUALITY_OF_LIFE"] = "便利功能"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"任务日志之外的小帮手，用于任务NPC窗口和与队友分享任务。"
+	"任务日志之外的小帮手，用于任务NPC窗口、与队友分享任务以及地下城。"
 L["QUEST_GIVERS_HEADER"] = "任务NPC"
 L["QUEST_GIVERS_DESCRIPTION"] = "任务NPC打开的窗口，你在这里接受和交付任务。"
-L["GIVER_CLEANUP"] = "启用任务NPC窗口整理"
+L["GIVER_CLEANUP"] = "任务NPC窗口整理"
 L["GIVER_CLEANUP_DESCRIPTION"] =
 	"让任务NPC窗口的文字排版与任务日志一致，使用相同的标题和行距，并在任务下方显示链接到 Wowhead 的任务ID。"
 L["GIVER_LEVELS"] = "显示任务等级"
@@ -106,12 +106,21 @@ L["QUEST_SHARING_DESCRIPTION"] =
 	"在任务日志中右键点击区域，菜单里的分享任务会把该区域中队友能接受的每个任务逐一分享给队伍。这些选项设置分享的节奏，以及队友错过任务时该怎么办。"
 L["SHARE_INTERVAL"] = "分享间隔秒数"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"区域右键菜单中的分享任务在两个任务之间等待的时间。时间越长，队友就有越多时间接受每个任务。"
+	"分享一个任务后到下一个任务之间的等待时间，适用于分享任务和地下城任务分享。时间越长，队友就有越多时间接受每个任务。"
 L["SHARE_WHISPERS"] = "分享失败时密语"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"当队友正忙、距离太远或任务日志已满时，密语告诉对方你尝试分享的任务，并请对方提醒你。如果对方无法接受该任务，则不发送任何消息。"
-L["SHARE_WHISPER_EXAMPLE"] = "示例："
-L["SHARE_WHISPER_EXAMPLE_QUEST_NAME"] = "任务名称"
+L["OPTIONS_EXAMPLE"] = "示例："
+L["OPTIONS_EXAMPLE_QUEST_NAME"] = "任务名称"
+L["DUNGEON_QUESTS_HEADER"] = "地下城任务"
+L["DUNGEON_QUESTS_DESCRIPTION"] =
+	"当你和队伍进入地下城或团队副本时触发，每支队伍在每个地下城只触发一次。任务日志中列在该地下城下的任务都算在内；装有Questie时，任何目标位于其中的任务也算，职业任务也能找到。"
+L["DUNGEON_ANNOUNCE"] = "地下城任务自动通报"
+L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
+	"告诉队友你在刚进入的地下城里还有哪些任务要做，让大家知道要留意什么。可以交付的任务不会列出。"
+L["DUNGEON_SHARE"] = "地下城任务自动分享"
+L["DUNGEON_SHARE_DESCRIPTION"] =
+	"按任务分享中设定的节奏，分享该地下城里所有游戏允许分享的任务。错过分享的队友会收到平常的密语，可以再找你要。有人加入或离开队伍时会再次分享。"
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -145,21 +154,31 @@ L["RESIZE_TOOLTIP"] = "拖动以调整任务日志大小。"
 L["ZONE_MENU_HINT"] = "右键点击查看更多选项"
 L["SHARE_ZONE_QUESTS"] = "分享 %d 个任务"
 L["SHARE_ZONE_QUEST"] = "分享 1 个任务"
-L["SHARE_ZONE_TOOLTIP"] = "本区域可分享 %d 个任务（共 %d 个）。每 %d 秒发送一个。"
+L["SHARE_ZONE_QUESTS_TOOLTIP"] = "把本区域中游戏允许分享的任务分享给队伍，每 %d 秒一个。"
+L["SHARE_ZONE_QUEST_TOOLTIP"] = "把本区域中游戏允许分享的那一个任务分享给队伍。"
 L["CHAT_SHARING_ZONE_ONE"] = "正在分享 %s 的 1 个任务。"
 L["CHAT_SHARING_ZONE"] = "正在分享 %d 个任务，来自 %s，每 %d 秒一个。"
-L["WHISPER_SHARE_BUSY"] =
-	"我刚才想把 %s 分享给你，但你好像在忙。如果需要，等你有空时喊我一声，我再发一次。"
-L["WHISPER_SHARE_TOO_FAR"] =
-	"我刚才想把 %s 分享给你，但我们离得太远了。如果需要，等我们靠近些时喊我一声，我再发一次。"
-L["WHISPER_SHARE_LOG_FULL"] =
-	"我刚才想把 %s 分享给你，但你的任务日志满了。如果需要，等你腾出空位后喊我一声，我再发一次。"
 L["ABANDON_GRAY_QUESTS"] = "放弃灰色任务"
 L["ABANDON_GRAY_NONE"] = "该区域没有可放弃的灰色任务。"
 L["ABANDON_GRAY_CONFIRM"] = "放弃这 %d 个灰色任务吗？"
 L["ABANDON_GRAY_CONFIRM_ONE"] = "放弃这个灰色任务吗？"
 L["CHAT_ABANDONED_GRAY"] = "已放弃 %d 个灰色任务。"
 L["CHAT_ABANDONED_GRAY_ONE"] = "已放弃 1 个灰色任务。"
+
+--------------------------------------------------------------------------------
+-- Messages to Other Players
+--------------------------------------------------------------------------------
+
+L["WHISPER_SHARE_BUSY"] =
+	"我刚才想把 %s 分享给你，但你好像在忙。如果需要，等你有空时喊我一声，我再发一次。"
+L["WHISPER_SHARE_TOO_FAR"] =
+	"我刚才想把 %s 分享给你，但我们离得太远了。如果需要，等我们靠近些时喊我一声，我再发一次。"
+L["WHISPER_SHARE_LOG_FULL"] =
+	"我刚才想把 %s 分享给你，但你的任务日志满了。如果需要，等你腾出空位后喊我一声，我再发一次。"
+L["DUNGEON_QUESTS_ANNOUNCE"] = "我在这里还有 %d 个任务要做：%s"
+L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "我在这里还有 1 个任务要做：%s"
+L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"
+L["DUNGEON_QUESTS_SEPARATOR"] = "、"
 
 --------------------------------------------------------------------------------
 -- Questie Tracking

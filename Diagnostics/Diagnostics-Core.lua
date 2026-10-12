@@ -138,9 +138,9 @@ ns.DiagnosticsStrings = {
 	TRACKING_CONTEXT_TITLE = "Tracking Context",
 	TRACKING_CONTEXT_DESCRIPTION = "Shows the tracking marks setting, how full the watch list is, and whether Questie's tracker is in charge of tracking.",
 	SHARING_CONTEXT_TITLE = "Sharing Context",
-	SHARING_CONTEXT_DESCRIPTION = "Shows whether the zone menu can share right now, and every switch and setting that decides whether a failed share sends a whisper.",
+	SHARING_CONTEXT_DESCRIPTION = "Shows what the zone menu can share or abandon right now, every switch and setting that decides whether a failed share sends a whisper, and, inside a dungeon, which quests count for it and the announcement as it would go out.",
 	MAP_CONTEXT_TITLE = "Quest Map Context",
-	MAP_CONTEXT_DESCRIPTION = "Shows whether the map beside the quest log is open, the zone it shows, and whether Questie has icons for the selected quest.",
+	MAP_CONTEXT_DESCRIPTION = "Shows whether the map beside the quest log is open, the zone it shows, whether its unexplored areas can be filled in, and whether Questie has icons for the selected quest.",
 	VALIDATE_TITLE = "Validate Data: %s",
 	VALIDATE_DESCRIPTION = "Checks every id in this data file against this client and exports the results as tab-separated text.",
 	VALIDATE_PROGRESS = "%s / %s IDs",
@@ -166,7 +166,7 @@ ns.DiagnosticsStrings = {
 	MESSAGES_TITLE = "Message Length",
 	MESSAGES_DESCRIPTION = "Builds each whisper "
 		.. TITLE
-		.. " can send, with the longest quest title in your log, and shows its length against the chat limit. Nothing is sent.",
+		.. " can send, with the longest quest title in your log, and the dungeon announcement for every quest in your log, and shows each one's length against the chat limit. Nothing is sent.",
 
 	STATUS_WAITING = "Waiting",
 	STATUS_RUNNING = "Running",

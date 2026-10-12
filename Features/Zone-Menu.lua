@@ -69,11 +69,11 @@ function ns.OpenZoneMenu(owner, zoneTitle)
 			seconds. Left out when none can be shared; greyed out while solo and while a share is still going
 		]]
 		local inGroup = IsInGroup()
-		local shareable, total = ns.ShareableZoneQuests(zoneTitle)
+		local shareable = ns.ShareableZoneQuests(zoneTitle)
 		if #shareable > 0 then
 			local label = #shareable == 1 and L["SHARE_ZONE_QUEST"] or L["SHARE_ZONE_QUESTS"]:format(#shareable)
 			local share = root:CreateButton(label, function()
-				local questIDs = ns.ShareableZoneQuests(zoneTitle, true)
+				local questIDs = ns.ShareableZoneQuests(zoneTitle)
 				if #questIDs == 1 then
 					ns:PrintMessage(L["CHAT_SHARING_ZONE_ONE"]:format(zoneTitle))
 				else
@@ -85,10 +85,12 @@ function ns.OpenZoneMenu(owner, zoneTitle)
 			share:SetTooltip(function(tooltip)
 				if not inGroup then
 					GameTooltip_SetTitle(tooltip, ERR_NOT_IN_GROUP)
+				elseif #shareable == 1 then
+					GameTooltip_AddNormalLine(tooltip, L["SHARE_ZONE_QUEST_TOOLTIP"], true)
 				else
 					GameTooltip_AddNormalLine(
 						tooltip,
-						L["SHARE_ZONE_TOOLTIP"]:format(#shareable, total, ns.GetShareInterval()),
+						L["SHARE_ZONE_QUESTS_TOOLTIP"]:format(ns.GetShareInterval()),
 						true
 					)
 				end

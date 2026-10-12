@@ -6,10 +6,10 @@ local L = ns.L
 --------------------------------------------------------------------------------
 
 --[[
-	A line beside the quest count totaling the XP and gold waiting in quests ready to turn in (just the
-	gold at the level cap, where quest XP stops). Both come from Questie's quest data (its QuestXP
-	module), so the line is hidden while Questie isn't loaded. Hovering it lists each quest under its
-	zone
+	A line centred in the bottom row, between Abandon Quest and Share Quest, totaling the XP and gold
+	waiting in quests ready to turn in (just the gold at the level cap, where quest XP stops). Both come
+	from Questie's quest data (its QuestXP module), so the line is hidden while Questie isn't loaded.
+	Hovering it lists each quest under its zone
 ]]
 local questXP
 local function QuestieXP()
@@ -114,8 +114,13 @@ function ns.UpdateTurnInLine(line, readyQuests)
 	local totalXP, totalMoney = 0, 0
 	local zones, zoneByName = {}, {}
 	for _, ready in ipairs(readyQuests) do
-		local xp = not atCap and source:GetQuestLogRewardXP(ready.questID) or 0
-		local money = source.GetQuestRewardMoney(ready.questID) or 0
+		local xp = 0
+		if not atCap then
+			local found, value = pcall(source.GetQuestLogRewardXP, source, ready.questID)
+			xp = found and type(value) == "number" and value or 0
+		end
+		local found, value = pcall(source.GetQuestRewardMoney, ready.questID)
+		local money = found and type(value) == "number" and value or 0
 		if xp > 0 or money > 0 then
 			totalXP, totalMoney = totalXP + xp, totalMoney + money
 			local name = ready.zone or OTHER
