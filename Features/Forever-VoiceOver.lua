@@ -10,9 +10,22 @@ local TITLE_INSET = 22
 --[[
 	Spoken Quests puts its play buttons on the map's quest list, which this window stands in for, so the
 	list puts them on its own rows through Spoken's own button functions. Buttons of its own, one per
-	quest, rather than Spoken's: the map's list takes those back to its rows whenever it redraws
+	quest in the log and reused once a quest leaves it, rather than Spoken's: the map's list takes those
+	back to its rows whenever it redraws
 ]]
 local buttons = {}
+
+-- A button whose quest has left the log, taken off its old quest; nil when every button's quest is still there
+local function TakeLeftoverButton()
+	for questID, button in pairs(buttons) do
+		if not C_QuestLog.GetLogIndexForQuestID(questID) then
+			buttons[questID] = nil
+			button:Hide()
+			button.row = nil
+			return button
+		end
+	end
+end
 
 local function GetOverlay()
 	local voiceOver = ns.GetVoiceOver()
@@ -44,7 +57,7 @@ function ns.ShowVoiceOverButton(row, questID)
 
 	local button = buttons[questID]
 	if not button then
-		button = overlay:MakePlayButton(row)
+		button = TakeLeftoverButton() or overlay:MakePlayButton(row)
 		buttons[questID] = button
 	end
 	button:SetParent(row)

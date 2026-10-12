@@ -11,6 +11,13 @@ ns.SAVED_VARIABLES_NAME = "PrettyWideQuestLogDB"
 -- The add-on this one replaced. Both hook the quest log, so they must not run together.
 ns.PREDECESSOR_ADDON_NAME = "WideQuestLogPlus"
 
+--[[
+	Questie's data powers the map, the quest chain and the XP to turn in. Without it, a chat line says so
+	this long after login, once the welcome lines have scrolled past
+]]
+ns.QUESTIE_ADDON_NAME = "Questie"
+ns.QUESTIE_NOTICE_DELAY = 20
+
 --------------------------------------------------------------------------------
 -- Links
 --------------------------------------------------------------------------------
@@ -21,6 +28,17 @@ ns.URLS = {
 	CURSEFORGE = "https://www.curseforge.com/wow/addons/pretty-wide-quest-log",
 	WAGO = "https://addons.wago.io/addons/pretty-wide-quest-log",
 }
+
+-- A quest's Wowhead page, in the part of the site for this client; WoW Forever's quests are Classic Era's
+local WOWHEAD_QUEST_URLS = {
+	Vanilla = "https://www.wowhead.com/classic/quest=",
+	TBC = "https://www.wowhead.com/tbc/quest=",
+	Camelot = "https://www.wowhead.com/classic/quest=",
+}
+ns.WOWHEAD_QUEST_URL = WOWHEAD_QUEST_URLS[ns.FLAVOR]
+
+-- The chain link before a quest ID that opens its Wowhead page: white, so it takes the quest ID's colour
+ns.WOWHEAD_LINK_ICON = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/PWQL_Link"
 
 --------------------------------------------------------------------------------
 -- Colors
@@ -44,6 +62,8 @@ ns.PALETTE = {
 
 ns.OPTIONS_REGISTRY = {
 	General = ADDON_NAME,
+	QuestLog = ADDON_NAME .. "_QuestLog",
+	QualityOfLife = ADDON_NAME .. "_QualityOfLife",
 	Profiles = ADDON_NAME .. "_Profiles",
 	Diagnostics = ADDON_NAME .. "_Diagnostics",
 }
@@ -117,6 +137,7 @@ LAYOUT.LINE_HEIGHT = 1.2
 	QUEST_ID_GAP once the quest text's font is known, as it differs between clients and languages
 ]]
 LAYOUT.TITLE_SPACE_BELOW = 8
+LAYOUT.DAILY_RESET_SPACE_BELOW = 8 -- Under TBC's daily reset line, which sits between the title and the objectives
 LAYOUT.HEADING_SPACE_BELOW = 6
 LAYOUT.HEADING_LINES_ABOVE = 1.4
 local BLIZZARD_HEADING_GAP = 5 -- What Blizzard leaves under a heading
@@ -180,6 +201,9 @@ ns.TRACKING_MARKS = {
 	},
 }
 
+-- After the name of the zone the player is in, in every zone order: the green check of a completed objective, as tall as the text
+ns.CURRENT_ZONE_MARK = "|TInterface/RaidFrame/ReadyCheck-Ready:0|t"
+
 --[[
 	Space above every zone header in the quest list except the first: half a row, so zones read as
 	separate groups (about three times the space between two rows' text) without a full blank line
@@ -198,10 +222,12 @@ LAYOUT.BUTTON_HEIGHT = 21
 
 --[[
 	Expand All and Track All above the quest list, left to right from the quest log's own "All" spot.
-	Each is at least as wide as a bottom button, and wider where a label needs it
+	Each is at least as wide as a bottom button, and wider where a label needs it, with a gap between each
+	and the next (Show Map's too)
 ]]
 LAYOUT.LIST_BUTTONS_X = 74
 LAYOUT.LIST_BUTTONS_Y = -53
+LAYOUT.LIST_BUTTONS_GAP = 8
 LAYOUT.LABEL_PADDING = 32
 
 -- Centre of the scroll bar slot to the right of the parchment
@@ -217,3 +243,20 @@ LAYOUT.GRIP_INSET = 4
 
 -- A window dragged taller still leaves this much of the screen below it
 LAYOUT.MINIMUM_BOTTOM_CLAMP = 20
+
+--------------------------------------------------------------------------------
+-- Messages
+--------------------------------------------------------------------------------
+
+-- Leads every message the add-on sends to other players (the master list's Target marker column)
+ns.TARGET_MARKER = "{rt3}"
+
+-- SendChatMessage rejects anything longer, in bytes
+ns.CHAT_MESSAGE_MAX_LENGTH = 255
+
+--[[
+	The zone menu shares one quest at a time, ns.GetShareInterval() seconds apart, within these bounds (the
+	Quality of Life panel's slider). Any sooner than the shortest and the game calls a party member busy
+]]
+ns.SHARE_INTERVAL_MIN = 3
+ns.SHARE_INTERVAL_MAX = 10

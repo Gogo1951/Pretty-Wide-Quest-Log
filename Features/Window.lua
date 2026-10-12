@@ -62,14 +62,16 @@ end
 
 --[[
 	Snaps a window height to whole list rows, between the default height and the bottom of the screen
-	(the window grows downward from its top edge)
+	(the window grows downward from its top edge). Heights are in the window's own units, which its
+	scale stretches, so the screen's measures are divided by it
 ]]
 function ns.ClampHeight(frame, height, rowHeight)
 	local base = LAYOUT.BASE_HEIGHT
 	height = base + math.floor((height - base) / rowHeight + 0.5) * rowHeight
 
-	local top = frame:GetTop() or UIParent:GetHeight()
-	local maximumHeight = math.max(base, top - LAYOUT.MINIMUM_BOTTOM_CLAMP)
+	local scale = frame:GetScale()
+	local top = frame:GetTop() or (UIParent:GetHeight() / scale)
+	local maximumHeight = math.max(base, top - LAYOUT.MINIMUM_BOTTOM_CLAMP / scale)
 	if height > maximumHeight then
 		height = base + math.floor((maximumHeight - base) / rowHeight) * rowHeight
 	end
@@ -149,7 +151,7 @@ end
 function ns.CreateListButtons(parent)
 	local expandButton = CreateListButton(parent, { L["EXPAND_ALL"], L["COLLAPSE_ALL"] })
 	local trackButton = CreateListButton(parent, { L["TRACK_ALL"], L["UNTRACK_ALL"] })
-	trackButton:SetPoint("LEFT", expandButton, "RIGHT")
+	trackButton:SetPoint("LEFT", expandButton, "RIGHT", LAYOUT.LIST_BUTTONS_GAP, 0)
 
 	local buttons = { expandButton, trackButton }
 	local fitted

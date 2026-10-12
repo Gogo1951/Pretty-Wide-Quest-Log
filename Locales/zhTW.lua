@@ -8,44 +8,35 @@ end
 --------------------------------------------------------------------------------
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
+L["ADDON_SHORT"] = "PWQL"
 L["CHAT_LOADED"] =
 	"版本 %s。設定（包括關閉此訊息的選項）位於 選項 > 插件 > Pretty Wide Quest Log。喜歡這個插件嗎？推薦給朋友吧！(="
 L["CHAT_OPTIONS_IN_COMBAT"] = "基於安全考量，戰鬥中無法開啟設定介面。"
+L["CHAT_QUESTIE_MISSING"] =
+	"本插件的許多功能仰賴 Questie 的資料。沒有 Questie，部分功能將無法使用。"
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus 也已啟用，兩者會互相搶奪任務日誌。請在插件列表中停用 Wide Quest Log Plus，然後重新載入介面。"
 
 --------------------------------------------------------------------------------
--- Options
+-- General Panel
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
 	"更大、更好的任務日誌，讓你有更多閱讀空間，一眼看到更多資訊。保留熟悉的暴雪版面配置，同時並排檢視任務等級、實用標籤、目標、獎勵以及完整的任務清單。"
 L["ENABLE_WELCOME_MESSAGE"] = "啟用歡迎訊息"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登入時顯示 Pretty Wide Quest Log 的歡迎詞。"
-L["ENABLE_WIDE_QUEST_LOG"] = "為此設定檔啟用 Pretty Wide Quest Log"
-L["ENABLE_WIDE_QUEST_LOG_DESCRIPTION"] =
-	"讓任務日誌快捷鍵、微型選單按鈕以及在任務追蹤中點擊任務時開啟這個寬任務日誌。關閉此選項可改用嵌在世界地圖中的暴雪預設任務日誌。重新載入介面後生效。"
+L["OPTIONS_FEATURES_HEADER"] = "功能"
+L["ENABLE_QUEST_LOG_CLEANUP"] = "啟用任務日誌整理"
+L["FEATURE_QUEST_LOG_DESCRIPTION"] =
+	"將暴雪任務日誌換成寬版任務日誌，地圖就在旁邊。關閉此選項可改用暴雪任務日誌。重新載入介面後生效。"
+L["ENABLE_QUALITY_OF_LIFE"] = "啟用便利功能"
+L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
+	"開啟任務NPC視窗整理、自訂分享任務的節奏，以及分享任務失敗時的密語。關閉後恢復暴雪的任務NPC視窗，並以預設節奏分享。"
+L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
+	"啟用任務日誌整理需要重新載入介面才會生效，關閉設定介面時會提示你重新載入。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新載入介面才能切換任務日誌。現在重新載入嗎？"
-L["ZONE_ORDER"] = "區域順序"
-L["ZONE_ORDER_DESCRIPTION"] = "變更任務清單中區域的順序。"
-L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "平均等級，由高到低（預設）"
-L["SORT_AVERAGE_LEVEL_LOWEST"] = "平均等級，由低到高"
-L["SORT_ALPHABETICAL"] = "依名稱"
-L["ZONE_GAP"] = "區域名稱上方留空"
-L["ZONE_GAP_DESCRIPTION"] =
-	"在每個區域名稱上方留出一點間距。如果你的任務分散在許多區域，會很方便。"
-L["QUEST_ORDER"] = "任務順序"
-L["QUEST_ORDER_DESCRIPTION"] = "變更每個區域下任務的順序。"
-L["SORT_LEVEL_HIGHEST_DEFAULT"] = "等級，由高到低（預設）"
-L["SORT_LEVEL_LOWEST"] = "等級，由低到高"
-L["MARK_UNTRACKED"] = "標記未追蹤的任務"
-L["MARK_UNTRACKED_DESCRIPTION"] =
-	"已追蹤的任務不再顯示勾號 %s，改為在未追蹤的任務前顯示眼睛 %s。如果你幾乎追蹤所有任務，會很方便。"
-L["RESET_WINDOW"] = "重設大小和位置"
-L["RESET_WINDOW_DESCRIPTION"] = "將任務日誌恢復為預設大小和位置。"
-L["RESET_WINDOW_CONFIRM"] = "要將任務日誌重設為預設大小和位置嗎？"
 L["OPTIONS_COMMANDS_HEADER"] = "/指令"
-L["OPTIONS_COMMAND"] = "/wide"
+L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "開啟此插件的設定介面。"
 L["FEEDBACK_HEADER"] = "意見回饋與支援"
 L["FEEDBACK_DISCORD"] = "Discord"
@@ -53,6 +44,74 @@ L["FEEDBACK_GITHUB"] = "GitHub"
 L["FEEDBACK_CURSEFORGE"] = "CurseForge"
 L["FEEDBACK_WAGO"] = "Wago"
 L["OPTIONS_VERSION"] = "版本 %s"
+
+--------------------------------------------------------------------------------
+-- Quest Log Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_LOG"] = "任務日誌"
+L["TAB_QUEST_LOG_DESCRIPTION"] =
+	"以寬版任務日誌取代暴雪任務日誌：任務依區域列出，旁邊顯示所選任務的詳細資訊及其地圖。"
+L["QUEST_LOG_LAYOUT_HEADER"] = "任務日誌版面"
+L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
+	"依你的玩法排列任務，選擇每列顯示的內容，並調整視窗和地圖大小以符合你的螢幕。"
+L["ZONE_ORDER"] = "區域順序"
+L["ZONE_ORDER_DESCRIPTION"] = "變更任務清單中區域的順序。"
+L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "平均等級，由高到低（預設）"
+L["SORT_AVERAGE_LEVEL_LOWEST"] = "平均等級，由低到高"
+L["SORT_ALPHABETICAL"] = "依名稱"
+L["CURRENT_ZONE_FIRST"] = "優先顯示目前區域"
+L["CURRENT_ZONE_FIRST_DESCRIPTION"] = "無論區域順序為何，都將你所在的區域置於清單頂端。"
+L["ZONE_GAP"] = "區域名稱上方留空"
+L["ZONE_GAP_DESCRIPTION"] =
+	"在每個區域名稱上方留出一點間距。如果你的任務分散在許多區域，會很方便。"
+L["QUEST_ORDER"] = "任務順序"
+L["QUEST_ORDER_DESCRIPTION"] = "變更每個區域下任務的順序。"
+L["SORT_LEVEL_HIGHEST_DEFAULT"] = "等級，由高到低（預設）"
+L["SORT_LEVEL_LOWEST"] = "等級，由低到高"
+L["COMPLETED_FIRST"] = "已完成任務優先"
+L["COMPLETED_FIRST_DESCRIPTION"] = "將可以回報的任務移到所在區域的頂端。"
+L["SHOW_QUEST_LEVELS"] = "顯示任務等級"
+L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
+	"在清單中每個任務名稱前顯示其等級和類型，例如 [40副] 表示40級地城任務。"
+L["MARK_UNTRACKED"] = "標記未追蹤的任務"
+L["MARK_UNTRACKED_DESCRIPTION"] =
+	"已追蹤的任務不再顯示勾號 %s，改為在未追蹤的任務前顯示眼睛 %s。如果你幾乎追蹤所有任務，會很方便。"
+L["CLOSE_IN_COMBAT"] = "戰鬥開始時關閉"
+L["CLOSE_IN_COMBAT_DESCRIPTION"] = "戰鬥開始時關閉任務日誌，避免遮住戰鬥畫面。"
+L["WINDOW_SCALE"] = "任務日誌縮放"
+L["WINDOW_SCALE_DESCRIPTION"] = "放大或縮小任務日誌。旁邊的地圖會隨之一起縮放。"
+L["MAP_SCALE"] = "地圖縮放"
+L["MAP_SCALE_DESCRIPTION"] = "在任務日誌縮放的基礎上，放大或縮小任務日誌旁的地圖。"
+L["RESET_WINDOW"] = "重設大小和位置"
+L["RESET_WINDOW_DESCRIPTION"] = "將任務日誌恢復為預設大小和位置。"
+L["RESET_WINDOW_CONFIRM"] = "要將任務日誌重設為預設大小和位置嗎？"
+
+--------------------------------------------------------------------------------
+-- Quality of Life Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUALITY_OF_LIFE"] = "便利功能"
+L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
+	"任務日誌之外的小幫手，用於任務NPC視窗和與隊友分享任務。"
+L["QUEST_GIVERS_HEADER"] = "任務NPC"
+L["QUEST_GIVERS_DESCRIPTION"] = "任務NPC開啟的視窗，你在這裡接受和回報任務。"
+L["GIVER_CLEANUP"] = "啟用任務NPC視窗整理"
+L["GIVER_CLEANUP_DESCRIPTION"] =
+	"讓任務NPC視窗的文字排版與任務日誌一致，使用相同的標題和行距，並在任務下方顯示連結到 Wowhead 的任務ID。"
+L["GIVER_LEVELS"] = "顯示任務等級"
+L["GIVER_LEVELS_DESCRIPTION"] = "在任務NPC的任務清單中加上任務日誌的等級標籤，例如 [40副]。"
+L["QUEST_SHARING_HEADER"] = "任務分享"
+L["QUEST_SHARING_DESCRIPTION"] =
+	"在任務日誌中右鍵點擊區域，選單裡的分享任務會把該區域中隊友能接受的每個任務逐一分享給隊伍。這些選項設定分享的節奏，以及隊友錯過任務時該怎麼辦。"
+L["SHARE_INTERVAL"] = "分享間隔秒數"
+L["SHARE_INTERVAL_DESCRIPTION"] =
+	"區域右鍵選單中的分享任務在兩個任務之間等待的時間。時間越長，隊友就有越多時間接受每個任務。"
+L["SHARE_WHISPERS"] = "分享失敗時密語"
+L["SHARE_WHISPERS_DESCRIPTION"] =
+	"當隊友正忙、距離太遠或任務日誌已滿時，密語告訴對方你嘗試分享的任務，並請對方提醒你。如果對方無法接受該任務，則不傳送任何訊息。"
+L["SHARE_WHISPER_EXAMPLE"] = "範例："
+L["SHARE_WHISPER_EXAMPLE_QUEST_NAME"] = "任務名稱"
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -64,16 +123,47 @@ L["QUEST_SUFFIX_PVP"] = "戰"
 L["QUEST_SUFFIX_GROUP"] = "組"
 L["QUEST_SUFFIX_ELITE"] = "精"
 L["QUEST_ID"] = "任務ID %d"
+L["QUEST_CHAIN"] = "任務鏈"
+L["DAILY_RESET"] = "每日任務將在 %s 後重置。"
+L["WOWHEAD_LINK_TOOLTIP"] = "點擊取得 Wowhead 連結。"
+L["WOWHEAD_LINK_COPY"] = "按 Ctrl+C（Mac 上為 Cmd+C）複製 Wowhead 連結。"
 L["EXPAND_ALL"] = "全部展開"
 L["COLLAPSE_ALL"] = "全部收合"
 L["TRACK_ALL"] = "全部追蹤"
 L["UNTRACK_ALL"] = "全部取消追蹤"
 L["HIDE_MAP"] = "隱藏地圖"
-L["RESIZE_TOOLTIP"] = "拖曳以調整任務日誌大小"
+L["TURN_IN_XP"] = "%s 經驗"
+L["TURN_IN_SEPARATOR"] = " / "
+L["TURN_IN_SUMMARY"] = "回報：%s"
+L["TURN_IN_TOOLTIP"] = "可以回報"
+L["RESIZE_TOOLTIP"] = "拖曳以調整任務日誌大小。"
+
+--------------------------------------------------------------------------------
+-- Zone Menu
+--------------------------------------------------------------------------------
+
+L["ZONE_MENU_HINT"] = "右鍵點擊查看更多選項"
+L["SHARE_ZONE_QUESTS"] = "分享 %d 個任務"
+L["SHARE_ZONE_QUEST"] = "分享 1 個任務"
+L["SHARE_ZONE_TOOLTIP"] = "本區域可分享 %d 個任務（共 %d 個）。每 %d 秒傳送一個。"
+L["CHAT_SHARING_ZONE_ONE"] = "正在分享 %s 的 1 個任務。"
+L["CHAT_SHARING_ZONE"] = "正在分享 %d 個任務，來自 %s，每 %d 秒一個。"
+L["WHISPER_SHARE_BUSY"] =
+	"我剛才想把 %s 分享給你，但你好像在忙。如果需要，等你有空時叫我一聲，我再傳一次。"
+L["WHISPER_SHARE_TOO_FAR"] =
+	"我剛才想把 %s 分享給你，但我們離得太遠了。如果需要，等我們靠近一點時叫我一聲，我再傳一次。"
+L["WHISPER_SHARE_LOG_FULL"] =
+	"我剛才想把 %s 分享給你，但你的任務日誌滿了。如果需要，等你騰出空位後叫我一聲，我再傳一次。"
+L["ABANDON_GRAY_QUESTS"] = "放棄灰色任務"
+L["ABANDON_GRAY_NONE"] = "此區域沒有可放棄的灰色任務。"
+L["ABANDON_GRAY_CONFIRM"] = "要放棄這 %d 個灰色任務嗎？"
+L["ABANDON_GRAY_CONFIRM_ONE"] = "要放棄這個灰色任務嗎？"
+L["CHAT_ABANDONED_GRAY"] = "已放棄 %d 個灰色任務。"
+L["CHAT_ABANDONED_GRAY_ONE"] = "已放棄 1 個灰色任務。"
 
 --------------------------------------------------------------------------------
 -- Questie Tracking
 --------------------------------------------------------------------------------
 
 L["QUESTIE_CANNOT_SHOW"] = "Questie 追蹤器無法顯示 %s，因為 Questie 資料庫中缺少該任務。"
-L["QUESTIE_CANNOT_TRACK"] = "Questie 暫時無法追蹤此任務"
+L["QUESTIE_CANNOT_TRACK"] = "Questie 暫時無法追蹤此任務。"

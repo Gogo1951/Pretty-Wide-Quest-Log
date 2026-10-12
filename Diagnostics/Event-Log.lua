@@ -14,7 +14,9 @@ local EVENT_LOG_MAX_ARG_LENGTH = 255
     Events ns:LogEvent drops before recording -- deliberately empty. The
     dispatcher only ever hands LogEvent the events the add-on registers (Core's
     ns.EVENT_NAMES), and none of those is a sustained firehose worth dropping:
-    every registered event is potential signal in a bug report.
+    every registered event is potential signal in a bug report. CHAT_MSG_SYSTEM
+    stays too: it fires once per system line, and the quest share results the
+    whispers answer arrive as those lines.
     The lookup in LogEvent stays so a genuine no-signal firehose can be excluded
     here if one is ever registered. Generic offenders
     (COMBAT_LOG_EVENT_UNFILTERED, UNIT_AURA, ...) do not belong here unless

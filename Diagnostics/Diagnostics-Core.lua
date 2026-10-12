@@ -72,6 +72,7 @@ ns.DiagnosticsStrings = {
 	EVENT_LOG_INTRO = "Records the events "
 		.. TITLE
 		.. " listens to, in the order they fired, showing whether an event never fired, or fired and nothing happened.",
+	EVENT_LOG_PRIVACY = "Some of these events carry lines of chat, which can name other players or quote what they said, so read the log before you paste it anywhere.",
 	EVENT_LOG_IDLE = "Not capturing.",
 	EVENT_LOG_CAPTURING = "Capturing. Reproduce the problem, then press Stop.",
 	EVENT_LOG_STOPPED = "Stopped: %s events captured.",
@@ -132,12 +133,12 @@ ns.DiagnosticsStrings = {
 	EVENTS_SOME_FAIL = "%d failed to register",
 	API_TITLE = "API Endpoints",
 	API_DESCRIPTION = "Checks that every game function " .. TITLE .. " calls exists on this client.",
-	API_ALL_PASS = "all present",
-	API_SOME_FAIL = "%d missing",
 	QUEST_LOG_CONTEXT_TITLE = "Quest Log Context",
 	QUEST_LOG_CONTEXT_DESCRIPTION = "Shows which quest log loaded, your settings, the selected quest, and every add-on or open window that can change what the quest log shows.",
 	TRACKING_CONTEXT_TITLE = "Tracking Context",
 	TRACKING_CONTEXT_DESCRIPTION = "Shows the tracking marks setting, how full the watch list is, and whether Questie's tracker is in charge of tracking.",
+	SHARING_CONTEXT_TITLE = "Sharing Context",
+	SHARING_CONTEXT_DESCRIPTION = "Shows whether the zone menu can share right now, and every switch and setting that decides whether a failed share sends a whisper.",
 	MAP_CONTEXT_TITLE = "Quest Map Context",
 	MAP_CONTEXT_DESCRIPTION = "Shows whether the map beside the quest log is open, the zone it shows, and whether Questie has icons for the selected quest.",
 	VALIDATE_TITLE = "Validate Data: %s",
@@ -162,6 +163,10 @@ ns.DiagnosticsStrings = {
 	NAMES_DESCRIPTION = "Shows the name your client gives every game string " .. TITLE .. " shows or matches.",
 	NAMES_ALL_FOUND = "all found",
 	NAMES_SOME_NIL = "%d NIL",
+	MESSAGES_TITLE = "Message Length",
+	MESSAGES_DESCRIPTION = "Builds each whisper "
+		.. TITLE
+		.. " can send, with the longest quest title in your log, and shows its length against the chat limit. Nothing is sent.",
 
 	STATUS_WAITING = "Waiting",
 	STATUS_RUNNING = "Running",
@@ -230,7 +235,7 @@ end
 ns.GetDiagnosticClientHeader = GetClientHeader
 ns.CountDiagnosticKeys = CountKeys
 
--- Magic Eraser has this in its feature utilities; no feature here prints counts, so diagnostics keeps its own.
+-- The panel's own counts; diagnostics never leans on a feature file's helpers.
 function ns:FormatCommaNumber(number)
 	return (tostring(number):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""))
 end

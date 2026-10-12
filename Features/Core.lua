@@ -38,6 +38,9 @@ local EVENTS = {
 	{ "UNIT_QUEST_LOG_CHANGED", "OnUnitQuestLogChanged" },
 	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate" },
 	{ "PLAYER_LEVEL_UP", "OnPlayerLevelUp" },
+	{ "ZONE_CHANGED_NEW_AREA", "OnZoneChangedNewArea" },
+	{ "PLAYER_REGEN_DISABLED", "OnPlayerRegenDisabled" },
+	{ "CHAT_MSG_SYSTEM", "OnChatMsgSystem" },
 }
 
 local EVENT_HANDLERS = {}
@@ -68,11 +71,45 @@ end
 RegisterEvent("ADDON_LOADED")
 
 --------------------------------------------------------------------------------
+-- The Wide Quest Log
+--------------------------------------------------------------------------------
+
+--[[
+	The Quest Log switch decides, as the saved settings load, whether the wide quest log runs this
+	session; a change takes effect at the next /reload. On Classic Era and TBC its files widen and hook
+	Blizzard's own quest log, which can't be undone, so each hands its work here and it runs only with the
+	switch on. WoW Forever's quest log is a window of its own that stays closed with the switch off, so
+	its pieces build at once and only the takeover of the quest log key waits (Forever-Quest-Log.lua)
+]]
+local wideQuestLogParts = {}
+
+function ns.AddWideQuestLogPart(build)
+	if ns.FLAVOR == "Camelot" then
+		build()
+	else
+		wideQuestLogParts[#wideQuestLogParts + 1] = build
+	end
+end
+
+local function StartWideQuestLog()
+	ns.wideQuestLogActive = ns.db.profile.enableWideQuestLog and true or false
+	if ns.wideQuestLogActive then
+		for _, build in ipairs(wideQuestLogParts) do
+			build()
+		end
+	end
+	wideQuestLogParts = nil
+end
+
+--------------------------------------------------------------------------------
 -- Saved Variables
 --------------------------------------------------------------------------------
 
 function ns:ApplyProfile()
-	ns.RefreshQuestLog()
+	ns.ApplyQuestGiverCleanup()
+	if ns.wideQuestLogActive then
+		ns.RefreshQuestLog()
+	end
 	for _, registryName in pairs(ns.OPTIONS_REGISTRY) do
 		AceConfigRegistry:NotifyChange(registryName)
 	end
@@ -87,6 +124,8 @@ function ns:OnAddonLoaded(name)
 	for _, message in ipairs({ "OnProfileChanged", "OnProfileReset", "OnProfileCopied" }) do
 		ns.db.RegisterCallback(ns, message, "ApplyProfile")
 	end
+	StartWideQuestLog()
+	ns.ApplyQuestGiverCleanup()
 	ns.RegisterOptionsPanels()
 
 	if ns.OnDatabaseReady then
@@ -118,7 +157,17 @@ function ns:WarnIfPredecessorLoaded()
 	end
 end
 
+-- Prints regardless of the welcome toggle: it explains missing features, not a greeting.
+function ns:NoteIfQuestieMissing()
+	C_Timer.After(ns.QUESTIE_NOTICE_DELAY, function()
+		if not C_AddOns.IsAddOnLoaded(ns.QUESTIE_ADDON_NAME) then
+			ns:PrintMessage(L["CHAT_QUESTIE_MISSING"])
+		end
+	end)
+end
+
 function ns:OnPlayerLogin()
 	ns:PrintWelcome()
 	ns:WarnIfPredecessorLoaded()
+	ns:NoteIfQuestieMissing()
 end

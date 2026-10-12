@@ -20,6 +20,14 @@ function ns.RegisterOptionsPanels()
 	local mainPanel, mainCategoryID = AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.General, L["ADDON_TITLE"])
 	ns.optionsFrames = { main = mainPanel, categoryID = mainCategoryID }
 
+	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.QuestLog, ns.BuildQuestLogOptions)
+	local questLogPanel =
+		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QuestLog, L["TAB_QUEST_LOG"], L["ADDON_TITLE"])
+
+	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.QualityOfLife, ns.BuildQualityOfLifeOptions)
+	local qualityOfLifePanel =
+		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QualityOfLife, L["TAB_QUALITY_OF_LIFE"], L["ADDON_TITLE"])
+
 	local profilesOptions = ns.BuildProfilesOptions()
 	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.Profiles, profilesOptions)
 	local profilesPanel =
@@ -29,10 +37,8 @@ function ns.RegisterOptionsPanels()
 	local diagnosticsPanel =
 		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.Diagnostics, ns.DiagnosticsStrings.TAB, L["ADDON_TITLE"])
 
-	-- WoW Forever's reload prompt, when that client's TOC loaded it
-	if ns.WatchOptionsForReload then
-		ns.WatchOptionsForReload({ mainPanel, profilesPanel, diagnosticsPanel })
-	end
+	-- The Quest Log switch's reload prompt (Options-General.lua)
+	ns.WatchOptionsForReload({ mainPanel, questLogPanel, qualityOfLifePanel, profilesPanel, diagnosticsPanel })
 end
 
 --------------------------------------------------------------------------------
@@ -58,7 +64,7 @@ end
 -- Slash Commands
 --------------------------------------------------------------------------------
 
-SLASH_PRETTYWIDEQUESTLOGOPTIONS1 = "/wide"
+SLASH_PRETTYWIDEQUESTLOGOPTIONS1 = "/pwql"
 SlashCmdList.PRETTYWIDEQUESTLOGOPTIONS = function()
 	ns:OpenOptionsPanel()
 end

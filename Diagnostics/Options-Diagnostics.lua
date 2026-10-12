@@ -150,12 +150,21 @@ local function NoEventLogReport()
 	return ns.diagnostics.eventLogReport == nil
 end
 
+-- The intro, the add-on's own examples, and the privacy warning wherever a registered chat event can put chat in the log
+local function EventLogIntro()
+	local parts = { D.EVENT_LOG_INTRO, D.EVENT_LOG_EXAMPLES }
+	for _, event in ipairs(ns.EVENT_NAMES) do
+		if event:find("^CHAT_MSG_") then
+			parts[#parts + 1] = D.EVENT_LOG_PRIVACY
+			break
+		end
+	end
+	return table.concat(parts, " ")
+end
+
 local function BuildEventLogBox(order)
 	return Box(D.EVENT_LOG_TITLE, order, {
-		descIntro = HelpDesc(
-			D.EVENT_LOG_EXAMPLES and (D.EVENT_LOG_INTRO .. " " .. D.EVENT_LOG_EXAMPLES) or D.EVENT_LOG_INTRO,
-			1
-		),
+		descIntro = HelpDesc(EventLogIntro(), 1),
 		rowControls = Row(2, {
 			Desc(EventLogState, nil, nil, BOX_ROW_WIDTH - 3 * LOG_BUTTON_WIDTH - ROW_SLACK),
 			Button(D.EVENT_LOG_START, D.EVENT_LOG_START_DESCRIPTION, LOG_BUTTON_WIDTH, function()

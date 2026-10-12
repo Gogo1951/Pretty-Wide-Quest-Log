@@ -158,3 +158,71 @@ function ns:StopNameLookupReport()
 	nameRun.generation = nameRun.generation + 1
 	nameRun.onFinish = nil
 end
+
+--------------------------------------------------------------------------------
+-- Message Length
+--------------------------------------------------------------------------------
+
+-- The whispers a failed quest share sends (Share-Reminders.lua), by locale key
+local SHARE_WHISPER_KEYS = {
+	"WHISPER_SHARE_BUSY",
+	"WHISPER_SHARE_TOO_FAR",
+	"WHISPER_SHARE_LOG_FULL",
+}
+
+-- The quest with the longest title in the log, in bytes: its ID and title
+local function LongestQuestTitle()
+	local longest, longestID = "", nil
+	local function Consider(title, questID)
+		if title and questID and #title > #longest then
+			longest, longestID = title, questID
+		end
+	end
+	if ns.FLAVOR == "Camelot" then
+		for index = 1, C_QuestLog.GetNumQuestLogEntries() do
+			local entry = C_QuestLog.GetInfo(index)
+			if entry and not entry.isHeader then
+				Consider(entry.title, entry.questID)
+			end
+		end
+	else
+		for index = 1, GetNumQuestLogEntries() do
+			local title, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(index)
+			if not isHeader then
+				Consider(title, questID)
+			end
+		end
+	end
+	return longestID, longest
+end
+
+--[[
+	Each whisper built for that quest, as sent (with Questie's link where it fits), and its byte length
+	against the chat limit; SHORTENED where even the bracketed title had to be cut. Builds strings only
+]]
+function ns:BuildMessageLengthReport()
+	local lines = { GetClientHeader(), "" }
+	local questID, title = LongestQuestTitle()
+	if not questID then
+		lines[#lines + 1] = "No quests in the log: pick up a quest to measure with."
+		return table.concat(lines, "\n")
+	end
+	lines[#lines + 1] = string.format("Longest quest title: %s (%d bytes)", title, #title)
+	lines[#lines + 1] = string.format("Chat limit: %d bytes", ns.CHAT_MESSAGE_MAX_LENGTH)
+	lines[#lines + 1] = ""
+	for _, key in ipairs(SHARE_WHISPER_KEYS) do
+		local sent = ns.BuildShareWhisper(key, questID, title)
+		local bracketed = ns:BuildAnnounceMessage(key, "[" .. title .. "]")
+		local linked = sent:find("|H", 1, true) ~= nil
+		local status = (not linked and #bracketed > ns.CHAT_MESSAGE_MAX_LENGTH) and "SHORTENED" or "OK"
+		lines[#lines + 1] = string.format(
+			"[%s] %s: %d bytes, %s",
+			status,
+			key,
+			#sent,
+			linked and "with Questie's quest link" or "with the title in brackets"
+		)
+		lines[#lines + 1] = "    " .. ShownText(sent)
+	end
+	return table.concat(lines, "\n")
+end

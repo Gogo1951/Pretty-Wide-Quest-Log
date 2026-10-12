@@ -20,24 +20,19 @@ local STATUS_OK = ns.DIAGNOSTIC_STATUS_OK
     A report either builds its text at once (build) or runs over several frames
     (start, handed a callback taking the text, its note and any problem, with
     stop to cancel it). note, where a built report has one, turns its text into
-    the few words its status row shows. Manifests.lua checks only the current
-    client's APIs, so every [FAIL] in API Endpoints is a real one and it counts
-    them like Event Registration.
+    the few words its status row shows. API Endpoints has none on purpose: a
+    [FAIL] on one half of a modern/legacy pair is the report working, so
+    counting them would cry wolf.
 ]]
 local D = ns.DiagnosticsStrings
 
-local function FailureNote(allPass, someFail)
-	return function(text)
-		local _, failures = string.gsub(text, "%[FAIL%]", "")
-		if failures == 0 then
-			return allPass
-		end
-		return string.format(someFail, failures)
+local function EventsNote(text)
+	local _, failures = string.gsub(text, "%[FAIL%]", "")
+	if failures == 0 then
+		return D.EVENTS_ALL_PASS
 	end
+	return string.format(D.EVENTS_SOME_FAIL, failures)
 end
-
-local EventsNote = FailureNote(D.EVENTS_ALL_PASS, D.EVENTS_SOME_FAIL)
-local ApiNote = FailureNote(D.API_ALL_PASS, D.API_SOME_FAIL)
 
 -- A data report's status note: OK first, then every other STATUS alphabetically, each with its count.
 local function DataNote(counts)
@@ -71,6 +66,13 @@ ns.DIAGNOSTIC_REPORTS = {
 		description = D.TRACKING_CONTEXT_DESCRIPTION,
 		build = function()
 			return ns:BuildTrackingContextReport()
+		end,
+	},
+	sharing = {
+		title = D.SHARING_CONTEXT_TITLE,
+		description = D.SHARING_CONTEXT_DESCRIPTION,
+		build = function()
+			return ns:BuildSharingContextReport()
 		end,
 	},
 	map = {
@@ -115,7 +117,6 @@ ns.DIAGNOSTIC_REPORTS = {
 		build = function()
 			return ns:RunApiChecks()
 		end,
-		note = ApiNote,
 	},
 	libs = {
 		title = D.LIBS_TITLE,
@@ -129,6 +130,13 @@ ns.DIAGNOSTIC_REPORTS = {
 		description = D.LOCALE_DESCRIPTION,
 		build = function()
 			return ns:BuildLocaleContextReport()
+		end,
+	},
+	messages = {
+		title = D.MESSAGES_TITLE,
+		description = D.MESSAGES_DESCRIPTION,
+		build = function()
+			return ns:BuildMessageLengthReport()
 		end,
 	},
 	names = {
@@ -147,10 +155,10 @@ ns.DIAGNOSTIC_SECTIONS = {
 	{
 		key = "settings",
 		label = D.SECTION_SETTINGS,
-		reports = { "questLog", "tracking", "map", "saved", "display", "addons" },
+		reports = { "questLog", "tracking", "sharing", "map", "saved", "display", "addons" },
 	},
 	{ key = "code", label = D.SECTION_CODE, reports = { "events", "api", "libs" } },
-	{ key = "localization", label = D.SECTION_LOCALIZATION, reports = { "locale", "names" } },
+	{ key = "localization", label = D.SECTION_LOCALIZATION, reports = { "locale", "names", "messages" } },
 }
 
 function ns:GetDiagnosticSection(key)

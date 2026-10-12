@@ -42,6 +42,9 @@ function ns:BuildDisplayContextReport()
 		"Saved height: %s (applied when the quest log opens, limited to the screen)",
 		tostring(saved and saved.height)
 	)
+	-- The Window Scale setting; the effective scale above multiplies it by the UI scale
+	lines[#lines + 1] = string.format("Saved window scale: %s", tostring(saved and saved.scale))
+	lines[#lines + 1] = string.format("Saved map scale: %s", tostring(saved and saved.mapScale))
 	local savedPoint = saved and saved.point
 	lines[#lines + 1] = string.format(
 		"Saved position: %s",
