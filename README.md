@@ -6,7 +6,7 @@ A bigger, better quest log that gives you more room to read and more information
 
 ### Forever
 
-<img width="800" src="https://github.com/user-attachments/assets/749f6c5a-fbc9-4182-ba15-aa2e19318384" />
+<img width="800" src="https://github.com/user-attachments/assets/2fc1879e-a781-4310-b90b-dbbae9391b64" />
 
 ### TBC & Era
 
@@ -16,7 +16,7 @@ A bigger, better quest log that gives you more room to read and more information
 
 🎧 **Keeps Your Quest-Givers Talking** // Works with VoiceOver and Spoken, so the narration doesn't skip a beat.
 
-<img width="800" src="https://github.com/user-attachments/assets/111391a5-afd2-4051-b1b7-343931bff591" />
+<img width="800" src="https://github.com/user-attachments/assets/8637f1aa-bd9d-431f-af11-243b2fb1d716" />
 
 ## Features
 
@@ -46,7 +46,7 @@ Never lose your place in a long chain again. With Questie installed, the selecte
 * 📍 The step you're on is highlighted.
 * 🔍 Hover any step for Questie's tooltip on it.
 
-<img width="800" src="https://github.com/user-attachments/assets/b36f0e4d-5cb5-42b3-80ad-10655b2e08e3" />
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/42ea4e70-12d7-4666-801b-9fc4db4046e9" />
 
 ### Options
 
