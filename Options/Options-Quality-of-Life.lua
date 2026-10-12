@@ -36,14 +36,46 @@ end
 -- Chat shows the {rt3} that leads a whisper as the purple diamond
 local TARGET_MARKER_ICON = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t"
 
+local EXAMPLE_QUEST = "[" .. L["OPTIONS_EXAMPLE_QUEST_NAME"] .. "]"
+
+-- A message as chat shows it, the marker drawn as its icon
+local function ShownInChat(message)
+	return (message:gsub(ns.TARGET_MARKER, TARGET_MARKER_ICON))
+end
+
 --[[
 	One of the whispers as the party member would read it, all in silver after "Example:", without chat's
-	whisper color. The marker is drawn as the icon chat shows in its place
+	whisper color
 ]]
 local function ShareWhisperExample()
-	local message = ns:BuildAnnounceMessage("WHISPER_SHARE_BUSY", "[" .. L["SHARE_WHISPER_EXAMPLE_QUEST_NAME"] .. "]")
-	message = message:gsub(ns.TARGET_MARKER, TARGET_MARKER_ICON)
-	return ns.GetColor("HELP") .. L["SHARE_WHISPER_EXAMPLE"] .. " " .. message .. "|r"
+	local message = ShownInChat(ns:BuildAnnounceMessage("WHISPER_SHARE_BUSY", EXAMPLE_QUEST))
+	return ns.GetColor("HELP") .. L["OPTIONS_EXAMPLE"] .. " " .. message .. "|r"
+end
+
+-- The dungeon announcement for three quests as the group would read it, all in silver after "Example:"
+local EXAMPLE_DUNGEON_QUEST_COUNT = 3
+
+local function DungeonAnnounceExample()
+	local quests = {}
+	for index = 1, EXAMPLE_DUNGEON_QUEST_COUNT do
+		quests[index] = EXAMPLE_QUEST
+	end
+	local list = table.concat(quests, L["DUNGEON_QUESTS_SEPARATOR"])
+	local message = ShownInChat(ns:BuildAnnounceMessage("DUNGEON_QUESTS_ANNOUNCE", EXAMPLE_DUNGEON_QUEST_COUNT, list))
+	return ns.GetColor("HELP") .. L["OPTIONS_EXAMPLE"] .. " " .. message .. "|r"
+end
+
+-- A silver example under a toggle, indented as a sub-option and shown only while hidden() is false
+local function ExampleRow(order, example, hidden)
+	return ns.OptionsSubRow(order, {
+		example = {
+			type = "description",
+			name = example,
+			fontSize = "medium",
+			width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH,
+			order = 2,
+		},
+	}, hidden)
 end
 
 --------------------------------------------------------------------------------
@@ -101,17 +133,21 @@ function ns.BuildQualityOfLifeOptions()
 			},
 			spaceShareWhispers = ns.OptionsSpacer(27, Hidden),
 			shareWhispers = Toggle("shareWhispers", "SHARE_WHISPERS", 28),
-			shareWhisperExampleRow = ns.OptionsSubRow(29, {
-				example = {
-					type = "description",
-					name = ShareWhisperExample,
-					fontSize = "medium",
-					width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH,
-					order = 2,
-				},
-			}, function()
+			shareWhisperExampleRow = ExampleRow(29, ShareWhisperExample, function()
 				return Hidden() or not ns.db.profile.shareWhispers
 			end),
+
+			spaceDungeonQuests0 = ns.OptionsSpacer(30, Hidden),
+			headerDungeonQuests = ns.OptionsHeader(L["DUNGEON_QUESTS_HEADER"], 31, Hidden),
+			spaceDungeonQuests1 = ns.OptionsSpacer(32, Hidden),
+			descDungeonQuests = ns.OptionsDesc(L["DUNGEON_QUESTS_DESCRIPTION"], 33, Hidden),
+			spaceDungeonQuests2 = ns.OptionsSpacer(34, Hidden),
+			dungeonAnnounce = Toggle("dungeonAnnounce", "DUNGEON_ANNOUNCE", 35),
+			dungeonAnnounceExampleRow = ExampleRow(36, DungeonAnnounceExample, function()
+				return Hidden() or not ns.db.profile.dungeonAnnounce
+			end),
+			spaceDungeonShare = ns.OptionsSpacer(37, Hidden),
+			dungeonShare = Toggle("dungeonShare", "DUNGEON_SHARE", 38),
 		},
 	}
 end

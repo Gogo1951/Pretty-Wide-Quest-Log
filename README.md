@@ -1,8 +1,8 @@
-# Pretty Wide Quest Log
+# Pretty Wide Quest Log (PWQL)
 
-A bigger, better quest log that gives you more room to read and more information at a glance. Keep Blizzard's familiar layout while seeing quest levels, useful tags, objectives, rewards, and your entire quest list side by side.
+A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, VoiceOver, and ElvUI.
 
-**TL;DR**: Get more out of your quest log. See more quests, know what you're taking on, and organize everything by zone, level, or name, all while keeping the familiar Blizzard experience.
+**TL;DR**: The quest log Blizzard should have shipped. Everything about a quest on one screen, and your whole group on the same quests without typing a word.
 
 ### Forever
 
@@ -24,7 +24,7 @@ A bigger, better quest log that gives you more room to read and more information
 
 🗂️ **Organized and Easy to Scan** // Sort zones and quests by level or name, with roomier lines, cleaner headings, and checkmarks on finished objectives, all true to Blizzard's look.
 
-⚡ **Quality of Life Automation** // Share a whole zone's quests with your party, drop a zone's gray quests in one click, and automatically whisper anyone who misses a share.
+📣 **Your Whole Group, On the Same Page** // Walk into a dungeon and your group instantly knows which of your quests are inside and gets every one you can share, with a friendly whisper for anyone who misses one.
 
 🤝 **Plays Nice With Other Addons** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken while keeping the quest log feeling like part of the default UI.
 
@@ -48,11 +48,24 @@ Never lose your place in a long chain again. With Questie installed, the selecte
 
 <img width="800" src="https://github.com/user-attachments/assets/fa6051c8-639b-4436-9f4b-8b71a3c159ff" />
 
+### Questing With a Group
+
+Get everyone on the same quests without typing a word.
+
+| | Feature | What It Does |
+| --- | --- | --- |
+| 📣 | **Dungeon Announcements** | Zone into a dungeon or raid and your group sees which of your quests are still to do inside. |
+| 📤 | **Dungeon Sharing** | Every quest you can share gets offered to the group, and again for anyone who joins late. |
+| 🗺️ | **Zone Sharing** | Right-click a zone in your log to share all its quests in one go, or drop its gray ones. |
+| 💬 | **Missed-Share Whispers** | Busy, too far away, or log full? They get a friendly whisper naming the quest, so nobody gets left behind. |
+
+> **PWQL** // I have 2 quests to do here: [The Defias Brotherhood], [Red Silk Bandanas]
+
 ### Options
 
 * **Pretty Wide Quest Log** // Turn the quest log and the quality of life helpers on or off, plus the welcome message.
 * **Quest Log** // Sort zones and quests your way, choose what each row shows, and size the window and map to fit your screen.
-* **Quality of Life** // A cleaner quest giver window and an easier way to share a whole zone's quests with your party.
+* **Quality of Life** // A cleaner quest giver window, plus quest sharing and dungeon announcements for your group, at a pace that suits them.
 * **Profiles** // Reset or swap your settings.
 * **Diagnostic Tools** // Reports to attach when you file a bug.
 

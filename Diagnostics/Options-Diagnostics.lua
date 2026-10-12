@@ -152,7 +152,10 @@ end
 
 -- The intro, the add-on's own examples, and the privacy warning wherever a registered chat event can put chat in the log
 local function EventLogIntro()
-	local parts = { D.EVENT_LOG_INTRO, D.EVENT_LOG_EXAMPLES }
+	local parts = { D.EVENT_LOG_INTRO }
+	if D.EVENT_LOG_EXAMPLES then
+		parts[#parts + 1] = D.EVENT_LOG_EXAMPLES
+	end
 	for _, event in ipairs(ns.EVENT_NAMES) do
 		if event:find("^CHAT_MSG_") then
 			parts[#parts + 1] = D.EVENT_LOG_PRIVACY

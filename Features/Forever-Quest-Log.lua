@@ -327,6 +327,10 @@ frame:SetScript("OnHide", function()
 	PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE)
 	StaticPopup_Hide("ABANDON_QUEST")
 	StaticPopup_Hide("ABANDON_QUEST_WITH_ITEMS")
+	-- A quest giver opening hides this window first, so it lays out the shared text in Blizzard's look
+	if not ns.IsQuestGiverCleanupOn() then
+		ns.RestoreQuestInfoStyle()
+	end
 end)
 
 local function Toggle()

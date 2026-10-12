@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Un journal de quêtes plus grand et plus efficace, qui vous donne plus de place pour lire et plus d'informations en un coup d'œil. Gardez la disposition familière de Blizzard tout en voyant côte à côte le niveau des quêtes, des repères utiles, les objectifs, les récompenses et toute votre liste de quêtes."
+	"Un journal de quêtes large, redimensionnable et à double volet, avec le niveau des quêtes, des repères donjon et élite, les récompenses, les suites de quêtes et une carte pour chaque quête. Partagez des quêtes avec votre groupe et annoncez automatiquement les quêtes de donjon. Compatible avec Questie, VoiceOver et ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message d'accueil de Pretty Wide Quest Log à la connexion."
 L["OPTIONS_FEATURES_HEADER"] = "Fonctionnalités"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Remplace le journal de quêtes de Blizzard par le journal large, avec la carte à côté. Désactivez-le pour utiliser le journal de quêtes de Blizzard. Prend effet après un rechargement."
 L["ENABLE_QUALITY_OF_LIFE"] = "Activer les améliorations de confort"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Active la fenêtre de donneur de quêtes épurée, votre propre rythme pour partager des quêtes et les chuchotements quand un partage échoue. Désactivez-le pour retrouver la fenêtre de donneur de quêtes de Blizzard et partager au rythme par défaut."
+	"Active la fenêtre de donneur de quêtes épurée, votre propre rythme pour partager des quêtes, les chuchotements quand un partage échoue ainsi que l'annonce et le partage des quêtes de donjon. Désactivez-le pour retrouver la fenêtre de donneur de quêtes de Blizzard et partager au rythme par défaut."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activer le journal de quêtes épuré prend effet après un rechargement, proposé à la fermeture de l'interface des options."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après un rechargement. Recharger maintenant ?"
@@ -70,7 +70,7 @@ L["QUEST_ORDER"] = "Ordre des quêtes"
 L["QUEST_ORDER_DESCRIPTION"] = "Change l'ordre des quêtes sous chaque zone."
 L["SORT_LEVEL_HIGHEST_DEFAULT"] = "Niveau, le plus haut d'abord (par défaut)"
 L["SORT_LEVEL_LOWEST"] = "Niveau, le plus bas d'abord"
-L["COMPLETED_FIRST"] = "Quêtes terminées en premier"
+L["COMPLETED_FIRST"] = "Afficher les quêtes terminées en premier"
 L["COMPLETED_FIRST_DESCRIPTION"] = "Place en haut de leur zone les quêtes prêtes à être rendues."
 L["SHOW_QUEST_LEVELS"] = "Afficher le niveau des quêtes"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
@@ -97,10 +97,10 @@ L["RESET_WINDOW_CONFIRM"] = "Remettre le journal de quêtes à sa taille et à s
 
 L["TAB_QUALITY_OF_LIFE"] = "Améliorations de confort"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"De petites aides en dehors du journal de quêtes lui-même, pour la fenêtre de donneur de quêtes et pour partager des quêtes avec votre groupe."
+	"De petites aides en dehors du journal de quêtes lui-même, pour la fenêtre de donneur de quêtes, pour partager des quêtes avec votre groupe et pour les donjons."
 L["QUEST_GIVERS_HEADER"] = "Donneurs de quêtes"
 L["QUEST_GIVERS_DESCRIPTION"] = "La fenêtre qu'ouvre un donneur de quêtes, où vous acceptez et rendez des quêtes."
-L["GIVER_CLEANUP"] = "Activer la fenêtre de donneur de quêtes épurée"
+L["GIVER_CLEANUP"] = "Fenêtre de donneur de quêtes épurée"
 L["GIVER_CLEANUP_DESCRIPTION"] =
 	"Met en forme le texte de la fenêtre de donneur de quêtes comme celui du journal de quêtes, avec les mêmes titres et le même interligne, et affiche sous la quête son ID, lié à Wowhead."
 L["GIVER_LEVELS"] = "Afficher le niveau des quêtes"
@@ -111,12 +111,21 @@ L["QUEST_SHARING_DESCRIPTION"] =
 	"Partager les quêtes, dans le menu clic droit d'une zone du journal de quêtes, propose à votre groupe, l'une après l'autre, toutes les quêtes de cette zone qu'il peut prendre. Ces options règlent le rythme et ce qui se passe quand un membre du groupe en rate une."
 L["SHARE_INTERVAL"] = "Secondes entre les partages"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"Le temps qu'attend Partager les quêtes, dans le menu clic droit d'une zone, entre une quête et la suivante. Plus il est long, plus votre groupe a le temps d'accepter chacune."
+	"Le temps d'attente entre une quête partagée et la suivante, pour Partager les quêtes et pour le partage des quêtes de donjon. Plus il est long, plus votre groupe a le temps d'accepter chacune."
 L["SHARE_WHISPERS"] = "Chuchoter quand un partage échoue"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Quand un membre du groupe est occupé, trop loin ou a un journal de quêtes plein, lui chuchote la quête que vous avez essayé de partager et lui demande de vous la rappeler. Rien n'est envoyé s'il ne peut pas prendre la quête."
-L["SHARE_WHISPER_EXAMPLE"] = "Exemple :"
-L["SHARE_WHISPER_EXAMPLE_QUEST_NAME"] = "Nom de la quête"
+L["OPTIONS_EXAMPLE"] = "Exemple :"
+L["OPTIONS_EXAMPLE_QUEST_NAME"] = "Nom de la quête"
+L["DUNGEON_QUESTS_HEADER"] = "Quêtes de donjon"
+L["DUNGEON_QUESTS_DESCRIPTION"] =
+	"Ces options se déclenchent quand vous entrez dans un donjon ou un raid avec votre groupe, une fois par groupe pour chaque donjon. Une quête compte si elle est rangée sous le donjon dans votre journal de quêtes ou, avec Questie, si l'un de ses objectifs s'y trouve, ce qui inclut aussi les quêtes de classe."
+L["DUNGEON_ANNOUNCE"] = "Annonces automatiques des quêtes de donjon"
+L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
+	"Indique à votre groupe quelles quêtes il vous reste à faire dans le donjon où vous venez d'entrer, pour que tout le monde sache quoi surveiller. Les quêtes prêtes à être rendues sont omises."
+L["DUNGEON_SHARE"] = "Partage automatique des quêtes de donjon"
+L["DUNGEON_SHARE_DESCRIPTION"] =
+	"Partage chaque quête du donjon que le jeu vous laisse partager, au rythme réglé dans Partage de quêtes. Quiconque rate un partage reçoit le chuchotement habituel pour pouvoir la redemander. Partage à nouveau chaque fois que quelqu'un rejoint ou quitte le groupe."
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -150,22 +159,32 @@ L["RESIZE_TOOLTIP"] = "Faites glisser pour redimensionner le journal de quêtes.
 L["ZONE_MENU_HINT"] = "Clic droit pour plus d'options"
 L["SHARE_ZONE_QUESTS"] = "Partager %d quêtes"
 L["SHARE_ZONE_QUEST"] = "Partager 1 quête"
-L["SHARE_ZONE_TOOLTIP"] =
-	"%d des %d quêtes de cette zone peuvent être partagées. Elles partent une par une, toutes les %d secondes."
+L["SHARE_ZONE_QUESTS_TOOLTIP"] =
+	"Propose à votre groupe les quêtes de cette zone que le jeu vous laisse partager, une toutes les %d secondes."
+L["SHARE_ZONE_QUEST_TOOLTIP"] = "Propose à votre groupe la seule quête de cette zone que le jeu vous laisse partager."
 L["CHAT_SHARING_ZONE_ONE"] = "Partage de 1 quête de %s."
 L["CHAT_SHARING_ZONE"] = "Partage de %d quêtes de %s, une toutes les %d secondes."
-L["WHISPER_SHARE_BUSY"] =
-	"J'ai essayé de partager %s avec toi, mais tu n'avais pas l'air disponible. Si elle t'intéresse, fais-moi signe quand tu es libre et je te la renvoie."
-L["WHISPER_SHARE_TOO_FAR"] =
-	"J'ai essayé de partager %s avec toi, mais on était trop loin l'un de l'autre. Si elle t'intéresse, fais-moi signe quand on sera plus près et je te la renvoie."
-L["WHISPER_SHARE_LOG_FULL"] =
-	"J'ai essayé de partager %s avec toi, mais ton journal de quêtes était plein. Si elle t'intéresse, fais-moi signe quand tu auras fait de la place et je te la renvoie."
 L["ABANDON_GRAY_QUESTS"] = "Abandonner les quêtes grises"
 L["ABANDON_GRAY_NONE"] = "Cette zone n'a aucune quête grise à abandonner."
 L["ABANDON_GRAY_CONFIRM"] = "Abandonner ces %d quêtes grises ?"
 L["ABANDON_GRAY_CONFIRM_ONE"] = "Abandonner cette quête grise ?"
 L["CHAT_ABANDONED_GRAY"] = "%d quêtes grises abandonnées."
 L["CHAT_ABANDONED_GRAY_ONE"] = "1 quête grise abandonnée."
+
+--------------------------------------------------------------------------------
+-- Messages to Other Players
+--------------------------------------------------------------------------------
+
+L["WHISPER_SHARE_BUSY"] =
+	"J'ai essayé de partager %s avec toi, mais tu n'avais pas l'air disponible. Si elle t'intéresse, fais-moi signe quand tu es libre et je te la renvoie."
+L["WHISPER_SHARE_TOO_FAR"] =
+	"J'ai essayé de partager %s avec toi, mais on était trop loin l'un de l'autre. Si elle t'intéresse, fais-moi signe quand on sera plus près et je te la renvoie."
+L["WHISPER_SHARE_LOG_FULL"] =
+	"J'ai essayé de partager %s avec toi, mais ton journal de quêtes était plein. Si elle t'intéresse, fais-moi signe quand tu auras fait de la place et je te la renvoie."
+L["DUNGEON_QUESTS_ANNOUNCE"] = "J'ai %d quêtes à faire ici : %s"
+L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "J'ai 1 quête à faire ici : %s"
+L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"
+L["DUNGEON_QUESTS_SEPARATOR"] = ", "
 
 --------------------------------------------------------------------------------
 -- Questie Tracking

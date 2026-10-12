@@ -22,10 +22,11 @@ ns.Version = GetVersion()
 --------------------------------------------------------------------------------
 
 --[[
-	Every event the add-on can handle, in registration order, with its handler.
-	Feature files define the handlers; an event is registered only once a loaded
-	file defines its handler, so a client never registers an event only another
-	client's files use. ns.EVENT_NAMES lists what was actually registered.
+	Every event the add-on can handle, in registration order, with its handler;
+	an event listed twice runs both handlers, in this order. Feature files define
+	the handlers; an event is registered only once a loaded file defines one of
+	its handlers, so a client never registers an event only another client's
+	files use. ns.EVENT_NAMES lists what was actually registered.
 ]]
 local EVENTS = {
 	{ "ADDON_LOADED", "OnAddonLoaded" },
@@ -41,11 +42,16 @@ local EVENTS = {
 	{ "ZONE_CHANGED_NEW_AREA", "OnZoneChangedNewArea" },
 	{ "PLAYER_REGEN_DISABLED", "OnPlayerRegenDisabled" },
 	{ "CHAT_MSG_SYSTEM", "OnChatMsgSystem" },
+	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld" },
+	{ "GROUP_JOINED", "OnGroupJoined" },
+	{ "GROUP_LEFT", "OnGroupLeft" },
+	{ "GROUP_ROSTER_UPDATE", "OnDungeonRosterUpdate" },
 }
 
 local EVENT_HANDLERS = {}
 for _, event in ipairs(EVENTS) do
-	EVENT_HANDLERS[event[1]] = event[2]
+	EVENT_HANDLERS[event[1]] = EVENT_HANDLERS[event[1]] or {}
+	table.insert(EVENT_HANDLERS[event[1]], event[2])
 end
 
 ns.EVENT_NAMES = {}
@@ -57,13 +63,18 @@ eventFrame:SetScript("OnEvent", function(_, event, ...)
 		ns:LogEvent(event, ...)
 	end
 
-	local handler = ns[EVENT_HANDLERS[event]]
-	if handler then
-		handler(ns, ...)
+	for _, handlerName in ipairs(EVENT_HANDLERS[event]) do
+		local handler = ns[handlerName]
+		if handler then
+			handler(ns, ...)
+		end
 	end
 end)
 
 local function RegisterEvent(event)
+	if eventFrame:IsEventRegistered(event) then
+		return
+	end
 	eventFrame:RegisterEvent(event)
 	ns.EVENT_NAMES[#ns.EVENT_NAMES + 1] = event
 end
@@ -150,7 +161,7 @@ function ns:PrintWelcome()
 	ns:PrintMessage(L["CHAT_LOADED"]:format(ns.Version))
 end
 
--- Prints on every login while it holds, ignoring the welcome toggle: it's a conflict, not a greeting.
+-- Prints on every login while it holds, ignoring the welcome toggle: it's a conflict, not a greeting. It never turns either add-on off.
 function ns:WarnIfPredecessorLoaded()
 	if C_AddOns.IsAddOnLoaded(ns.PREDECESSOR_ADDON_NAME) then
 		ns:PrintMessage(L["CHAT_PREDECESSOR_LOADED"])

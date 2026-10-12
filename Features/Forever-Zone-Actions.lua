@@ -29,6 +29,31 @@ function ns.ShareableZoneQuests(zoneTitle)
 end
 
 --[[
+	Every quest in the log, as { questID, title, zoneTitle, isComplete, isFailed, pushable }, pushable
+	being whether the game lets you share it
+]]
+function ns.LogQuests()
+	local quests, zoneTitle = {}, nil
+	for index = 1, C_QuestLog.GetNumQuestLogEntries() do
+		local entry = C_QuestLog.GetInfo(index)
+		if entry and entry.isHeader then
+			zoneTitle = entry.title
+		elseif entry and not entry.isHidden and not entry.isTask then
+			local questID = entry.questID
+			quests[#quests + 1] = {
+				questID = questID,
+				title = entry.title,
+				zoneTitle = zoneTitle,
+				isComplete = C_QuestLog.IsComplete(questID) and true or false,
+				isFailed = C_QuestLog.IsFailed(questID) and true or false,
+				pushable = C_QuestLog.IsPushableQuest(questID) and true or false,
+			}
+		end
+	end
+	return quests
+end
+
+--[[
 	Gray as the quest list draws it (Forever-Quest-List.lua): the server's rating for the player, or the
 	quest's level when the server gives none
 ]]

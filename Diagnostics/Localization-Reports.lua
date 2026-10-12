@@ -198,7 +198,8 @@ end
 
 --[[
 	Each whisper built for that quest, as sent (with Questie's link where it fits), and its byte length
-	against the chat limit; SHORTENED where even the bracketed title had to be cut. Builds strings only
+	against the chat limit; SHORTENED where even the bracketed title had to be cut. Then each message of
+	the dungeon announcement, OVER past the limit. Builds strings only
 ]]
 function ns:BuildMessageLengthReport()
 	local lines = { GetClientHeader(), "" }
@@ -223,6 +224,20 @@ function ns:BuildMessageLengthReport()
 			linked and "with Questie's quest link" or "with the title in brackets"
 		)
 		lines[#lines + 1] = "    " .. ShownText(sent)
+	end
+
+	-- Every quest still to do in the log, announced as one dungeon's: the most the announcement can carry
+	local messages = ns.BuildDungeonAnnouncement((ns.DiagnosticLogQuests()))
+	lines[#lines + 1] = ""
+	lines[#lines + 1] =
+		string.format("Dungeon announcement naming every quest to do in the log: %d messages", #messages)
+	for _, message in ipairs(messages) do
+		lines[#lines + 1] = string.format(
+			"[%s] DUNGEON_QUESTS_ANNOUNCE: %d bytes",
+			#message > ns.CHAT_MESSAGE_MAX_LENGTH and "OVER" or "OK",
+			#message
+		)
+		lines[#lines + 1] = "    " .. ShownText(message)
 	end
 	return table.concat(lines, "\n")
 end

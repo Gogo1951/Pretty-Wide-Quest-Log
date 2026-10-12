@@ -182,6 +182,39 @@ local function SetFontObjectKeepingColour(region, fontObject)
 	region:SetTextColor(red, green, blue, alpha)
 end
 
+-- Each FontString's font and line spacing as Blizzard left it, kept the first time it's restyled
+local blizzardStyle = {}
+
+function ns.RememberBlizzardStyle(region)
+	if blizzardStyle[region] then
+		return
+	end
+	local file, size, flags = region:GetFont()
+	blizzardStyle[region] = {
+		fontObject = region:GetFontObject(),
+		file = file,
+		size = size,
+		flags = flags,
+		spacing = region:GetSpacing(),
+	}
+end
+
+-- Puts a remembered FontString's font and line spacing back, keeping its colour
+function ns.RestoreBlizzardStyle(region)
+	local style = blizzardStyle[region]
+	if not style then
+		return
+	end
+	local red, green, blue, alpha = region:GetTextColor()
+	if style.fontObject then
+		region:SetFontObject(style.fontObject)
+	else
+		region:SetFont(style.file, style.size, style.flags)
+	end
+	region:SetTextColor(red, green, blue, alpha)
+	region:SetSpacing(style.spacing)
+end
+
 --[[
 	Sets a FontString of quest text at LAYOUT.LINE_HEIGHT, and with sectionHeading true gives it the
 	section heading font first
@@ -210,7 +243,9 @@ end
 
 --[[
 	WoW Forever's QuestInfo pieces, shared by the quest giver window, the quest details and the map's
-	details, so a quest reads the same wherever it's shown. The other clients don't have them
+	details. The quest details style them before every repaint; elsewhere they follow the quest giver
+	window cleanup (ns.ApplyQuestGiverCleanup), going back to Blizzard's while it's off. The other
+	clients don't have them
 ]]
 local QUEST_INFO_TEXT = {
 	"QuestInfoTitleHeader",
@@ -220,39 +255,58 @@ local QUEST_INFO_TEXT = {
 }
 local QUEST_INFO_HEADINGS = { "QuestInfoObjectivesHeader", "QuestInfoDescriptionHeader" }
 
-function ns.StyleQuestInfo()
+-- Calls back with each QuestInfo piece this client has, and whether it's a section heading
+local function EachQuestInfoPiece(callback)
 	for _, name in ipairs(QUEST_INFO_TEXT) do
 		if _G[name] then
-			ns.StyleQuestText(_G[name])
+			callback(_G[name], false)
 		end
 	end
 	for _, name in ipairs(QUEST_INFO_HEADINGS) do
 		if _G[name] then
-			ns.StyleQuestText(_G[name], true)
+			callback(_G[name], true)
 		end
 	end
 	local rewards = QuestInfoRewardsFrame
 	if rewards then
 		for _, region in pairs({ rewards.ItemChooseText, rewards.ItemReceiveText }) do -- pairs, so any this client lacks drop out
-			ns.StyleQuestText(region)
+			callback(region, false)
 		end
 		if rewards.Header then
-			ns.StyleQuestText(rewards.Header, true)
+			callback(rewards.Header, true)
 		end
 	end
 end
 
--- Styled once, before Blizzard first lays any of it out, so its measurements match
-ns.StyleQuestInfo()
+local function StyleQuestInfoPiece(region, sectionHeading)
+	ns.RememberBlizzardStyle(region)
+	ns.StyleQuestText(region, sectionHeading)
+end
+
+function ns.StyleQuestInfo()
+	EachQuestInfoPiece(StyleQuestInfoPiece)
+end
+
+function ns.RestoreQuestInfoStyle()
+	EachQuestInfoPiece(ns.RestoreBlizzardStyle)
+end
 
 --[[
 	The experience reward, each time QuestInfo shows one (the quest details, the quest giver window and the
-	map's details), in the description's font and colour, its thousands grouped like the turn-in line's
+	map's details), in the description's font and colour, its thousands grouped like the turn-in line's.
+	On a quest giver page with the quest giver window cleanup off it stays Blizzard's
 ]]
 local experienceFrame = QuestInfoRewardsFrame and QuestInfoRewardsFrame.XPFrame
 local experienceValue = experienceFrame and experienceFrame.ValueText
 if experienceValue and QuestInfo_Display then
-	hooksecurefunc("QuestInfo_Display", function()
+	ns.RememberBlizzardStyle(experienceValue)
+	local blizzardRed, blizzardGreen, blizzardBlue, blizzardAlpha = experienceValue:GetTextColor()
+	hooksecurefunc("QuestInfo_Display", function(_, parentFrame)
+		if ns.IsQuestGiverPage(parentFrame) and not ns.IsQuestGiverCleanupOn() then
+			ns.RestoreBlizzardStyle(experienceValue)
+			experienceValue:SetTextColor(blizzardRed, blizzardGreen, blizzardBlue, blizzardAlpha)
+			return
+		end
 		StyleQuestNumber(experienceValue, QuestInfoDescriptionText)
 		local experience = tonumber((experienceValue:GetText() or ""):gsub("%D", ""), 10)
 		if experience then

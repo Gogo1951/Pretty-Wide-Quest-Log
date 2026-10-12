@@ -6,6 +6,7 @@ ns.L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 --------------------------------------------------------------------------------
 
 ns.ADDON_TITLE = ns.L["ADDON_TITLE"]
+-- A fresh table: Wide Quest Log Plus's settings stay in its own, which this add-on can't read, so none carry over
 ns.SAVED_VARIABLES_NAME = "PrettyWideQuestLogDB"
 
 -- The add-on this one replaced. Both hook the quest log, so they must not run together.
@@ -248,7 +249,10 @@ LAYOUT.MINIMUM_BOTTOM_CLAMP = 20
 -- Messages
 --------------------------------------------------------------------------------
 
--- Leads every message the add-on sends to other players (the master list's Target marker column)
+--[[
+	Leads every message the add-on sends to other players (the master list's Target marker column), except
+	on WoW Forever, which blocks raid-marker tokens in chat
+]]
 ns.TARGET_MARKER = "{rt3}"
 
 -- SendChatMessage rejects anything longer, in bytes
@@ -260,3 +264,9 @@ ns.CHAT_MESSAGE_MAX_LENGTH = 255
 ]]
 ns.SHARE_INTERVAL_MIN = 3
 ns.SHARE_INTERVAL_MAX = 10
+
+--[[
+	Seconds after entering a dungeon before its quests are announced and shared (Dungeon-Quests.lua), so
+	the rest of the group has had a moment to arrive too
+]]
+ns.DUNGEON_QUESTS_DELAY = 8

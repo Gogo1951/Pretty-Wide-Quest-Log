@@ -137,9 +137,9 @@ end
 --[[
 	The quest giver window and the map's quest details use the same objective lines and reward frames,
 	laid out Blizzard's way, so the objective lines go back to Blizzard's font, without this add-on's
-	count column, whenever anything else calls QuestInfo_Display. The rest of the text is set the same
-	way everywhere (ns.StyleQuestInfo). The quest giver window gets the quest details' gold, experience
-	and quest ID (Forever-Quest-Giver.lua); the map keeps Blizzard's
+	count column, whenever anything else calls QuestInfo_Display. The rest of the text follows the quest
+	giver window cleanup (ns.ApplyQuestGiverCleanup). The quest giver window gets the quest details' gold,
+	experience and quest ID (Forever-Quest-Giver.lua); the map keeps Blizzard's
 ]]
 local function LayOutSharedPieces(template, parentFrame)
 	if parentFrame == detailChild then

@@ -1,5 +1,5 @@
 ## Title: Pretty Wide Quest Log
-## Notes: A bigger, better quest log that gives you more room to read and more information at a glance. Keep Blizzard's familiar layout while seeing quest levels, useful tags, objectives, rewards, and your entire quest list side by side.
+## Notes: A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, VoiceOver, and ElvUI.
 ## Author: Gogo1951
 
 ## IconTexture: Interface/AddOns/Pretty-Wide-Quest-Log/Includes/Images/Pretty-Wide-Quest-Log.tga
@@ -54,6 +54,7 @@ Locales/zhTW.lua
 # Data
 Data/Flavor.lua
 Data/Data.lua
+Data/TBC/Map-Reveal-TBC.lua
 Data/Default-Settings.lua
 
 # Pretty Wide Quest Log
@@ -75,11 +76,14 @@ Features/Classic-Quest-Log.lua
 Features/Classic-Zone-Actions.lua
 Features/Zone-Menu.lua
 Features/Share-Reminders.lua
+Features/Dungeon-Quest-Lookup.lua
+Features/Dungeon-Quests.lua
 Features/Quest-Map.xml
 Features/Quest-Map.lua
 Features/Questie-Map.xml
 Features/Questie-Map.lua
 Features/Classic-Quest-Map.lua
+Features/Quest-Map-Reveal.lua
 Features/Classic-ElvUI.lua
 
 # Diagnostics
