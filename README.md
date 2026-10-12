@@ -46,7 +46,7 @@ Never lose your place in a long chain again. With Questie installed, the selecte
 * 📍 The step you're on is highlighted.
 * 🔍 Hover any step for Questie's tooltip on it.
 
-<img width="800" alt="image" src="https://github.com/user-attachments/assets/42ea4e70-12d7-4666-801b-9fc4db4046e9" />
+<img width="800" src="https://github.com/user-attachments/assets/fa6051c8-639b-4436-9f4b-8b71a3c159ff" />
 
 ### Options
 
