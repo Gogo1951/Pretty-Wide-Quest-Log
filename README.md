@@ -38,6 +38,12 @@ A bigger, better quest log that gives you more room to read and more information
 4. Type `/wide` to pick how zones and quests are sorted.
 5. _"Your quest log's sorted. Now go find Mankrik's wife."_
 
+### Quest Chains
+
+Supports quest chains!
+
+<img width="800" src="https://github.com/user-attachments/assets/b36f0e4d-5cb5-42b3-80ad-10655b2e08e3" />
+
 ### Options
 
 * **Pretty Wide Quest Log** // Zone and quest order, a space above zone names, marking untracked quests instead of tracked ones, the welcome message, Reset Size and Position, and on WoW Forever, which quest log the key opens.
