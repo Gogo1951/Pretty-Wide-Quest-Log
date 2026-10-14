@@ -69,7 +69,7 @@ Get everyone on the same quests without typing a word.
 * **Profiles** // Reset or swap your settings.
 * **Diagnostic Tools** // Reports to attach when you file a bug.
 
-<img width="800" src="https://github.com/user-attachments/assets/2da25427-8945-488e-b4de-a728aac1216e" />
+<img width="800" src="https://github.com/user-attachments/assets/b04acb35-a31f-4f40-bb7a-d38dc1e3da78" />
 
 ## Testing & Localization Status
 
