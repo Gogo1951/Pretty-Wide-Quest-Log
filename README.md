@@ -6,6 +6,8 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 
 ### Forever
 
+🎧 **Keeps Your Quest-Givers Talking** // Works with VoiceOver and Spoken, so the narration doesn't skip a beat.
+
 <img width="800" src="https://github.com/user-attachments/assets/2fc1879e-a781-4310-b90b-dbbae9391b64" />
 
 ### TBC & Era
@@ -13,8 +15,6 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 🔎 **A Map Without the Icon Soup** // Questie is the best thing to happen to Classic questing, but with a dozen quests in a zone, the map turns into icon soup. The map beside your log shows Questie's data for the selected quest, so you can focus on exactly where you need to go.
 
 🌍 **Follow Quests Across Zones** // Some quests take you all over the world. Switch between every zone a quest visits, right from the map, and keep the whole journey in view.
-
-🎧 **Keeps Your Quest-Givers Talking** // Works with VoiceOver and Spoken, so the narration doesn't skip a beat.
 
 <img width="800" src="https://github.com/user-attachments/assets/8637f1aa-bd9d-431f-af11-243b2fb1d716" />
 
