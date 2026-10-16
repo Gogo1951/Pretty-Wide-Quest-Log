@@ -26,7 +26,7 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 
 📣 **Your Whole Group, On the Same Page** // Walk into a dungeon and your group instantly knows which of your quests are inside and gets every one you can share, with a friendly whisper for anyone who misses one.
 
-🤝 **Plays Nice With Other Addons** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken while keeping the quest log feeling like part of the default UI.
+🤝 **Plays Nice With Other Add-ons** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken while keeping the quest log feeling like part of the default UI.
 
 ## Setup
 
@@ -67,6 +67,7 @@ Get everyone on the same quests without typing a word.
 * **Quest Log** // Sort zones and quests your way, choose what each row shows, and size the window and map to fit your screen.
 * **Quality of Life** // A cleaner quest giver window, plus quest sharing and dungeon announcements for your group, at a pace that suits them.
 * **Profiles** // Reset or swap your settings.
+* **Feedback & Support** // Links for reporting a bug, sharing an idea, or helping spread the word.
 * **Diagnostic Tools** // Reports to attach when you file a bug.
 
 <img width="800" src="https://github.com/user-attachments/assets/b04acb35-a31f-4f40-bb7a-d38dc1e3da78" />
@@ -110,14 +111,24 @@ Get everyone on the same quests without typing a word.
 
 ### 🟢 Pairs With
 
+* rickrob's [Guidelime](https://www.curseforge.com/wow/addons/guidelime)
 * Leatrix's [Leatrix Maps](https://www.curseforge.com/wow/addons/leatrix-maps)
 * TheCrux\_BB's [Questie](https://www.curseforge.com/wow/addons/questie)
 * RestedXP's [RestedXP Guide](https://www.curseforge.com/wow/addons/restedxp-guide)
-* rustykey's [Spoken Player](https://www.curseforge.com/wow/addons/spoken-player)
 * MrThinger's [VoiceOver (Classic)](https://www.curseforge.com/wow/addons/voiceover)
+
+### 🟡 Overlaps
+
+* Garufo's [DungeonQuests](https://www.curseforge.com/wow/addons/dungeonquests)
+* Leatrix's [Leatrix Plus](https://www.curseforge.com/wow/addons/leatrix-plus)
+* GodModeTeam's [QuestGuru](https://www.curseforge.com/wow/addons/questguru)
+* ChevCast's [QuestTogether](https://www.curseforge.com/wow/addons/questtogether)
+* 0x29a's [QuestXP Total](https://www.curseforge.com/wow/addons/questxp-total)
 
 ### 🔴 Alternatives
 
+* Musu32's [Belphie's Quest Log](https://www.curseforge.com/wow/addons/belphies-quest-log)
 * DarrenKosick's [BetterQuestLog](https://www.curseforge.com/wow/addons/betterquestlog)
-* swordforhire's [MyQuestLog](https://www.curseforge.com/wow/addons/myquestlog)
-* StreamBuddiesApp's [StBu-MasterQuest](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
+* Toomasu12's [Blocky Quests](https://www.curseforge.com/wow/addons/blocky-quests)
+* dragginnsack's [LoreJournal Classic](https://www.curseforge.com/wow/addons/lorejournal-classic)
+* StreamBuddies's [StBu MasterQuestLog](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
