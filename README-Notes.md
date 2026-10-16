@@ -1,50 +1,41 @@
-# Connoisseur // Notes
+# Pretty Wide Quest Log // Notes
 
-> Where Connoisseur departs from the Gogo1951 add-on Style Guide, kept so no review raises it again.
+> Where Pretty Wide Quest Log departs from the Gogo1951 add-on Style Guide, kept so no review raises it again.
 
 ## Exceptions
 
-### Profiles panel without suggested profiles (remove after 2026-10-30)
+### Quest tag IDs in code
 
-- **Departs from:** OPTIONS PANEL → Profiles Panel, "returns the stock AceDBOptions-3.0 table unmodified".
-- **Instead:** The Profiles panel is built with AceDBOptions' `noDefaultProfiles` flag, so its pickers list only profiles that exist, never the suggested Default, realm and class profiles.
-- **Why:** While the migration that moves characters off the shared Default profile runs, a character put on Default is moved off it again at its next login.
+- **Departs from:** GAME NAMES, IDs living in the flavor folders.
+- **Instead:** The quest tag IDs that pick the D, R, P, G and E letters stay in a table in `Features/Quest-Display.lua`.
+- **Why:** They are fixed engine enum values, identical on every client, so a seven-folder data set would hold no information the code doesn't.
 
-### Game names in a few locale strings
+### No Data tab in Diagnostic Tools
 
-- **Departs from:** GAME NAMES, "Locale files hold only our own words."
-- **Instead:** `TIP_PET_NO_MEND` names Mend Pet in its own string, and where one language's clients name the same spell, item or label differently, the locale uses the Classic Era and WoW Forever name.
-- **Why:** Looking Mend Pet up by ID would put its spell ID in every data folder, and one string per language must serve all three clients.
+- **Departs from:** DIAGNOSTIC TOOLS → Layout, the Data tab; TOC FILE FORMAT → File Group Order, `Diagnostics/Validate-Data.lua`.
+- **Instead:** Diagnostic Tools has no Data tab and no TOC loads the Validate Data report. The only static game data is the map reveal tables (`Data/{Game}/Map-Reveal-{Game}.lua`).
+- **Why:** Validate Data checks item, spell and quest IDs, and the reveal tables hold map art and texture file IDs it has no check for, so the tab would hold no rows that mean anything.
 
-### Era reports prune Discovery
+### Map reveal data carries no Last Validated date
 
-- **Departs from:** `04 - Data Review.md`, "a Vanilla report never touches `Data/Discovery/`".
-- **Instead:** A row a Classic Era Validate Data report flags NOT ON CLIENT leaves `Data/Discovery/` too; Discovery's other values wait for a Season of Discovery export.
-- **Why:** Season of Discovery runs on the Classic Era client, so an ID that client lacks is missing there as well.
+- **Departs from:** DATA → Data File Layout, a Last Validated date no more than six months old in every folder a TOC lists.
+- **Instead:** The map reveal tables (`Data/{Game}/Map-Reveal-{Game}.lua`) keep `Never.` under Last Validated, and manual testing of the quest map on each client stands in for a Validate Data report.
+- **Why:** Validate Data has no check for map art or texture file IDs, so no report could ever date these files.
 
-### Dot-defined namespace functions
+### Track All buttons use our own strings
 
-- **Departs from:** the guide's snippets, which define `ns` functions with colons.
-- **Instead:** Every `ns` function outside `Diagnostics/` is dot-defined and takes no `self`, while `Diagnostics/` and the `ns:FormatCommaNumber` helper it calls keep Magic Eraser's colon methods.
-- **Why:** Nothing outside the diagnostics framework uses `self`, and the framework stays identical to the Magic Eraser folder it is copied from.
+- **Departs from:** GAME NAMES, a Blizzard UI label comes from the client.
+- **Instead:** The Track All and Untrack All buttons use the add-on's own strings on every client, though WoW Forever has Blizzard labels for them.
+- **Why:** The buttons read the same on every client.
 
-### Every class and race section shows to everyone
+### Messages to other players lead with the short name
 
-- **Departs from:** OPTIONS PANEL → Widget Conventions, "Only show spells the player knows".
-- **Instead:** The Macros panel shows its Druid, Rogue, Night Elf and Forsaken sections, and the Feed Pet and Poisons macro toggles, to every character, and gates only on what a client can't do.
-- **Why:** The maintainer wants every option visible from any character.
+- **Departs from:** MESSAGES, the name leading every message is `L["ADDON_TITLE"]`.
+- **Instead:** Whispers and the dungeon quest announcement in group chat lead with `L["ADDON_SHORT"]` (PWQL) after the target marker.
+- **Why:** Both are short lines read mid-play, and the full title would take up half of one before the message starts; the announcement also needs every byte it can get for quest links.
 
-### Feature subfolders
+### README title carries the short name
 
-- **Departs from:** FILE STRUCTURE, `Features/{Feature-Name}.lua`.
-- **Instead:** Large features live in `Features/` subfolders, whose files carry the feature name in the basename (`Features/Restocker/Restocker-Window.lua`); `Features/Macros/` keeps its own file names.
-- **Why:** The maintainer's choice.
-
-## Decisions
-
-- The consumable data tables leave out oddball items that a data check turns up, even when they share a table's cooldown: Scorpid Surprise (5473), Green Tea Leaf (1401), Holy Spring Water (737) and Night Dragon's Breath (11952) stay out.
-- Season of Discovery items live only in `Data/Discovery/`: every other data folder leaves them out with a deliberately-absent note, even where its client's Validate Data reports them OK, since OK only proves the client knows the ID.
-- Star's Tears and Star's Lament are offered only inside an arena (arena column 1), though the client lets them be used anywhere: they are expensive, and ordinary food and water serve better outside one.
-- The four Ogre Brews keep Gruul's Lair (330) among their allowed zones: they work there, though their tooltip names only the Blade's Edge Plateaus.
-- Harvest Bread and Winter Veil Loaf carry no arena value though their tooltips say Conjured Item: the TBC client doesn't flag them usable in arenas, so they are never offered there.
-- The pet-food tables leave out foods Feed Pet would waste, even when the client gives them a pet diet: special foods that sell for nothing (Whipper Root Tuber, Essence Mango, holiday foods) and battleground or zone rations. Feed Pet feeds the cheapest food in the pet's level bracket first, so it would spend those before ordinary food.
+- **Departs from:** README rules, the H1 being the Short Name alone.
+- **Instead:** The README's H1 adds the abbreviation in parentheses after the name.
+- **Why:** Players meet the abbreviation first, at the head of every whisper and group announcement the add-on sends, so the title has to tie it back to the add-on.
