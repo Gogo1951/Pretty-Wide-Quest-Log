@@ -39,3 +39,9 @@
 - **Departs from:** README rules, the H1 being the Short Name alone.
 - **Instead:** The README's H1 adds the abbreviation in parentheses after the name.
 - **Why:** Players meet the abbreviation first, at the head of every whisper and group announcement the add-on sends, so the title has to tie it back to the add-on.
+
+### README Showcase has a screenshot per client
+
+- **Departs from:** README rules, the Showcase under the TL;DR showing the add-on in a single item.
+- **Instead:** The Showcase holds a screenshot under a heading for each client, Forever and TBC & Era, with the quest map's feature lines above the TBC & Era one.
+- **Why:** The two clients' quest logs are different windows that look different, so each gets its own picture, and the maintainer keeps the map's lines beside the one they caption.
