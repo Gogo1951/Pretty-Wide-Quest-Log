@@ -21,8 +21,7 @@ function ns.RegisterOptionsPanels()
 	ns.optionsFrames = { main = mainPanel, categoryID = mainCategoryID }
 
 	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.QuestLog, ns.BuildQuestLogOptions)
-	local questLogPanel =
-		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QuestLog, L["TAB_QUEST_LOG"], L["ADDON_TITLE"])
+	local questLogPanel = AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QuestLog, QUEST_LOG, L["ADDON_TITLE"])
 
 	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.QualityOfLife, ns.BuildQualityOfLifeOptions)
 	local qualityOfLifePanel =
@@ -33,12 +32,23 @@ function ns.RegisterOptionsPanels()
 	local profilesPanel =
 		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.Profiles, profilesOptions.name, L["ADDON_TITLE"])
 
+	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.FeedbackSupport, ns.BuildFeedbackSupportOptions)
+	local feedbackSupportPanel =
+		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.FeedbackSupport, L["OPTIONS_FEEDBACK"], L["ADDON_TITLE"])
+
 	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.Diagnostics, ns.BuildDiagnosticsOptions)
 	local diagnosticsPanel =
 		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.Diagnostics, ns.DiagnosticsStrings.TAB, L["ADDON_TITLE"])
 
 	-- The Quest Log switch's reload prompt (Options-General.lua)
-	ns.WatchOptionsForReload({ mainPanel, questLogPanel, qualityOfLifePanel, profilesPanel, diagnosticsPanel })
+	ns.WatchOptionsForReload({
+		mainPanel,
+		questLogPanel,
+		qualityOfLifePanel,
+		profilesPanel,
+		feedbackSupportPanel,
+		diagnosticsPanel,
+	})
 end
 
 --------------------------------------------------------------------------------

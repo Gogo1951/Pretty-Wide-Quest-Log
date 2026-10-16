@@ -44,11 +44,11 @@ local function ShownInChat(message)
 end
 
 --[[
-	One of the whispers as the party member would read it, all in silver after "Example:", without chat's
+	The first whisper as the party member would read it, all in silver after "Example:", without chat's
 	whisper color
 ]]
 local function ShareWhisperExample()
-	local message = ShownInChat(ns:BuildAnnounceMessage("WHISPER_SHARE_BUSY", EXAMPLE_QUEST))
+	local message = ShownInChat(ns:BuildAnnounceMessage("WHISPER_SHARE_FAILED", EXAMPLE_QUEST))
 	return ns.GetColor("HELP") .. L["OPTIONS_EXAMPLE"] .. " " .. message .. "|r"
 end
 

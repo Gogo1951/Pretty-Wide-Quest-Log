@@ -46,6 +46,8 @@ local EVENTS = {
 	{ "GROUP_JOINED", "OnGroupJoined" },
 	{ "GROUP_LEFT", "OnGroupLeft" },
 	{ "GROUP_ROSTER_UPDATE", "OnDungeonRosterUpdate" },
+	{ "GROUP_JOINED", "OnShareGroupChanged" },
+	{ "GROUP_LEFT", "OnShareGroupChanged" },
 }
 
 local EVENT_HANDLERS = {}

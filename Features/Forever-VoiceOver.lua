@@ -65,7 +65,7 @@ function ns.ShowVoiceOverButton(row, questID)
 	button:ClearAllPoints()
 	button:SetPoint("LEFT", row, "LEFT", LAYOUT.QUEST_TEXT_X, 0)
 
-	-- Greyed out for a quest no sound pack has a reading of
+	-- Grayed out for a quest no sound pack has a reading of
 	overlay:BindPlayButton(button, questID, C_QuestLog.GetTitleForQuestID(questID) or "")
 	local sound = { event = voiceOver.Enums.SoundEvent.QuestAccept, questID = questID }
 	button:SetEnabled(voiceOver.DataModules:PrepareSound(sound) and true or false)

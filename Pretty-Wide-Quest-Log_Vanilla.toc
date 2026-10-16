@@ -70,6 +70,7 @@ Features/Quest-Giver.lua
 Features/Window.lua
 Features/Turn-In-Line.lua
 Features/Classic-Tracking.lua
+Features/Classic-Quest-Sort.lua
 Features/Classic-Quest-List.lua
 Features/Classic-VoiceOver.lua
 Features/Classic-Quest-Details.lua
@@ -102,6 +103,7 @@ Options/Options-General.lua
 Options/Options-Quest-Log.lua
 Options/Options-Quality-of-Life.lua
 Options/Options-Profiles.lua
+Options/Options-Feedback-Support.lua
 Diagnostics/Options-Diagnostics.lua
 Options/Options.lua
 

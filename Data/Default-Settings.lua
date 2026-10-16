@@ -1,8 +1,9 @@
 local _, ns = ...
 
 --[[
-	The window's height, point and scale, and the map's scale, live in global, so Reset Profile never moves
-	or resizes them. Height and point have no default
+	The window's height, point and scale, the map's scale, and whether the map is hidden (mapHidden) live
+	in global, so Reset Profile never moves, resizes, rescales or hides them. Height, point and mapHidden
+	have no default
 ]]
 ns.DATABASE_DEFAULTS = {
 	profile = {

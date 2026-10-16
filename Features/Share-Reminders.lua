@@ -2,19 +2,21 @@ local _, ns = ...
 
 --[[
 	Every client: when a quest share fails for a reason the party member can fix, a whisper telling them
-	which quest it was and asking them to remind you. Failures they can't fix (not eligible, already on it,
-	already done) get none. Party only: nothing is whispered in a raid, a battleground or an arena.
+	which quest it was and asking them to remind you. Each later failure for the same player gets a short
+	line naming just the quest, until you next join or leave a group. Failures they can't fix (not
+	eligible, already on it, already done) get none. Party only: nothing is whispered in a raid, a
+	battleground or an arena.
 ]]
 
 --------------------------------------------------------------------------------
 -- Share Results
 --------------------------------------------------------------------------------
 
--- The game's share results the other player can fix, by the whisper each gets; a client without one skips it
+-- The game's share results the other player can fix; a client without one skips it
 local FIXABLE_RESULTS = {
-	{ "ERR_QUEST_PUSH_BUSY_S", "WHISPER_SHARE_BUSY" },
-	{ "ERR_QUEST_PUSH_TOO_FAR_S", "WHISPER_SHARE_TOO_FAR" },
-	{ "ERR_QUEST_PUSH_LOG_FULL_S", "WHISPER_SHARE_LOG_FULL" },
+	"ERR_QUEST_PUSH_BUSY_S",
+	"ERR_QUEST_PUSH_TOO_FAR_S",
+	"ERR_QUEST_PUSH_LOG_FULL_S",
 }
 
 -- A chat line's format string as a pattern catching the player's name where the format has its %s
@@ -26,9 +28,9 @@ end
 
 local resultPatterns = {}
 for _, result in ipairs(FIXABLE_RESULTS) do
-	local formatString = _G[result[1]]
+	local formatString = _G[result]
 	if type(formatString) == "string" then
-		resultPatterns[#resultPatterns + 1] = { pattern = NamePattern(formatString), whisperKey = result[2] }
+		resultPatterns[#resultPatterns + 1] = NamePattern(formatString)
 	end
 end
 
@@ -44,19 +46,15 @@ end
 local lastShare = {}
 local whispered = {}
 
-local function SelectedQuest()
-	if ns.FLAVOR == "Camelot" then
-		local questID = C_QuestLog.GetSelectedQuest()
-		return questID, questID and C_QuestLog.GetTitleForQuestID(questID)
-	end
-	local title, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(GetQuestLogSelection())
-	if title and not isHeader then
-		return questID, title
-	end
+-- The players sent the full whisper since you last joined or left a group; the rest get the short one
+local told = {}
+
+function ns:OnShareGroupChanged()
+	told = {}
 end
 
 hooksecurefunc("QuestLogPushQuest", function()
-	local questID, title = SelectedQuest()
+	local questID, title = ns.SelectedQuest()
 	if questID and title then
 		lastShare.questID, lastShare.title, lastShare.time = questID, title, GetTime()
 		whispered = {}
@@ -146,12 +144,14 @@ function ns:OnChatMsgSystem(message)
 	if GetTime() - lastShare.time > ns.GetShareInterval() or not InPartyOnly() then
 		return
 	end
-	for _, result in ipairs(resultPatterns) do
-		local name = message:match(result.pattern)
+	for _, pattern in ipairs(resultPatterns) do
+		local name = message:match(pattern)
 		if name and not whispered[name] then
 			whispered[name] = true
-			local reference = ns.ShareWhisperQuestReference(result.whisperKey, lastShare.questID, lastShare.title)
-			ns:Announce("WHISPER", name, result.whisperKey, reference)
+			local whisperKey = told[name] and "WHISPER_SHARE_FAILED_AGAIN" or "WHISPER_SHARE_FAILED"
+			told[name] = true
+			local reference = ns.ShareWhisperQuestReference(whisperKey, lastShare.questID, lastShare.title)
+			ns:Announce("WHISPER", name, whisperKey, reference)
 			return
 		end
 	end

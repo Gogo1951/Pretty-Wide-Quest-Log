@@ -8,6 +8,12 @@ local state = ns.questLog
 -- Finding Quests
 --------------------------------------------------------------------------------
 
+-- The quest selected in Blizzard's quest log, as its quest ID and title; nothing while none is selected
+function ns.SelectedQuest()
+	local questID = C_QuestLog.GetSelectedQuest()
+	return questID, questID and C_QuestLog.GetTitleForQuestID(questID)
+end
+
 --[[
 	The quests in a zone the game lets you share, as quest IDs, and how many quests the zone holds. The
 	quest log lists a collapsed zone's quests too, so the zone stays as it is

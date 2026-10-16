@@ -10,15 +10,15 @@ end
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT"] = "PWQL"
 L["CHAT_LOADED"] =
-	"버전 %s. 설정(이 메시지를 끄는 옵션 포함)은 설정 > 애드온 > Pretty Wide Quest Log에서 찾을 수 있습니다. 애드온이 마음에 드시나요? 친구에게도 알려 주세요! (="
+	"버전 %s. 설정(이 메시지를 끄는 옵션 포함)은 설정 > 애드온 > Pretty Wide Quest Log에 있습니다. 이 애드온이 마음에 드시나요? 친구에게 알려 주시거나, CurseForge에서 즐겨찾기에 추가하시거나, GitHub에서 Star를 눌러 주세요. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "안전을 위해 전투 중에는 설정 창을 열 수 없습니다."
 L["CHAT_QUESTIE_MISSING"] =
-	"이 애드온의 많은 기능이 Questie 데이터를 사용합니다. Questie가 없으면 일부 기능만 사용할 수 있습니다."
+	"이 애드온의 많은 기능이 Questie 데이터를 사용하므로, Questie가 없으면 일부 기능이 제한됩니다."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus도 켜져 있어 두 애드온이 퀘스트 목록을 두고 충돌합니다. 애드온 목록에서 Wide Quest Log Plus를 끈 다음 UI를 다시 불러오세요."
 
 --------------------------------------------------------------------------------
--- General Panel
+-- Options: General Panel
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
@@ -28,7 +28,7 @@ L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log �
 L["OPTIONS_FEATURES_HEADER"] = "기능"
 L["ENABLE_QUEST_LOG_CLEANUP"] = "퀘스트 목록 정리 사용"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
-	"블리자드 퀘스트 목록을 지도가 옆에 붙은 넓은 퀘스트 목록으로 바꿉니다. 끄면 블리자드 퀘스트 목록을 대신 사용합니다. UI를 다시 불러온 후에 적용됩니다."
+	"블리자드 퀘스트 목록을 지도가 옆에 붙은 넓은 퀘스트 목록으로 바꿉니다. UI를 다시 불러온 후에 적용됩니다."
 L["ENABLE_QUALITY_OF_LIFE"] = "편의 기능 사용"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"퀘스트 NPC 창 정리, 원하는 속도로 퀘스트 공유하기, 퀘스트 공유 실패 시 귓속말, 던전 퀘스트 알림과 공유를 켭니다. 끄면 블리자드 퀘스트 NPC 창으로 돌아가고 기본 속도로 공유합니다."
@@ -39,15 +39,9 @@ L["RELOAD_PROMPT"] =
 L["OPTIONS_COMMANDS_HEADER"] = "/명령어"
 L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "이 애드온의 설정 창을 엽니다."
-L["FEEDBACK_HEADER"] = "피드백 및 지원"
-L["FEEDBACK_DISCORD"] = "Discord"
-L["FEEDBACK_GITHUB"] = "GitHub"
-L["FEEDBACK_CURSEFORGE"] = "CurseForge"
-L["FEEDBACK_WAGO"] = "Wago"
-L["OPTIONS_VERSION"] = "버전 %s"
 
 --------------------------------------------------------------------------------
--- Quest Log Panel
+-- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
 L["TAB_QUEST_LOG"] = "퀘스트 목록"
@@ -93,7 +87,7 @@ L["RESET_WINDOW_DESCRIPTION"] = "퀘스트 목록을 기본 크기와 위치로 
 L["RESET_WINDOW_CONFIRM"] = "퀘스트 목록을 기본 크기와 위치로 초기화할까요?"
 
 --------------------------------------------------------------------------------
--- Quality of Life Panel
+-- Options: Quality of Life Panel
 --------------------------------------------------------------------------------
 
 L["TAB_QUALITY_OF_LIFE"] = "편의 기능"
@@ -104,13 +98,13 @@ L["QUEST_GIVERS_DESCRIPTION"] =
 	"퀘스트 NPC가 여는 창으로, 여기서 퀘스트를 받고 완료 보고합니다."
 L["GIVER_CLEANUP"] = "퀘스트 NPC 창 정리"
 L["GIVER_CLEANUP_DESCRIPTION"] =
-	"퀘스트 NPC 창의 글을 퀘스트 목록과 같은 제목과 줄 간격으로 맞추고, 퀘스트 아래에 Wowhead로 연결되는 퀘스트 ID를 표시합니다."
+	"퀘스트 NPC 창의 글을 퀘스트 목록과 같은 제목과 줄 간격으로 배치하고, 퀘스트 아래에 Wowhead로 연결되는 퀘스트 ID를 표시합니다."
 L["GIVER_LEVELS"] = "퀘스트 레벨 표시"
 L["GIVER_LEVELS_DESCRIPTION"] =
 	"퀘스트 NPC의 퀘스트 목록에 [40던] 같은 퀘스트 목록의 레벨 태그를 붙입니다."
 L["QUEST_SHARING_HEADER"] = "퀘스트 공유"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"퀘스트 목록에서 지역을 오른쪽 클릭하면 나오는 메뉴의 퀘스트 공유는 그 지역에서 파티원이 받을 수 있는 모든 퀘스트를 하나씩 차례로 제안합니다. 여기서 그 속도와 파티원이 퀘스트를 놓쳤을 때 어떻게 할지 정합니다."
+	"퀘스트 목록에서 지역을 오른쪽 클릭하면 나오는 메뉴의 퀘스트 공유는 그 지역에서 게임이 공유를 허용하는 모든 퀘스트를 하나씩 차례로 파티에 제안합니다. 여기서 그 속도와 파티원이 퀘스트를 놓쳤을 때 어떻게 할지 정합니다."
 L["SHARE_INTERVAL"] = "공유 간격(초)"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"공유한 퀘스트 하나와 다음 퀘스트 사이에 기다리는 시간으로, 퀘스트 공유와 던전 퀘스트 공유에 적용됩니다. 길수록 파티원이 각 퀘스트를 수락할 시간이 늘어납니다."
@@ -127,7 +121,34 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"방금 들어간 던전에서 아직 해야 할 퀘스트를 파티에 알려, 모두가 무엇을 챙겨야 할지 알 수 있게 합니다. 완료 보고만 남은 퀘스트는 빠집니다."
 L["DUNGEON_SHARE"] = "던전 퀘스트 자동 공유"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"게임이 공유를 허용하는 그 던전의 퀘스트를 모두 퀘스트 공유에서 정한 속도로 공유합니다. 공유를 놓친 파티원에게는 평소처럼 귓속말이 가서 다시 요청할 수 있습니다. 누군가 파티에 들어오거나 나가면 다시 공유합니다."
+	"게임이 공유를 허용하는 그 던전의 퀘스트를 모두 퀘스트 공유에서 정한 속도로 공유합니다. 공유 실패 시 귓속말이 켜져 있으면 공유를 놓친 파티원에게 귓속말을 보내 다시 요청할 수 있게 합니다. 누군가 파티에 들어오거나 나가면 다시 공유합니다."
+
+--------------------------------------------------------------------------------
+-- Options: Feedback & Support Panel
+--------------------------------------------------------------------------------
+
+L["OPTIONS_LEVEL_UP_TITLE"] = "Pretty Wide Quest Log의 레벨 업을 도와주세요"
+L["OPTIONS_LEVEL_UP_INTRO"] =
+	"이 애드온은 이 게임을 사랑하고 모두가 최대한 즐겁게 플레이하기를 바라는 플레이어들이 만들었습니다. 후원을 요청하는 일은 절대 없을 겁니다. 저희의 작업이 여러분의 게임을 조금 더 좋게 만든다는 것이 진정한 보람입니다. 그렇다면 꼭 이야기해 주세요!"
+L["OPTIONS_LEVEL_UP_WAYS"] =
+	"더 많은 플레이어에게 다가갈 수 있도록 도와주실 수 있는 방법을 소개합니다."
+L["OPTIONS_LEVEL_UP_FEEDBACK"] =
+	"• 피드백 공유: 버그를 찾으셨거나 아이디어가 있으신가요? Discord에서 알려 주세요. 여러분의 피드백은 애드온을 개선하는 데 도움이 되며, 풀 리퀘스트도 언제나 환영합니다."
+L["OPTIONS_LEVEL_UP_FRIEND"] =
+	"• 친구에게 알리기: 이 애드온을 좋아할 만한 사람을 알고 계신가요? 그분께 알려 주세요. 입소문은 더 많은 플레이어가 좋은 애드온을 발견하는 데 도움이 됩니다."
+L["OPTIONS_LEVEL_UP_CURSEFORGE"] =
+	"• CurseForge에서 즐겨찾기: 아래 CurseForge 링크를 열고 로그인한 다음, 다운로드 버튼 아래의 별을 클릭하세요. 즐겨찾기는 더 많은 플레이어가 애드온을 발견하는 데 도움이 됩니다."
+L["OPTIONS_LEVEL_UP_GITHUB"] =
+	"• GitHub에서 Star 누르기: 아래 GitHub 링크를 열고 로그인한 다음, 오른쪽 위의 Star를 클릭하세요. 별이 많을수록 프로젝트가 더 많은 무료 개발자 도구를 받을 자격을 얻는 데 도움이 됩니다."
+L["OPTIONS_LEVEL_UP_THANKS"] = "Pretty Wide Quest Log를 선택해 주셔서 감사합니다!"
+L["OPTIONS_FEEDBACK"] = "피드백 및 지원"
+L["OPTIONS_FEEDBACK_LINKS_HEADER"] = "피드백 및 지원 링크"
+L["OPTIONS_CURSEFORGE"] = "CurseForge"
+L["OPTIONS_GITHUB"] = "GitHub"
+L["OPTIONS_DISCORD"] = "Discord"
+L["OPTIONS_WAGO"] = "Wago"
+L["OPTIONS_COPY_LINK"] = "링크를 복사하려면 링크 상자를 클릭한 다음 Ctrl+A와 Ctrl+C를 누르세요."
+L["OPTIONS_VERSION"] = "버전 %s"
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -178,12 +199,9 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "회색 퀘스트 1개를 포기했습니다."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
-L["WHISPER_SHARE_BUSY"] =
-	"%s 퀘스트를 공유하려고 했는데 바빠 보였어요. 필요하면 여유 있을 때 말해 주세요. 다시 보내 드릴게요."
-L["WHISPER_SHARE_TOO_FAR"] =
-	"%s 퀘스트를 공유하려고 했는데 서로 너무 멀리 있었어요. 필요하면 가까워졌을 때 말해 주세요. 다시 보내 드릴게요."
-L["WHISPER_SHARE_LOG_FULL"] =
-	"%s 퀘스트를 공유하려고 했는데 퀘스트 목록이 가득 차 있었어요. 필요하면 자리를 비운 뒤 말해 주세요. 다시 보내 드릴게요."
+L["WHISPER_SHARE_FAILED"] =
+	"%s 퀘스트를 공유하려고 했는데 전달되지 않았어요. 필요하면 준비됐을 때 말해 주세요. 다시 공유해 드릴게요."
+L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 퀘스트도 마찬가지예요."
 L["DUNGEON_QUESTS_ANNOUNCE"] = "여기서 할 퀘스트가 %d개 있어요: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "여기서 할 퀘스트가 1개 있어요: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"

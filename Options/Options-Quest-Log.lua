@@ -37,7 +37,7 @@ end
 
 --[[
 	The wide quest log runs this session or it doesn't (Core.lua). With the switch turned on but the
-	reload still to come, there's no quest log to apply the settings to, so they show greyed out
+	reload still to come, there's no quest log to apply the settings to, so they show grayed out
 ]]
 local function Inactive()
 	return not ns.wideQuestLogActive
@@ -97,7 +97,7 @@ end
 
 --[[
 	A sub-option of the order dropdown above it, on its own indented row; the row hides it, not itself. Its
-	silver caption would stay bright on a greyed-out checkbox, so it drops the silver while greyed out
+	silver caption would stay bright on a grayed-out checkbox, so it drops the silver while grayed out
 ]]
 local function SortSubOption(key, nameKey, order)
 	local toggle = QuestLogToggle(key, nameKey, nil, 2)
@@ -116,7 +116,7 @@ end
 function ns.BuildQuestLogOptions()
 	return {
 		type = "group",
-		name = L["TAB_QUEST_LOG"],
+		name = QUEST_LOG,
 		args = {
 			descIntro = ns.OptionsDesc(L["TAB_QUEST_LOG_DESCRIPTION"], 1),
 			spaceIntro = ns.OptionsSpacer(2),

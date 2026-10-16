@@ -2,13 +2,6 @@ local _, ns = ...
 local L = ns.L
 local GetColor = ns.GetColor
 
---[[
-	The Feedback & Support labels are one short word each, so they take only what a word needs and give
-	the rest of the row to the URL.
-]]
-local LINK_LABEL_WIDTH = 0.6
-local LINK_URL_WIDTH = ns.OPTIONS_ROW_WIDTH - LINK_LABEL_WIDTH
-
 -- The Features switches, two to a line
 local FEATURE_WIDTH = ns.OPTIONS_ROW_WIDTH / 2
 
@@ -31,39 +24,6 @@ local function AddCommands(args, order)
 		GetColor("INFO") .. L["OPTIONS_COMMAND"] .. "|r" .. "  " .. L["OPTIONS_COMMAND_DESCRIPTION"],
 		order + 3
 	)
-end
-
-local function AddFeedback(args, order)
-	args.spaceFeedback0 = ns.OptionsSpacer(order)
-	args.headerFeedback = ns.OptionsHeader(L["FEEDBACK_HEADER"], order + 1)
-	args.spaceFeedback1 = ns.OptionsSpacer(order + 2)
-	order = order + 3
-
-	local urls = {
-		{ L["FEEDBACK_DISCORD"], ns.URLS.DISCORD },
-		{ L["FEEDBACK_GITHUB"], ns.URLS.GITHUB },
-		{ L["FEEDBACK_CURSEFORGE"], ns.URLS.CURSEFORGE },
-		{ L["FEEDBACK_WAGO"], ns.URLS.WAGO },
-	}
-	for index, row in ipairs(urls) do
-		if index > 1 then
-			args["urlSpace" .. index] = ns.OptionsSpacer(order)
-			order = order + 1
-		end
-		local url = row[2]
-		args["urlLabel" .. index] = ns.OptionsRowLabel(GetColor("TITLE") .. row[1] .. "|r", order, LINK_LABEL_WIDTH)
-		args["urlValue" .. index] = {
-			type = "input",
-			name = "",
-			width = LINK_URL_WIDTH,
-			order = order + 1,
-			get = function()
-				return url
-			end,
-			set = function() end,
-		}
-		order = order + 2
-	end
 end
 
 function ns.BuildGeneralOptions()
@@ -104,23 +64,9 @@ function ns.BuildGeneralOptions()
 			ns.ApplyQuestGiverCleanup
 		),
 		questLogReloadPending = ns.OptionsStatusLine(QuestLogReloadPending, 15),
-
-		spaceVersion = {
-			type = "description",
-			name = " ",
-			width = "full",
-			order = 998,
-		},
-		version = {
-			type = "description",
-			name = GetColor("MUTED") .. L["OPTIONS_VERSION"]:format(ns.Version) .. "|r",
-			fontSize = "medium",
-			order = 999,
-		},
 	}
 
 	AddCommands(args, 100)
-	AddFeedback(args, 200)
 
 	return {
 		type = "group",

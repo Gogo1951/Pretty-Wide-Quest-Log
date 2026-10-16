@@ -17,7 +17,7 @@ ns.AddWideQuestLogPart(function()
 		return E and E.GetModule and E:GetModule("Skins", true)
 	end
 
-	-- Opaque in the skin's own colour. ElvUI keeps customBackdropAlpha through its colour updates
+	-- Opaque in the skin's own color. ElvUI keeps customBackdropAlpha through its color updates
 	local function MakeOpaque(frame)
 		frame.customBackdropAlpha = 1
 		local r, g, b = frame:GetBackdropColor()

@@ -66,7 +66,7 @@ function ns.OpenZoneMenu(owner, zoneTitle)
 
 		--[[
 			Counts only the quests the game lets you share, and shares those, one every ns.GetShareInterval()
-			seconds. Left out when none can be shared; greyed out while solo and while a share is still going
+			seconds. Left out when none can be shared; grayed out while solo and while a share is still going
 		]]
 		local inGroup = IsInGroup()
 		local shareable = ns.ShareableZoneQuests(zoneTitle)
@@ -97,7 +97,7 @@ function ns.OpenZoneMenu(owner, zoneTitle)
 			end)
 		end
 
-		-- Always there, so players know it exists; greyed out, saying why, when the zone has no gray quests
+		-- Always there, so players know it exists; grayed out, saying why, when the zone has no gray quests
 		local grayQuests = ns.GrayQuests(zoneTitle)
 		local abandonGray = root:CreateButton(L["ABANDON_GRAY_QUESTS"], function()
 			AbandonGrayQuests(grayQuests)

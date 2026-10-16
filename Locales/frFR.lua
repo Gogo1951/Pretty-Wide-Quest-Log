@@ -10,15 +10,15 @@ end
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT"] = "PWQL"
 L["CHAT_LOADED"] =
-	"Version %s. Les paramètres (y compris l'option pour désactiver ce message) se trouvent dans Options > AddOns > Pretty Wide Quest Log. L'add-on vous plaît ? Parlez-en à un ami ! (="
+	"Version %s. Les paramètres (y compris l'option pour désactiver ce message) se trouvent dans Options > AddOns > Pretty Wide Quest Log. Cet add-on vous plaît ? Parlez-en à un ami, ajoutez-le à vos favoris sur CurseForge ou mettez-lui une Star sur GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "Par mesure de sécurité, l'interface des options ne peut pas être ouverte en combat."
 L["CHAT_QUESTIE_MISSING"] =
-	"Une grande partie de cet add-on repose sur les données de Questie. Sans Questie, vous aurez moins de fonctionnalités."
+	"Une grande partie de cet add-on repose sur les données de Questie, donc sans lui certaines fonctionnalités sont limitées."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus est aussi activé, et les deux vont se disputer le journal de quêtes. Désactivez Wide Quest Log Plus dans la liste des AddOns, puis rechargez."
 
 --------------------------------------------------------------------------------
--- General Panel
+-- Options: General Panel
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
@@ -28,7 +28,7 @@ L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message d'accueil de Prett
 L["OPTIONS_FEATURES_HEADER"] = "Fonctionnalités"
 L["ENABLE_QUEST_LOG_CLEANUP"] = "Activer le journal de quêtes épuré"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
-	"Remplace le journal de quêtes de Blizzard par le journal large, avec la carte à côté. Désactivez-le pour utiliser le journal de quêtes de Blizzard. Prend effet après un rechargement."
+	"Remplace le journal de quêtes de Blizzard par le journal large, avec la carte à côté. Prend effet après un rechargement."
 L["ENABLE_QUALITY_OF_LIFE"] = "Activer les améliorations de confort"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"Active la fenêtre de donneur de quêtes épurée, votre propre rythme pour partager des quêtes, les chuchotements quand un partage échoue ainsi que l'annonce et le partage des quêtes de donjon. Désactivez-le pour retrouver la fenêtre de donneur de quêtes de Blizzard et partager au rythme par défaut."
@@ -38,15 +38,9 @@ L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après 
 L["OPTIONS_COMMANDS_HEADER"] = "/Commandes"
 L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Ouvre l'interface des options de cet add-on."
-L["FEEDBACK_HEADER"] = "Commentaires et assistance"
-L["FEEDBACK_DISCORD"] = "Discord"
-L["FEEDBACK_GITHUB"] = "GitHub"
-L["FEEDBACK_CURSEFORGE"] = "CurseForge"
-L["FEEDBACK_WAGO"] = "Wago"
-L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------
--- Quest Log Panel
+-- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
 L["TAB_QUEST_LOG"] = "Journal de quêtes"
@@ -92,7 +86,7 @@ L["RESET_WINDOW_DESCRIPTION"] = "Remet le journal de quêtes à sa taille et à 
 L["RESET_WINDOW_CONFIRM"] = "Remettre le journal de quêtes à sa taille et à sa position par défaut ?"
 
 --------------------------------------------------------------------------------
--- Quality of Life Panel
+-- Options: Quality of Life Panel
 --------------------------------------------------------------------------------
 
 L["TAB_QUALITY_OF_LIFE"] = "Améliorations de confort"
@@ -102,13 +96,13 @@ L["QUEST_GIVERS_HEADER"] = "Donneurs de quêtes"
 L["QUEST_GIVERS_DESCRIPTION"] = "La fenêtre qu'ouvre un donneur de quêtes, où vous acceptez et rendez des quêtes."
 L["GIVER_CLEANUP"] = "Fenêtre de donneur de quêtes épurée"
 L["GIVER_CLEANUP_DESCRIPTION"] =
-	"Met en forme le texte de la fenêtre de donneur de quêtes comme celui du journal de quêtes, avec les mêmes titres et le même interligne, et affiche sous la quête son ID, lié à Wowhead."
+	"Met en page le texte de la fenêtre de donneur de quêtes comme celui du journal de quêtes, avec les mêmes titres et le même interligne, et affiche sous la quête son ID, lié à Wowhead."
 L["GIVER_LEVELS"] = "Afficher le niveau des quêtes"
 L["GIVER_LEVELS_DESCRIPTION"] =
 	"Ajoute les repères de niveau du journal de quêtes, comme [40D], à la liste de quêtes d'un donneur de quêtes."
 L["QUEST_SHARING_HEADER"] = "Partage de quêtes"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"Partager les quêtes, dans le menu clic droit d'une zone du journal de quêtes, propose à votre groupe, l'une après l'autre, toutes les quêtes de cette zone qu'il peut prendre. Ces options règlent le rythme et ce qui se passe quand un membre du groupe en rate une."
+	"Partager les quêtes, dans le menu clic droit d'une zone du journal de quêtes, propose à votre groupe, l'une après l'autre, toutes les quêtes de cette zone que le jeu vous laisse partager. Ces options règlent le rythme et ce qui se passe quand un membre du groupe en rate une."
 L["SHARE_INTERVAL"] = "Secondes entre les partages"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Le temps d'attente entre une quête partagée et la suivante, pour Partager les quêtes et pour le partage des quêtes de donjon. Plus il est long, plus votre groupe a le temps d'accepter chacune."
@@ -125,7 +119,33 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Indique à votre groupe quelles quêtes il vous reste à faire dans le donjon où vous venez d'entrer, pour que tout le monde sache quoi surveiller. Les quêtes prêtes à être rendues sont omises."
 L["DUNGEON_SHARE"] = "Partage automatique des quêtes de donjon"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Partage chaque quête du donjon que le jeu vous laisse partager, au rythme réglé dans Partage de quêtes. Quiconque rate un partage reçoit le chuchotement habituel pour pouvoir la redemander. Partage à nouveau chaque fois que quelqu'un rejoint ou quitte le groupe."
+	"Partage chaque quête du donjon que le jeu vous laisse partager, au rythme réglé dans Partage de quêtes. Avec Chuchoter quand un partage échoue activé, quiconque rate un partage reçoit un chuchotement pour pouvoir la redemander. Partage à nouveau chaque fois que quelqu'un rejoint ou quitte le groupe."
+
+--------------------------------------------------------------------------------
+-- Options: Feedback & Support Panel
+--------------------------------------------------------------------------------
+
+L["OPTIONS_LEVEL_UP_TITLE"] = "Aidez Pretty Wide Quest Log à monter de niveau"
+L["OPTIONS_LEVEL_UP_INTRO"] =
+	"Cet add-on a été créé par des joueurs qui adorent ce jeu et veulent le rendre aussi amusant que possible pour tout le monde. Nous ne demanderons jamais de dons. Notre vraie satisfaction, c'est de savoir que notre travail rend le jeu un peu meilleur pour vous. Si c'est le cas, nous serions ravis de le savoir !"
+L["OPTIONS_LEVEL_UP_WAYS"] = "Voici quelques façons de nous aider à toucher plus de joueurs."
+L["OPTIONS_LEVEL_UP_FEEDBACK"] =
+	"• Donnez votre avis : Vous avez trouvé un bug ou vous avez une idée ? Dites-le-nous sur Discord. Vos retours nous aident à améliorer l'add-on, et les pull requests sont toujours les bienvenues."
+L["OPTIONS_LEVEL_UP_FRIEND"] =
+	"• Parlez-en à un ami : Vous connaissez quelqu'un qui pourrait aimer cet add-on ? Parlez-lui-en. Le bouche-à-oreille aide plus de joueurs à découvrir de bons add-ons."
+L["OPTIONS_LEVEL_UP_CURSEFORGE"] =
+	"• Ajoutez-le aux favoris sur CurseForge : Ouvrez le lien CurseForge ci-dessous, connectez-vous et cliquez sur l'étoile sous le bouton de téléchargement. Les favoris aident plus de joueurs à découvrir l'add-on."
+L["OPTIONS_LEVEL_UP_GITHUB"] =
+	"• Mettez une Star sur GitHub : Ouvrez le lien GitHub ci-dessous, connectez-vous et cliquez sur Star en haut à droite. Les étoiles aident le projet à obtenir davantage d'outils de développement gratuits."
+L["OPTIONS_LEVEL_UP_THANKS"] = "Merci d'avoir choisi Pretty Wide Quest Log !"
+L["OPTIONS_FEEDBACK"] = "Commentaires et assistance"
+L["OPTIONS_FEEDBACK_LINKS_HEADER"] = "Liens de commentaires et d'assistance"
+L["OPTIONS_CURSEFORGE"] = "CurseForge"
+L["OPTIONS_GITHUB"] = "GitHub"
+L["OPTIONS_DISCORD"] = "Discord"
+L["OPTIONS_WAGO"] = "Wago"
+L["OPTIONS_COPY_LINK"] = "Pour copier un lien, cliquez dans son champ, puis appuyez sur Ctrl+A et Ctrl+C."
+L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -175,12 +195,9 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "1 quête grise abandonnée."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
-L["WHISPER_SHARE_BUSY"] =
-	"J'ai essayé de partager %s avec toi, mais tu n'avais pas l'air disponible. Si elle t'intéresse, fais-moi signe quand tu es libre et je te la renvoie."
-L["WHISPER_SHARE_TOO_FAR"] =
-	"J'ai essayé de partager %s avec toi, mais on était trop loin l'un de l'autre. Si elle t'intéresse, fais-moi signe quand on sera plus près et je te la renvoie."
-L["WHISPER_SHARE_LOG_FULL"] =
-	"J'ai essayé de partager %s avec toi, mais ton journal de quêtes était plein. Si elle t'intéresse, fais-moi signe quand tu auras fait de la place et je te la renvoie."
+L["WHISPER_SHARE_FAILED"] =
+	"J'ai essayé de partager %s avec toi, mais ça n'a pas marché. Si la quête t'intéresse, fais-moi signe quand tu peux et je te la repartage."
+L["WHISPER_SHARE_FAILED_AGAIN"] = "Pareil pour %s."
 L["DUNGEON_QUESTS_ANNOUNCE"] = "J'ai %d quêtes à faire ici : %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "J'ai 1 quête à faire ici : %s"
 L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"

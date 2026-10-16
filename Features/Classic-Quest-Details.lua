@@ -179,7 +179,7 @@ ns.AddWideQuestLogPart(function()
 			questIDText:Hide()
 			return
 		end
-		-- Description's colour: dark on the parchment, white under ElvUI's parchment remover
+		-- Description's color: dark on the parchment, white under ElvUI's parchment remover
 		ns.StyleQuestID(questIDText, questID, QuestLogQuestDescription)
 		questIDText:Show()
 		PlaceQuestID()
@@ -187,7 +187,7 @@ ns.AddWideQuestLogPart(function()
 	end
 
 	--[[
-		On TBC, a daily quest says when dailies reset, under its title, in the description's font and colour.
+		On TBC, a daily quest says when dailies reset, under its title, in the description's font and color.
 		The objectives hang below it while it shows, and below the title otherwise. Classic Era has no daily
 		quests, so it never shows there
 	]]

@@ -90,6 +90,7 @@ local SHARED_FUNCTIONS = {
 	"GetNumSubgroupMembers",
 	"IsInGroup",
 	"IsInRaid",
+	"IsInInstance",
 	"GetInstanceInfo",
 	"C_Map.GetAreaInfo",
 	"C_Map.GetMapArtID",
@@ -101,6 +102,10 @@ local SHARED_FUNCTIONS = {
 	"InCombatLockdown",
 	"ReloadUI",
 	"GameTooltip_Hide",
+	-- The map's OnShow calls Blizzard's own (Quest-Map.lua); the quest giver tags hook the gossip buttons' Setup (Quest-Giver.lua)
+	"MapCanvasMixin.OnShow",
+	"GossipSharedAvailableQuestButtonMixin.Setup",
+	"GossipSharedActiveQuestButtonMixin.Setup",
 }
 
 -- The quest giver window's pieces, the quest text fonts, and the map's canvas, built in Features/Quest-Map.xml
@@ -783,6 +788,12 @@ function ns:BuildQuestLogContextReport()
 		"Questie quest database: %s",
 		(questieDB and type(questieDB.QueryQuestSingle) == "function") and "found" or "not found"
 	)
+	-- A chain row's tooltip is Questie's own; without it hovering a row shows nothing (Quest-Chain.lua)
+	local chainLink = ns.ImportQuestieModule("QuestieLink")
+	lines[#lines + 1] = string.format(
+		"Questie quest tooltips on chain rows: %s",
+		(chainLink and type(chainLink.CreateQuestTooltip) == "function") and "found" or "not found"
+	)
 	local selectedID = SelectedQuest()
 	if selectedID then
 		local parts, position = ns.GetQuestChain(selectedID)
@@ -895,6 +906,25 @@ end
 -- The share results a whisper answers; Share-Reminders.lua skips any this client lacks
 local SHARE_RESULTS = { "ERR_QUEST_PUSH_BUSY_S", "ERR_QUEST_PUSH_TOO_FAR_S", "ERR_QUEST_PUSH_LOG_FULL_S" }
 
+-- The QuestieDB lookups that place a quest in a dungeon when its header doesn't (Dungeon-Quest-Lookup.lua)
+local DUNGEON_QUESTIE_QUERIES = { "QueryQuestSingle", "QueryNPCSingle", "QueryObjectSingle", "QueryItemSingle" }
+
+-- How many of these QuestieDB lookups are present, naming any missing
+local function QuestieQueries(names)
+	local questieDB = ns.ImportQuestieModule("QuestieDB")
+	if not questieDB then
+		return "QuestieDB not found"
+	end
+	local missing = {}
+	for _, name in ipairs(names) do
+		if type(questieDB[name]) ~= "function" then
+			missing[#missing + 1] = name
+		end
+	end
+	return string.format("%d of %d present", #names - #missing, #names)
+		.. (#missing > 0 and (", missing " .. table.concat(missing, ", ")) or "")
+end
+
 local function QuestState(quest)
 	if quest.isComplete then
 		return "ready to turn in, so not announced"
@@ -914,13 +944,23 @@ local function DungeonQuestLines(lines)
 	Setting(lines, "Announce dungeon quests", "dungeonAnnounce")
 	Setting(lines, "Share dungeon quests", "dungeonShare")
 	lines[#lines + 1] = string.format("Group chat channel: %s", tostring(ns:GetGroupChatChannel()))
+	-- Without ZoneDB the dungeon is known by name alone; without these queries only the quest log header places a quest (Dungeon-Quest-Lookup.lua)
+	local zoneDB = ns.ImportQuestieModule("ZoneDB")
+	lines[#lines + 1] = string.format(
+		"Questie ZoneDB instance table / GetDungeons: %s / %s",
+		YesNo(zoneDB and type(zoneDB.instanceIdToAreaId) == "table"),
+		YesNo(zoneDB and type(zoneDB.GetDungeons) == "function")
+	)
+	lines[#lines + 1] =
+		string.format("Questie lookups the dungeon match uses: %s", QuestieQueries(DUNGEON_QUESTIE_QUERIES))
 	local dungeon = ns.CurrentDungeon()
+	local _, instanceType, _, _, _, _, _, instanceID = GetInstanceInfo()
 	if not dungeon then
 		-- Only "party" and "raid" count (Dungeon-Quest-Lookup.lua)
-		local _, instanceType = GetInstanceInfo()
 		lines[#lines + 1] = string.format("In a dungeon or raid: no (instance type %s)", tostring(instanceType))
 		return
 	end
+	lines[#lines + 1] = string.format("Instance ID: %s", tostring(instanceID))
 
 	local areaIDs = {}
 	for areaID in pairs(dungeon.areaIDs) do
@@ -1048,6 +1088,13 @@ function ns:BuildSharingContextReport()
 	Setting(lines, "Quality of Life switch", "enableQualityOfLife")
 	Setting(lines, "Whisper when a share fails", "shareWhispers")
 	Setting(lines, "Seconds between shares", "shareInterval")
+	-- Party only: no whisper in a raid, a battleground or an arena (Share-Reminders.lua)
+	local _, instanceType = IsInInstance()
+	lines[#lines + 1] = string.format("In a raid / instance type: %s / %s", YesNo(IsInRaid()), tostring(instanceType))
+	lines[#lines + 1] = string.format(
+		"Whispers can go out here: %s",
+		YesNo(IsInGroup() and not IsInRaid() and instanceType ~= "pvp" and instanceType ~= "arena")
+	)
 	-- In chat lockdown on WoW Forever the share result can't be read, so no whisper goes out (Share-Reminders.lua)
 	lines[#lines + 1] = string.format(
 		"Chat messaging lockdown: %s",

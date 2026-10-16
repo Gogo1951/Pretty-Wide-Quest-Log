@@ -10,15 +10,15 @@ end
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT"] = "PWQL"
 L["CHAT_LOADED"] =
-	"版本 %s。設定（包括關閉此訊息的選項）位於 選項 > 插件 > Pretty Wide Quest Log。喜歡這個插件嗎？推薦給朋友吧！(="
+	"版本 %s。設定（包括關閉此訊息的選項）位於 選項 > 插件 > Pretty Wide Quest Log。喜歡這個插件嗎？推薦給朋友，在 CurseForge 上收藏，或在 GitHub 上按 Star 吧。(="
 L["CHAT_OPTIONS_IN_COMBAT"] = "基於安全考量，戰鬥中無法開啟設定介面。"
 L["CHAT_QUESTIE_MISSING"] =
-	"本插件的許多功能仰賴 Questie 的資料。沒有 Questie，部分功能將無法使用。"
+	"本插件的許多功能仰賴 Questie 的資料，因此沒有 Questie 時部分功能會受限。"
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus 也已啟用，兩者會互相搶奪任務日誌。請在插件列表中停用 Wide Quest Log Plus，然後重新載入介面。"
 
 --------------------------------------------------------------------------------
--- General Panel
+-- Options: General Panel
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
@@ -28,7 +28,7 @@ L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登入時顯示 Pretty Wide Quest Log
 L["OPTIONS_FEATURES_HEADER"] = "功能"
 L["ENABLE_QUEST_LOG_CLEANUP"] = "啟用任務日誌整理"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
-	"將暴雪任務日誌換成寬版任務日誌，地圖就在旁邊。關閉此選項可改用暴雪任務日誌。重新載入介面後生效。"
+	"將暴雪任務日誌換成寬版任務日誌，地圖就在旁邊。重新載入介面後生效。"
 L["ENABLE_QUALITY_OF_LIFE"] = "啟用便利功能"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"開啟任務NPC視窗整理、自訂分享任務的節奏、分享任務失敗時的密語，以及地城任務的通報和分享。關閉後恢復暴雪的任務NPC視窗，並以預設節奏分享。"
@@ -38,15 +38,9 @@ L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新載入介面才能切換
 L["OPTIONS_COMMANDS_HEADER"] = "/指令"
 L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "開啟此插件的設定介面。"
-L["FEEDBACK_HEADER"] = "意見回饋與支援"
-L["FEEDBACK_DISCORD"] = "Discord"
-L["FEEDBACK_GITHUB"] = "GitHub"
-L["FEEDBACK_CURSEFORGE"] = "CurseForge"
-L["FEEDBACK_WAGO"] = "Wago"
-L["OPTIONS_VERSION"] = "版本 %s"
 
 --------------------------------------------------------------------------------
--- Quest Log Panel
+-- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
 L["TAB_QUEST_LOG"] = "任務日誌"
@@ -88,7 +82,7 @@ L["RESET_WINDOW_DESCRIPTION"] = "將任務日誌恢復為預設大小和位置�
 L["RESET_WINDOW_CONFIRM"] = "要將任務日誌重設為預設大小和位置嗎？"
 
 --------------------------------------------------------------------------------
--- Quality of Life Panel
+-- Options: Quality of Life Panel
 --------------------------------------------------------------------------------
 
 L["TAB_QUALITY_OF_LIFE"] = "便利功能"
@@ -103,7 +97,7 @@ L["GIVER_LEVELS"] = "顯示任務等級"
 L["GIVER_LEVELS_DESCRIPTION"] = "在任務NPC的任務清單中加上任務日誌的等級標籤，例如 [40副]。"
 L["QUEST_SHARING_HEADER"] = "任務分享"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"在任務日誌中右鍵點擊區域，選單裡的分享任務會把該區域中隊友能接受的每個任務逐一分享給隊伍。這些選項設定分享的節奏，以及隊友錯過任務時該怎麼辦。"
+	"在任務日誌中右鍵點擊區域，選單裡的分享任務會把該區域中遊戲允許分享的每個任務逐一分享給隊伍。這些選項設定分享的節奏，以及隊友錯過任務時該怎麼辦。"
 L["SHARE_INTERVAL"] = "分享間隔秒數"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"分享一個任務後到下一個任務之間的等待時間，適用於分享任務和地城任務分享。時間越長，隊友就有越多時間接受每個任務。"
@@ -120,7 +114,33 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"告訴隊友你在剛進入的地城裡還有哪些任務要做，讓大家知道要留意什麼。可以回報的任務不會列出。"
 L["DUNGEON_SHARE"] = "地城任務自動分享"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"依任務分享中設定的節奏，分享該地城裡所有遊戲允許分享的任務。錯過分享的隊友會收到平常的密語，可以再找你要。有人加入或離開隊伍時會再次分享。"
+	"依任務分享中設定的節奏，分享該地城裡所有遊戲允許分享的任務。開啟分享失敗時密語後，錯過分享的隊友會收到密語，可以再找你要。有人加入或離開隊伍時會再次分享。"
+
+--------------------------------------------------------------------------------
+-- Options: Feedback & Support Panel
+--------------------------------------------------------------------------------
+
+L["OPTIONS_LEVEL_UP_TITLE"] = "幫助 Pretty Wide Quest Log 升級"
+L["OPTIONS_LEVEL_UP_INTRO"] =
+	"這個插件由熱愛這款遊戲、希望讓每個人都玩得盡可能開心的玩家打造。我們永遠不會請求捐款。真正的滿足感來自知道我們的努力讓你的遊戲體驗更好一點。如果真是如此，我們很想聽你說說！"
+L["OPTIONS_LEVEL_UP_WAYS"] = "以下是你可以幫助我們接觸更多玩家的幾種方式。"
+L["OPTIONS_LEVEL_UP_FEEDBACK"] =
+	"• 分享意見：發現錯誤或有新點子？請在 Discord 上告訴我們。你的意見能幫助我們改進插件，也隨時歡迎提交拉取請求。"
+L["OPTIONS_LEVEL_UP_FRIEND"] =
+	"• 告訴朋友：認識可能會喜歡這個插件的人嗎？告訴他們吧。口碑能幫助更多玩家發現優秀的插件。"
+L["OPTIONS_LEVEL_UP_CURSEFORGE"] =
+	"• 在 CurseForge 上收藏：開啟下方的 CurseForge 連結，登入後點擊下載按鈕下方的星號。收藏能幫助更多玩家發現這個插件。"
+L["OPTIONS_LEVEL_UP_GITHUB"] =
+	"• 在 GitHub 上按 Star：開啟下方的 GitHub 連結，登入後點擊右上角的 Star。星號能幫助專案取得更多免費開發者工具的資格。"
+L["OPTIONS_LEVEL_UP_THANKS"] = "感謝你選擇 Pretty Wide Quest Log！"
+L["OPTIONS_FEEDBACK"] = "意見回饋與支援"
+L["OPTIONS_FEEDBACK_LINKS_HEADER"] = "意見回饋與支援連結"
+L["OPTIONS_CURSEFORGE"] = "CurseForge"
+L["OPTIONS_GITHUB"] = "GitHub"
+L["OPTIONS_DISCORD"] = "Discord"
+L["OPTIONS_WAGO"] = "Wago"
+L["OPTIONS_COPY_LINK"] = "要複製連結，請點擊連結框，然後按 Ctrl+A 和 Ctrl+C。"
+L["OPTIONS_VERSION"] = "版本 %s"
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -169,12 +189,9 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "已放棄 1 個灰色任務。"
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
-L["WHISPER_SHARE_BUSY"] =
-	"我剛才想把 %s 分享給你，但你好像在忙。如果需要，等你有空時叫我一聲，我再傳一次。"
-L["WHISPER_SHARE_TOO_FAR"] =
-	"我剛才想把 %s 分享給你，但我們離得太遠了。如果需要，等我們靠近一點時叫我一聲，我再傳一次。"
-L["WHISPER_SHARE_LOG_FULL"] =
-	"我剛才想把 %s 分享給你，但你的任務日誌滿了。如果需要，等你騰出空位後叫我一聲，我再傳一次。"
+L["WHISPER_SHARE_FAILED"] =
+	"我剛才想把 %s 分享給你，但沒成功。如果需要，等你準備好時叫我一聲，我再分享一次。"
+L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 也一樣。"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "我在這裡還有 %d 個任務要做：%s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "我在這裡還有 1 個任務要做：%s"
 L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"

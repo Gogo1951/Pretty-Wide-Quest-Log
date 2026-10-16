@@ -6,7 +6,7 @@ local L = ns.L
 --------------------------------------------------------------------------------
 
 --[[
-	A line centred in the bottom row, between Abandon Quest and Share Quest, totaling the XP and gold
+	A line centered in the bottom row, between Abandon Quest and Share Quest, totaling the XP and gold
 	waiting in quests ready to turn in (just the gold at the level cap, where quest XP stops). Both come
 	from Questie's quest data (its QuestXP module), so the line is hidden while Questie isn't loaded.
 	Hovering it lists each quest under its zone
@@ -86,8 +86,9 @@ function ns.CreateTurnInLine(parent)
 end
 
 --[[
-	Centred in the bottom row, in the gap between Abandon Quest and Share Quest. Placed when it first
-	shows, as each client's quest log file makes those buttons after the list file makes the line
+	Centered in the bottom row, in the gap between Abandon Quest and Share Quest. Placed when it first
+	shows, as on Classic Era and TBC Classic-Quest-Log.lua makes those buttons after Classic-Quest-List.lua
+	makes the line (on WoW Forever, Forever-Quest-Log.lua makes them first)
 ]]
 local function PlaceTurnInLine(line)
 	if line.placed then

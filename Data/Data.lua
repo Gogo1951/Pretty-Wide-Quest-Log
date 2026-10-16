@@ -23,7 +23,7 @@ ns.QUESTIE_NOTICE_DELAY = 20
 -- Links
 --------------------------------------------------------------------------------
 
-ns.URLS = {
+ns.LINKS = {
 	DISCORD = "https://discord.gg/eh8hKq992Q",
 	GITHUB = "https://github.com/Gogo1951/Pretty-Wide-Quest-Log",
 	CURSEFORGE = "https://www.curseforge.com/wow/addons/pretty-wide-quest-log",
@@ -38,7 +38,7 @@ local WOWHEAD_QUEST_URLS = {
 }
 ns.WOWHEAD_QUEST_URL = WOWHEAD_QUEST_URLS[ns.FLAVOR]
 
--- The chain link before a quest ID that opens its Wowhead page: white, so it takes the quest ID's colour
+-- The chain link before a quest ID that opens its Wowhead page: white, so it takes the quest ID's color
 ns.WOWHEAD_LINK_ICON = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/PWQL_Link"
 
 --------------------------------------------------------------------------------
@@ -66,6 +66,7 @@ ns.OPTIONS_REGISTRY = {
 	QuestLog = ADDON_NAME .. "_QuestLog",
 	QualityOfLife = ADDON_NAME .. "_QualityOfLife",
 	Profiles = ADDON_NAME .. "_Profiles",
+	FeedbackSupport = ADDON_NAME .. "_FeedbackSupport",
 	Diagnostics = ADDON_NAME .. "_Diagnostics",
 }
 
@@ -231,7 +232,7 @@ LAYOUT.LIST_BUTTONS_Y = -53
 LAYOUT.LIST_BUTTONS_GAP = 8
 LAYOUT.LABEL_PADDING = 32
 
--- Centre of the scroll bar slot to the right of the parchment
+-- Center of the scroll bar slot to the right of the parchment
 LAYOUT.DETAIL_SCROLL_SLOT_X = 673 + LAYOUT.EXTRA_WIDTH
 
 --[[

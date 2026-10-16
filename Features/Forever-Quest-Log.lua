@@ -111,10 +111,10 @@ exitButton:SetPoint("BOTTOMRIGHT", -LAYOUT.BUTTON_RIGHT, LAYOUT.BUTTON_BOTTOM)
 local shareButton = CreateBottomButton(SHARE_QUEST, nil, ForSelectedQuest(QuestMapQuestOptions_ShareQuest))
 shareButton:SetPoint("RIGHT", exitButton, "LEFT")
 
--- The Ready to Turn In line sits centred between these two (Turn-In-Line.lua)
+-- The Ready to Turn In line sits centered between these two (Turn-In-Line.lua)
 ns.abandonButton, ns.shareButton = abandonButton, shareButton
 
--- Say why the button is greyed out for quests Questie can't track
+-- Say why the button is grayed out for quests Questie can't track
 trackButton:SetMotionScriptsWhileDisabled(true)
 trackButton:SetScript("OnEnter", function(self)
 	if self.untrackable and state.selectedQuestID then
