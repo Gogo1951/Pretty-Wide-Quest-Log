@@ -101,6 +101,7 @@ Options/Options-General.lua
 Options/Options-Quest-Log.lua
 Options/Options-Quality-of-Life.lua
 Options/Options-Profiles.lua
+Options/Options-Feedback-Support.lua
 Diagnostics/Options-Diagnostics.lua
 Options/Options.lua
 

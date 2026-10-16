@@ -165,9 +165,8 @@ end
 
 -- The whispers a failed quest share sends (Share-Reminders.lua), by locale key
 local SHARE_WHISPER_KEYS = {
-	"WHISPER_SHARE_BUSY",
-	"WHISPER_SHARE_TOO_FAR",
-	"WHISPER_SHARE_LOG_FULL",
+	"WHISPER_SHARE_FAILED",
+	"WHISPER_SHARE_FAILED_AGAIN",
 }
 
 -- The quest with the longest title in the log, in bytes: its ID and title

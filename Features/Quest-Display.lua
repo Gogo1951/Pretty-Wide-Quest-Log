@@ -49,8 +49,8 @@ local function QuestIDText(questID)
 end
 
 --[[
-	Shows a quest ID in a FontString, in the same font and colour as source (the description) but
-	smaller. One that links to Wowhead starts with a chain link, in the same colour
+	Shows a quest ID in a FontString, in the same font and color as source (the description) but
+	smaller. One that links to Wowhead starts with a chain link, in the same color
 ]]
 function ns.StyleQuestID(text, questID, source)
 	local file, size, flags = source:GetFont()
@@ -116,7 +116,7 @@ end
 
 local objectiveCounts = {} -- Count column for each objective line, by line
 
--- Skins (ElvUI) recolour the lines in hooks that may run after styling, so the counts match them again a frame later
+-- Skins (ElvUI) recolor the lines in hooks that may run after styling, so the counts match them again a frame later
 local recolorPending
 local function RecolorCounts()
 	recolorPending = nil
@@ -175,8 +175,8 @@ for _, method in ipairs({ "SetFont", "SetShadowColor", "SetShadowOffset" }) do
 	hooksecurefunc(QuestTitleFont, method, SyncSectionHeadingFont)
 end
 
--- Sets a FontString's font object, keeping its colour
-local function SetFontObjectKeepingColour(region, fontObject)
+-- Sets a FontString's font object, keeping its color
+local function SetFontObjectKeepingColor(region, fontObject)
 	local red, green, blue, alpha = region:GetTextColor()
 	region:SetFontObject(fontObject)
 	region:SetTextColor(red, green, blue, alpha)
@@ -199,7 +199,7 @@ function ns.RememberBlizzardStyle(region)
 	}
 end
 
--- Puts a remembered FontString's font and line spacing back, keeping its colour
+-- Puts a remembered FontString's font and line spacing back, keeping its color
 function ns.RestoreBlizzardStyle(region)
 	local style = blizzardStyle[region]
 	if not style then
@@ -221,7 +221,7 @@ end
 ]]
 function ns.StyleQuestText(region, sectionHeading)
 	if sectionHeading and region:GetFontObject() ~= sectionHeadingFont then
-		SetFontObjectKeepingColour(region, sectionHeadingFont)
+		SetFontObjectKeepingColor(region, sectionHeadingFont)
 	end
 	local _, size = region:GetFont()
 	region:SetSpacing(LineSpacing(size))
@@ -229,7 +229,7 @@ end
 
 --[[
 	Sets a number Blizzard draws in its own white outlined font (the experience reward) in source's font
-	and colour (the description's), like the other numbers on the parchment
+	and color (the description's), like the other numbers on the parchment
 ]]
 local function StyleQuestNumber(region, source)
 	local fontObject = source:GetFontObject()
@@ -293,7 +293,7 @@ end
 
 --[[
 	The experience reward, each time QuestInfo shows one (the quest details, the quest giver window and the
-	map's details), in the description's font and colour, its thousands grouped like the turn-in line's.
+	map's details), in the description's font and color, its thousands grouped like the turn-in line's.
 	On a quest giver page with the quest giver window cleanup off it stays Blizzard's
 ]]
 local experienceFrame = QuestInfoRewardsFrame and QuestInfoRewardsFrame.XPFrame
@@ -339,7 +339,7 @@ function ns.SpaceAroundRewardButtons(region)
 	return y - spacedY
 end
 
--- Gives a FontString the same font and line spacing as another, keeping its own colour
+-- Gives a FontString the same font and line spacing as another, keeping its own color
 local function MatchFont(region, source)
 	local red, green, blue, alpha = region:GetTextColor()
 	local fontObject = source:GetFontObject()

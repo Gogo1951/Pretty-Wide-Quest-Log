@@ -82,7 +82,7 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-	Puts the quest log's tag ("[36]", "[40D]") in front of a quest's line, in the line's own colour (dark
+	Puts the quest log's tag ("[36]", "[40D]") in front of a quest's line, in the line's own color (dark
 	on the parchment), while the quest giver window cleanup and its giverLevels sub-option are both on.
 	Blizzard sets the line's text before this runs, but may run this more than once on the same text, so a
 	line already tagged is left alone

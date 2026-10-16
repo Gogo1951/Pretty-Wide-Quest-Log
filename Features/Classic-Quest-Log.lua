@@ -30,7 +30,7 @@ ns.AddWideQuestLogPart(function()
 	SetPanelAttribute("width", BASE_WIDTH)
 	ns.questLogFrame = QuestLogFrame
 
-	-- The Ready to Turn In line sits centred between these two (Turn-In-Line.lua)
+	-- The Ready to Turn In line sits centered between these two (Turn-In-Line.lua)
 	ns.abandonButton, ns.shareButton = QuestLogFrameAbandonButton, QuestFramePushQuestButton
 
 	QuestLogTitleText:ClearAllPoints()

@@ -72,7 +72,6 @@ ns.DiagnosticsStrings = {
 	EVENT_LOG_INTRO = "Records the events "
 		.. TITLE
 		.. " listens to, in the order they fired, showing whether an event never fired, or fired and nothing happened.",
-	EVENT_LOG_PRIVACY = "Some of these events carry lines of chat, which can name other players or quote what they said, so read the log before you paste it anywhere.",
 	EVENT_LOG_IDLE = "Not capturing.",
 	EVENT_LOG_CAPTURING = "Capturing. Reproduce the problem, then press Stop.",
 	EVENT_LOG_STOPPED = "Stopped: %s events captured.",
@@ -82,6 +81,7 @@ ns.DiagnosticsStrings = {
 	EVENT_LOG_STOP_DESCRIPTION = "Stops capturing and keeps what was captured, ready to show.",
 	EVENT_LOG_SHOW = "Show",
 	EVENT_LOG_SHOW_DESCRIPTION = "Prints the captured events in the box below, ready to copy.",
+	EVENT_LOG_PRIVACY = "The log includes the text of chat messages it catches, whispers too. Read it through before you paste it anywhere.",
 	TAINT_TITLE = "Taint Log",
 	TAINT_INTRO = 'Seeing "action blocked" or "interface action failed" errors? Turn this on and the game records the cause to a file. Send the file along with your bug report.',
 	TAINT_STATE = "Taint logging is currently set to level %d (0 = off, 2 = verbose).",
@@ -144,7 +144,6 @@ ns.DiagnosticsStrings = {
 	VALIDATE_TITLE = "Validate Data: %s",
 	VALIDATE_DESCRIPTION = "Checks every id in this data file against this client and exports the results as tab-separated text.",
 	VALIDATE_PROGRESS = "%s / %s IDs",
-	VALIDATE_HINT = "Checks every item and quest id a data file ships against this client and exports what the client knows about each one as tab-separated text, ready to paste into a spreadsheet. Item rows carry every item API return, the file's own values in the DATA columns so you can sort for mismatches, everything the client knows about the item's spell including its tooltip in SPELL_TOOLTIP, and the whole item tooltip in one TOOLTIP cell, its lines joined by // and a right-hand text after >>. Quest rows carry every quest API return the client has. STATUS reads OK, NOT ON CLIENT for an id this client does not have or never answers for, INCOMPLETE when an item loaded but its tooltip or its spell never did (a spell with no description of its own is fine), NO TITLE when a quest's title never loaded (not grounds to prune), ERROR with the message in the name cell when a read throws, or TABLE MISSING when this client's folder never built a table. Quest ids follow in a block of their own.",
 	DISPLAY_TITLE = "Display Context",
 	DISPLAY_DESCRIPTION = "Shows your screen size, UI scale and the quest log's saved size and position.",
 	ADDONS_TITLE = "Other Add-ons",

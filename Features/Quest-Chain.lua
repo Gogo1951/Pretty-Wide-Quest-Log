@@ -159,7 +159,7 @@ local function Row(section, index)
 end
 
 --[[
-	source's font, colour and shadow. The shadow gives the Description heading and text their weight;
+	source's font, color and shadow. The shadow gives the Description heading and text their weight;
 	read off the FontString itself, as skins (ElvUI) set it there rather than on its font object
 ]]
 local function CopyFont(region, source)
@@ -173,7 +173,7 @@ local function CopyFont(region, source)
 end
 
 --[[
-	Fills the section for questID in the fonts and colours of the details' Description heading and text.
+	Fills the section for questID in the fonts and colors of the details' Description heading and text.
 	Returns whether it shows
 ]]
 function ns.UpdateQuestChainSection(section, questID, headingSource, textSource)

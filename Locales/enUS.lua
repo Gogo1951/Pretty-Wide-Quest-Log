@@ -10,15 +10,15 @@ end
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT"] = "PWQL"
 L["CHAT_LOADED"] =
-	"Version %s. Settings (including the option to disable this message) can be found under Options > AddOns > Pretty Wide Quest Log. Enjoying the add-on? Tell a friend about it! (="
+	"Version %s. Settings (including the option to disable this message) are under Options > AddOns > Pretty Wide Quest Log. Enjoying this add-on? Tell a friend, Favorite it on CurseForge, or Star it on GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "As a safety precaution, the Options Interface cannot be opened during combat."
 L["CHAT_QUESTIE_MISSING"] =
-	"We use Questie data to power a lot of this add-on. Without Questie, you will have reduced functionality."
+	"We use Questie's data to power a lot of this add-on, so some features are limited without it."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus is also turned on, and the two will fight over the quest log. Turn off Wide Quest Log Plus in the AddOns list, then reload."
 
 --------------------------------------------------------------------------------
--- General Panel
+-- Options: General Panel
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
@@ -28,7 +28,7 @@ L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log greet
 L["OPTIONS_FEATURES_HEADER"] = "Features"
 L["ENABLE_QUEST_LOG_CLEANUP"] = "Enable Quest Log Cleanup"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
-	"Swaps Blizzard's quest log for the wide one, with the map beside it. Turn it off to use Blizzard's quest log instead. Takes effect after a reload."
+	"Swaps Blizzard's quest log for the wide one, with the map beside it. Takes effect after a reload."
 L["ENABLE_QUALITY_OF_LIFE"] = "Enable Quality of Life"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"Turns on the quest giver window cleanup, your own pace for shared quests, whispers when a quest share fails, and dungeon quest announcements and sharing. Turn it off to get Blizzard's quest giver window back and share at the default pace."
@@ -38,18 +38,11 @@ L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. 
 L["OPTIONS_COMMANDS_HEADER"] = "/Commands"
 L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Opens the Options Interface for this add-on."
-L["FEEDBACK_HEADER"] = "Feedback & Support"
-L["FEEDBACK_DISCORD"] = "Discord"
-L["FEEDBACK_GITHUB"] = "GitHub"
-L["FEEDBACK_CURSEFORGE"] = "CurseForge"
-L["FEEDBACK_WAGO"] = "Wago"
-L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------
--- Quest Log Panel
+-- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
-L["TAB_QUEST_LOG"] = "Quest Log"
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Replaces Blizzard's quest log with a wide one: your quests listed by zone, with the selected quest's details and its map beside them."
 L["QUEST_LOG_LAYOUT_HEADER"] = "Quest Log Layout"
@@ -88,7 +81,7 @@ L["RESET_WINDOW_DESCRIPTION"] = "Puts the quest log back to its default size and
 L["RESET_WINDOW_CONFIRM"] = "Reset the quest log to its default size and position?"
 
 --------------------------------------------------------------------------------
--- Quality of Life Panel
+-- Options: Quality of Life Panel
 --------------------------------------------------------------------------------
 
 L["TAB_QUALITY_OF_LIFE"] = "Quality of Life"
@@ -98,12 +91,12 @@ L["QUEST_GIVERS_HEADER"] = "Quest Givers"
 L["QUEST_GIVERS_DESCRIPTION"] = "The window a quest giver opens, where you pick up quests and turn them in."
 L["GIVER_CLEANUP"] = "Quest Giver Window Cleanup"
 L["GIVER_CLEANUP_DESCRIPTION"] =
-	"Sets the quest giver window's text like the quest log's, with the same headings and line spacing, and shows the quest ID, linked to Wowhead, under the quest."
+	"Lays out the quest giver window's text like the quest log's, with the same headings and line spacing, and shows the quest ID, linked to Wowhead, under the quest."
 L["GIVER_LEVELS"] = "Show Quest Levels"
 L["GIVER_LEVELS_DESCRIPTION"] = "Adds the quest log's level tags, like [40D], to a quest giver's list of quests."
 L["QUEST_SHARING_HEADER"] = "Quest Sharing"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"Share Quests, on a zone's right-click menu in the quest log, offers your party every quest in that zone they can take, one after another. These set the pace, and what happens when a party member misses one."
+	"Share Quests, on a zone's right-click menu in the quest log, offers your party every quest in that zone the game lets you share, one after another. These set the pace, and what happens when a party member misses one."
 L["SHARE_INTERVAL"] = "Seconds Between Shares"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"How long to wait between one shared quest and the next, for Share Quests and dungeon quest sharing. Longer gives your party more time to accept each one."
@@ -120,7 +113,33 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Tells your group which of your quests still need doing in the dungeon you just entered, so everyone knows what to look out for. Quests ready to turn in are left out."
 L["DUNGEON_SHARE"] = "Automatic Dungeon Quest Sharing"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Shares every quest for the dungeon that the game lets you share, at the pace set under Quest Sharing. Anyone a share misses gets the usual whisper, so they can ask again. Shares again whenever someone joins or leaves the group."
+	"Shares every quest for the dungeon that the game lets you share, at the pace set under Quest Sharing. With Whisper When a Share Fails on, anyone a share misses is whispered so they can ask again. Shares again whenever someone joins or leaves the group."
+
+--------------------------------------------------------------------------------
+-- Options: Feedback & Support Panel
+--------------------------------------------------------------------------------
+
+L["OPTIONS_LEVEL_UP_TITLE"] = "Help Pretty Wide Quest Log Level Up"
+L["OPTIONS_LEVEL_UP_INTRO"] =
+	"This add-on was built by players who love this game and want to make it as fun as possible for everyone. We'll never ask for donations. The real satisfaction comes from knowing our work makes the game a little better for you. If it does, we'd love to hear about it!"
+L["OPTIONS_LEVEL_UP_WAYS"] = "Here are a few ways you can help us reach more players."
+L["OPTIONS_LEVEL_UP_FEEDBACK"] =
+	"• Share Feedback: Found a bug or have an idea? Let us know on Discord. Your feedback helps us improve the add-on, and pull requests are always welcome."
+L["OPTIONS_LEVEL_UP_FRIEND"] =
+	"• Tell a Friend: Know someone who might enjoy this add-on? Tell them about it. Word of mouth helps more players discover great add-ons."
+L["OPTIONS_LEVEL_UP_CURSEFORGE"] =
+	"• Favorite on CurseForge: Open the CurseForge link below, sign in, and click the star beneath the Download button. Favorites help more players discover the add-on."
+L["OPTIONS_LEVEL_UP_GITHUB"] =
+	"• Star on GitHub: Open the GitHub link below, sign in, and click Star in the top right. Stars help the project qualify for more free developer tools."
+L["OPTIONS_LEVEL_UP_THANKS"] = "Thanks for choosing Pretty Wide Quest Log!"
+L["OPTIONS_FEEDBACK"] = "Feedback & Support"
+L["OPTIONS_FEEDBACK_LINKS_HEADER"] = "Feedback & Support Links"
+L["OPTIONS_CURSEFORGE"] = "CurseForge"
+L["OPTIONS_GITHUB"] = "GitHub"
+L["OPTIONS_DISCORD"] = "Discord"
+L["OPTIONS_WAGO"] = "Wago"
+L["OPTIONS_COPY_LINK"] = "To copy a link, click its box, then press Ctrl+A and Ctrl+C."
+L["OPTIONS_VERSION"] = "Version %s"
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -170,12 +189,9 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "Abandoned 1 gray quest."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
-L["WHISPER_SHARE_BUSY"] =
-	"I tried to share %s with you, but you looked busy. If you'd like it, just give me a shout when you're free and I'll send it again."
-L["WHISPER_SHARE_TOO_FAR"] =
-	"I tried to share %s with you, but we were too far apart. If you'd like it, just give me a shout when we're closer and I'll send it again."
-L["WHISPER_SHARE_LOG_FULL"] =
-	"I tried to share %s with you, but your quest log was full. If you'd like it, just give me a shout once you've made room and I'll send it again."
+L["WHISPER_SHARE_FAILED"] =
+	"I tried to share %s with you, but it didn't go through. If you'd like the quest, just give me a shout when you're ready and I'll share it again."
+L["WHISPER_SHARE_FAILED_AGAIN"] = "Same goes for %s."
 L["DUNGEON_QUESTS_ANNOUNCE"] = "I have %d quests to do here: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "I have 1 quest to do here: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"

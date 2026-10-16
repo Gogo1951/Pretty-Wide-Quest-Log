@@ -150,24 +150,22 @@ local function NoEventLogReport()
 	return ns.diagnostics.eventLogReport == nil
 end
 
--- The intro, the add-on's own examples, and the privacy warning wherever a registered chat event can put chat in the log
-local function EventLogIntro()
-	local parts = { D.EVENT_LOG_INTRO }
-	if D.EVENT_LOG_EXAMPLES then
-		parts[#parts + 1] = D.EVENT_LOG_EXAMPLES
-	end
-	for _, event in ipairs(ns.EVENT_NAMES) do
-		if event:find("^CHAT_MSG_") then
-			parts[#parts + 1] = D.EVENT_LOG_PRIVACY
-			break
+-- A CHAT_MSG_* event puts message bodies, whispers included, into the log.
+local function LogsChat()
+	for _, event in ipairs(ns.EVENT_NAMES or {}) do
+		if string.sub(event, 1, 9) == "CHAT_MSG_" then
+			return true
 		end
 	end
-	return table.concat(parts, " ")
+	return false
 end
 
 local function BuildEventLogBox(order)
 	return Box(D.EVENT_LOG_TITLE, order, {
-		descIntro = HelpDesc(EventLogIntro(), 1),
+		descIntro = HelpDesc(
+			D.EVENT_LOG_EXAMPLES and (D.EVENT_LOG_INTRO .. " " .. D.EVENT_LOG_EXAMPLES) or D.EVENT_LOG_INTRO,
+			1
+		),
 		rowControls = Row(2, {
 			Desc(EventLogState, nil, nil, BOX_ROW_WIDTH - 3 * LOG_BUTTON_WIDTH - ROW_SLACK),
 			Button(D.EVENT_LOG_START, D.EVENT_LOG_START_DESCRIPTION, LOG_BUTTON_WIDTH, function()
@@ -191,6 +189,7 @@ local function BuildEventLogBox(order)
 			return ns.diagnostics.eventLogReport
 		end, 3, 8, NoEventLogReport),
 		descCopy = HelpDesc(D.COPY_HINT, 4, NoEventLogReport),
+		descPrivacy = LogsChat() and HelpDesc(D.EVENT_LOG_PRIVACY, 5) or nil,
 	})
 end
 
@@ -260,7 +259,7 @@ end
 local SECTION_TEXT = {
 	settings = { tab = D.TAB_SETTINGS, intro = D.SETTINGS_INTRO, runAll = D.SETTINGS_RUN_ALL },
 	code = { tab = D.TAB_CODE, intro = D.CODE_INTRO, runAll = D.CODE_RUN_ALL },
-	data = { tab = D.TAB_DATA, intro = D.DATA_INTRO, runAll = D.DATA_RUN_ALL, hint = D.VALIDATE_HINT },
+	data = { tab = D.TAB_DATA, intro = D.DATA_INTRO, runAll = D.DATA_RUN_ALL },
 	localization = { tab = D.TAB_LOCALIZATION, intro = D.LOCALIZATION_INTRO, runAll = D.LOCALIZATION_RUN_ALL },
 }
 
@@ -380,9 +379,6 @@ local function BuildSectionGroup(section, order)
 
 	for index, id in ipairs(section.reports) do
 		args["row" .. index] = ReportRow(section, id, 6 + index)
-	end
-	if text.hint then
-		args.descHint = HelpDesc(text.hint, 53)
 	end
 
 	return { type = "group", name = text.tab, order = order, args = args }

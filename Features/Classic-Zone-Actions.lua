@@ -15,8 +15,16 @@ local function IndexForQuestID(questID)
 	end
 end
 
+-- The quest selected in Blizzard's quest log, as its quest ID and title; nothing while a zone or nothing is selected
+function ns.SelectedQuest()
+	local title, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(GetQuestLogSelection())
+	if title and not isHeader then
+		return questID, title
+	end
+end
+
 local function SelectedQuestID()
-	return select(8, GetQuestLogTitle(GetQuestLogSelection()))
+	return (ns.SelectedQuest())
 end
 
 local function SelectQuest(questID)

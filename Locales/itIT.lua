@@ -10,16 +10,16 @@ end
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT"] = "PWQL"
 L["CHAT_LOADED"] =
-	"Versione %s. Le impostazioni (inclusa l'opzione per disattivare questo messaggio) si trovano in Opzioni > AddOn > Pretty Wide Quest Log. Ti piace l'add-on? Parlane a un amico! (="
+	"Versione %s. Le impostazioni (inclusa l'opzione per disattivare questo messaggio) si trovano in Opzioni > AddOn > Pretty Wide Quest Log. Ti piace questo add-on? Parlane a un amico, aggiungilo ai preferiti su CurseForge o mettigli una Star su GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] =
 	"Per precauzione, l'interfaccia delle opzioni non può essere aperta durante il combattimento."
 L["CHAT_QUESTIE_MISSING"] =
-	"Gran parte di questo add-on si basa sui dati di Questie. Senza Questie avrai meno funzioni a disposizione."
+	"Gran parte di questo add-on si basa sui dati di Questie, quindi senza Questie alcune funzioni sono limitate."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Anche Wide Quest Log Plus è attivo e i due si contenderanno il registro delle missioni. Disattiva Wide Quest Log Plus nell'elenco degli AddOn, poi ricarica."
 
 --------------------------------------------------------------------------------
--- General Panel
+-- Options: General Panel
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
@@ -29,7 +29,7 @@ L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra il saluto di Pretty Wide Quest
 L["OPTIONS_FEATURES_HEADER"] = "Funzioni"
 L["ENABLE_QUEST_LOG_CLEANUP"] = "Attiva registro delle missioni ordinato"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
-	"Sostituisce il registro delle missioni di Blizzard con quello largo, con la mappa accanto. Disattivalo per usare il registro delle missioni di Blizzard. Ha effetto dopo un ricaricamento."
+	"Sostituisce il registro delle missioni di Blizzard con quello largo, con la mappa accanto. Ha effetto dopo un ricaricamento."
 L["ENABLE_QUALITY_OF_LIFE"] = "Attiva funzioni di comodità"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"Attiva la finestra del datore di missioni ordinata, il tuo ritmo per condividere le missioni, i sussurri quando una condivisione non riesce e l'annuncio e la condivisione delle missioni delle spedizioni. Disattivalo per riavere la finestra del datore di missioni di Blizzard e condividere al ritmo predefinito."
@@ -39,15 +39,9 @@ L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia registro delle missioni dopo 
 L["OPTIONS_COMMANDS_HEADER"] = "/Comandi"
 L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Apre l'interfaccia delle opzioni di questo add-on."
-L["FEEDBACK_HEADER"] = "Feedback e supporto"
-L["FEEDBACK_DISCORD"] = "Discord"
-L["FEEDBACK_GITHUB"] = "GitHub"
-L["FEEDBACK_CURSEFORGE"] = "CurseForge"
-L["FEEDBACK_WAGO"] = "Wago"
-L["OPTIONS_VERSION"] = "Versione %s"
 
 --------------------------------------------------------------------------------
--- Quest Log Panel
+-- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
 L["TAB_QUEST_LOG"] = "Registro delle missioni"
@@ -93,7 +87,7 @@ L["RESET_WINDOW_DESCRIPTION"] = "Riporta il registro delle missioni alle dimensi
 L["RESET_WINDOW_CONFIRM"] = "Ripristinare le dimensioni e la posizione predefinite del registro delle missioni?"
 
 --------------------------------------------------------------------------------
--- Quality of Life Panel
+-- Options: Quality of Life Panel
 --------------------------------------------------------------------------------
 
 L["TAB_QUALITY_OF_LIFE"] = "Funzioni di comodità"
@@ -103,13 +97,13 @@ L["QUEST_GIVERS_HEADER"] = "Datori di missioni"
 L["QUEST_GIVERS_DESCRIPTION"] = "La finestra che apre un datore di missioni, dove accetti e consegni le missioni."
 L["GIVER_CLEANUP"] = "Finestra del datore di missioni ordinata"
 L["GIVER_CLEANUP_DESCRIPTION"] =
-	"Imposta il testo della finestra del datore di missioni come quello del registro delle missioni, con gli stessi titoli e la stessa interlinea, e mostra sotto la missione il suo ID, con un link a Wowhead."
+	"Impagina il testo della finestra del datore di missioni come quello del registro delle missioni, con gli stessi titoli e la stessa interlinea, e mostra sotto la missione il suo ID, con un link a Wowhead."
 L["GIVER_LEVELS"] = "Mostra i livelli delle missioni"
 L["GIVER_LEVELS_DESCRIPTION"] =
 	"Aggiunge le etichette di livello del registro delle missioni, come [40S], all'elenco delle missioni di un datore di missioni."
 L["QUEST_SHARING_HEADER"] = "Condivisione delle missioni"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"Condividi missioni, nel menu del clic destro su una zona del registro delle missioni, offre al tuo gruppo, una dopo l'altra, tutte le missioni di quella zona che possono accettare. Queste opzioni regolano il ritmo e cosa succede quando un membro del gruppo ne perde una."
+	"Condividi missioni, nel menu del clic destro su una zona del registro delle missioni, offre al tuo gruppo, una dopo l'altra, tutte le missioni di quella zona che il gioco ti permette di condividere. Queste opzioni regolano il ritmo e cosa succede quando un membro del gruppo ne perde una."
 L["SHARE_INTERVAL"] = "Secondi tra le condivisioni"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Quanto attendere tra una missione condivisa e la successiva, per Condividi missioni e per la condivisione delle missioni delle spedizioni. Più è lungo, più tempo ha il tuo gruppo per accettare ciascuna."
@@ -126,7 +120,33 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Dice al tuo gruppo quali delle tue missioni restano da fare nella spedizione in cui sei appena entrato, così tutti sanno cosa tenere d'occhio. Le missioni pronte da consegnare vengono escluse."
 L["DUNGEON_SHARE"] = "Condivisione automatica delle missioni delle spedizioni"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Condivide ogni missione della spedizione che il gioco ti permette di condividere, al ritmo impostato in Condivisione delle missioni. Chi si perde una condivisione riceve il solito sussurro, così può richiederla. Condivide di nuovo ogni volta che qualcuno entra o esce dal gruppo."
+	"Condivide ogni missione della spedizione che il gioco ti permette di condividere, al ritmo impostato in Condivisione delle missioni. Con Sussurra quando una condivisione non riesce attivo, chi si perde una condivisione riceve un sussurro, così può richiederla. Condivide di nuovo ogni volta che qualcuno entra o esce dal gruppo."
+
+--------------------------------------------------------------------------------
+-- Options: Feedback & Support Panel
+--------------------------------------------------------------------------------
+
+L["OPTIONS_LEVEL_UP_TITLE"] = "Aiuta Pretty Wide Quest Log a salire di livello"
+L["OPTIONS_LEVEL_UP_INTRO"] =
+	"Questo add-on è stato creato da giocatori che amano questo gioco e vogliono renderlo il più divertente possibile per tutti. Non chiederemo mai donazioni. La vera soddisfazione è sapere che il nostro lavoro rende il gioco un po' migliore per te. Se è così, ci farebbe piacere saperlo!"
+L["OPTIONS_LEVEL_UP_WAYS"] = "Ecco alcuni modi in cui puoi aiutarci a raggiungere più giocatori."
+L["OPTIONS_LEVEL_UP_FEEDBACK"] =
+	"• Condividi un feedback: Hai trovato un bug o hai un'idea? Faccelo sapere su Discord. Il tuo feedback ci aiuta a migliorare l'add-on, e le pull request sono sempre benvenute."
+L["OPTIONS_LEVEL_UP_FRIEND"] =
+	"• Parlane a un amico: Conosci qualcuno a cui potrebbe piacere questo add-on? Parlagliene. Il passaparola aiuta più giocatori a scoprire ottimi add-on."
+L["OPTIONS_LEVEL_UP_CURSEFORGE"] =
+	"• Aggiungi ai preferiti su CurseForge: Apri il link di CurseForge qui sotto, accedi e clicca sulla stella sotto il pulsante di download. I preferiti aiutano più giocatori a scoprire l'add-on."
+L["OPTIONS_LEVEL_UP_GITHUB"] =
+	"• Metti una Star su GitHub: Apri il link di GitHub qui sotto, accedi e clicca su Star in alto a destra. Le stelle aiutano il progetto a ottenere più strumenti gratuiti per sviluppatori."
+L["OPTIONS_LEVEL_UP_THANKS"] = "Grazie per aver scelto Pretty Wide Quest Log!"
+L["OPTIONS_FEEDBACK"] = "Feedback e supporto"
+L["OPTIONS_FEEDBACK_LINKS_HEADER"] = "Link per feedback e supporto"
+L["OPTIONS_CURSEFORGE"] = "CurseForge"
+L["OPTIONS_GITHUB"] = "GitHub"
+L["OPTIONS_DISCORD"] = "Discord"
+L["OPTIONS_WAGO"] = "Wago"
+L["OPTIONS_COPY_LINK"] = "Per copiare un link, clicca nel suo riquadro, poi premi Ctrl+A e Ctrl+C."
+L["OPTIONS_VERSION"] = "Versione %s"
 
 --------------------------------------------------------------------------------
 -- Quest Log Window
@@ -177,12 +197,9 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "1 missione grigia abbandonata."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
-L["WHISPER_SHARE_BUSY"] =
-	"Ho provato a condividere %s con te, ma mi sa che avevi da fare. Se ti interessa, fammi un fischio quando hai un momento e te la rimando."
-L["WHISPER_SHARE_TOO_FAR"] =
-	"Ho provato a condividere %s con te, ma eravamo troppo lontani. Se ti interessa, fammi un fischio quando siamo più vicini e te la rimando."
-L["WHISPER_SHARE_LOG_FULL"] =
-	"Ho provato a condividere %s con te, ma il tuo registro delle missioni era pieno. Se ti interessa, fammi un fischio quando hai fatto spazio e te la rimando."
+L["WHISPER_SHARE_FAILED"] =
+	"Ho provato a condividere %s con te, ma non è andata. Se ti interessa la missione, fammi un fischio quando puoi e te la ricondivido."
+L["WHISPER_SHARE_FAILED_AGAIN"] = "Lo stesso vale per %s."
 L["DUNGEON_QUESTS_ANNOUNCE"] = "Ho %d missioni da fare qui: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "Ho 1 missione da fare qui: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"

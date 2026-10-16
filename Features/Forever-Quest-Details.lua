@@ -51,7 +51,7 @@ local function QuestInfoInUseElsewhere()
 	return (mapDetails and mapDetails:IsVisible()) and true or false
 end
 
--- The quest ID, right-aligned under the rewards (or whatever comes last), in the description's colour
+-- The quest ID, right-aligned under the rewards (or whatever comes last), in the description's color
 local questIDRow = CreateFrame("Frame", nil, detailChild)
 questIDRow:SetSize(LAYOUT.CONTENT_WIDTH, 14)
 questIDRow.Text = questIDRow:CreateFontString(nil, "ARTWORK", "QuestFontNormalSmall")
