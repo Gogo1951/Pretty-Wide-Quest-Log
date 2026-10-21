@@ -51,7 +51,7 @@ function ns.LinkQuestIDToWowhead(parent, text, getQuestID)
 	button:SetScript("OnEnter", function(self)
 		if text:IsShown() then
 			GameTooltip:SetOwner(self, "ANCHOR_TOP")
-			GameTooltip:AddLine(L["WOWHEAD_LINK_TOOLTIP"], 1, 1, 1)
+			GameTooltip:AddLine(L["WOWHEAD_LINK_TOOLTIP"], ns.GetColorRGB("TEXT"))
 			GameTooltip:Show()
 		end
 	end)

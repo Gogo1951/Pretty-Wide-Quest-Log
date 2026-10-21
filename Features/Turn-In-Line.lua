@@ -59,11 +59,21 @@ local function ShowTurnInTooltip(self)
 	turnInTooltip:SetOwner(self, "ANCHOR_BOTTOM")
 	turnInTooltip:AddLine(L["TURN_IN_TOOLTIP"])
 	turnInTooltip:AddLine(" ")
+	local red, green, blue = ns.GetColorRGB("TEXT")
 	for _, zone in ipairs(self.zones) do
 		turnInTooltip:AddLine(" ")
 		turnInTooltip:AddLine(zone.name, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 		for _, quest in ipairs(zone.quests) do
-			turnInTooltip:AddDoubleLine(quest.title, RewardText(quest.xp, quest.money), 1, 1, 1, 1, 1, 1)
+			turnInTooltip:AddDoubleLine(
+				quest.title,
+				RewardText(quest.xp, quest.money),
+				red,
+				green,
+				blue,
+				red,
+				green,
+				blue
+			)
 		end
 	end
 	turnInTooltip:Show()
@@ -87,8 +97,9 @@ end
 
 --[[
 	Centered in the bottom row, in the gap between Abandon Quest and Share Quest. Placed when it first
-	shows, as on Classic Era and TBC Classic-Quest-Log.lua makes those buttons after Classic-Quest-List.lua
-	makes the line (on WoW Forever, Forever-Quest-Log.lua makes them first)
+	shows: on Classic Era and TBC those buttons are Blizzard's, and Classic-Quest-Log.lua records them as
+	ns.abandonButton and ns.shareButton only after Classic-Quest-List.lua has made the line (on WoW
+	Forever, Forever-Quest-Log.lua makes them first)
 ]]
 local function PlaceTurnInLine(line)
 	if line.placed then

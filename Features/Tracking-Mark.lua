@@ -49,7 +49,7 @@ function ns.ShowTrackingMark(texture, isTracked)
 	local markUntracked = ns.db and ns.db.profile.markUntracked
 	local mark = markUntracked and ns.TRACKING_MARKS.untracked or ns.TRACKING_MARKS.tracked
 	texture:SetTexture(mark.texture)
-	texture:SetVertexColor(mark.r, mark.g, mark.b)
+	texture:SetVertexColor(ns.HexToRGB(mark.color))
 	texture:SetShown(
 		(isTracked and true or false) ~= (markUntracked and true or false) and not IsQuestieTrackerPending()
 	)

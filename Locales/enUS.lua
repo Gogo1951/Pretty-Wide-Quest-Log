@@ -26,14 +26,14 @@ L["OPTIONS_DESCRIPTION"] =
 L["ENABLE_WELCOME_MESSAGE"] = "Enable Welcome Message"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log greeting when you log in."
 L["OPTIONS_FEATURES_HEADER"] = "Features"
-L["ENABLE_QUEST_LOG_CLEANUP"] = "Enable Quest Log Cleanup"
+L["ENABLE_WIDE_QUEST_LOG"] = "Enable Wide Quest Log"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Swaps Blizzard's quest log for the wide one, with the map beside it. Takes effect after a reload."
 L["ENABLE_QUALITY_OF_LIFE"] = "Enable Quality of Life"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"Turns on the quest giver window cleanup, your own pace for shared quests, whispers when a quest share fails, and dungeon quest announcements and sharing. Turn it off to get Blizzard's quest giver window back and share at the default pace."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
-	"Enable Quest Log Cleanup takes effect after a reload, offered when you close the Options Interface."
+	"Enable Wide Quest Log takes effect after a reload, offered when you close the Options Interface."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
 L["OPTIONS_COMMANDS_HEADER"] = "/Commands"
 L["OPTIONS_COMMAND"] = "/pwql"
@@ -55,7 +55,7 @@ L["SORT_AVERAGE_LEVEL_LOWEST"] = "Average Level, Lowest First"
 L["SORT_ALPHABETICAL"] = "Alphabetical"
 L["CURRENT_ZONE_FIRST"] = "Show Current Zone First"
 L["CURRENT_ZONE_FIRST_DESCRIPTION"] = "Puts the zone you're in at the top of the list, whatever the zone order."
-L["ZONE_GAP"] = "Space Above Zone Names"
+L["ZONE_GAP"] = "Add Space Above Zone Names"
 L["ZONE_GAP_DESCRIPTION"] =
 	"Adds a little space above each zone name. Handy when your quests are spread across lots of zones."
 L["QUEST_ORDER"] = "Quest Order"
@@ -72,6 +72,9 @@ L["MARK_UNTRACKED_DESCRIPTION"] =
 	"Tracked quests lose their checkmark %s, and untracked quests get an eye %s instead. Handy if you track almost everything."
 L["CLOSE_IN_COMBAT"] = "Close When Combat Starts"
 L["CLOSE_IN_COMBAT_DESCRIPTION"] = "Closes the quest log when a fight starts, so it never covers the action."
+L["SHOW_OBJECTIVE_AREAS"] = "Show Objective Areas"
+L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
+	"Shades where each objective's mobs and objects are found on the map beside the quest log, with one icon in each area instead of one on every spawn. Needs Questie."
 L["WINDOW_SCALE"] = "Quest Log Scale"
 L["WINDOW_SCALE_DESCRIPTION"] = "Makes the quest log bigger or smaller. The map beside it grows and shrinks with it."
 L["MAP_SCALE"] = "Map Scale"

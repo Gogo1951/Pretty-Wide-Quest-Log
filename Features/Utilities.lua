@@ -4,13 +4,24 @@ local _, ns = ...
 -- Colors
 --------------------------------------------------------------------------------
 
-local COLORS = {}
+-- A 6-character hex color as r, g, b from 0 to 1, for the APIs that take numbers
+local function HexToRGB(hex)
+	return tonumber(hex:sub(1, 2), 16) / 255, tonumber(hex:sub(3, 4), 16) / 255, tonumber(hex:sub(5, 6), 16) / 255
+end
+ns.HexToRGB = HexToRGB
+
+local COLORS, COLORS_RGB = {}, {}
 for key, hex in pairs(ns.PALETTE) do
 	COLORS[key] = "|cff" .. hex
+	COLORS_RGB[key] = { HexToRGB(hex) }
 end
 
 function ns.GetColor(key)
 	return COLORS[key] or COLORS.TEXT
+end
+
+function ns.GetColorRGB(key)
+	return unpack(COLORS_RGB[key] or COLORS_RGB.TEXT)
 end
 
 --------------------------------------------------------------------------------
@@ -178,7 +189,8 @@ end
 
 --[[
 	Whether a zone header is the zone the player is in. Both quest logs name their zones only by text, so
-	this matches names (GAME NAMES); a dungeon or class header never matches
+	this matches names (GAME NAMES). A class or profession header never matches, and a dungeon's header
+	matches only while the player is inside it (Dungeon-Quest-Lookup.lua relies on that)
 ]]
 function ns.IsCurrentZone(title)
 	return title ~= nil and title == GetRealZoneText()

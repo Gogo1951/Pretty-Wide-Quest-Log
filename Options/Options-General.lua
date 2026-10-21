@@ -50,7 +50,7 @@ function ns.BuildGeneralOptions()
 		-- Each is also at the top of its own panel. The Quest Log's takes effect at the next /reload, which the Options window offers on close (below)
 		enableWideQuestLog = ns.OptionsFeatureToggle(
 			"enableWideQuestLog",
-			"ENABLE_QUEST_LOG_CLEANUP",
+			"ENABLE_WIDE_QUEST_LOG",
 			"FEATURE_QUEST_LOG_DESCRIPTION",
 			13,
 			FEATURE_WIDTH

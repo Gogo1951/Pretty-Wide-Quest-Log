@@ -24,6 +24,7 @@ ns.DATABASE_DEFAULTS = {
 		questSort = "LEVEL_HIGHEST_FIRST",
 		completedFirst = true,
 		closeInCombat = false,
+		showObjectiveAreas = true,
 	},
 	global = {
 		scale = 1,

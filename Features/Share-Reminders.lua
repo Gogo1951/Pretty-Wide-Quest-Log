@@ -49,8 +49,19 @@ local whispered = {}
 -- The players sent the full whisper since you last joined or left a group; the rest get the short one
 local told = {}
 
-function ns:OnShareGroupChanged()
+local function ForgetTold()
 	told = {}
+end
+
+-- The owner of this file's handlers for events the dungeon quests handle too (Core.lua)
+ns.shareReminders = {}
+
+function ns.shareReminders:OnGroupJoined()
+	ForgetTold()
+end
+
+function ns.shareReminders:OnGroupLeft()
+	ForgetTold()
 end
 
 hooksecurefunc("QuestLogPushQuest", function()

@@ -83,6 +83,8 @@ Features/Quest-Map.xml
 Features/Quest-Map.lua
 Features/Questie-Map.xml
 Features/Questie-Map.lua
+Features/Questie-Map-Areas.lua
+Features/Questie-Map-Area-Layer.lua
 Features/Classic-Quest-Map.lua
 Features/Quest-Map-Reveal.lua
 Features/Classic-ElvUI.lua

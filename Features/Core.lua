@@ -22,11 +22,12 @@ ns.Version = GetVersion()
 --------------------------------------------------------------------------------
 
 --[[
-	Every event the add-on can handle, in registration order, with its handler;
-	an event listed twice runs both handlers, in this order. Feature files define
-	the handlers; an event is registered only once a loaded file defines one of
-	its handlers, so a client never registers an event only another client's
-	files use. ns.EVENT_NAMES lists what was actually registered.
+	Every event the add-on can handle, in registration order, with its handler, named for the event, and
+	where two features handle the same event, the key of the ns table that holds the second one's (its
+	owner; without one, the handler is on ns). An event listed twice runs both handlers, in this order.
+	Feature files define the handlers; an event is registered only once a loaded file defines one of its
+	handlers, so a client never registers an event only another client's files use. ns.EVENT_NAMES lists
+	what was actually registered.
 ]]
 local EVENTS = {
 	{ "ADDON_LOADED", "OnAddonLoaded" },
@@ -41,19 +42,33 @@ local EVENTS = {
 	{ "PLAYER_LEVEL_UP", "OnPlayerLevelUp" },
 	{ "ZONE_CHANGED_NEW_AREA", "OnZoneChangedNewArea" },
 	{ "PLAYER_REGEN_DISABLED", "OnPlayerRegenDisabled" },
+	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled" },
+	{ "UPDATE_BINDINGS", "OnUpdateBindings" },
 	{ "CHAT_MSG_SYSTEM", "OnChatMsgSystem" },
 	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld" },
 	{ "GROUP_JOINED", "OnGroupJoined" },
 	{ "GROUP_LEFT", "OnGroupLeft" },
-	{ "GROUP_ROSTER_UPDATE", "OnDungeonRosterUpdate" },
-	{ "GROUP_JOINED", "OnShareGroupChanged" },
-	{ "GROUP_LEFT", "OnShareGroupChanged" },
+	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "dungeonQuests" },
+	{ "GROUP_JOINED", "OnGroupJoined", "shareReminders" },
+	{ "GROUP_LEFT", "OnGroupLeft", "shareReminders" },
 }
 
 local EVENT_HANDLERS = {}
 for _, event in ipairs(EVENTS) do
 	EVENT_HANDLERS[event[1]] = EVENT_HANDLERS[event[1]] or {}
-	table.insert(EVENT_HANDLERS[event[1]], event[2])
+	table.insert(EVENT_HANDLERS[event[1]], event)
+end
+
+-- An EVENTS row's owner and handler, or nothing while no loaded file defines it
+local function FindHandler(event)
+	local owner = ns
+	if event[3] then
+		owner = ns[event[3]]
+	end
+	local handler = owner and owner[event[2]]
+	if handler then
+		return owner, handler
+	end
 end
 
 ns.EVENT_NAMES = {}
@@ -61,14 +76,14 @@ ns.EVENT_NAMES = {}
 local eventFrame = CreateFrame("Frame")
 
 eventFrame:SetScript("OnEvent", function(_, event, ...)
-	if ns.diagnostics and ns.diagnostics.logging then
+	if ns.diagnostics.logging then
 		ns:LogEvent(event, ...)
 	end
 
-	for _, handlerName in ipairs(EVENT_HANDLERS[event]) do
-		local handler = ns[handlerName]
+	for _, row in ipairs(EVENT_HANDLERS[event]) do
+		local owner, handler = FindHandler(row)
 		if handler then
-			handler(ns, ...)
+			handler(owner, ...)
 		end
 	end
 end)
@@ -122,6 +137,7 @@ function ns:ApplyProfile()
 	ns.ApplyQuestGiverCleanup()
 	if ns.wideQuestLogActive then
 		ns.RefreshQuestLog()
+		ns.questMap.RequestRefresh()
 	end
 	for _, registryName in pairs(ns.OPTIONS_REGISTRY) do
 		AceConfigRegistry:NotifyChange(registryName)
@@ -146,7 +162,7 @@ function ns:OnAddonLoaded(name)
 	end
 
 	for _, event in ipairs(EVENTS) do
-		if event[1] ~= "ADDON_LOADED" and ns[event[2]] then
+		if event[1] ~= "ADDON_LOADED" and FindHandler(event) then
 			RegisterEvent(event[1])
 		end
 	end
