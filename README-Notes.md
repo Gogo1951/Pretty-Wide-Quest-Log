@@ -45,3 +45,9 @@
 - **Departs from:** README rules, the Showcase under the TL;DR showing the add-on in a single item.
 - **Instead:** The Showcase holds a screenshot under a heading for each client, Forever and TBC & Era, with the quest map's feature lines above the TBC & Era one.
 - **Why:** The two clients' quest logs are different windows that look different, so each gets its own picture, and the maintainer keeps the map's lines beside the one they caption.
+
+### Classic quest log reshaped in place
+
+- **Departs from:** COMPATIBILITY, never calling `SetUIPanelAttribute` and writing nothing to a Blizzard panel; FILE STRUCTURE, named frames carrying the add-on's prefix.
+- **Instead:** On Classic Era and TBC the wide quest log widens Blizzard's own quest log window: it gives the panel manager the window's new size through `SetUIPanelAttribute`, raises `QUESTS_DISPLAYED` and adds list rows named like Blizzard's for a taller window, and docks the map inside it.
+- **Why:** Those clients' quest log is Blizzard's unprotected window, which the game and other add-ons keep using, so reshaping it in place reaches nothing protected and keeps them working.
