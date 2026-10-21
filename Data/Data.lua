@@ -194,12 +194,10 @@ LAYOUT.QUEST_TEXT_X = LAYOUT.CHECK_X + 16 + LAYOUT.CHECK_GAP
 	still read)
 ]]
 ns.TRACKING_MARKS = {
-	tracked = { texture = "Interface/Buttons/UI-CheckBox-Check", r = 64 / 255, g = 224 / 255, b = 208 / 255 },
+	tracked = { texture = "Interface/Buttons/UI-CheckBox-Check", color = "40E0D0" },
 	untracked = {
 		texture = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/PWQL_Untracked",
-		r = 160 / 255,
-		g = 16 / 255,
-		b = 12 / 255,
+		color = "A0100C",
 	},
 }
 

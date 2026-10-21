@@ -18,4 +18,10 @@
 			</Layer>
 		</Layers>
 	</Frame>
+	<!--
+		The layer the selected quest's objective areas are drawn on, as large as the map
+		(Questie-Map-Area-Layer.lua). It takes no mouse, so dragging the map and hovering the icons above it pass
+		straight through
+	-->
+	<Frame name="PrettyWideQuestLogAreaPinTemplate" mixin="MapCanvasPinMixin" virtual="true"/>
 </Ui>

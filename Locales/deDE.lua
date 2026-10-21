@@ -26,14 +26,14 @@ L["OPTIONS_DESCRIPTION"] =
 L["ENABLE_WELCOME_MESSAGE"] = "Willkommensnachricht aktivieren"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Zeigt beim Einloggen die Begrüßung von Pretty Wide Quest Log."
 L["OPTIONS_FEATURES_HEADER"] = "Funktionen"
-L["ENABLE_QUEST_LOG_CLEANUP"] = "Aufgeräumtes Questlog aktivieren"
+L["ENABLE_WIDE_QUEST_LOG"] = "Breites Questlog aktivieren"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Ersetzt Blizzards Questlog durch das breite, mit der Karte daneben. Wird nach einem Neuladen wirksam."
 L["ENABLE_QUALITY_OF_LIFE"] = "Komfortfunktionen aktivieren"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"Schaltet das aufgeräumte Questgeberfenster, dein eigenes Tempo beim Teilen von Quests, Flüsternachrichten bei fehlgeschlagenem Teilen sowie die Ansage und das Teilen von Dungeonquests ein. Schalte es aus, um Blizzards Questgeberfenster zurückzubekommen und im Standardtempo zu teilen."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
-	"Aufgeräumtes Questlog aktivieren wird nach einem Neuladen wirksam, das dir beim Schließen des Optionsmenüs angeboten wird."
+	"Breites Questlog aktivieren wird nach einem Neuladen wirksam, das dir beim Schließen des Optionsmenüs angeboten wird."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log wechselt das Questlog erst nach einem Neuladen. Jetzt neu laden?"
 L["OPTIONS_COMMANDS_HEADER"] = "/Befehle"
 L["OPTIONS_COMMAND"] = "/pwql"
@@ -43,7 +43,6 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Öffnet das Optionsmenü für dieses Add-on.
 -- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
-L["TAB_QUEST_LOG"] = "Questlog"
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Ersetzt Blizzards Questlog durch ein breites: deine Quests nach Zone sortiert, daneben die Details der gewählten Quest und ihre Karte."
 L["QUEST_LOG_LAYOUT_HEADER"] = "Aufbau des Questlogs"
@@ -57,7 +56,7 @@ L["SORT_ALPHABETICAL"] = "Alphabetisch"
 L["CURRENT_ZONE_FIRST"] = "Aktuelle Zone zuerst zeigen"
 L["CURRENT_ZONE_FIRST_DESCRIPTION"] =
 	"Setzt die Zone, in der du dich befindest, an den Anfang der Liste, egal welche Reihenfolge der Zonen gewählt ist."
-L["ZONE_GAP"] = "Abstand über Zonennamen"
+L["ZONE_GAP"] = "Abstand über Zonennamen einfügen"
 L["ZONE_GAP_DESCRIPTION"] =
 	"Fügt über jedem Zonennamen etwas Abstand ein. Praktisch, wenn deine Quests über viele Zonen verteilt sind."
 L["QUEST_ORDER"] = "Reihenfolge der Quests"
@@ -75,6 +74,9 @@ L["MARK_UNTRACKED_DESCRIPTION"] =
 L["CLOSE_IN_COMBAT"] = "Bei Kampfbeginn schließen"
 L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 	"Schließt das Questlog, sobald ein Kampf beginnt, damit es nie das Geschehen verdeckt."
+L["SHOW_OBJECTIVE_AREAS"] = "Zielgebiete anzeigen"
+L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
+	"Schattiert auf der Karte neben dem Questlog, wo die Gegner und Objekte jedes Ziels zu finden sind, mit einem Symbol pro Gebiet statt einem auf jedem Spawnpunkt. Benötigt Questie."
 L["WINDOW_SCALE"] = "Skalierung des Questlogs"
 L["WINDOW_SCALE_DESCRIPTION"] = "Macht das Questlog größer oder kleiner. Die Karte daneben wächst und schrumpft mit."
 L["MAP_SCALE"] = "Skalierung der Karte"

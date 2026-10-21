@@ -3,7 +3,8 @@ local _, ns = ...
 --[[
 	Every client: the selected quest's icons from Questie's world map, its objectives and turn-in, drawn
 	again on the map (Quest-Map.lua) larger, with a dropdown for a quest whose icons span several zones.
-	Each client's own map file decides what the map shows when Questie has no icons for the quest
+	An objective's icons give way to its areas where it has them (Questie-Map-Areas.lua). Each client's
+	own map file decides what the map shows when Questie has no icons for the quest
 ]]
 
 ns.AddWideQuestLogPart(function()
@@ -75,6 +76,53 @@ ns.AddWideQuestLogPart(function()
 		return zones
 	end
 
+	-- A zone from an area in Questie's database, when the map can show it
+	local function AreaMapID(ZoneDB, areaID)
+		local parentID = areaID and ZoneDB.GetParentZoneId and ZoneDB:GetParentZoneId(areaID)
+		local mapID = areaID and ZoneDB:GetUiMapIdByAreaId(parentID or areaID)
+		return mapID and C_Map.GetMapInfo(mapID) and mapID or nil
+	end
+
+	-- The area holding most of an NPC's or object's spawns in Questie's database
+	local function BusiestArea(spawns)
+		local bestAreaID, bestCount
+		for areaID, list in pairs(type(spawns) == "table" and spawns or {}) do
+			local count = type(list) == "table" and #list or 0
+			if count > 0 and (not bestCount or count > bestCount or (count == bestCount and areaID < bestAreaID)) then
+				bestAreaID, bestCount = areaID, count
+			end
+		end
+		return bestAreaID
+	end
+
+	--[[
+		The zone a quest was given in, from Questie's database: where its quest giver stands, otherwise the
+		zone the quest is filed under, for a quest started from an item. Nil without Questie, or for a quest
+		filed under a class or profession that no NPC or object starts
+	]]
+	function questMap.QuestGiverMapID(questID)
+		local QuestieDB = ns.ImportQuestieModule("QuestieDB")
+		local ZoneDB = ns.ImportQuestieModule("ZoneDB")
+		if not (questID and QuestieDB and QuestieDB.QueryQuestSingle and ZoneDB and ZoneDB.GetUiMapIdByAreaId) then
+			return nil
+		end
+
+		local startedBy = QuestieDB.QueryQuestSingle(questID, "startedBy")
+		if type(startedBy) == "table" then
+			for kind, query in ipairs({ QuestieDB.QueryNPCSingle, QuestieDB.QueryObjectSingle }) do
+				for _, id in ipairs(type(startedBy[kind]) == "table" and startedBy[kind] or {}) do
+					local mapID = AreaMapID(ZoneDB, BusiestArea(query(id, "spawns")))
+					if mapID then
+						return mapID
+					end
+				end
+			end
+		end
+
+		local zoneOrSort = QuestieDB.QueryQuestSingle(questID, "zoneOrSort")
+		return type(zoneOrSort) == "number" and zoneOrSort > 0 and AreaMapID(ZoneDB, zoneOrSort) or nil
+	end
+
 	--------------------------------------------------------------------------------
 	-- Tooltip
 	--------------------------------------------------------------------------------
@@ -98,7 +146,7 @@ ns.AddWideQuestLogPart(function()
 
 	--[[
 		The quest, then every NPC or object around the hovered icon with its objectives, as Questie's world
-		map groups them
+		map groups them. An area's marker stands for every NPC or object in the area
 	]]
 	local function ShowPinTooltip(pin)
 		local x, y = pin:GetPosition()
@@ -106,16 +154,17 @@ ns.AddWideQuestLogPart(function()
 		for other in canvas:EnumeratePinsByTemplate(PIN_TEMPLATE) do
 			local otherX, otherY = other:GetPosition()
 			if math.abs(otherX - x) < CLUSTER_DISTANCE and math.abs(otherY - y) < CLUSTER_DISTANCE then
-				local name = other.data.Name or ""
-				local entry = byName[name]
-				if not entry then
-					entry = { name = name, objectives = {} }
-					byName[name] = entry
-					entries[#entries + 1] = entry
-				end
 				local objective = ObjectiveText(other.data)
-				if objective and not tContains(entry.objectives, objective) then
-					entry.objectives[#entry.objectives + 1] = objective
+				for _, name in ipairs(other.area and other.area.names or { other.data.Name or "" }) do
+					local entry = byName[name]
+					if not entry then
+						entry = { name = name, objectives = {} }
+						byName[name] = entry
+						entries[#entries + 1] = entry
+					end
+					if objective and not tContains(entry.objectives, objective) then
+						entry.objectives[#entry.objectives + 1] = objective
+					end
 				end
 			end
 		end
@@ -125,10 +174,11 @@ ns.AddWideQuestLogPart(function()
 		if quest and quest.name then
 			GameTooltip:AddLine(quest.name)
 		end
+		local helpRed, helpGreen, helpBlue = ns.GetColorRGB("HELP")
 		for _, entry in ipairs(entries) do
-			GameTooltip:AddLine(entry.name, 1, 1, 1)
+			GameTooltip:AddLine(entry.name, ns.GetColorRGB("TEXT"))
 			for _, objective in ipairs(entry.objectives) do
-				GameTooltip:AddLine(objective, 0.8, 0.8, 0.8, true)
+				GameTooltip:AddLine(objective, helpRed, helpGreen, helpBlue, true)
 			end
 		end
 		GameTooltip:Show()
@@ -165,37 +215,117 @@ ns.AddWideQuestLogPart(function()
 		pin.Glow:Show()
 	end
 
+	-- How large one of Questie's icons is drawn on this map, with the map zoomed all the way out
+	local function IconSize(icon)
+		local size = icon:GetWidth()
+		return ICON_SCALE * (size > 0 and size or DEFAULT_ICON_SIZE)
+	end
+
+	-- One of Questie's icons drawn again at x, y (0-1), or a marker for an area in that icon's look
+	local function AddPin(map, icon, x, y, area)
+		local pin = map:AcquirePin(PIN_TEMPLATE)
+		pin.data = icon.data
+		pin.area = area
+		local size = IconSize(icon)
+		pin:SetSize(size, size)
+		pin.Texture:SetTexture(icon.texture:GetTexture())
+		pin.Texture:SetTexCoord(icon.texture:GetTexCoord())
+		pin.Texture:SetVertexColor(icon.texture:GetVertexColor())
+		SetGlow(pin, icon, size)
+		pin:SetScript("OnEnter", ShowPinTooltip)
+		pin:SetScript("OnLeave", GameTooltip_Hide)
+		pin:UseFrameLevelType("PIN_FRAME_LEVEL_ACTIVE_QUEST")
+		pin:ApplyFrameLevel()
+		--[[
+			The map draws its pins at its own zoom, which shrinks them with the map; these keep them the size
+			set above, growing a little as the map zooms in, as Questie's world map pins do
+		]]
+		pin:SetScalingLimits(1, 1.0, 1.2)
+		pin:SetPosition(x, y)
+		pin:ApplyCurrentScale()
+	end
+
+	-- The objective an icon marks a spawn of, leaving out quest givers and turn-ins
+	local function SpawnObjective(data)
+		local objective = data.ObjectiveData
+		if data.Type ~= "available" and data.Type ~= "complete" and objective and objective.spawnList then
+			return objective
+		end
+	end
+
+	local TURN_IN_COLOR = { ns.GetColorRGB("TITLE") } -- The gold of the turn-in's question mark
+
+	--[[
+		With Show Objective Areas on, each objective Questie has spawns for on the map is drawn as its areas
+		(Questie-Map-Areas.lua), one marker in each in the look of one of its icons there, in place of its
+		icons. The rest of the quest's icons, the turn-in among them, are drawn as Questie draws them, each
+		in a small circle of its own so it stands out as well. questMap.areaCount is how many areas and
+		circles are shaded, for the Quest Map Context report
+	]]
 	local questieProvider = CreateFromMixins(MapCanvasDataProviderMixin)
 
 	function questieProvider:RemoveAllData()
-		self:GetMap():RemoveAllPinsByTemplate(PIN_TEMPLATE)
+		local map = self:GetMap()
+		map:RemoveAllPinsByTemplate(PIN_TEMPLATE)
+		questMap.RemoveObjectiveAreas(map)
+		questMap.areaCount = 0
 	end
 
 	function questieProvider:RefreshAllData()
 		self:RemoveAllData()
 		local map = self:GetMap()
-		ForEachIcon(map:GetMapID(), shownQuestID, function(icon, x, y)
-			local pin = map:AcquirePin(PIN_TEMPLATE)
-			pin.data = icon.data
-			local size = icon:GetWidth()
-			size = ICON_SCALE * (size > 0 and size or DEFAULT_ICON_SIZE)
-			pin:SetSize(size, size)
-			pin.Texture:SetTexture(icon.texture:GetTexture())
-			pin.Texture:SetTexCoord(icon.texture:GetTexCoord())
-			pin.Texture:SetVertexColor(icon.texture:GetVertexColor())
-			SetGlow(pin, icon, size)
-			pin:SetScript("OnEnter", ShowPinTooltip)
-			pin:SetScript("OnLeave", GameTooltip_Hide)
-			pin:UseFrameLevelType("PIN_FRAME_LEVEL_ACTIVE_QUEST")
-			pin:ApplyFrameLevel()
-			--[[
-				The map draws its pins at its own zoom, which shrinks them with the map; these keep them the
-				size set above, growing a little as the map zooms in, as Questie's world map pins do
-			]]
-			pin:SetScalingLimits(1, 1.0, 1.2)
-			pin:SetPosition(x, y)
-			pin:ApplyCurrentScale()
+		local mapID = map:GetMapID()
+		local showAreas = ns.db.profile.showObjectiveAreas
+
+		local icons, objectives, objectiveIcons = {}, {}, {}
+		ForEachIcon(mapID, shownQuestID, function(icon, x, y)
+			icons[#icons + 1] = { icon = icon, x = x, y = y }
+			local objective = showAreas and SpawnObjective(icon.data)
+			if objective then
+				if not objectiveIcons[objective] then
+					objectiveIcons[objective] = {}
+					objectives[#objectives + 1] = objective
+				end
+				table.insert(objectiveIcons[objective], icon)
+			end
 		end)
+
+		local areasByObjective, shapes = {}, {}
+		for _, objective in ipairs(objectives) do
+			local objectiveIconList = objectiveIcons[objective]
+			local areas = questMap.ObjectiveAreas(objective, map, IconSize(objectiveIconList[1]))
+			if #areas > 0 then
+				areasByObjective[objective] = areas
+				for _, area in ipairs(areas) do
+					local look = objectiveIconList[1]
+					for _, icon in ipairs(objectiveIconList) do
+						if icon.data.Icon == area.icon then
+							look = icon
+							break
+						end
+					end
+					AddPin(map, look, area.x, area.y, area)
+					shapes[#shapes + 1] = { color = objective.Color, x = area.x, y = area.y, outline = area.outline }
+				end
+			end
+		end
+
+		for _, entry in ipairs(icons) do
+			local data = entry.icon.data
+			local objective = SpawnObjective(data)
+			if not (objective and areasByObjective[objective]) then
+				AddPin(map, entry.icon, entry.x, entry.y)
+				local outline = showAreas and questMap.SpotOutline(map, entry.x, entry.y, IconSize(entry.icon))
+				if outline then
+					local color = data.Type == "complete" and TURN_IN_COLOR
+						or (data.ObjectiveData and data.ObjectiveData.Color)
+					shapes[#shapes + 1] = { color = color, x = entry.x, y = entry.y, outline = outline }
+				end
+			end
+		end
+
+		questMap.DrawObjectiveAreas(map, shapes)
+		questMap.areaCount = #shapes
 	end
 
 	canvas:AddDataProvider(questieProvider)
@@ -279,6 +409,9 @@ ns.AddWideQuestLogPart(function()
 			end
 		end)
 	end
+
+	-- The circles around icons are sized for the map's size on screen, so a resized map draws them again
+	canvas.ScrollContainer:HookScript("OnSizeChanged", questMap.RequestRefresh)
 
 	if HBDPins then
 		for _, name in ipairs({

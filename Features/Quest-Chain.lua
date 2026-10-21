@@ -4,7 +4,9 @@ local LAYOUT = ns.LAYOUT
 
 -- Every client: where the selected quest sits in its chain, from Questie's quest database, in the quest details.
 
-local CURRENT_PART_BAND = { 0, 0, 0, 0.12 } -- Behind this quest's line, so it reads as the one you're on
+-- Behind this quest's line, so it reads as the one you're on
+local CURRENT_PART_BAND = "000000"
+local CURRENT_PART_BAND_ALPHA = 0.12
 local ROW_GAP = 1
 
 --------------------------------------------------------------------------------
@@ -147,7 +149,8 @@ local function Row(section, index)
 	row:SetWidth(LAYOUT.CONTENT_WIDTH)
 	row.Band = row:CreateTexture(nil, "BACKGROUND")
 	row.Band:SetAllPoints()
-	row.Band:SetColorTexture(unpack(CURRENT_PART_BAND))
+	local red, green, blue = ns.HexToRGB(CURRENT_PART_BAND)
+	row.Band:SetColorTexture(red, green, blue, CURRENT_PART_BAND_ALPHA)
 	row.Text = row:CreateFontString(nil, "ARTWORK")
 	row.Text:SetPoint("LEFT")
 	row.Text:SetWidth(LAYOUT.CONTENT_WIDTH)

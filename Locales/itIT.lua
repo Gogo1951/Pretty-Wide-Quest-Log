@@ -27,14 +27,14 @@ L["OPTIONS_DESCRIPTION"] =
 L["ENABLE_WELCOME_MESSAGE"] = "Attiva messaggio di benvenuto"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra il saluto di Pretty Wide Quest Log quando accedi."
 L["OPTIONS_FEATURES_HEADER"] = "Funzioni"
-L["ENABLE_QUEST_LOG_CLEANUP"] = "Attiva registro delle missioni ordinato"
+L["ENABLE_WIDE_QUEST_LOG"] = "Attiva registro delle missioni largo"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Sostituisce il registro delle missioni di Blizzard con quello largo, con la mappa accanto. Ha effetto dopo un ricaricamento."
 L["ENABLE_QUALITY_OF_LIFE"] = "Attiva funzioni di comodità"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"Attiva la finestra del datore di missioni ordinata, il tuo ritmo per condividere le missioni, i sussurri quando una condivisione non riesce e l'annuncio e la condivisione delle missioni delle spedizioni. Disattivalo per riavere la finestra del datore di missioni di Blizzard e condividere al ritmo predefinito."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
-	"Attiva registro delle missioni ordinato ha effetto dopo un ricaricamento, che ti verrà proposto alla chiusura dell'interfaccia delle opzioni."
+	"Attiva registro delle missioni largo ha effetto dopo un ricaricamento, che ti verrà proposto alla chiusura dell'interfaccia delle opzioni."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia registro delle missioni dopo un ricaricamento. Ricaricare ora?"
 L["OPTIONS_COMMANDS_HEADER"] = "/Comandi"
 L["OPTIONS_COMMAND"] = "/pwql"
@@ -44,7 +44,6 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Apre l'interfaccia delle opzioni di questo a
 -- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
-L["TAB_QUEST_LOG"] = "Registro delle missioni"
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Sostituisce il registro delle missioni di Blizzard con uno largo: le tue missioni elencate per zona, con accanto i dettagli della missione selezionata e la sua mappa."
 L["QUEST_LOG_LAYOUT_HEADER"] = "Layout del registro delle missioni"
@@ -58,7 +57,7 @@ L["SORT_ALPHABETICAL"] = "Alfabetico"
 L["CURRENT_ZONE_FIRST"] = "Mostra prima la zona attuale"
 L["CURRENT_ZONE_FIRST_DESCRIPTION"] =
 	"Mette in cima all'elenco la zona in cui ti trovi, qualunque sia l'ordine delle zone."
-L["ZONE_GAP"] = "Spazio sopra i nomi delle zone"
+L["ZONE_GAP"] = "Aggiungi spazio sopra i nomi delle zone"
 L["ZONE_GAP_DESCRIPTION"] =
 	"Aggiunge un po' di spazio sopra ogni nome di zona. Utile se le tue missioni sono sparse in molte zone."
 L["QUEST_ORDER"] = "Ordine delle missioni"
@@ -76,6 +75,9 @@ L["MARK_UNTRACKED_DESCRIPTION"] =
 L["CLOSE_IN_COMBAT"] = "Chiudi all'inizio del combattimento"
 L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 	"Chiude il registro delle missioni quando inizia un combattimento, così non copre mai l'azione."
+L["SHOW_OBJECTIVE_AREAS"] = "Mostra le aree degli obiettivi"
+L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
+	"Ombreggia sulla mappa accanto al registro delle missioni i punti in cui si trovano i nemici e gli oggetti di ogni obiettivo, con un'icona per area invece di una su ogni punto di comparsa. Richiede Questie."
 L["WINDOW_SCALE"] = "Scala del registro delle missioni"
 L["WINDOW_SCALE_DESCRIPTION"] =
 	"Ingrandisce o rimpicciolisce il registro delle missioni. La mappa accanto cresce e si riduce insieme a lui."

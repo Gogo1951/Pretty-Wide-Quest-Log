@@ -29,7 +29,6 @@ local blobProvider = AddProvider(QuestBlobDataProviderMixin)
 local questProvider = AddProvider(QuestDataProviderMixin)
 AddProvider(DungeonEntranceDataProviderMixin)
 AddProvider(FlightPointDataProviderMixin)
-AddProvider(GroupMembersDataProviderMixin)
 
 --[[
 	Blizzard draws objective areas and quest markers only while the questPOI setting is on, and Questie
@@ -114,7 +113,6 @@ levels:AddFrameLevel("PIN_FRAME_LEVEL_FLIGHT_POINT")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_QUEST_PING")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_ACTIVE_QUEST", C_QuestLog.GetMaxNumQuests())
 levels:AddFrameLevel("PIN_FRAME_LEVEL_SUPER_TRACKED_QUEST")
-levels:AddFrameLevel("PIN_FRAME_LEVEL_GROUP_MEMBER")
 
 --------------------------------------------------------------------------------
 -- Following the selected quest
@@ -123,14 +121,14 @@ levels:AddFrameLevel("PIN_FRAME_LEVEL_GROUP_MEMBER")
 local shownQuestID
 
 --[[
-	Questie's icons for the quest when it has any, otherwise the quest's zone (the player's when it has
-	none) with Blizzard's objective area picked out
+	Questie's icons for the quest when it has any, otherwise the quest's zone (the zone it was given in
+	when it has none, then the player's) with Blizzard's objective area picked out
 ]]
 local function ShowQuest(questID)
 	shownQuestID = questID
 	local mapID = questID and GetQuestUiMapID(questID)
 	if not mapID or mapID == 0 then
-		mapID = MapUtil.GetDisplayableMapForPlayer()
+		mapID = questMap.QuestGiverMapID(questID) or MapUtil.GetDisplayableMapForPlayer()
 	end
 
 	if questMap.FollowQuestieQuest(questID, mapID) or not questID then

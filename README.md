@@ -12,7 +12,7 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 
 ### TBC & Era
 
-🔎 **A Map Without the Icon Soup** // Questie is the best thing to happen to Classic questing, but with a dozen quests in a zone, the map turns into icon soup. The map beside your log shows Questie's data for the selected quest, so you can focus on exactly where you need to go.
+🔎 **A Map Without the Icon Soup** // Questie is the best thing to happen to Classic questing, but with a dozen quests in a zone, the map turns into icon soup. The map beside your log shows Questie's data for the selected quest, shading each objective's area with one icon in it instead of a pin on every spawn, so you can focus on exactly where you need to go.
 
 🌍 **Follow Quests Across Zones** // Some quests take you all over the world. Switch between every zone a quest visits, right from the map, and keep the whole journey in view.
 
@@ -119,16 +119,16 @@ Get everyone on the same quests without typing a word.
 
 ### 🟡 Overlaps
 
-* Garufo's [DungeonQuests](https://www.curseforge.com/wow/addons/dungeonquests)
+* nanderson11's [AtlasQuest - Fan Update](https://www.curseforge.com/wow/addons/atlas-quest-fan-update)
+* Peterodox's [Dialogue UI](https://www.curseforge.com/wow/addons/dialogueui)
+* ExehnTV's [DungeonJournal](https://www.curseforge.com/wow/addons/dungeonjournal)
 * Leatrix's [Leatrix Plus](https://www.curseforge.com/wow/addons/leatrix-plus)
-* GodModeTeam's [QuestGuru](https://www.curseforge.com/wow/addons/questguru)
-* ChevCast's [QuestTogether](https://www.curseforge.com/wow/addons/questtogether)
-* 0x29a's [QuestXP Total](https://www.curseforge.com/wow/addons/questxp-total)
+* KindredTwitch's [Quest XP Tracker](https://www.curseforge.com/wow/addons/quest-xp-tracker)
 
 ### 🔴 Alternatives
 
-* Musu32's [Belphie's Quest Log](https://www.curseforge.com/wow/addons/belphies-quest-log)
 * DarrenKosick's [BetterQuestLog](https://www.curseforge.com/wow/addons/betterquestlog)
-* Toomasu12's [Blocky Quests](https://www.curseforge.com/wow/addons/blocky-quests)
-* dragginnsack's [LoreJournal Classic](https://www.curseforge.com/wow/addons/lorejournal-classic)
+* Kerzo's [Kerzo Classic Quest Log](https://www.curseforge.com/wow/addons/kerzo-classic-quest-log)
+* Drathnis's [QuestLogPlus](https://www.curseforge.com/wow/addons/questlog-plus)
 * StreamBuddies's [StBu MasterQuestLog](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
+* StreamBuddies's [StBu QuestLogLayout](https://www.curseforge.com/wow/addons/sb-questloglayout)

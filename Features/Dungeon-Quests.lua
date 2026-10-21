@@ -238,8 +238,11 @@ local function Reshare(generation, key)
 	Share(ns.DungeonQuests(dungeon), dungeon)
 end
 
+-- The owner of this file's second handler for an event another file handles too (Core.lua)
+ns.dungeonQuests = {}
+
 -- Someone joined or left: the dungeon's quests are shared again ns.DUNGEON_QUESTS_DELAY after the last change
-function ns:OnDungeonRosterUpdate()
+function ns.dungeonQuests:OnGroupRosterUpdate()
 	if not RosterChanged() then
 		return
 	end

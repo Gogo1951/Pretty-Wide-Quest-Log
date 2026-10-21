@@ -22,7 +22,7 @@ read_globals = {
 	"C_Timer",
 	"CANCEL",
 	"ChatFrameUtil",
-	"ChatTypeInfo",
+	"ClearOverrideBindings",
 	"CLOSE",
 	"CollapseQuestHeader",
 	"COMPLETE",
@@ -43,7 +43,6 @@ read_globals = {
 	"ERR_NOT_IN_GROUP",
 	"ERR_QUEST_PUSH_BUSY_S",
 	"ERR_QUEST_PUSH_LOG_FULL_S",
-	"ERR_QUEST_PUSH_TIMER_EXPIRED_S",
 	"ERR_QUEST_PUSH_TOO_FAR_S",
 	"EXIT",
 	"ExpandQuestHeader",
@@ -61,6 +60,7 @@ read_globals = {
 	"GetActiveQuestID",
 	"GetAvailableLevel",
 	"GetAvailableQuestInfo",
+	"GetBindingKey",
 	"GetBuildInfo",
 	"GetCursorPosition",
 	"GetCVar",
@@ -92,7 +92,6 @@ read_globals = {
 	"GetUIPanel",
 	"GossipSharedActiveQuestButtonMixin",
 	"GossipSharedAvailableQuestButtonMixin",
-	"GroupMembersDataProviderMixin",
 	"HIGHLIGHT_FONT_COLOR",
 	"HIGHLIGHT_FONT_COLOR_CODE",
 	"HideUIPanel",
@@ -116,6 +115,7 @@ read_globals = {
 	"MapUtil",
 	"MAX_WATCHABLE_QUESTS",
 	"MenuUtil",
+	"Mixin",
 	"NORMAL_FONT_COLOR",
 	"OBJECTIVES_WATCH_TOO_MANY",
 	"OTHER",
@@ -202,6 +202,7 @@ read_globals = {
 	"QuestUtil",
 	"QuestUtils_IsQuestWatched",
 	"QuestWatch_Update",
+	"RED_FONT_COLOR",
 	"RED_FONT_COLOR_CODE",
 	"RELOADUI",
 	"ReloadUI",
@@ -212,6 +213,7 @@ read_globals = {
 	"SelectQuestLogEntry",
 	"SetAbandonQuest",
 	"SetCVar",
+	"SetOverrideBindingClick",
 	"Settings",
 	"SetUIPanelAttribute",
 	"SHARE_QUEST",
@@ -237,12 +239,11 @@ read_globals = {
 	"UNTRACK_QUEST_ABBREV",
 	"VoiceOver",
 	"wipe",
+	"WorldMapFrame",
 }
 globals = {
 	"SLASH_PRETTYWIDEQUESTLOGOPTIONS1",
 	SlashCmdList = { fields = { "PRETTYWIDEQUESTLOGOPTIONS" } }, -- a field, so only the add-on's own slash entry is writable
-	"ToggleQuestLog", -- WoW Forever: routed to the add-on's quest log
-	"QuestMapFrame_OpenToQuestDetails", -- WoW Forever: routed to the add-on's quest log
 	"QUESTS_DISPLAYED", -- Classic: more list rows in a taller quest log
 	StaticPopupDialogs = {
 		fields = { "PRETTYWIDEQUESTLOG_RELOAD", "PRETTYWIDEQUESTLOG_WOWHEAD", "PRETTYWIDEQUESTLOG_ABANDON_GRAY" },

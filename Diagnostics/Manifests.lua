@@ -61,6 +61,7 @@ local SHARED_FUNCTIONS = {
 	"QuestFrameProgressItems_Update",
 	"QuestInfo_Display",
 	"CreateFromMixins",
+	"Mixin",
 	"CreateFont",
 	"PlaySound",
 	"GetCursorPosition",
@@ -125,7 +126,6 @@ local SHARED_TABLES = {
 	"QuestRewardScrollChildFrame",
 	"MapCanvasMixin",
 	"MapExplorationDataProviderMixin",
-	"GroupMembersDataProviderMixin",
 	"MapCanvasDataProviderMixin",
 	"MapCanvasPinMixin",
 	"WowStyle2DropdownMixin",
@@ -141,6 +141,7 @@ local SHARED_TABLES = {
 	"StaticPopupDialogs",
 	"GameTooltip",
 	"NORMAL_FONT_COLOR",
+	"RED_FONT_COLOR",
 }
 
 local CLASSIC_FUNCTIONS = {
@@ -268,11 +269,18 @@ local FOREVER_FUNCTIONS = {
 	"C_SuperTrack.GetSuperTrackedQuestID",
 	"QuestMapFrame_GetFocusedQuestID",
 	"IsShiftKeyDown",
+	-- The quest log key, bound over to the window's own button (Forever-Quest-Log.lua)
+	"GetBindingKey",
+	"ClearOverrideBindings",
+	"SetOverrideBindingClick",
 }
 
 local FOREVER_TABLES = {
 	"QUEST_TEMPLATE_LOG",
 	"QuestMapFrame",
+	"QuestMapFrame.DetailsFrame",
+	-- The micro menu button and tracker clicks open it first, and the window takes over from it
+	"WorldMapFrame",
 	"QuestFrame",
 	"QuestLogPopupDetailFrame",
 	"QuestInfoFrame",
@@ -428,7 +436,7 @@ end
 
 -- The add-on's own example reports, appended to the shared Event Log intro.
 ns.DiagnosticsStrings.EVENT_LOG_EXAMPLES =
-	"Best for 'the quest log didn't update' or 'tracking didn't change' reports on WoW Forever."
+	"Best for 'no whisper went out' or 'the dungeon quests weren't announced' reports, and on WoW Forever 'the quest log didn't update', 'tracking didn't change' or 'the quest log key opened the world map'."
 
 local function YesNo(value)
 	return value and "yes" or "no"
@@ -666,6 +674,17 @@ function ns:BuildQuestLogContextReport()
 			"Quest log key and tracker clicks taken over this session: %s",
 			YesNo(ns.questLogTakenOver == true)
 		)
+		--[[
+			While taken over, each quest log key opens the window's own button, which can't be set in combat;
+			the micro menu button and tracker clicks open the world map, which the window takes over from
+			only out of combat (Forever-Quest-Log.lua)
+		]]
+		local keys = { GetBindingKey("TOGGLEQUESTLOG") }
+		lines[#lines + 1] = string.format("Quest log key: %s", #keys > 0 and table.concat(keys, ", ") or "(not bound)")
+		for _, key in ipairs(keys) do
+			lines[#lines + 1] = string.format("  %s opens: %s", key, tostring(_G.GetBindingAction(key, true)))
+		end
+		lines[#lines + 1] = string.format("World map: %s", Shown(WorldMapFrame))
 		lines[#lines + 1] = string.format("Quest log window: %s", Shown(ns.questLogFrame))
 		-- The quest log closes as one of Blizzard's windows opens on the left (Forever-Quest-Log.lua)
 		local leftPanel = GetUIPanel("left") or GetUIPanel("doublewide")
@@ -817,7 +836,7 @@ end
 
 --[[
 	The state behind "the tracking marks are missing", "Track All does nothing"
-	and "the Track button is greyed out" reports. Questie's tracker, once
+	and "the Track button is grayed out" reports. Questie's tracker, once
 	enabled, hides every mark until it starts (Quest-Display.lua), and on WoW
 	Forever decides which quests can be tracked at all (Forever-Tracking.lua).
 	Reads only.
@@ -943,7 +962,7 @@ local function DungeonQuestLines(lines)
 	lines[#lines + 1] = ""
 	Setting(lines, "Announce dungeon quests", "dungeonAnnounce")
 	Setting(lines, "Share dungeon quests", "dungeonShare")
-	lines[#lines + 1] = string.format("Group chat channel: %s", tostring(ns:GetGroupChatChannel()))
+	lines[#lines + 1] = string.format("Group chat channel: %s", ns:GetGroupChatChannel() or "none (not in a group)")
 	-- Without ZoneDB the dungeon is known by name alone; without these queries only the quest log header places a quest (Dungeon-Quest-Lookup.lua)
 	local zoneDB = ns.ImportQuestieModule("ZoneDB")
 	lines[#lines + 1] = string.format(
@@ -1017,7 +1036,7 @@ end
 
 --[[
 	What the zone menu offers for a zone (Zone-Menu.lua): Share is left out with nothing to share, and
-	Abandon Gray Quests greyed out with nothing gray. On Classic Era and TBC the menu selects each quest to
+	Abandon Gray Quests grayed out with nothing gray. On Classic Era and TBC the menu selects each quest to
 	ask whether it can be shared, so only the zone's gray quests are counted here, with the list's own test
 ]]
 local function ZoneMenuLines(lines, zoneTitle)
@@ -1058,15 +1077,15 @@ local function ZoneMenuLines(lines, zoneTitle)
 end
 
 --[[
-	The state behind "Share is greyed out or missing in the zone menu",
-	"Abandon Gray Quests is greyed out", "no whisper went out when a share
+	The state behind "Share is grayed out or missing in the zone menu",
+	"Abandon Gray Quests is grayed out", "no whisper went out when a share
 	failed" and dungeon quest reports. Reads only: nothing is shared or sent,
 	and the quest log's selection and zones are left as they are.
 ]]
 function ns:BuildSharingContextReport()
 	local lines = { GetClientHeader(), "" }
 
-	-- The zone menu's Share is greyed out while solo and while a run of shares is still going (Zone-Menu.lua)
+	-- The zone menu's Share is grayed out while solo and while a run of shares is still going (Zone-Menu.lua)
 	lines[#lines + 1] = string.format("In a group: %s", YesNo(IsInGroup()))
 	lines[#lines + 1] = string.format("Share run in progress: %s", YesNo(ns.sharingQuests))
 	lines[#lines + 1] = string.format("Seconds between shares in use: %s", tostring(ns.db and ns.GetShareInterval()))
@@ -1179,6 +1198,80 @@ end
 local QUESTIE_PIN_CALLS =
 	{ "AddWorldMapIconMap", "AddWorldMapIconWorld", "RemoveWorldMapIcon", "RemoveAllWorldMapIcons" }
 
+-- An objective's spawns in the map's zone, and how many of them Questie-Map-Areas.lua would place
+local function ObjectiveSpawns(objective, mapID, zoneDB, phasing)
+	local inZone, placed = 0, 0
+	for _, spawnData in pairs(objective.spawnList) do
+		local spawnsByArea = type(spawnData) == "table" and spawnData.Spawns or {}
+		for areaID, spawns in pairs(spawnsByArea) do
+			if zoneDB:GetUiMapIdByAreaId(areaID) == mapID then
+				for _, spawn in ipairs(spawns) do
+					inZone = inZone + 1
+					local x, y = spawn[1], spawn[2]
+					local visible = not (phasing and phasing.IsSpawnVisible) or phasing.IsSpawnVisible(spawn[3])
+					if x and y and x >= 0 and y >= 0 and visible then
+						placed = placed + 1
+					end
+				end
+			end
+		end
+	end
+	return inZone, placed
+end
+
+--[[
+	Why the selected quest gets no objective areas on the map shown: the Questie pieces
+	Questie-Map-Areas.lua places spawns with, the zone's size in yards, and for each objective with an icon
+	drawn here, how many of its spawns are in the zone and placed (in your phase, with a position). An
+	objective with none placed keeps Questie's icons.
+]]
+local function ObjectiveAreaLines(lines, pins, questID, mapID)
+	local zoneDB = ns.ImportQuestieModule("ZoneDB")
+	local phasing = ns.ImportQuestieModule("Phasing")
+	local hasAreaLookup = zoneDB and type(zoneDB.GetUiMapIdByAreaId) == "function"
+	lines[#lines + 1] = string.format("Questie ZoneDB GetUiMapIdByAreaId: %s", hasAreaLookup and "found" or "not found")
+	lines[#lines + 1] = string.format(
+		"Questie Phasing IsSpawnVisible: %s",
+		(phasing and type(phasing.IsSpawnVisible) == "function") and "found" or "not found, so every spawn counts"
+	)
+	local zoneLibrary = LibStub("HereBeDragonsQuestie-2.0", true)
+	local width, height
+	if mapID and zoneLibrary and type(zoneLibrary.GetZoneSize) == "function" then
+		width, height = zoneLibrary:GetZoneSize(mapID)
+	end
+	lines[#lines + 1] = string.format("Zone size in yards: %s x %s", tostring(width), tostring(height))
+	if not (hasAreaLookup and questID and mapID and type(pins) == "table") then
+		return
+	end
+
+	local seen, objectives = {}, {}
+	for icon, placement in pairs(pins) do
+		local data = type(icon) == "table" and icon.data
+		local objective = type(data) == "table" and data.ObjectiveData
+		if
+			data
+			and data.Id == questID
+			and data.Type ~= "available"
+			and data.Type ~= "complete"
+			and type(objective) == "table"
+			and type(objective.spawnList) == "table"
+			and type(placement) == "table"
+			and placement.uiMapID == mapID
+			and IsDrawnIcon(icon)
+			and not seen[objective]
+		then
+			seen[objective] = true
+			objectives[#objectives + 1] = objective
+		end
+	end
+	lines[#lines + 1] = string.format("Selected quest's objectives with spawns drawn here: %d", #objectives)
+	for _, objective in ipairs(objectives) do
+		local inZone, placed = ObjectiveSpawns(objective, mapID, zoneDB, phasing)
+		lines[#lines + 1] =
+			string.format("  %s: %d spawns in this zone, %d placed", tostring(objective.Description), inZone, placed)
+	end
+end
+
 --[[
 	The state behind "the map is missing", "the map shows the wrong zone" and
 	"the zone is bare parchment" reports. The map follows the selected quest through Questie's world map
@@ -1263,13 +1356,17 @@ function ns:BuildMapContextReport()
 	end
 	local questieProfile = QuestieProfile()
 	if questieProfile then
-		-- The coloured glow behind objective icons shows only with Questie's own always-glow setting on
+		-- The colored glow behind objective icons shows only with Questie's own always-glow setting on
 		lines[#lines + 1] = string.format("Questie always glow on map: %s", tostring(questieProfile.alwaysGlowMap))
 	end
 	lines[#lines + 1] = string.format(
 		"Map follows Questie's icons for: %s",
 		tostring(questMap and questMap.questieQuestID or "(no quest)")
 	)
+	-- Built from Questie's spawns for each objective on the map shown (Questie-Map-Areas.lua)
+	Setting(lines, "Show objective areas", "showObjectiveAreas")
+	lines[#lines + 1] = string.format("Objective areas shaded: %s", tostring(questMap and questMap.areaCount))
+	ObjectiveAreaLines(lines, pins, questID, canvas and canvas:GetMapID())
 
 	return table.concat(lines, "\n")
 end

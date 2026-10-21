@@ -26,14 +26,14 @@ L["OPTIONS_DESCRIPTION"] =
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message d'accueil de Pretty Wide Quest Log à la connexion."
 L["OPTIONS_FEATURES_HEADER"] = "Fonctionnalités"
-L["ENABLE_QUEST_LOG_CLEANUP"] = "Activer le journal de quêtes épuré"
+L["ENABLE_WIDE_QUEST_LOG"] = "Activer le journal de quêtes large"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Remplace le journal de quêtes de Blizzard par le journal large, avec la carte à côté. Prend effet après un rechargement."
 L["ENABLE_QUALITY_OF_LIFE"] = "Activer les améliorations de confort"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"Active la fenêtre de donneur de quêtes épurée, votre propre rythme pour partager des quêtes, les chuchotements quand un partage échoue ainsi que l'annonce et le partage des quêtes de donjon. Désactivez-le pour retrouver la fenêtre de donneur de quêtes de Blizzard et partager au rythme par défaut."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
-	"Activer le journal de quêtes épuré prend effet après un rechargement, proposé à la fermeture de l'interface des options."
+	"Activer le journal de quêtes large prend effet après un rechargement, proposé à la fermeture de l'interface des options."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après un rechargement. Recharger maintenant ?"
 L["OPTIONS_COMMANDS_HEADER"] = "/Commandes"
 L["OPTIONS_COMMAND"] = "/pwql"
@@ -43,7 +43,6 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Ouvre l'interface des options de cet add-on.
 -- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
-L["TAB_QUEST_LOG"] = "Journal de quêtes"
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Remplace le journal de quêtes de Blizzard par un journal large : vos quêtes classées par zone, avec à côté les détails de la quête sélectionnée et sa carte."
 L["QUEST_LOG_LAYOUT_HEADER"] = "Disposition du journal de quêtes"
@@ -57,7 +56,7 @@ L["SORT_ALPHABETICAL"] = "Alphabétique"
 L["CURRENT_ZONE_FIRST"] = "Afficher la zone actuelle en premier"
 L["CURRENT_ZONE_FIRST_DESCRIPTION"] =
 	"Place la zone où vous vous trouvez en haut de la liste, quel que soit l'ordre des zones."
-L["ZONE_GAP"] = "Espace au-dessus des noms de zone"
+L["ZONE_GAP"] = "Ajouter de l'espace au-dessus des noms de zone"
 L["ZONE_GAP_DESCRIPTION"] =
 	"Ajoute un peu d'espace au-dessus de chaque nom de zone. Pratique si vos quêtes sont réparties sur de nombreuses zones."
 L["QUEST_ORDER"] = "Ordre des quêtes"
@@ -75,6 +74,9 @@ L["MARK_UNTRACKED_DESCRIPTION"] =
 L["CLOSE_IN_COMBAT"] = "Fermer en début de combat"
 L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 	"Ferme le journal de quêtes quand un combat commence, pour qu'il ne cache jamais l'action."
+L["SHOW_OBJECTIVE_AREAS"] = "Afficher les zones d'objectifs"
+L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
+	"Colore sur la carte à côté du journal de quêtes les endroits où se trouvent les monstres et les objets de chaque objectif, avec une seule icône par zone au lieu d'une sur chaque point d'apparition. Nécessite Questie."
 L["WINDOW_SCALE"] = "Échelle du journal de quêtes"
 L["WINDOW_SCALE_DESCRIPTION"] =
 	"Agrandit ou réduit le journal de quêtes. La carte à côté grandit et rétrécit avec lui."

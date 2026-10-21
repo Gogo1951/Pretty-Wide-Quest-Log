@@ -26,14 +26,14 @@ L["OPTIONS_DESCRIPTION"] =
 L["ENABLE_WELCOME_MESSAGE"] = "환영 메시지 사용"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log 환영 인사를 표시합니다."
 L["OPTIONS_FEATURES_HEADER"] = "기능"
-L["ENABLE_QUEST_LOG_CLEANUP"] = "퀘스트 목록 정리 사용"
+L["ENABLE_WIDE_QUEST_LOG"] = "넓은 퀘스트 목록 사용"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"블리자드 퀘스트 목록을 지도가 옆에 붙은 넓은 퀘스트 목록으로 바꿉니다. UI를 다시 불러온 후에 적용됩니다."
 L["ENABLE_QUALITY_OF_LIFE"] = "편의 기능 사용"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"퀘스트 NPC 창 정리, 원하는 속도로 퀘스트 공유하기, 퀘스트 공유 실패 시 귓속말, 던전 퀘스트 알림과 공유를 켭니다. 끄면 블리자드 퀘스트 NPC 창으로 돌아가고 기본 속도로 공유합니다."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
-	"퀘스트 목록 정리 사용은 UI를 다시 불러온 후에 적용되며, 설정 창을 닫을 때 다시 불러오기를 안내합니다."
+	"넓은 퀘스트 목록 사용은 UI를 다시 불러온 후에 적용되며, 설정 창을 닫을 때 다시 불러오기를 안내합니다."
 L["RELOAD_PROMPT"] =
 	"Pretty Wide Quest Log는 UI를 다시 불러온 후에 퀘스트 목록을 전환합니다. 지금 다시 불러오시겠습니까?"
 L["OPTIONS_COMMANDS_HEADER"] = "/명령어"
@@ -44,7 +44,6 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "이 애드온의 설정 창을 엽니다."
 -- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
-L["TAB_QUEST_LOG"] = "퀘스트 목록"
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"블리자드 퀘스트 목록을 넓은 목록으로 바꿉니다. 퀘스트가 지역별로 나열되고, 옆에 선택한 퀘스트의 세부 정보와 지도가 표시됩니다."
 L["QUEST_LOG_LAYOUT_HEADER"] = "퀘스트 목록 구성"
@@ -58,7 +57,7 @@ L["SORT_ALPHABETICAL"] = "이름순"
 L["CURRENT_ZONE_FIRST"] = "현재 지역 먼저 표시"
 L["CURRENT_ZONE_FIRST_DESCRIPTION"] =
 	"지역 순서와 관계없이 지금 있는 지역을 목록 맨 위에 둡니다."
-L["ZONE_GAP"] = "지역 이름 위 여백"
+L["ZONE_GAP"] = "지역 이름 위에 여백 추가"
 L["ZONE_GAP_DESCRIPTION"] =
 	"각 지역 이름 위에 약간의 여백을 추가합니다. 퀘스트가 여러 지역에 흩어져 있다면 유용합니다."
 L["QUEST_ORDER"] = "퀘스트 순서"
@@ -76,6 +75,9 @@ L["MARK_UNTRACKED_DESCRIPTION"] =
 L["CLOSE_IN_COMBAT"] = "전투 시작 시 닫기"
 L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 	"전투가 시작되면 퀘스트 목록을 닫아 화면을 가리지 않게 합니다."
+L["SHOW_OBJECTIVE_AREAS"] = "목표 구역 표시"
+L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
+	"퀘스트 목록 옆 지도에 각 목표의 몬스터와 사물이 있는 곳을 음영으로 표시하고, 생성 지점마다 아이콘을 두는 대신 구역마다 아이콘을 하나만 표시합니다. Questie가 필요합니다."
 L["WINDOW_SCALE"] = "퀘스트 목록 크기 비율"
 L["WINDOW_SCALE_DESCRIPTION"] =
 	"퀘스트 목록을 크게 또는 작게 만듭니다. 옆의 지도도 함께 커지고 작아집니다."

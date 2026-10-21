@@ -26,14 +26,14 @@ L["OPTIONS_DESCRIPTION"] =
 L["ENABLE_WELCOME_MESSAGE"] = "启用欢迎消息"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登录时显示 Pretty Wide Quest Log 的欢迎语。"
 L["OPTIONS_FEATURES_HEADER"] = "功能"
-L["ENABLE_QUEST_LOG_CLEANUP"] = "启用任务日志整理"
+L["ENABLE_WIDE_QUEST_LOG"] = "启用宽版任务日志"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"将暴雪任务日志换成宽版任务日志，地图就在旁边。重新加载界面后生效。"
 L["ENABLE_QUALITY_OF_LIFE"] = "启用便利功能"
 L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
 	"开启任务NPC窗口整理、自定义分享任务的节奏、分享任务失败时的密语，以及地下城任务的通报和分享。关闭后恢复暴雪的任务NPC窗口，并按默认节奏分享。"
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
-	"启用任务日志整理需要重新加载界面才能生效，关闭设置界面时会提示你重新加载。"
+	"启用宽版任务日志需要重新加载界面才能生效，关闭设置界面时会提示你重新加载。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新加载界面才能切换任务日志。现在重新加载吗？"
 L["OPTIONS_COMMANDS_HEADER"] = "/命令"
 L["OPTIONS_COMMAND"] = "/pwql"
@@ -43,7 +43,6 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "打开此插件的设置界面。"
 -- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
-L["TAB_QUEST_LOG"] = "任务日志"
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"用宽版任务日志替换暴雪任务日志：任务按区域列出，旁边显示所选任务的详情及其地图。"
 L["QUEST_LOG_LAYOUT_HEADER"] = "任务日志布局"
@@ -56,7 +55,7 @@ L["SORT_AVERAGE_LEVEL_LOWEST"] = "平均等级，从低到高"
 L["SORT_ALPHABETICAL"] = "按名称"
 L["CURRENT_ZONE_FIRST"] = "优先显示当前区域"
 L["CURRENT_ZONE_FIRST_DESCRIPTION"] = "无论区域顺序如何，都将你所在的区域置于列表顶部。"
-L["ZONE_GAP"] = "区域名称上方留空"
+L["ZONE_GAP"] = "在区域名称上方添加空白"
 L["ZONE_GAP_DESCRIPTION"] =
 	"在每个区域名称上方留出一点间距。如果你的任务分布在许多区域，会很方便。"
 L["QUEST_ORDER"] = "任务顺序"
@@ -73,6 +72,9 @@ L["MARK_UNTRACKED_DESCRIPTION"] =
 	"已追踪的任务不再显示对勾 %s，改为在未追踪的任务前显示眼睛 %s。如果你几乎追踪所有任务，会很方便。"
 L["CLOSE_IN_COMBAT"] = "战斗开始时关闭"
 L["CLOSE_IN_COMBAT_DESCRIPTION"] = "战斗开始时关闭任务日志，避免遮挡战斗画面。"
+L["SHOW_OBJECTIVE_AREAS"] = "显示目标范围"
+L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
+	"在任务日志旁的地图上，用阴影标出每个目标的怪物和物体所在的范围，每个范围只显示一个图标，而不是每个刷新点各显示一个。需要 Questie。"
 L["WINDOW_SCALE"] = "任务日志缩放"
 L["WINDOW_SCALE_DESCRIPTION"] = "放大或缩小任务日志。旁边的地图会随之一起缩放。"
 L["MAP_SCALE"] = "地图缩放"

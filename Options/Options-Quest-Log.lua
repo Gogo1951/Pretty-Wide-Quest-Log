@@ -14,13 +14,14 @@ local SORT_CONTROL_WIDTH = ns.OPTIONS_ROW_WIDTH - SORT_LABEL_WIDTH
 	check sits high in its square while the eye fills its own, so the eye reads low beside the text
 ]]
 local function TrackingMarkIcon(mark, offsetY)
+	local red, green, blue = ns.HexToRGB(mark.color)
 	return format(
 		"|T%s:16:16:0:%d:32:32:0:32:0:32:%d:%d:%d|t",
 		mark.texture,
 		offsetY or 0,
-		mark.r * 255,
-		mark.g * 255,
-		mark.b * 255
+		red * 255,
+		green * 255,
+		blue * 255
 	)
 end
 
@@ -95,6 +96,16 @@ local function QuestLogToggle(key, nameKey, desc, order)
 	}
 end
 
+-- Show Objective Areas changes only the map, which redraws at once
+local function ObjectiveAreasToggle(order)
+	local toggle = QuestLogToggle("showObjectiveAreas", "SHOW_OBJECTIVE_AREAS", nil, order)
+	toggle.set = function(_, value)
+		ns.db.profile.showObjectiveAreas = value
+		ns.questMap.RequestRefresh()
+	end
+	return toggle
+end
+
 --[[
 	A sub-option of the order dropdown above it, on its own indented row; the row hides it, not itself. Its
 	silver caption would stay bright on a grayed-out checkbox, so it drops the silver while grayed out
@@ -122,7 +133,7 @@ function ns.BuildQuestLogOptions()
 			spaceIntro = ns.OptionsSpacer(2),
 			enableWideQuestLog = ns.OptionsFeatureToggle(
 				"enableWideQuestLog",
-				"ENABLE_QUEST_LOG_CLEANUP",
+				"ENABLE_WIDE_QUEST_LOG",
 				"FEATURE_QUEST_LOG_DESCRIPTION",
 				3
 			),
@@ -158,15 +169,17 @@ function ns.BuildQuestLogOptions()
 			markUntracked = QuestLogToggle("markUntracked", "MARK_UNTRACKED", MARK_UNTRACKED_TEXT, 27),
 			spaceCloseInCombat = ns.OptionsSpacer(28, Hidden),
 			closeInCombat = QuestLogToggle("closeInCombat", "CLOSE_IN_COMBAT", nil, 29),
+			spaceObjectiveAreas = ns.OptionsSpacer(30, Hidden),
+			showObjectiveAreas = ObjectiveAreasToggle(31),
 
-			spaceWindowScale = ns.OptionsSpacer(30, Hidden),
-			windowScaleLabel = ns.OptionsRowLabel(L["WINDOW_SCALE"], 31, nil, Hidden),
+			spaceWindowScale = ns.OptionsSpacer(32, Hidden),
+			windowScaleLabel = ns.OptionsRowLabel(L["WINDOW_SCALE"], 33, nil, Hidden),
 			windowScale = {
 				type = "range",
 				name = "",
 				desc = L["WINDOW_SCALE_DESCRIPTION"],
 				width = ns.OPTIONS_CONTROL_WIDTH,
-				order = 32,
+				order = 34,
 				hidden = Hidden,
 				disabled = Inactive,
 				min = 0.7,
@@ -181,14 +194,14 @@ function ns.BuildQuestLogOptions()
 					ns.ApplyWindowScale()
 				end,
 			},
-			spaceMapScale = ns.OptionsSpacer(33, Hidden),
-			mapScaleLabel = ns.OptionsRowLabel(L["MAP_SCALE"], 34, nil, Hidden),
+			spaceMapScale = ns.OptionsSpacer(35, Hidden),
+			mapScaleLabel = ns.OptionsRowLabel(L["MAP_SCALE"], 36, nil, Hidden),
 			mapScale = {
 				type = "range",
 				name = "",
 				desc = L["MAP_SCALE_DESCRIPTION"],
 				width = ns.OPTIONS_CONTROL_WIDTH,
-				order = 35,
+				order = 37,
 				hidden = Hidden,
 				disabled = Inactive,
 				min = 0.7,
@@ -203,14 +216,14 @@ function ns.BuildQuestLogOptions()
 					ns.ApplyMapScale()
 				end,
 			},
-			spaceResetWindow = ns.OptionsSpacer(36, Hidden),
-			resetWindowIndent = ns.OptionsRowLabel(" ", 37, RESET_WINDOW_INDENT_WIDTH, Hidden),
+			spaceResetWindow = ns.OptionsSpacer(38, Hidden),
+			resetWindowIndent = ns.OptionsRowLabel(" ", 39, RESET_WINDOW_INDENT_WIDTH, Hidden),
 			resetWindow = {
 				type = "execute",
 				name = L["RESET_WINDOW"],
 				desc = L["RESET_WINDOW_DESCRIPTION"],
 				width = RESET_WINDOW_WIDTH,
-				order = 38,
+				order = 40,
 				hidden = Hidden,
 				disabled = Inactive,
 				confirm = true,
