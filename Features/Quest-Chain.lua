@@ -176,6 +176,29 @@ local function CopyFont(region, source)
 end
 
 --[[
+	Skins (ElvUI) recolor the Description heading and text only after the details are filled, so the
+	section would keep Blizzard's parchment colors. It follows each later recoloring of its sources instead
+]]
+local function FollowSourceColors(section, headingSource, textSource)
+	if section.headingSource then
+		return
+	end
+	section.headingSource, section.textSource = headingSource, textSource
+	local function Recolor()
+		section.Heading:SetTextColor(headingSource:GetTextColor())
+		section.Heading:SetShadowColor(headingSource:GetShadowColor())
+		for _, row in ipairs(section.rows) do
+			row.Text:SetTextColor(textSource:GetTextColor())
+			row.Text:SetShadowColor(textSource:GetShadowColor())
+		end
+	end
+	for _, source in ipairs({ headingSource, textSource }) do
+		hooksecurefunc(source, "SetTextColor", Recolor)
+		hooksecurefunc(source, "SetShadowColor", Recolor)
+	end
+end
+
+--[[
 	Fills the section for questID in the fonts and colors of the details' Description heading and text.
 	Returns whether it shows
 ]]
@@ -189,6 +212,7 @@ function ns.UpdateQuestChainSection(section, questID, headingSource, textSource)
 		return false
 	end
 
+	FollowSourceColors(section, headingSource, textSource)
 	CopyFont(section.Heading, headingSource)
 	section.Heading:SetText(L["QUEST_CHAIN"])
 	local height = section.Heading:GetStringHeight()
