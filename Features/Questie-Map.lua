@@ -16,8 +16,7 @@ ns.AddWideQuestLogPart(function()
 	local HBDPins = LibStub("HereBeDragonsQuestie-Pins-2.0", true)
 
 	local PIN_TEMPLATE = "PrettyWideQuestLogQuestiePinTemplate"
-	local DEFAULT_ICON_SIZE = 16
-	local ICON_SCALE = 1.75 -- Of the size Questie gives its world map icons, which reads small on a smaller map
+	local ICON_SIZE = 24 -- Near the size of Blizzard's quest markers, before Questie's scale for the icon's kind
 	local CLUSTER_DISTANCE = 0.015 -- Icons this close, as a share of the map, share one tooltip
 	local REFRESH_DELAY = 0.2 -- Questie draws in batches over several frames
 	local ZONE_DROPDOWN_WIDTH = 180
@@ -215,10 +214,14 @@ ns.AddWideQuestLogPart(function()
 		pin.Glow:Show()
 	end
 
-	-- How large one of Questie's icons is drawn on this map, with the map zoomed all the way out
+	--[[
+		How large one of Questie's icons is drawn on this map, with the map zoomed all the way out. Questie's
+		scale for the icon's kind keeps givers, objectives and turn-ins in proportion; its Global Scale,
+		which sizes its own world map icons, is left out
+	]]
 	local function IconSize(icon)
-		local size = icon:GetWidth()
-		return ICON_SCALE * (size > 0 and size or DEFAULT_ICON_SIZE)
+		local data = icon.data
+		return ICON_SIZE * (data.GetIconScale and data:GetIconScale() or 1)
 	end
 
 	-- One of Questie's icons drawn again at x, y (0-1), or a marker for an area in that icon's look
