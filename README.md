@@ -6,7 +6,7 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 
 ### Forever
 
-🎧 **Keeps Your Quest-Givers Talking** // Works with VoiceOver and Spoken, so the narration doesn't skip a beat.
+🎧 **Keeps Your Quest-Givers Talking** // Works with Spoken and VoiceOver, so the narration doesn't skip a beat.
 
 <img width="800" src="https://github.com/user-attachments/assets/2fc1879e-a781-4310-b90b-dbbae9391b64" />
 
@@ -122,8 +122,7 @@ Get everyone on the same quests without typing a word.
 * nanderson11's [AtlasQuest - Fan Update](https://www.curseforge.com/wow/addons/atlas-quest-fan-update)
 * Peterodox's [Dialogue UI](https://www.curseforge.com/wow/addons/dialogueui)
 * ExehnTV's [DungeonJournal](https://www.curseforge.com/wow/addons/dungeonjournal)
-* Leatrix's [Leatrix Plus](https://www.curseforge.com/wow/addons/leatrix-plus)
-* KindredTwitch's [Quest XP Tracker](https://www.curseforge.com/wow/addons/quest-xp-tracker)
+* MunkDev's [Immersion](https://www.curseforge.com/wow/addons/immersion)
 
 ### 🔴 Alternatives
 

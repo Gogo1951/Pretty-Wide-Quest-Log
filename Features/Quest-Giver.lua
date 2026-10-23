@@ -26,10 +26,10 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-	The quest giver window's own pages, where it doesn't use QuestInfo (all of them on Classic Era and
-	TBC Anniversary, the progress page on WoW Forever). Their text is found by its font, without
-	naming it: text in the title's font is a heading, the one hung from the top of its page being the
-	quest's title and the rest section headings, and everything else is quest text
+	Text the quest giver window's pages hold themselves rather than through QuestInfo, chiefly the
+	progress page's, which no client draws with QuestInfo. It is found by its font, without naming it:
+	text in the title's font is a heading, the one hung from the top of its page being the quest's
+	title and the rest section headings, and everything else is quest text
 ]]
 local QUEST_GIVER_PAGES = {
 	"QuestDetailScrollChildFrame",
@@ -58,7 +58,7 @@ local function StyleQuestGiverPages(on)
 end
 
 --[[
-	The window's own pages and WoW Forever's shared QuestInfo text, styled with the cleanup on and put
+	The window's own pages and the shared QuestInfo text, styled with the cleanup on and put
 	back to Blizzard's with it off. Done as the saved settings load, before Blizzard first lays any of
 	them out, so its measurements match, and again when the switch or the profile changes. A window
 	already open is laid out to match the next time it opens; WoW Forever's quest log, which restyles

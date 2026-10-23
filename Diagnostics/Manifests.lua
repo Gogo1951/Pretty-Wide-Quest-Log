@@ -266,10 +266,8 @@ local FOREVER_FUNCTIONS = {
 	"GetQuestUiMapID",
 	"GetQuestsOnMapCached",
 	"C_TaskQuest.DoesMapShowTaskQuestObjectives",
-	"C_SuperTrack.GetSuperTrackedQuestID",
-	"QuestMapFrame_GetFocusedQuestID",
 	"IsShiftKeyDown",
-	-- The quest log key, bound over to the window's own button (Forever-Quest-Log.lua)
+	-- The quest log key, bound over to the window's own button (Forever-Quest-Log-Key.lua)
 	"GetBindingKey",
 	"ClearOverrideBindings",
 	"SetOverrideBindingClick",
@@ -305,7 +303,6 @@ local FOREVER_TABLES = {
 	"QuestDataProviderMixin",
 	"DungeonEntranceDataProviderMixin",
 	"FlightPointDataProviderMixin",
-	"POIButtonHighlightManager",
 }
 
 ns.DIAGNOSTIC_API_CHECKS = {}
@@ -677,7 +674,7 @@ function ns:BuildQuestLogContextReport()
 		--[[
 			While taken over, each quest log key opens the window's own button, which can't be set in combat;
 			the micro menu button and tracker clicks open the world map, which the window takes over from
-			only out of combat (Forever-Quest-Log.lua)
+			only out of combat (Forever-Quest-Log-Key.lua)
 		]]
 		local keys = { GetBindingKey("TOGGLEQUESTLOG") }
 		lines[#lines + 1] = string.format("Quest log key: %s", #keys > 0 and table.concat(keys, ", ") or "(not bound)")
@@ -1176,11 +1173,12 @@ end
 
 --[[
 	Questie's icons on the world map for a quest, as Questie-Map.lua finds
-	them: the total, and per map how many the map draws and how many it
-	leaves out.
+	them: the total, per map how many the map draws and how many it leaves
+	out, and how many of the quest's carry Questie's scale for their kind
+	(the map draws the rest at its base size).
 ]]
 local function QuestieIcons(pins, questID)
-	local total, drawn, skipped = 0, {}, {}
+	local total, drawn, skipped, scaled = 0, {}, {}, 0
 	for icon, placement in pairs(pins) do
 		if type(icon) == "table" and type(icon.data) == "table" and type(placement) == "table" then
 			total = total + 1
@@ -1188,10 +1186,13 @@ local function QuestieIcons(pins, questID)
 			if questID and icon.data.Id == questID and mapID then
 				local counts = IsDrawnIcon(icon) and drawn or skipped
 				counts[mapID] = (counts[mapID] or 0) + 1
+				if icon.data.GetIconScale then
+					scaled = scaled + 1
+				end
 			end
 		end
 	end
-	return total, drawn, skipped
+	return total, drawn, skipped, scaled
 end
 
 -- Questie's calls that Questie-Map.lua hooks, so the map redraws as icons come and go
@@ -1316,6 +1317,10 @@ function ns:BuildMapContextReport()
 	if questID and IS_FOREVER then
 		lines[#lines + 1] = MapLine("  Blizzard's zone for it", GetQuestUiMapID(questID))
 	end
+	-- Where the map goes without Questie's icons; on WoW Forever only where Blizzard's zone above is 0 (Questie-Map.lua)
+	if questID and questMap and questMap.QuestGiverMapID then
+		lines[#lines + 1] = MapLine("  Quest giver's zone in Questie", questMap.QuestGiverMapID(questID))
+	end
 
 	lines[#lines + 1] = ""
 	local pinsLibrary = LibStub("HereBeDragonsQuestie-Pins-2.0", true)
@@ -1337,7 +1342,7 @@ function ns:BuildMapContextReport()
 	end
 	local pins = pinsLibrary and pinsLibrary.worldmapPins
 	if type(pins) == "table" then
-		local total, drawn, skipped = QuestieIcons(pins, questID)
+		local total, drawn, skipped, scaled = QuestieIcons(pins, questID)
 		lines[#lines + 1] = string.format("Questie world map icons placed: %d", total)
 		local maps, seen = {}, {}
 		for _, counts in ipairs({ drawn, skipped }) do
@@ -1353,6 +1358,9 @@ function ns:BuildMapContextReport()
 		for _, mapID in ipairs(maps) do
 			lines[#lines + 1] = MapLine(string.format("  %d / %d in", drawn[mapID] or 0, skipped[mapID] or 0), mapID)
 		end
+		if #maps > 0 then
+			lines[#lines + 1] = string.format("  Sized by Questie's scale for their kind: %d", scaled)
+		end
 	end
 	local questieProfile = QuestieProfile()
 	if questieProfile then
@@ -1363,6 +1371,24 @@ function ns:BuildMapContextReport()
 		"Map follows Questie's icons for: %s",
 		tostring(questMap and questMap.questieQuestID or "(no quest)")
 	)
+	if IS_FOREVER then
+		--[[
+			Blizzard's objective area and quest marker draw the selected quest only, and nothing while Questie's
+			icons have it, with a marker at its next waypoint when its objectives are in another zone
+			(Forever-Quest-Map.lua)
+		]]
+		local blizzardID = questID ~= (questMap and questMap.questieQuestID) and questID or nil
+		lines[#lines + 1] =
+			string.format("Blizzard's objective area and quest marker drawn for: %s", tostring(blizzardID or "(none)"))
+		local mapID = canvas and canvas:GetMapID()
+		if blizzardID and mapID then
+			local x, y = C_QuestLog.GetNextWaypointForMap(blizzardID, mapID)
+			lines[#lines + 1] = string.format(
+				"  Next waypoint on the map shown: %s",
+				(x and y) and string.format("%.3f, %.3f", x, y) or "(none)"
+			)
+		end
+	end
 	-- Built from Questie's spawns for each objective on the map shown (Questie-Map-Areas.lua)
 	Setting(lines, "Show objective areas", "showObjectiveAreas")
 	lines[#lines + 1] = string.format("Objective areas shaded: %s", tostring(questMap and questMap.areaCount))

@@ -70,6 +70,7 @@ Features/Window.lua
 Features/Turn-In-Line.lua
 Features/Forever-Tracking.lua
 Features/Forever-Quest-Log.lua
+Features/Forever-Quest-Log-Key.lua
 Features/Forever-Quest-List.lua
 Features/Forever-Quest-Details.lua
 Features/Forever-Quest-Giver.lua

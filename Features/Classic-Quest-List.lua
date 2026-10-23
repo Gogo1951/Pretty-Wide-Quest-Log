@@ -259,10 +259,10 @@ ns.AddWideQuestLogPart(function()
 
 	local turnInLine = ns.CreateTurnInLine(QuestLogFrame)
 
-	-- In the order the list shows them, each under the zone header above it
-	local function UpdateTurnInLine(order)
+	-- The quests (log indexes, in list order) ready to turn in, each under the zone header above it
+	local function UpdateTurnInLine(indexes)
 		local ready, zone = {}, nil
-		for _, index in ipairs(ListedIndexes(order)) do
+		for _, index in ipairs(indexes) do
 			local title, _, _, isHeader, _, isComplete, _, questID = GetQuestLogTitle(index)
 			if isHeader then
 				zone = title
@@ -276,12 +276,11 @@ ns.AddWideQuestLogPart(function()
 	--[[
 		Collapse All while any zone is open, Expand All once every zone is collapsed. Track All while a quest
 		could still be tracked, Untrack All once none can, enabled while any listed quest is tracked by
-		Blizzard's tracker or Questie's
+		Blizzard's tracker or Questie's. indexes are the quest log indexes in list order
 	]]
-	local function UpdateListButtons(order)
+	local function UpdateListButtons(indexes)
 		expandButton:SetText(QuestLogCollapseAllButton.collapsed and L["EXPAND_ALL"] or L["COLLAPSE_ALL"])
 
-		local indexes = ListedIndexes(order)
 		local trackAll = ns.CanTrackMore(indexes)
 		trackButton.trackAll = trackAll
 		trackButton:SetText(trackAll and L["TRACK_ALL"] or L["UNTRACK_ALL"])
@@ -303,8 +302,9 @@ ns.AddWideQuestLogPart(function()
 		PositionRows(currentOrder)
 		ns.MatchVoiceOverButtons(currentOrder)
 		StyleQuestRows(currentOrder) -- Last, as VoiceOver's button functions rewrite the title and move the check
-		UpdateListButtons(currentOrder)
-		UpdateTurnInLine(currentOrder)
+		local indexes = ListedIndexes(currentOrder)
+		UpdateListButtons(indexes)
+		UpdateTurnInLine(indexes)
 	end
 
 	--------------------------------------------------------------------------------

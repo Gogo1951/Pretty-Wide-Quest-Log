@@ -24,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 L["OPTIONS_DESCRIPTION"] =
 	"Ein breites, skalierbares Questlog mit zwei Spalten, Queststufen, Dungeon- und Elite-Kürzeln, Belohnungen, Questreihen und einer Questkarte für jede Quest. Teile Quests mit deiner Gruppe und sag Dungeonquests automatisch an. Funktioniert mit Questie, VoiceOver und ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Willkommensnachricht aktivieren"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Zeigt beim Einloggen die Begrüßung von Pretty Wide Quest Log."
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Zeigt beim Einloggen die Willkommensnachricht von Pretty Wide Quest Log."
 L["OPTIONS_FEATURES_HEADER"] = "Funktionen"
 L["ENABLE_WIDE_QUEST_LOG"] = "Breites Questlog aktivieren"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
@@ -92,7 +92,7 @@ L["RESET_WINDOW_CONFIRM"] = "Questlog auf Standardgröße und -position zurücks
 
 L["TAB_QUALITY_OF_LIFE"] = "Komfortfunktionen"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Kleine Helfer außerhalb des Questlogs selbst, für das Questgeberfenster, zum Teilen von Quests mit deiner Gruppe und für Dungeons."
+	"Kleine Helfer außerhalb des Questlogs selbst: für das Questgeberfenster, zum Teilen von Quests mit deiner Gruppe und für Dungeons."
 L["QUEST_GIVERS_HEADER"] = "Questgeber"
 L["QUEST_GIVERS_DESCRIPTION"] = "Das Fenster, das ein Questgeber öffnet, in dem du Quests annimmst und abgibst."
 L["GIVER_CLEANUP"] = "Aufgeräumtes Questgeberfenster"
@@ -103,7 +103,7 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 	"Ergänzt die Questliste eines Questgebers um die Stufenkürzel des Questlogs, etwa [40D]."
 L["QUEST_SHARING_HEADER"] = "Quests teilen"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"Quests teilen im Rechtsklickmenü einer Zone im Questlog bietet deiner Gruppe nacheinander jede Quest dieser Zone an, die das Spiel teilen lässt. Diese Einstellungen bestimmen das Tempo und was passiert, wenn ein Gruppenmitglied eine verpasst."
+	"Quests teilen im Rechtsklickmenü einer Zone im Questlog bietet deiner Gruppe nacheinander jede Quest dieser Zone an, die das Spiel teilen lässt. Die folgenden Einstellungen bestimmen das Tempo und was passiert, wenn ein Gruppenmitglied eine verpasst."
 L["SHARE_INTERVAL"] = "Sekunden zwischen dem Teilen"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Wie lange zwischen einer geteilten Quest und der nächsten gewartet wird, für Quests teilen und das Teilen von Dungeonquests. Je länger, desto mehr Zeit hat deine Gruppe, jede einzelne anzunehmen."

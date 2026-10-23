@@ -24,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 L["OPTIONS_DESCRIPTION"] =
 	"寬版雙欄任務日誌，可調整大小，顯示任務等級、地城與精英標籤、獎勵、任務鏈，並為每個任務顯示地圖。與隊伍分享任務，自動通報地城任務。相容 Questie、VoiceOver 和 ElvUI。"
 L["ENABLE_WELCOME_MESSAGE"] = "啟用歡迎訊息"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登入時顯示 Pretty Wide Quest Log 的歡迎詞。"
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登入時顯示 Pretty Wide Quest Log 的歡迎訊息。"
 L["OPTIONS_FEATURES_HEADER"] = "功能"
 L["ENABLE_WIDE_QUEST_LOG"] = "啟用寬版任務日誌"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
@@ -89,7 +89,7 @@ L["RESET_WINDOW_CONFIRM"] = "要將任務日誌重設為預設大小和位置嗎
 
 L["TAB_QUALITY_OF_LIFE"] = "便利功能"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"任務日誌之外的小幫手，用於任務NPC視窗、與隊友分享任務以及地城。"
+	"任務日誌本身之外的小幫手：用於任務NPC視窗、與隊友分享任務以及地城。"
 L["QUEST_GIVERS_HEADER"] = "任務NPC"
 L["QUEST_GIVERS_DESCRIPTION"] = "任務NPC開啟的視窗，你在這裡接受和回報任務。"
 L["GIVER_CLEANUP"] = "任務NPC視窗整理"
@@ -99,7 +99,7 @@ L["GIVER_LEVELS"] = "顯示任務等級"
 L["GIVER_LEVELS_DESCRIPTION"] = "在任務NPC的任務清單中加上任務日誌的等級標籤，例如 [40副]。"
 L["QUEST_SHARING_HEADER"] = "任務分享"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"在任務日誌中右鍵點擊區域，選單裡的分享任務會把該區域中遊戲允許分享的每個任務逐一分享給隊伍。這些選項設定分享的節奏，以及隊友錯過任務時該怎麼辦。"
+	"在任務日誌中右鍵點擊區域，選單裡的分享任務會把該區域中遊戲允許分享的每個任務逐一分享給隊伍。下方的選項設定分享的節奏，以及隊友錯過任務時該怎麼辦。"
 L["SHARE_INTERVAL"] = "分享間隔秒數"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"分享一個任務後到下一個任務之間的等待時間，適用於分享任務和地城任務分享。時間越長，隊友就有越多時間接受每個任務。"

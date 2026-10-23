@@ -9,7 +9,9 @@ local L = ns.L
 
 --[[
 	Letters after the level in the quest list, by quest tag (Enum.QuestTag): D dungeon, R raid, P PvP,
-	G group. Elite quests without one of those get E
+	G group. Elite quests without one of those get E. The tags are the engine's quest tag enum values
+	(named in Enum.QuestTag on the Retail engine only), the same on every client, so like class tokens
+	they stay code constants rather than flavor-folder data
 ]]
 local QUEST_TAG_SUFFIX = {
 	[81] = L["QUEST_SUFFIX_DUNGEON"], -- Dungeon
@@ -242,10 +244,10 @@ local function StyleQuestNumber(region, source)
 end
 
 --[[
-	WoW Forever's QuestInfo pieces, shared by the quest giver window, the quest details and the map's
-	details. The quest details style them before every repaint; elsewhere they follow the quest giver
-	window cleanup (ns.ApplyQuestGiverCleanup), going back to Blizzard's while it's off. The other
-	clients don't have them
+	QuestInfo pieces, shared on every client by the quest giver window's detail and reward pages, and on
+	WoW Forever by the quest details and the map's details too. The quest details style them before
+	every repaint; elsewhere they follow the quest giver window cleanup (ns.ApplyQuestGiverCleanup),
+	going back to Blizzard's while it's off. A piece a client lacks is skipped
 ]]
 local QUEST_INFO_TEXT = {
 	"QuestInfoTitleHeader",

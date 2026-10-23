@@ -24,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 L["OPTIONS_DESCRIPTION"] =
 	"퀘스트 레벨, 던전 및 정예 태그, 보상, 연계 퀘스트, 퀘스트별 지도를 보여 주는 넓고 크기 조절이 가능한 2단 퀘스트 목록입니다. 파티에 퀘스트를 공유하고 던전 퀘스트를 자동으로 알립니다. Questie, VoiceOver, ElvUI와 함께 작동합니다."
 L["ENABLE_WELCOME_MESSAGE"] = "환영 메시지 사용"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log 환영 인사를 표시합니다."
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log 환영 메시지를 표시합니다."
 L["OPTIONS_FEATURES_HEADER"] = "기능"
 L["ENABLE_WIDE_QUEST_LOG"] = "넓은 퀘스트 목록 사용"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
@@ -94,7 +94,7 @@ L["RESET_WINDOW_CONFIRM"] = "퀘스트 목록을 기본 크기와 위치로 초�
 
 L["TAB_QUALITY_OF_LIFE"] = "편의 기능"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"퀘스트 목록 밖에서 돕는 작은 기능들로, 퀘스트 NPC 창, 파티원과의 퀘스트 공유, 던전을 위한 것입니다."
+	"퀘스트 목록 자체의 바깥에서 돕는 작은 기능들입니다. 퀘스트 NPC 창, 파티원과의 퀘스트 공유, 던전을 위한 기능입니다."
 L["QUEST_GIVERS_HEADER"] = "퀘스트 NPC"
 L["QUEST_GIVERS_DESCRIPTION"] =
 	"퀘스트 NPC가 여는 창으로, 여기서 퀘스트를 받고 완료 보고합니다."
@@ -106,7 +106,7 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 	"퀘스트 NPC의 퀘스트 목록에 [40던] 같은 퀘스트 목록의 레벨 태그를 붙입니다."
 L["QUEST_SHARING_HEADER"] = "퀘스트 공유"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"퀘스트 목록에서 지역을 오른쪽 클릭하면 나오는 메뉴의 퀘스트 공유는 그 지역에서 게임이 공유를 허용하는 모든 퀘스트를 하나씩 차례로 파티에 제안합니다. 여기서 그 속도와 파티원이 퀘스트를 놓쳤을 때 어떻게 할지 정합니다."
+	"퀘스트 목록에서 지역을 오른쪽 클릭하면 나오는 메뉴의 퀘스트 공유는 그 지역에서 게임이 공유를 허용하는 모든 퀘스트를 하나씩 차례로 파티에 제안합니다. 아래 설정에서 그 속도와 파티원이 퀘스트를 놓쳤을 때 어떻게 할지 정합니다."
 L["SHARE_INTERVAL"] = "공유 간격(초)"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"공유한 퀘스트 하나와 다음 퀘스트 사이에 기다리는 시간으로, 퀘스트 공유와 던전 퀘스트 공유에 적용됩니다. 길수록 파티원이 각 퀘스트를 수락할 시간이 늘어납니다."

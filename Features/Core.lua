@@ -107,7 +107,7 @@ RegisterEvent("ADDON_LOADED")
 	session; a change takes effect at the next /reload. On Classic Era and TBC its files widen and hook
 	Blizzard's own quest log, which can't be undone, so each hands its work here and it runs only with the
 	switch on. WoW Forever's quest log is a window of its own that stays closed with the switch off, so
-	its pieces build at once and only the takeover of the quest log key waits (Forever-Quest-Log.lua)
+	its pieces build at once and only the takeover of the quest log key waits (Forever-Quest-Log-Key.lua)
 ]]
 local wideQuestLogParts = {}
 

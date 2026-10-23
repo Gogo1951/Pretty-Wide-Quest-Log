@@ -24,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 L["OPTIONS_DESCRIPTION"] =
 	"宽版双栏任务日志，可调整大小，显示任务等级、地下城与精英标签、奖励、任务链，并为每个任务显示地图。与队伍分享任务，自动通报地下城任务。兼容 Questie、VoiceOver 和 ElvUI。"
 L["ENABLE_WELCOME_MESSAGE"] = "启用欢迎消息"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登录时显示 Pretty Wide Quest Log 的欢迎语。"
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登录时显示 Pretty Wide Quest Log 的欢迎消息。"
 L["OPTIONS_FEATURES_HEADER"] = "功能"
 L["ENABLE_WIDE_QUEST_LOG"] = "启用宽版任务日志"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
@@ -89,7 +89,7 @@ L["RESET_WINDOW_CONFIRM"] = "将任务日志重置为默认大小和位置？"
 
 L["TAB_QUALITY_OF_LIFE"] = "便利功能"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"任务日志之外的小帮手，用于任务NPC窗口、与队友分享任务以及地下城。"
+	"任务日志本身之外的小帮手：用于任务NPC窗口、与队友分享任务以及地下城。"
 L["QUEST_GIVERS_HEADER"] = "任务NPC"
 L["QUEST_GIVERS_DESCRIPTION"] = "任务NPC打开的窗口，你在这里接受和交付任务。"
 L["GIVER_CLEANUP"] = "任务NPC窗口整理"
@@ -99,7 +99,7 @@ L["GIVER_LEVELS"] = "显示任务等级"
 L["GIVER_LEVELS_DESCRIPTION"] = "在任务NPC的任务列表中加上任务日志的等级标签，例如 [40副]。"
 L["QUEST_SHARING_HEADER"] = "任务分享"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"在任务日志中右键点击区域，菜单里的分享任务会把该区域中游戏允许分享的每个任务逐一分享给队伍。这些选项设置分享的节奏，以及队友错过任务时该怎么办。"
+	"在任务日志中右键点击区域，菜单里的分享任务会把该区域中游戏允许分享的每个任务逐一分享给队伍。下方的选项设置分享的节奏，以及队友错过任务时该怎么办。"
 L["SHARE_INTERVAL"] = "分享间隔秒数"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"分享一个任务后到下一个任务之间的等待时间，适用于分享任务和地下城任务分享。时间越长，队友就有越多时间接受每个任务。"

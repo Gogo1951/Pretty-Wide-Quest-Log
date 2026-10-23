@@ -24,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 L["OPTIONS_DESCRIPTION"] =
 	"Um registro de missões largo, redimensionável e com dois painéis, com níveis das missões, marcadores de masmorra e elite, recompensas, cadeias de missões e um mapa para cada missão. Compartilhe missões com seu grupo e anuncie automaticamente as missões de masmorra. Funciona com Questie, VoiceOver e ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Ativar mensagem de boas-vindas"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra a saudação do Pretty Wide Quest Log ao entrar no jogo."
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra a mensagem de boas-vindas do Pretty Wide Quest Log ao entrar no jogo."
 L["OPTIONS_FEATURES_HEADER"] = "Recursos"
 L["ENABLE_WIDE_QUEST_LOG"] = "Ativar registro de missões largo"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
@@ -93,7 +93,7 @@ L["RESET_WINDOW_CONFIRM"] = "Redefinir o registro de missões para o tamanho e a
 
 L["TAB_QUALITY_OF_LIFE"] = "Melhorias de conveniência"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Pequenas ajudas fora do registro de missões em si, para a janela de missões do PNJ, para compartilhar missões com o seu grupo e para masmorras."
+	"Pequenas ajudas fora do registro de missões em si: para a janela de missões do PNJ, para compartilhar missões com o seu grupo e para masmorras."
 L["QUEST_GIVERS_HEADER"] = "PNJs de missões"
 L["QUEST_GIVERS_DESCRIPTION"] = "A janela que um PNJ de missões abre, onde você aceita e entrega missões."
 L["GIVER_CLEANUP"] = "Janela de missões do PNJ organizada"
@@ -104,7 +104,7 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 	"Adiciona as marcações de nível do registro de missões, como [40M], à lista de missões de um PNJ."
 L["QUEST_SHARING_HEADER"] = "Compartilhamento de missões"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"Compartilhar missões, no menu de clique direito de uma zona no registro de missões, oferece ao seu grupo, uma após a outra, todas as missões daquela zona que o jogo deixa você compartilhar. Estas opções definem o ritmo e o que acontece quando um membro do grupo perde uma."
+	"Compartilhar missões, no menu de clique direito de uma zona no registro de missões, oferece ao seu grupo, uma após a outra, todas as missões daquela zona que o jogo deixa você compartilhar. As opções abaixo definem o ritmo e o que acontece quando um membro do grupo perde uma."
 L["SHARE_INTERVAL"] = "Segundos entre compartilhamentos"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Quanto tempo esperar entre uma missão compartilhada e a próxima, em Compartilhar missões e no compartilhamento de missões de masmorra. Quanto maior, mais tempo o seu grupo tem para aceitar cada uma."
