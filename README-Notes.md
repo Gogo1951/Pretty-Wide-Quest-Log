@@ -4,12 +4,6 @@
 
 ## Exceptions
 
-### Quest tag IDs in code
-
-- **Departs from:** GAME NAMES, IDs living in the flavor folders.
-- **Instead:** The quest tag IDs that pick the D, R, P, G and E letters stay in a table in `Features/Quest-Display.lua`.
-- **Why:** They are fixed engine enum values, identical on every client, so a seven-folder data set would hold no information the code doesn't.
-
 ### No Data tab in Diagnostic Tools
 
 - **Departs from:** DIAGNOSTIC TOOLS → Layout, the Data tab; TOC FILE FORMAT → File Group Order, `Diagnostics/Validate-Data.lua`.
