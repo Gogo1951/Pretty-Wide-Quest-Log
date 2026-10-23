@@ -24,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 L["OPTIONS_DESCRIPTION"] =
 	"Un journal de quêtes large, redimensionnable et à double volet, avec le niveau des quêtes, des repères donjon et élite, les récompenses, les suites de quêtes et une carte pour chaque quête. Partagez des quêtes avec votre groupe et annoncez automatiquement les quêtes de donjon. Compatible avec Questie, VoiceOver et ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message d'accueil de Pretty Wide Quest Log à la connexion."
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message de bienvenue de Pretty Wide Quest Log à la connexion."
 L["OPTIONS_FEATURES_HEADER"] = "Fonctionnalités"
 L["ENABLE_WIDE_QUEST_LOG"] = "Activer le journal de quêtes large"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
@@ -93,7 +93,7 @@ L["RESET_WINDOW_CONFIRM"] = "Remettre le journal de quêtes à sa taille et à s
 
 L["TAB_QUALITY_OF_LIFE"] = "Améliorations de confort"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"De petites aides en dehors du journal de quêtes lui-même, pour la fenêtre de donneur de quêtes, pour partager des quêtes avec votre groupe et pour les donjons."
+	"De petites aides en dehors du journal de quêtes lui-même : pour la fenêtre de donneur de quêtes, pour partager des quêtes avec votre groupe et pour les donjons."
 L["QUEST_GIVERS_HEADER"] = "Donneurs de quêtes"
 L["QUEST_GIVERS_DESCRIPTION"] = "La fenêtre qu'ouvre un donneur de quêtes, où vous acceptez et rendez des quêtes."
 L["GIVER_CLEANUP"] = "Fenêtre de donneur de quêtes épurée"
@@ -104,7 +104,7 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 	"Ajoute les repères de niveau du journal de quêtes, comme [40D], à la liste de quêtes d'un donneur de quêtes."
 L["QUEST_SHARING_HEADER"] = "Partage de quêtes"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"Partager les quêtes, dans le menu clic droit d'une zone du journal de quêtes, propose à votre groupe, l'une après l'autre, toutes les quêtes de cette zone que le jeu vous laisse partager. Ces options règlent le rythme et ce qui se passe quand un membre du groupe en rate une."
+	"Partager les quêtes, dans le menu clic droit d'une zone du journal de quêtes, propose à votre groupe, l'une après l'autre, toutes les quêtes de cette zone que le jeu vous laisse partager. Les options ci-dessous règlent le rythme et ce qui se passe quand un membre du groupe en rate une."
 L["SHARE_INTERVAL"] = "Secondes entre les partages"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Le temps d'attente entre une quête partagée et la suivante, pour Partager les quêtes et pour le partage des quêtes de donjon. Plus il est long, plus votre groupe a le temps d'accepter chacune."

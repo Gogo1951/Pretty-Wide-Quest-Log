@@ -24,7 +24,8 @@ L["CHAT_PREDECESSOR_LOADED"] =
 L["OPTIONS_DESCRIPTION"] =
 	"Un registro de misiones ancho, redimensionable y de doble panel, con niveles de misión, etiquetas de mazmorra y élite, recompensas, cadenas de misiones y un mapa para cada misión. Comparte misiones con tu grupo y anuncia automáticamente las misiones de mazmorra. Funciona con Questie, VoiceOver y ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activar mensaje de bienvenida"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Muestra el saludo de Pretty Wide Quest Log al iniciar sesión."
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] =
+	"Muestra el mensaje de bienvenida de Pretty Wide Quest Log al iniciar sesión."
 L["OPTIONS_FEATURES_HEADER"] = "Funciones"
 L["ENABLE_WIDE_QUEST_LOG"] = "Activar registro de misiones ancho"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
@@ -93,7 +94,7 @@ L["RESET_WINDOW_CONFIRM"] = "¿Restablecer el registro de misiones a su tamaño 
 
 L["TAB_QUALITY_OF_LIFE"] = "Mejoras de comodidad"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Pequeñas ayudas fuera del propio registro de misiones, para la ventana de misiones del PNJ, para compartir misiones con tu grupo y para las mazmorras."
+	"Pequeñas ayudas fuera del propio registro de misiones: para la ventana de misiones del PNJ, para compartir misiones con tu grupo y para las mazmorras."
 L["QUEST_GIVERS_HEADER"] = "PNJ de misiones"
 L["QUEST_GIVERS_DESCRIPTION"] = "La ventana que abre un PNJ de misiones, donde aceptas y entregas misiones."
 L["GIVER_CLEANUP"] = "Ventana de misiones del PNJ ordenada"
@@ -104,7 +105,7 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 	"Añade las etiquetas de nivel del registro de misiones, como [40M], a la lista de misiones de un PNJ."
 L["QUEST_SHARING_HEADER"] = "Compartir misiones"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"Compartir misiones, en el menú de clic derecho de una zona del registro de misiones, ofrece a tu grupo una tras otra todas las misiones de esa zona que el juego te deja compartir. Estas opciones fijan el ritmo y lo que pasa cuando a un miembro del grupo se le escapa una."
+	"Compartir misiones, en el menú de clic derecho de una zona del registro de misiones, ofrece a tu grupo una tras otra todas las misiones de esa zona que el juego te deja compartir. Las opciones de abajo fijan el ritmo y lo que pasa cuando a un miembro del grupo se le escapa una."
 L["SHARE_INTERVAL"] = "Segundos entre envíos"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Cuánto esperar entre una misión compartida y la siguiente, tanto en Compartir misiones como en el envío automático de misiones de mazmorra. Cuanto más largo, más tiempo tiene tu grupo para aceptar cada una."

@@ -24,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 L["OPTIONS_DESCRIPTION"] =
 	"A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, VoiceOver, and ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Enable Welcome Message"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log greeting when you log in."
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log welcome message when you log in."
 L["OPTIONS_FEATURES_HEADER"] = "Features"
 L["ENABLE_WIDE_QUEST_LOG"] = "Enable Wide Quest Log"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
@@ -89,7 +89,7 @@ L["RESET_WINDOW_CONFIRM"] = "Reset the quest log to its default size and positio
 
 L["TAB_QUALITY_OF_LIFE"] = "Quality of Life"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Small helpers outside the quest log itself, for the quest giver window, for sharing quests with your party, and for dungeons."
+	"Small helpers outside the quest log itself: for the quest giver window, for sharing quests with your party, and for dungeons."
 L["QUEST_GIVERS_HEADER"] = "Quest Givers"
 L["QUEST_GIVERS_DESCRIPTION"] = "The window a quest giver opens, where you pick up quests and turn them in."
 L["GIVER_CLEANUP"] = "Quest Giver Window Cleanup"
@@ -99,7 +99,7 @@ L["GIVER_LEVELS"] = "Show Quest Levels"
 L["GIVER_LEVELS_DESCRIPTION"] = "Adds the quest log's level tags, like [40D], to a quest giver's list of quests."
 L["QUEST_SHARING_HEADER"] = "Quest Sharing"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"Share Quests, on a zone's right-click menu in the quest log, offers your party every quest in that zone the game lets you share, one after another. These set the pace, and what happens when a party member misses one."
+	"Share Quests, on a zone's right-click menu in the quest log, offers your party every quest in that zone the game lets you share, one after another. The settings below set the pace and what happens when a party member misses one."
 L["SHARE_INTERVAL"] = "Seconds Between Shares"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"How long to wait between one shared quest and the next, for Share Quests and dungeon quest sharing. Longer gives your party more time to accept each one."

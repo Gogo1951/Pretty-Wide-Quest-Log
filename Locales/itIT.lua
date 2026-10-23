@@ -25,7 +25,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 L["OPTIONS_DESCRIPTION"] =
 	"Un registro delle missioni largo, ridimensionabile e a doppio pannello, con livelli delle missioni, etichette per spedizioni ed élite, ricompense, catene di missioni e una mappa per ogni missione. Condividi le missioni con il tuo gruppo e annuncia in automatico le missioni delle spedizioni. Funziona con Questie, VoiceOver ed ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Attiva messaggio di benvenuto"
-L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra il saluto di Pretty Wide Quest Log quando accedi."
+L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra il messaggio di benvenuto di Pretty Wide Quest Log quando accedi."
 L["OPTIONS_FEATURES_HEADER"] = "Funzioni"
 L["ENABLE_WIDE_QUEST_LOG"] = "Attiva registro delle missioni largo"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
@@ -94,7 +94,7 @@ L["RESET_WINDOW_CONFIRM"] = "Ripristinare le dimensioni e la posizione predefini
 
 L["TAB_QUALITY_OF_LIFE"] = "Funzioni di comodità"
 L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Piccoli aiuti al di fuori del registro delle missioni, per la finestra del datore di missioni, per condividere le missioni con il tuo gruppo e per le spedizioni."
+	"Piccoli aiuti al di fuori del registro delle missioni stesso: per la finestra del datore di missioni, per condividere le missioni con il tuo gruppo e per le spedizioni."
 L["QUEST_GIVERS_HEADER"] = "Datori di missioni"
 L["QUEST_GIVERS_DESCRIPTION"] = "La finestra che apre un datore di missioni, dove accetti e consegni le missioni."
 L["GIVER_CLEANUP"] = "Finestra del datore di missioni ordinata"
@@ -105,7 +105,7 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 	"Aggiunge le etichette di livello del registro delle missioni, come [40S], all'elenco delle missioni di un datore di missioni."
 L["QUEST_SHARING_HEADER"] = "Condivisione delle missioni"
 L["QUEST_SHARING_DESCRIPTION"] =
-	"Condividi missioni, nel menu del clic destro su una zona del registro delle missioni, offre al tuo gruppo, una dopo l'altra, tutte le missioni di quella zona che il gioco ti permette di condividere. Queste opzioni regolano il ritmo e cosa succede quando un membro del gruppo ne perde una."
+	"Condividi missioni, nel menu del clic destro su una zona del registro delle missioni, offre al tuo gruppo, una dopo l'altra, tutte le missioni di quella zona che il gioco ti permette di condividere. Le opzioni qui sotto regolano il ritmo e cosa succede quando un membro del gruppo ne perde una."
 L["SHARE_INTERVAL"] = "Secondi tra le condivisioni"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Quanto attendere tra una missione condivisa e la successiva, per Condividi missioni e per la condivisione delle missioni delle spedizioni. Più è lungo, più tempo ha il tuo gruppo per accettare ciascuna."
