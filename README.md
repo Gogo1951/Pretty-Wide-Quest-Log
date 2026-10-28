@@ -46,7 +46,7 @@ Never lose your place in a long chain again. With Questie installed, the selecte
 * 📍 The step you're on is highlighted.
 * 🔍 Hover any step for Questie's tooltip on it.
 
-<img width="800" src="https://github.com/user-attachments/assets/1791ba80-b454-4e5a-ab9a-3abc999b6eed" />
+<img width="800" src="https://github.com/user-attachments/assets/6cf6eebe-5eaf-4b0e-98d3-b9811741f6ed" />
 
 ### Questing With a Group
 
