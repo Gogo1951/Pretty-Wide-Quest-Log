@@ -169,27 +169,15 @@ local SHARE_WHISPER_KEYS = {
 	"WHISPER_SHARE_FAILED_AGAIN",
 }
 
--- The quest with the longest title in the log, in bytes: its ID and title
+--[[
+	The quest with the longest title in the log, in bytes: its ID and title. Read with every zone open
+	(ns.LogQuests), since a zone collapsed in Blizzard's log lists none of its quests
+]]
 local function LongestQuestTitle()
 	local longest, longestID = "", nil
-	local function Consider(title, questID)
-		if title and questID and #title > #longest then
-			longest, longestID = title, questID
-		end
-	end
-	if ns.FLAVOR == "Camelot" then
-		for index = 1, C_QuestLog.GetNumQuestLogEntries() do
-			local entry = C_QuestLog.GetInfo(index)
-			if entry and not entry.isHeader then
-				Consider(entry.title, entry.questID)
-			end
-		end
-	else
-		for index = 1, GetNumQuestLogEntries() do
-			local title, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(index)
-			if not isHeader then
-				Consider(title, questID)
-			end
+	for _, quest in ipairs(ns.LogQuests()) do
+		if quest.title and quest.questID and #quest.title > #longest then
+			longest, longestID = quest.title, quest.questID
 		end
 	end
 	return longestID, longest

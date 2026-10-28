@@ -27,9 +27,12 @@ ns.AddWideQuestLogPart(function()
 	-- Questie's icons
 	--------------------------------------------------------------------------------
 
-	-- Leaves out route lines, and icons Questie's settings hide or fade out entirely
+	--[[
+		Leaves out route lines, and icons faded out entirely. Icons Questie's settings hide on its own maps
+		are kept: this map shows the quest picked in the quest log, whatever Questie shows elsewhere
+	]]
 	local function IsShownIcon(icon)
-		if icon.type == "line" or icon.hidden or not (icon.data and icon.texture) then
+		if icon.type == "line" or not (icon.data and icon.texture) then
 			return false
 		end
 		local _, _, _, alpha = icon.texture:GetVertexColor()

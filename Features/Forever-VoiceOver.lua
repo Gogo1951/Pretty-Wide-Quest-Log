@@ -1,6 +1,6 @@
 local _, ns = ...
 
--- WoW Forever: VoiceOver's play buttons on the quest list's rows.
+-- WoW Forever and Mists: VoiceOver's play buttons on the quest list's rows.
 
 local LAYOUT = ns.LAYOUT
 
@@ -8,17 +8,18 @@ local LAYOUT = ns.LAYOUT
 local TITLE_INSET = 22
 
 --[[
-	Spoken Quests puts its play buttons on the map's quest list, which this window stands in for, so the
-	list puts them on its own rows through Spoken's own button functions. Buttons of its own, one per
-	quest in the log and reused once a quest leaves it, rather than Spoken's: the map's list takes those
-	back to its rows whenever it redraws
+	VoiceOver, or its fork Spoken Quests, puts its play buttons on Blizzard's quest list (the map's on WoW
+	Forever, the quest log's on Mists), which this window stands in for, so the list puts them on its own
+	rows through VoiceOver's own button functions. Buttons of its own, one per quest in the log and reused
+	once a quest leaves it, rather than VoiceOver's: Blizzard's list takes those back to its rows whenever
+	it redraws
 ]]
 local buttons = {}
 
 -- A button whose quest has left the log, taken off its old quest; nil when every button's quest is still there
 local function TakeLeftoverButton()
 	for questID, button in pairs(buttons) do
-		if not C_QuestLog.GetLogIndexForQuestID(questID) then
+		if not ns.GetLogIndexForQuestID(questID) then
 			buttons[questID] = nil
 			button:Hide()
 			button.row = nil
@@ -66,7 +67,7 @@ function ns.ShowVoiceOverButton(row, questID)
 	button:SetPoint("LEFT", row, "LEFT", LAYOUT.QUEST_TEXT_X, 0)
 
 	-- Grayed out for a quest no sound pack has a reading of
-	overlay:BindPlayButton(button, questID, C_QuestLog.GetTitleForQuestID(questID) or "")
+	overlay:BindPlayButton(button, questID, ns.GetQuestTitleByID(questID) or "")
 	local sound = { event = voiceOver.Enums.SoundEvent.QuestAccept, questID = questID }
 	button:SetEnabled(voiceOver.DataModules:PrepareSound(sound) and true or false)
 	overlay:SetPlayButtonState(button)

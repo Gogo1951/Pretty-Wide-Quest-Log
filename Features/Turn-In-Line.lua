@@ -58,7 +58,6 @@ end
 local function ShowTurnInTooltip(self)
 	turnInTooltip:SetOwner(self, "ANCHOR_BOTTOM")
 	turnInTooltip:AddLine(L["TURN_IN_TOOLTIP"])
-	turnInTooltip:AddLine(" ")
 	local red, green, blue = ns.GetColorRGB("TEXT")
 	for _, zone in ipairs(self.zones) do
 		turnInTooltip:AddLine(" ")

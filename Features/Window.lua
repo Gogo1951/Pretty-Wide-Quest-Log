@@ -7,7 +7,8 @@ local TOP_SPLIT = 0.5
 local STRIP_SOURCE = 8 -- Pixels of the middle piece the widening strip is cut from
 
 --[[
-	Draws the window art on a frame and returns a function that lays it out for a given window height.
+	Draws the window art on a frame and returns a function that lays it out for a given window height, and
+	one that hides it for good.
 	Three columns of pieces, plus a strip widening the parchment where the middle and right pieces meet.
 	The strip is cut from the last few pixels of the middle piece and stretched, so both of its seams
 	continue the art on either side. The top half of each upper piece carries the window's top border
@@ -40,7 +41,13 @@ function ns.CreateWindowArt(frame, sublevel)
 		end
 	end
 
-	return function(height)
+	local function Hide()
+		for _, art in ipairs(pieces) do
+			art.region:Hide()
+		end
+	end
+
+	local function Layout(height)
 		local extra = height - LAYOUT.BASE_HEIGHT
 		for _, art in ipairs(pieces) do
 			art.region:ClearAllPoints()
@@ -58,6 +65,8 @@ function ns.CreateWindowArt(frame, sublevel)
 			end
 		end
 	end
+
+	return Layout, Hide
 end
 
 --[[
@@ -78,9 +87,13 @@ function ns.ClampHeight(frame, height, rowHeight)
 	return math.max(height, base)
 end
 
+-- Called as a drag of the grip below ends, for whatever waits on the window's final size (Mists-Quest-Portrait.lua)
+function ns.OnWindowResizeStopped() end
+
 --[[
 	A grip in the window's bottom-right corner for dragging it taller. applyHeight(height) resizes the
-	window and getHeight() returns its height now; the height it's dragged to is saved when the drag ends
+	window and getHeight() returns its height now; the height it's dragged to is saved when the drag ends.
+	frame.isResizing is set while it's being dragged
 ]]
 function ns.CreateResizeGrip(frame, applyHeight, getHeight)
 	local grip = CreateFrame("Button", nil, frame)
@@ -108,13 +121,16 @@ function ns.CreateResizeGrip(frame, applyHeight, getHeight)
 			return
 		end
 		startY = nil
+		frame.isResizing = nil
 		self:SetScript("OnUpdate", nil)
 		ns.db.global.height = getHeight()
+		ns.OnWindowResizeStopped()
 	end
 
 	grip:SetScript("OnMouseDown", function(self)
 		local _, y = GetCursorPosition()
 		startY, startHeight = y / frame:GetEffectiveScale(), getHeight()
+		frame.isResizing = true
 		self:SetScript("OnUpdate", function(this)
 			if not IsMouseButtonDown("LeftButton") then
 				StopSizing(this) -- The mouse-up went somewhere else

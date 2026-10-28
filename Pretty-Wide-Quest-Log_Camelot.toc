@@ -55,6 +55,8 @@ Locales/zhTW.lua
 Data/Flavor.lua
 Data/Data.lua
 Data/Camelot/Map-Reveal-Camelot.lua
+Data/Camelot/Quest-Tags-Camelot.lua
+Data/Camelot/Sample-Quests-Camelot.lua
 Data/Default-Settings.lua
 
 # Pretty Wide Quest Log
@@ -70,6 +72,7 @@ Features/Window.lua
 Features/Turn-In-Line.lua
 Features/Forever-Tracking.lua
 Features/Forever-Quest-Log.lua
+Features/Quest-Log-Key.lua
 Features/Forever-Quest-Log-Key.lua
 Features/Forever-Quest-List.lua
 Features/Forever-Quest-Details.lua
@@ -95,6 +98,7 @@ Diagnostics/Manifests.lua
 Diagnostics/Event-Log.lua
 Diagnostics/Code-Reports.lua
 Diagnostics/Settings-Reports.lua
+Diagnostics/Validate-Data.lua
 Diagnostics/Localization-Reports.lua
 Diagnostics/Report-Runner.lua
 

@@ -4,17 +4,11 @@
 
 ## Exceptions
 
-### No Data tab in Diagnostic Tools
+### Validate Data checks map art IDs
 
-- **Departs from:** DIAGNOSTIC TOOLS → Layout, the Data tab; TOC FILE FORMAT → File Group Order, `Diagnostics/Validate-Data.lua`.
-- **Instead:** Diagnostic Tools has no Data tab and no TOC loads the Validate Data report. The only static game data is the map reveal tables (`Data/{Game}/Map-Reveal-{Game}.lua`).
-- **Why:** Validate Data checks item, spell and quest IDs, and the reveal tables hold map art and texture file IDs it has no check for, so the tab would hold no rows that mean anything.
-
-### Map reveal data carries no Last Validated date
-
-- **Departs from:** DATA → Data File Layout, a Last Validated date no more than six months old in every folder a TOC lists.
-- **Instead:** The map reveal tables (`Data/{Game}/Map-Reveal-{Game}.lua`) keep `Never.` under Last Validated, and manual testing of the quest map on each client stands in for a Validate Data report.
-- **Why:** Validate Data has no check for map art or texture file IDs, so no report could ever date these files.
+- **Departs from:** Build Reference → DIAGNOSTIC TOOLS → Validate Data, one kind per ID kind a client API can answer.
+- **Instead:** The map reveal tables get a kind of their own, which checks each map art ID against the art the client's own maps are drawn on and flags one no map uses as `NO MAP`; the Data Review prunes a `NO MAP` row only when the client's `UiMapXMapArt` table on wago.tools has no map for that art either.
+- **Why:** No client API looks up a map art ID, and a map reports only the art of the character's current phase, so the game alone can't tell a phased zone's other art from art the client lacks.
 
 ### Track All buttons use our own strings
 
@@ -22,23 +16,23 @@
 - **Instead:** The Track All and Untrack All buttons use the add-on's own strings on every client, though WoW Forever has Blizzard labels for them.
 - **Why:** The buttons read the same on every client.
 
-### Messages to other players lead with the short name
+### Quest log title leads with Quest Log
 
-- **Departs from:** MESSAGES, the name leading every message is `L["ADDON_TITLE"]`.
-- **Instead:** Whispers and the dungeon quest announcement in group chat lead with `L["ADDON_SHORT"]` (PWQL) after the target marker.
-- **Why:** Both are short lines read mid-play, and the full title would take up half of one before the message starts; the announcement also needs every byte it can get for quest links.
-
-### README title carries the short name
-
-- **Departs from:** README rules, the H1 being the Short Name alone.
-- **Instead:** The README's H1 adds the abbreviation in parentheses after the name.
-- **Why:** Players meet the abbreviation first, at the head of every whisper and group announcement the add-on sends, so the title has to tie it back to the add-on.
+- **Departs from:** ADD-ON NAMES, window titles shaped `Full Name // Title`.
+- **Instead:** The quest log window's title is the game's own Quest Log label, then the Short Name (`Quest Log // PWQL`).
+- **Why:** The window stands in for Blizzard's quest log, so its title leads with the game's own name for it.
 
 ### README Showcase has a screenshot per client
 
 - **Departs from:** README rules, the Showcase under the TL;DR showing the add-on in a single item.
 - **Instead:** The Showcase holds a screenshot under a heading for each client, Forever and TBC & Era, with the quest map's feature lines above the TBC & Era one.
 - **Why:** The two clients' quest logs are different windows that look different, so each gets its own picture, and the maintainer keeps the map's lines beside the one they caption.
+
+### README shows quest chains in a screenshot
+
+- **Departs from:** README rules, the README carrying one image, the Showcase's.
+- **Instead:** Tips & Tricks has a Quest Chains section with a screenshot of a quest's chain in the details pane.
+- **Why:** A chain's checked-off, highlighted steps are quicker to understand in a picture than in words.
 
 ### Classic quest log reshaped in place
 

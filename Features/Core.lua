@@ -106,13 +106,16 @@ RegisterEvent("ADDON_LOADED")
 	The Quest Log switch decides, as the saved settings load, whether the wide quest log runs this
 	session; a change takes effect at the next /reload. On Classic Era and TBC its files widen and hook
 	Blizzard's own quest log, which can't be undone, so each hands its work here and it runs only with the
-	switch on. WoW Forever's quest log is a window of its own that stays closed with the switch off, so
-	its pieces build at once and only the takeover of the quest log key waits (Forever-Quest-Log-Key.lua)
+	switch on. On WoW Forever and Mists the quest log is a window of its own that stays closed with the
+	switch off (Forever-Quest-Log.lua), so its pieces build at once and only the takeover of the quest log
+	key waits (Quest-Log-Key.lua). A client whose TOC lists no quest log files has nothing to run,
+	so the switch does nothing there
 ]]
 local wideQuestLogParts = {}
 
 function ns.AddWideQuestLogPart(build)
-	if ns.FLAVOR == "Camelot" then
+	ns.hasWideQuestLog = true
+	if ns.questLogIsOwnWindow then
 		build()
 	else
 		wideQuestLogParts[#wideQuestLogParts + 1] = build
@@ -120,7 +123,7 @@ function ns.AddWideQuestLogPart(build)
 end
 
 local function StartWideQuestLog()
-	ns.wideQuestLogActive = ns.db.profile.enableWideQuestLog and true or false
+	ns.wideQuestLogActive = (ns.hasWideQuestLog and ns.db.profile.enableWideQuestLog) and true or false
 	if ns.wideQuestLogActive then
 		for _, build in ipairs(wideQuestLogParts) do
 			build()
@@ -137,7 +140,9 @@ function ns:ApplyProfile()
 	ns.ApplyQuestGiverCleanup()
 	if ns.wideQuestLogActive then
 		ns.RefreshQuestLog()
-		ns.questMap.RequestRefresh()
+		if ns.hasQuestMap then
+			ns.questMap.RequestRefresh()
+		end
 	end
 	for _, registryName in pairs(ns.OPTIONS_REGISTRY) do
 		AceConfigRegistry:NotifyChange(registryName)
@@ -190,7 +195,7 @@ end
 function ns:NoteIfQuestieMissing()
 	C_Timer.After(ns.QUESTIE_NOTICE_DELAY, function()
 		if not C_AddOns.IsAddOnLoaded(ns.QUESTIE_ADDON_NAME) then
-			ns:PrintMessage(L["CHAT_QUESTIE_MISSING"])
+			ns:PrintMessage(L["CHAT_QUESTIE_MISSING_FEATURES"])
 		end
 	end)
 end

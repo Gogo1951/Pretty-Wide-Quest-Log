@@ -1,0 +1,118 @@
+## Title: Pretty Wide Quest Log
+## Notes: A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, VoiceOver, and ElvUI.
+## Author: Gogo1951
+
+## IconTexture: Interface/AddOns/Pretty-Wide-Quest-Log/Includes/Images/Pretty-Wide-Quest-Log.tga
+## X-License: MIT
+
+## Category-enUS: Quests
+## Category-deDE: Quests
+## Category-esES: Misiones
+## Category-esMX: Misiones
+## Category-frFR: Quêtes
+## Category-itIT: Missioni
+## Category-koKR: 퀘스트
+## Category-ptBR: Missões
+## Category-ruRU: Задания
+## Category-zhCN: 任务
+## Category-zhTW: 任務
+
+## Interface: 50504
+## X-Flavor: Mists
+## Version: @project-version@
+## X-Curse-Project-ID: 1732686
+## X-Wago-ID: Q6aqkj6W
+
+## SavedVariables: PrettyWideQuestLogDB
+## OptionalDeps: Questie, ElvUI, AI_VoiceOver, Spoken_Quests
+
+# Includes
+Includes/Libraries/LibStub/LibStub.lua
+Includes/Libraries/CallbackHandler-1.0/CallbackHandler-1.0.lua
+Includes/Libraries/AceLocale-3.0/AceLocale-3.0.lua
+Includes/Libraries/AceDB-3.0/AceDB-3.0.lua
+Includes/Libraries/AceGUI-3.0/AceGUI-3.0.xml
+Includes/Libraries/AceConfig-3.0/AceConfigRegistry-3.0/AceConfigRegistry-3.0.lua
+Includes/Libraries/AceConfig-3.0/AceConfigCmd-3.0/AceConfigCmd-3.0.lua
+Includes/Libraries/AceConfig-3.0/AceConfigDialog-3.0/AceConfigDialog-3.0.lua
+Includes/Libraries/AceConfig-3.0/AceConfig-3.0.lua
+Includes/Libraries/AceDBOptions-3.0/AceDBOptions-3.0.lua
+
+# Localization
+Locales/enUS.lua
+Locales/deDE.lua
+Locales/esES.lua
+Locales/esMX.lua
+Locales/frFR.lua
+Locales/itIT.lua
+Locales/koKR.lua
+Locales/ptBR.lua
+Locales/ruRU.lua
+Locales/zhCN.lua
+Locales/zhTW.lua
+
+# Data
+Data/Flavor.lua
+Data/Data.lua
+Data/Mists/Map-Reveal-Mists.lua
+Data/Mists/Quest-Tags-Mists.lua
+Data/Mists/Sample-Quests-Mists.lua
+Data/Default-Settings.lua
+
+# Pretty Wide Quest Log
+Features/Core.lua
+Features/Utilities.lua
+Features/Announcements.lua
+Features/Quest-Display.lua
+Features/Tracking-Mark.lua
+Features/Wowhead-Link.lua
+Features/Quest-Chain.lua
+Features/Quest-Giver.lua
+Features/Window.lua
+Features/Turn-In-Line.lua
+Features/Mists-Tracking.lua
+Features/Forever-Quest-Log.lua
+Features/Quest-Log-Key.lua
+Features/Mists-Quest-Log-Key.lua
+Features/Forever-Quest-List.lua
+Features/Forever-Quest-Details.lua
+Features/Forever-Quest-Giver.lua
+Features/Forever-VoiceOver.lua
+Features/Classic-Zone-Actions.lua
+Features/Zone-Menu.lua
+Features/Share-Reminders.lua
+Features/Dungeon-Quest-Lookup.lua
+Features/Dungeon-Quests.lua
+Features/Quest-Map.xml
+Features/Quest-Map.lua
+Features/Questie-Map.xml
+Features/Questie-Map.lua
+Features/Questie-Map-Areas.lua
+Features/Questie-Map-Area-Layer.lua
+Features/Forever-Quest-Map.lua
+Features/Quest-Map-Reveal.lua
+Features/Mists-Quest-Portrait.lua
+
+# Diagnostics
+Diagnostics/Diagnostics-Core.lua
+Diagnostics/Manifests.lua
+Diagnostics/Event-Log.lua
+Diagnostics/Code-Reports.lua
+Diagnostics/Settings-Reports.lua
+Diagnostics/Validate-Data.lua
+Diagnostics/Localization-Reports.lua
+Diagnostics/Report-Runner.lua
+
+# Options
+Options/Options-Utilities.lua
+Options/Options-General.lua
+Options/Options-Quest-Log.lua
+Options/Options-Quality-of-Life.lua
+Options/Options-Profiles.lua
+Options/Options-Feedback-Support.lua
+Diagnostics/Options-Diagnostics.lua
+Options/Options.lua
+
+# Feedback Welcome! (=
+# Pretty Wide Quest Log on GitHub // https://github.com/Gogo1951/Pretty-Wide-Quest-Log
+# Pretty Wide Quest Log on Discord // https://discord.gg/eh8hKq992Q

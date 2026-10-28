@@ -8,12 +8,12 @@ end
 --------------------------------------------------------------------------------
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
-L["ADDON_SHORT"] = "PWQL"
+L["ADDON_SHORT_NAME"] = "PWQL"
 L["CHAT_LOADED"] =
 	"Version %s. Les paramètres (y compris l'option pour désactiver ce message) se trouvent dans Options > AddOns > Pretty Wide Quest Log. Cet add-on vous plaît ? Parlez-en à un ami, ajoutez-le à vos favoris sur CurseForge ou mettez-lui une Star sur GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "Par mesure de sécurité, l'interface des options ne peut pas être ouverte en combat."
-L["CHAT_QUESTIE_MISSING"] =
-	"Une grande partie de cet add-on repose sur les données de Questie, donc sans lui certaines fonctionnalités sont limitées."
+L["CHAT_QUESTIE_MISSING_FEATURES"] =
+	"Sans Questie, la carte de quêtes en montre moins, et les suites de quêtes ainsi que le total À rendre restent masqués. Activez Questie dans la liste des AddOns pour les voir."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus est aussi activé, et les deux vont se disputer le journal de quêtes. Désactivez Wide Quest Log Plus dans la liste des AddOns, puis rechargez."
 
@@ -30,8 +30,8 @@ L["ENABLE_WIDE_QUEST_LOG"] = "Activer le journal de quêtes large"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Remplace le journal de quêtes de Blizzard par le journal large, avec la carte à côté. Prend effet après un rechargement."
 L["ENABLE_QUALITY_OF_LIFE"] = "Activer les améliorations de confort"
-L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Active la fenêtre de donneur de quêtes épurée, votre propre rythme pour partager des quêtes, les chuchotements quand un partage échoue ainsi que l'annonce et le partage des quêtes de donjon. Désactivez-le pour retrouver la fenêtre de donneur de quêtes de Blizzard et partager au rythme par défaut."
+L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
+	"Épure la fenêtre de donneur de quêtes et aide votre groupe à prendre vos quêtes : rythme de partage, chuchotements quand un partage rate quelqu'un, et annonce et partage des quêtes de donjon. Partager les quêtes d'une zone fonctionne dans tous les cas."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activer le journal de quêtes large prend effet après un rechargement, proposé à la fermeture de l'interface des options."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après un rechargement. Recharger maintenant ?"
@@ -66,8 +66,9 @@ L["SORT_LEVEL_LOWEST"] = "Niveau, le plus bas d'abord"
 L["COMPLETED_FIRST"] = "Afficher les quêtes terminées en premier"
 L["COMPLETED_FIRST_DESCRIPTION"] = "Place en haut de leur zone les quêtes prêtes à être rendues."
 L["SHOW_QUEST_LEVELS"] = "Afficher le niveau des quêtes"
+-- TRANSLATORS: %s is the level tag for a level 40 dungeon quest, such as [40D], built from QUEST_SUFFIX_DUNGEON
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
-	"Place le niveau et le type de chaque quête devant son nom dans la liste, comme [40D] pour une quête de donjon de niveau 40."
+	"Place le niveau et le type de chaque quête devant son nom dans la liste, comme %s pour une quête de donjon de niveau 40."
 L["MARK_UNTRACKED"] = "Marquer les quêtes non suivies"
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"Les quêtes suivies perdent leur coche %s, et les quêtes non suivies ont un œil %s à la place. Pratique si vous suivez presque tout."
@@ -77,15 +78,21 @@ L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 L["SHOW_OBJECTIVE_AREAS"] = "Afficher les zones d'objectifs"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
 	"Colore sur la carte à côté du journal de quêtes les endroits où se trouvent les monstres et les objets de chaque objectif, avec une seule icône par zone au lieu d'une sur chaque point d'apparition. Nécessite Questie."
+L["NEEDS_QUESTIE_HINT"] = "Activez Questie pour utiliser cette option."
 L["WINDOW_SCALE"] = "Échelle du journal de quêtes"
 L["WINDOW_SCALE_DESCRIPTION"] =
 	"Agrandit ou réduit le journal de quêtes. La carte à côté grandit et rétrécit avec lui."
 L["MAP_SCALE"] = "Échelle de la carte"
 L["MAP_SCALE_DESCRIPTION"] =
 	"Agrandit ou réduit la carte à côté du journal de quêtes, en plus de l'échelle du journal de quêtes."
-L["RESET_WINDOW"] = "Réinitialiser la taille et la position"
-L["RESET_WINDOW_DESCRIPTION"] = "Remet le journal de quêtes à sa taille et à sa position par défaut."
-L["RESET_WINDOW_CONFIRM"] = "Remettre le journal de quêtes à sa taille et à sa position par défaut ?"
+L["RESET_WINDOW_BUTTON"] = "Réinitialiser la fenêtre"
+L["RESET_WINDOW_SCALE_DESCRIPTION"] =
+	"Remet la hauteur et l'échelle du journal de quêtes, ainsi que l'échelle de la carte, à leurs valeurs par défaut."
+L["RESET_WINDOW_MOVE_DESCRIPTION"] =
+	"Remet la hauteur et l'échelle du journal de quêtes, ainsi que l'échelle de la carte, à leurs valeurs par défaut, et ramène la fenêtre à son emplacement de départ."
+L["RESET_WINDOW_SCALE_CONFIRM"] = "Réinitialiser la hauteur et l'échelle du journal de quêtes ?"
+L["RESET_WINDOW_MOVE_CONFIRM"] =
+	"Réinitialiser la hauteur et l'échelle du journal de quêtes, ainsi que son emplacement à l'écran ?"
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -99,23 +106,23 @@ L["QUEST_GIVERS_DESCRIPTION"] = "La fenêtre qu'ouvre un donneur de quêtes, où
 L["GIVER_CLEANUP"] = "Fenêtre de donneur de quêtes épurée"
 L["GIVER_CLEANUP_DESCRIPTION"] =
 	"Met en page le texte de la fenêtre de donneur de quêtes comme celui du journal de quêtes, avec les mêmes titres et le même interligne, et affiche sous la quête son ID, lié à Wowhead."
-L["GIVER_LEVELS"] = "Afficher le niveau des quêtes"
+-- TRANSLATORS: %s is a level tag such as [40D], as in SHOW_QUEST_LEVELS_DESCRIPTION
 L["GIVER_LEVELS_DESCRIPTION"] =
-	"Ajoute les repères de niveau du journal de quêtes, comme [40D], à la liste de quêtes d'un donneur de quêtes."
+	"Ajoute les repères de niveau du journal de quêtes, comme %s, à la liste de quêtes d'un donneur de quêtes."
 L["QUEST_SHARING_HEADER"] = "Partage de quêtes"
-L["QUEST_SHARING_DESCRIPTION"] =
-	"Partager les quêtes, dans le menu clic droit d'une zone du journal de quêtes, propose à votre groupe, l'une après l'autre, toutes les quêtes de cette zone que le jeu vous laisse partager. Les options ci-dessous règlent le rythme et ce qui se passe quand un membre du groupe en rate une."
+L["QUEST_SHARING_INTRO"] =
+	"Faites un clic droit sur le nom d'une zone dans le journal de quêtes pour proposer à votre groupe, l'une après l'autre, toutes ses quêtes que vous pouvez partager. Ces options règlent le rythme et ce qui se passe quand quelqu'un en rate une."
 L["SHARE_INTERVAL"] = "Secondes entre les partages"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Le temps d'attente entre une quête partagée et la suivante, pour Partager les quêtes et pour le partage des quêtes de donjon. Plus il est long, plus votre groupe a le temps d'accepter chacune."
 L["SHARE_WHISPERS"] = "Chuchoter quand un partage échoue"
 L["SHARE_WHISPERS_DESCRIPTION"] =
-	"Quand un membre du groupe est occupé, trop loin ou a un journal de quêtes plein, lui chuchote la quête que vous avez essayé de partager et lui demande de vous la rappeler. Rien n'est envoyé s'il ne peut pas prendre la quête."
-L["OPTIONS_EXAMPLE"] = "Exemple :"
-L["OPTIONS_EXAMPLE_QUEST_NAME"] = "Nom de la quête"
+	"Quand un membre du groupe est occupé, trop loin ou a un journal de quêtes plein, lui chuchote la quête que vous avez essayé de partager et lui demande de vous la rappeler. Rien n'est envoyé s'il ne remplit pas les conditions de la quête, l'a déjà ou l'a déjà terminée."
+L["SAMPLE_EXAMPLE"] = "Exemple : %s"
+L["SAMPLE_QUEST_LOADING"] = "Chargement de l'ID de quête : %d"
 L["DUNGEON_QUESTS_HEADER"] = "Quêtes de donjon"
-L["DUNGEON_QUESTS_DESCRIPTION"] =
-	"Ces options se déclenchent quand vous entrez dans un donjon ou un raid avec votre groupe, une fois par groupe pour chaque donjon. Une quête compte si elle est rangée sous le donjon dans votre journal de quêtes ou, avec Questie, si l'un de ses objectifs s'y trouve, ce qui inclut aussi les quêtes de classe."
+L["DUNGEON_QUESTS_INTRO"] =
+	"Quand vous entrez dans un donjon ou un raid avec votre groupe, vos quêtes pour celui-ci sont annoncées et partagées, une fois par groupe pour chaque donjon. Avec Questie, les quêtes dont les objectifs s'y trouvent comptent aussi, quêtes de classe comprises."
 L["DUNGEON_ANNOUNCE"] = "Annonces automatiques des quêtes de donjon"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Indique à votre groupe quelles quêtes il vous reste à faire dans le donjon où vous venez d'entrer, pour que tout le monde sache quoi surveiller. Les quêtes prêtes à être rendues sont omises."
@@ -158,8 +165,17 @@ L["QUEST_SUFFIX_RAID"] = "R"
 L["QUEST_SUFFIX_PVP"] = "J"
 L["QUEST_SUFFIX_GROUP"] = "G"
 L["QUEST_SUFFIX_ELITE"] = "E"
+-- TRANSLATORS: each QUEST_TYPE_* is what the matching QUEST_SUFFIX_* letter above stands for
+L["QUEST_TYPE_DUNGEON"] = "donjon"
+L["QUEST_TYPE_RAID"] = "raid"
+L["QUEST_TYPE_GROUP"] = "groupe"
+L["QUEST_TYPE_ELITE"] = "élite"
+L["QUEST_TYPE_PVP"] = "JcJ"
+L["QUEST_LEVEL_LEGEND"] = "Lettres après le niveau : %s."
+L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s %s"
+L["QUEST_LEVEL_LEGEND_SEPARATOR"] = ", "
 L["QUEST_ID"] = "ID de quête %d"
-L["QUEST_CHAIN"] = "Suite de quêtes"
+L["QUEST_CHAIN_PROGRESS"] = "Suite de quêtes (%d sur %d)"
 L["DAILY_RESET"] = "Les quêtes journalières se réinitialisent dans %s."
 L["WOWHEAD_LINK_TOOLTIP"] = "Cliquez pour obtenir un lien Wowhead."
 L["WOWHEAD_LINK_COPY"] = "Appuyez sur Ctrl+C (Cmd+C sur Mac) pour copier le lien Wowhead."
@@ -178,7 +194,7 @@ L["RESIZE_TOOLTIP"] = "Faites glisser pour redimensionner le journal de quêtes.
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_HINT"] = "Clic droit pour plus d'options"
+L["ZONE_MENU_ACTIONS_HINT"] = "Clic droit pour partager les quêtes ou abandonner les grises"
 L["SHARE_ZONE_QUESTS"] = "Partager %d quêtes"
 L["SHARE_ZONE_QUEST"] = "Partager 1 quête"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
@@ -198,11 +214,11 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "1 quête grise abandonnée."
 --------------------------------------------------------------------------------
 
 L["WHISPER_SHARE_FAILED"] =
-	"J'ai essayé de partager %s avec toi, mais ça n'a pas marché. Si la quête t'intéresse, fais-moi signe quand tu peux et je te la repartage."
-L["WHISPER_SHARE_FAILED_AGAIN"] = "Pareil pour %s."
+	"J'ai essayé de partager %s avec toi, mais ça n'a pas marché. Si la quête t'intéresse, fais-moi signe quand tu peux et je te la repartage"
+L["WHISPER_SHARE_FAILED_AGAIN"] = "Pareil pour %s"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "J'ai %d quêtes à faire ici : %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "J'ai 1 quête à faire ici : %s"
-L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"
+L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Autres quêtes à faire ici : %s"
 L["DUNGEON_QUESTS_SEPARATOR"] = ", "
 
 --------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 local _, ns = ...
 
--- WoW Forever: the quest giver window's gold, experience and quest ID, laid out like the quest details.
+-- WoW Forever and Mists: the quest giver window's gold, experience and quest ID, laid out like the quest details.
 
 local LAYOUT = ns.LAYOUT
 

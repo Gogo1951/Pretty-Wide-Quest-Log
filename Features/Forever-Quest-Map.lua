@@ -1,10 +1,13 @@
 local _, ns = ...
 
 --[[
-	WoW Forever: the map's layers and the quest it follows (Quest-Map.lua builds the map itself). The
-	selected quest comes from Questie's icons when it has any (Questie-Map.lua), otherwise from
+	WoW Forever and Mists: the map's layers and the quest it follows (Quest-Map.lua builds the map itself).
+	The selected quest comes from Questie's icons when it has any (Questie-Map.lua), otherwise from
 	Blizzard's own quest objective area and quest marker
 ]]
+
+-- WoW Forever caches the quests on each map; Mists asks each time
+local GetQuestsOnMap = GetQuestsOnMapCached or C_QuestLog.GetQuestsOnMap
 
 local questMap = ns.questMap
 local canvas = questMap.canvas
@@ -33,7 +36,8 @@ local function AddProvider(mixin)
 end
 
 AddProvider(MapExplorationDataProviderMixin)
-AddProvider(FogOfWarDataProviderMixin)
+-- Mists has the fog layer but not the frame it draws with
+AddProvider(FogOfWarFrameMixin and FogOfWarDataProviderMixin)
 local blobProvider = AddProvider(QuestBlobDataProviderMixin)
 local questProvider = AddProvider(QuestDataProviderMixin)
 AddProvider(DungeonEntranceDataProviderMixin)
@@ -69,9 +73,15 @@ if questProvider then
 			return
 		end
 
+		-- Mists numbers its quest markers, keeping track of the numbers taken as it adds them
+		if self.AssignMissingNumbersToPins then
+			self.usedQuestNumbers = self.usedQuestNumbers or {}
+			self.pinsMissingNumbers = self.pinsMissingNumbers or {}
+		end
+
 		local pinsToQuantize = {}
 		local mapInfo = C_Map.GetMapInfo(mapID)
-		local questsOnMap = GetQuestsOnMapCached(mapID)
+		local questsOnMap = GetQuestsOnMap(mapID)
 		local doesMapShowTaskObjectives = C_TaskQuest.DoesMapShowTaskQuestObjectives(mapID)
 
 		local function CheckAddQuest(questID, x, y, isMapIndicatorQuest, frameLevelOffset, isWaypoint)
@@ -89,10 +99,16 @@ if questProvider then
 			end
 		end
 
-		-- Where to head next when the quest's objectives are in another zone
-		local x, y = C_QuestLog.GetNextWaypointForMap(shownID, mapID)
-		if x and y then
-			CheckAddQuest(shownID, x, y, false, questsOnMap and (#questsOnMap + 1) or 0, true)
+		-- Where to head next when the quest's objectives are in another zone (WoW Forever only)
+		if C_QuestLog.GetNextWaypointForMap then
+			local x, y = C_QuestLog.GetNextWaypointForMap(shownID, mapID)
+			if x and y then
+				CheckAddQuest(shownID, x, y, false, questsOnMap and (#questsOnMap + 1) or 0, true)
+			end
+		end
+
+		if self.AssignMissingNumbersToPins then
+			self:AssignMissingNumbersToPins()
 		end
 
 		self.poiQuantizer:ClearAndQuantize(pinsToQuantize)
@@ -100,7 +116,9 @@ if questProvider then
 			pin:SetPosition(pin.quantizedX or pin.normalizedX, pin.quantizedY or pin.normalizedY)
 		end
 
-		self:UpdatePing()
+		if self.UpdatePing then
+			self:UpdatePing()
+		end
 	end
 end
 

@@ -53,10 +53,10 @@ end
 
 --[[
 	Whether the Quest Log switch asks for the other quest log than this session runs: it applies only as the
-	saved settings load (Core.lua), so it waits for a reload
+	saved settings load (Core.lua), so it waits for a reload. A client with no wide quest log yet has none to wait for
 ]]
 function ns.IsQuestLogReloadPending()
-	return (ns.db.profile.enableWideQuestLog and true or false) ~= ns.wideQuestLogActive
+	return ns.hasWideQuestLog == true and (ns.db.profile.enableWideQuestLog and true or false) ~= ns.wideQuestLogActive
 end
 
 -- A silver line shown only while getText returns something
@@ -84,7 +84,7 @@ end
 	A sub-option: an indented control on a line of its own, in an unnamed inline group (Build Reference →
 	Sub-Option Rows). hidden goes on the group, so the indent collapses with it
 ]]
-function ns.OptionsSubRow(order, controls, hidden)
+function ns.OptionsSubRow(order, hidden, controls)
 	local args = {
 		indent = { type = "description", name = " ", width = ns.OPTIONS_SUB_INDENT_WIDTH, order = 1 },
 	}

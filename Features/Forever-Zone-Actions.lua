@@ -14,6 +14,17 @@ function ns.SelectedQuest()
 	return questID, questID and C_QuestLog.GetTitleForQuestID(questID)
 end
 
+-- The quest a share goes out for: the log entry QuestLogPushQuest is given, or the selected quest when it's given none
+function ns.SharedQuest(questLogIndex)
+	if not questLogIndex then
+		return ns.SelectedQuest()
+	end
+	local entry = C_QuestLog.GetInfo(questLogIndex)
+	if entry and not entry.isHeader and entry.questID then
+		return entry.questID, C_QuestLog.GetTitleForQuestID(entry.questID)
+	end
+end
+
 --[[
 	The quests in a zone the game lets you share, as quest IDs, and how many quests the zone holds. The
 	quest log lists a collapsed zone's quests too, so the zone stays as it is

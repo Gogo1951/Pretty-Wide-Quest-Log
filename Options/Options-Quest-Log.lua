@@ -1,9 +1,16 @@
 local _, ns = ...
 local L = ns.L
+local GetColor = ns.GetColor
 
--- Reset Size and Position, a quarter wider than a standard button for the longer locales, right-aligned
+-- Reset Window, a quarter wider than a standard button for the longer locales, right-aligned
 local RESET_WINDOW_WIDTH = 1.25
 local RESET_WINDOW_INDENT_WIDTH = ns.OPTIONS_ROW_WIDTH - RESET_WINDOW_WIDTH
+
+--[[
+	Only a quest log that's a window of its own (WoW Forever and Mists) is dragged and saves its spot, which
+	its reset puts back; Blizzard's on Classic Era and TBC has no spot to reset (ns.ResetWindow)
+]]
+local RESET_WINDOW_KIND = ns.questLogIsOwnWindow and "MOVE" or "SCALE"
 
 -- The order dropdowns take more of their row than other controls, so their longest choice shows whole
 local SORT_LABEL_WIDTH = 1.4
@@ -96,9 +103,31 @@ local function QuestLogToggle(key, nameKey, desc, order)
 	}
 end
 
--- Show Objective Areas changes only the map, which redraws at once
+-- The map's settings are hidden too on a client whose wide quest log has no map yet (Quest-Map.lua)
+local function MapHidden()
+	return Hidden() or not ns.hasQuestMap
+end
+
+local function QuestieLoaded()
+	return C_AddOns.IsAddOnLoaded(ns.QUESTIE_ADDON_NAME)
+end
+
+--[[
+	Show Objective Areas changes only the map, which redraws at once. The areas come from Questie, so
+	without it the toggle is grayed out and its tooltip says why; the saved choice is kept for when it's back
+]]
 local function ObjectiveAreasToggle(order)
 	local toggle = QuestLogToggle("showObjectiveAreas", "SHOW_OBJECTIVE_AREAS", nil, order)
+	toggle.hidden = MapHidden
+	toggle.disabled = function()
+		return Inactive() or not QuestieLoaded()
+	end
+	toggle.desc = function()
+		if QuestieLoaded() then
+			return L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"]
+		end
+		return L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] .. "\n" .. GetColor("OFF") .. L["NEEDS_QUESTIE_HINT"] .. "|r"
+	end
 	toggle.set = function(_, value)
 		ns.db.profile.showObjectiveAreas = value
 		ns.questMap.RequestRefresh()
@@ -117,7 +146,7 @@ local function SortSubOption(key, nameKey, order)
 	end
 	toggle.width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH
 	toggle.hidden = nil
-	return ns.OptionsSubRow(order, { [key] = toggle }, Hidden)
+	return ns.OptionsSubRow(order, Hidden, { [key] = toggle })
 end
 
 --------------------------------------------------------------------------------
@@ -164,12 +193,19 @@ function ns.BuildQuestLogOptions()
 			}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 22),
 			completedFirstRow = SortSubOption("completedFirst", "COMPLETED_FIRST", 23),
 			spaceShowQuestLevels = ns.OptionsSpacer(24, Hidden),
-			showQuestLevels = QuestLogToggle("showQuestLevels", "SHOW_QUEST_LEVELS", nil, 25),
+			showQuestLevels = QuestLogToggle(
+				"showQuestLevels",
+				"SHOW_QUEST_LEVELS",
+				L["SHOW_QUEST_LEVELS_DESCRIPTION"]:format(ns.LevelTag(40, L["QUEST_SUFFIX_DUNGEON"]))
+					.. " "
+					.. ns.QuestLevelLegend(),
+				25
+			),
 			spaceMarkUntracked = ns.OptionsSpacer(26, Hidden),
 			markUntracked = QuestLogToggle("markUntracked", "MARK_UNTRACKED", MARK_UNTRACKED_TEXT, 27),
 			spaceCloseInCombat = ns.OptionsSpacer(28, Hidden),
 			closeInCombat = QuestLogToggle("closeInCombat", "CLOSE_IN_COMBAT", nil, 29),
-			spaceObjectiveAreas = ns.OptionsSpacer(30, Hidden),
+			spaceObjectiveAreas = ns.OptionsSpacer(30, MapHidden),
 			showObjectiveAreas = ObjectiveAreasToggle(31),
 
 			spaceWindowScale = ns.OptionsSpacer(32, Hidden),
@@ -194,15 +230,15 @@ function ns.BuildQuestLogOptions()
 					ns.ApplyWindowScale()
 				end,
 			},
-			spaceMapScale = ns.OptionsSpacer(35, Hidden),
-			mapScaleLabel = ns.OptionsRowLabel(L["MAP_SCALE"], 36, nil, Hidden),
+			spaceMapScale = ns.OptionsSpacer(35, MapHidden),
+			mapScaleLabel = ns.OptionsRowLabel(L["MAP_SCALE"], 36, nil, MapHidden),
 			mapScale = {
 				type = "range",
 				name = "",
 				desc = L["MAP_SCALE_DESCRIPTION"],
 				width = ns.OPTIONS_CONTROL_WIDTH,
 				order = 37,
-				hidden = Hidden,
+				hidden = MapHidden,
 				disabled = Inactive,
 				min = 0.7,
 				max = 1.3,
@@ -220,14 +256,14 @@ function ns.BuildQuestLogOptions()
 			resetWindowIndent = ns.OptionsRowLabel(" ", 39, RESET_WINDOW_INDENT_WIDTH, Hidden),
 			resetWindow = {
 				type = "execute",
-				name = L["RESET_WINDOW"],
-				desc = L["RESET_WINDOW_DESCRIPTION"],
+				name = L["RESET_WINDOW_BUTTON"],
+				desc = L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_DESCRIPTION"],
 				width = RESET_WINDOW_WIDTH,
 				order = 40,
 				hidden = Hidden,
 				disabled = Inactive,
 				confirm = true,
-				confirmText = L["RESET_WINDOW_CONFIRM"],
+				confirmText = L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_CONFIRM"],
 				func = function()
 					ns.ResetWindow()
 				end,

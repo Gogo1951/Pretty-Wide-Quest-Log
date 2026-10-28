@@ -35,7 +35,7 @@ local function DungeonAnnouncementArguments(dungeonQuests)
 	local function Arguments(isFirst, parts)
 		local list = table.concat(parts, L["DUNGEON_QUESTS_SEPARATOR"])
 		if not isFirst then
-			return { "DUNGEON_QUESTS_ANNOUNCE_MORE", list }
+			return { "DUNGEON_QUESTS_ANNOUNCE_CONTINUED", list }
 		elseif count == 1 then
 			return { "DUNGEON_QUESTS_ANNOUNCE_ONE", list }
 		end

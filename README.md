@@ -2,7 +2,7 @@
 
 A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, VoiceOver, and ElvUI.
 
-**TL;DR**: The quest log Blizzard should have shipped. Everything about a quest on one screen, and your whole group on the same quests without typing a word.
+**TL;DR:** The quest log Blizzard should have shipped. Everything about a quest on one screen, and your whole group on the same quests without typing a word.
 
 ### Forever
 
@@ -18,65 +18,52 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 
 <img width="800" src="https://github.com/user-attachments/assets/8637f1aa-bd9d-431f-af11-243b2fb1d716" />
 
+### Example Messages
+
+> **Enter a Dungeon, Party:** I have 2 quests to do here: [The Defias Brotherhood], [Red Silk Bandanas] // PWQL
+
+> **A Share Misses Someone, Message To Katz:** I tried to share [Red Silk Bandanas] with you, but it didn't go through. If you'd like the quest, just give me a shout when you're ready and I'll share it again // PWQL
+
+> **Share a Zone's Quests, Self:** Pretty Wide Quest Log // Sharing 4 quests from Westfall, one every 3 seconds.
+
+## Setup
+
+1. Install the add-on, ideally using [CurseForge](https://www.curseforge.com/wow/addons/pretty-wide-quest-log) or [Wago](https://addons.wago.io/addons/pretty-wide-quest-log).
+2. Type `/pwql` to open the Options Interface and pick how zones and quests are sorted.
+3. Press your quest log key (L), or click the quest log button on the micro menu.
+4. Drag the grip in the bottom-right corner to make the window as tall as you like.
+5. _"Your quest log's sorted. Now go find Mankrik's wife."_
+
 ## Features
 
-📖 **Everything at a Glance** // See your whole quest list and every detail of the selected quest side by side, with level, dungeon, raid, elite, group, and PvP tags to size up a quest before diving in.
+📖 **Everything at a Glance** // Your whole quest list and every detail of the selected quest side by side, with level, dungeon, raid, elite, group, and PvP tags to size up a quest before diving in.
 
 🗂️ **Organized and Easy to Scan** // Sort zones and quests by level or name, with roomier lines, cleaner headings, and checkmarks on finished objectives, all true to Blizzard's look.
 
 📣 **Your Whole Group, On the Same Page** // Walk into a dungeon and your group instantly knows which of your quests are inside and gets every one you can share, with a friendly whisper for anyone who misses one.
 
-🤝 **Plays Nice With Other Add-ons** // Works with Questie's tracker, ElvUI's skin, VoiceOver, and Spoken while keeping the quest log feeling like part of the default UI.
+📜 **A Tidier Quest Giver** // The quest giver window gets the quest log's clean layout, level tags on every quest it offers, and a quest ID that links to Wowhead.
 
-## Setup
-
-1. Install the add-on, ideally using [CurseForge](https://www.curseforge.com/wow/addons/pretty-wide-quest-log) or [Wago](https://addons.wago.io/addons/pretty-wide-quest-log).
-2. Press your quest log key (L) or click the quest log button on the micro menu.
-3. Drag the grip in the bottom-right corner to make the window as tall as you like.
-4. Type `/pwql` to pick how zones and quests are sorted.
-5. _"Your quest log's sorted. Now go find Mankrik's wife."_
-
-## How It Works
+## Tips & Tricks
 
 ### Quest Chains
 
-Never lose your place in a long chain again. With Questie installed, the selected quest's details list every step of its chain, so you know what came before and what's still ahead.
-
-* ✅ Steps you've turned in are checked off.
-* 📍 The step you're on is highlighted.
-* 🔍 Hover any step for Questie's tooltip on it.
+Never lose your place in a long chain again. With Questie installed, the selected quest's details list every step of its chain, checking off the ones you've turned in and highlighting the one you're on. Hover any step for Questie's tooltip on it.
 
 <img width="800" src="https://github.com/user-attachments/assets/6cf6eebe-5eaf-4b0e-98d3-b9811741f6ed" />
 
-### Questing With a Group
+### Handy Clicks
 
-Get everyone on the same quests without typing a word.
-
-| | Feature | What It Does |
-| --- | --- | --- |
-| 📣 | **Dungeon Announcements** | Zone into a dungeon or raid and your group sees which of your quests are still to do inside. |
-| 📤 | **Dungeon Sharing** | Every quest you can share gets offered to the group, and again for anyone who joins late. |
-| 🗺️ | **Zone Sharing** | Right-click a zone in your log to share all its quests in one go, or drop its gray ones. |
-| 💬 | **Missed-Share Whispers** | Busy, too far away, or log full? They get a friendly whisper naming the quest, so nobody gets left behind. |
-
-> **PWQL** // I have 2 quests to do here: [The Defias Brotherhood], [Red Silk Bandanas]
-
-### Options
-
-* **Pretty Wide Quest Log** // Turn the quest log and the quality of life helpers on or off, plus the welcome message.
-* **Quest Log** // Sort zones and quests your way, choose what each row shows, and size the window and map to fit your screen.
-* **Quality of Life** // A cleaner quest giver window, plus quest sharing and dungeon announcements for your group, at a pace that suits them.
-* **Profiles** // Reset or swap your settings.
-* **Feedback & Support** // Links for reporting a bug, sharing an idea, or helping spread the word.
-* **Diagnostic Tools** // Reports to attach when you file a bug.
-
-<img width="800" src="https://github.com/user-attachments/assets/b04acb35-a31f-4f40-bb7a-d38dc1e3da78" />
+| Click | What It Does |
+| --- | --- |
+| **Right-Click** a zone name | Share all its quests with your party, or abandon its gray ones. |
+| **Click** a quest's ID | Get its Wowhead link, ready to copy. |
 
 ## Testing & Localization Status
 
 🔴 World of Warcraft // 12.1.0
 
-🔴 Mists of Pandaria Classic // 5.5.4
+🟢 Mists of Pandaria Classic // 5.5.4
 
 🟢 Burning Crusade Anniversary // 2.5.6
 
@@ -123,6 +110,7 @@ Get everyone on the same quests without typing a word.
 * Peterodox's [Dialogue UI](https://www.curseforge.com/wow/addons/dialogueui)
 * ExehnTV's [DungeonJournal](https://www.curseforge.com/wow/addons/dungeonjournal)
 * MunkDev's [Immersion](https://www.curseforge.com/wow/addons/immersion)
+* Leatrix's [Leatrix Plus](https://www.curseforge.com/wow/addons/leatrix-plus)
 
 ### 🔴 Alternatives
 

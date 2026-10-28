@@ -8,24 +8,45 @@ local L = ns.L
 --------------------------------------------------------------------------------
 
 --[[
-	Letters after the level in the quest list, by quest tag (Enum.QuestTag): D dungeon, R raid, P PvP,
-	G group. Elite quests without one of those get E. The tags are the engine's quest tag enum values
-	(named in Enum.QuestTag on the Retail engine only), the same on every client, so like class tokens
-	they stay code constants rather than flavor-folder data
+	Letters after the level in the quest list, by quest tag. Elite quests without a tag of their own get E.
+	Tag 1 is Elite on Classic Era and WoW Forever but Group on TBC, so the tags live in each flavor's folder
+	(ns.QUEST_TAG_SUFFIXES)
 ]]
-local QUEST_TAG_SUFFIX = {
-	[81] = L["QUEST_SUFFIX_DUNGEON"], -- Dungeon
-	[85] = L["QUEST_SUFFIX_DUNGEON"], -- Heroic
-	[62] = L["QUEST_SUFFIX_RAID"], -- Raid
-	[88] = L["QUEST_SUFFIX_RAID"], -- Raid (10)
-	[89] = L["QUEST_SUFFIX_RAID"], -- Raid (25)
-	[41] = L["QUEST_SUFFIX_PVP"], -- PvP
-	[1] = L["QUEST_SUFFIX_GROUP"], -- Group
-}
+local QUEST_TAG_SUFFIX = {}
+for tagID, kind in pairs(ns.QUEST_TAG_SUFFIXES) do
+	QUEST_TAG_SUFFIX[tagID] = L["QUEST_SUFFIX_" .. kind]
+end
 local ELITE_SUFFIX = L["QUEST_SUFFIX_ELITE"]
 
 function ns.QuestSuffix(tagID, isElite)
 	return (tagID and QUEST_TAG_SUFFIX[tagID]) or (isElite and ELITE_SUFFIX) or ""
+end
+
+--[[
+	"Letters after the level: D dungeon, R raid, E elite, P PvP.": each letter this client can show, with
+	what it stands for, for the Show Quest Levels tooltips. E is always in, as an elite quest without a tag
+	of its own gets it on any client
+]]
+local LEGEND_ORDER = { "DUNGEON", "RAID", "GROUP", "ELITE", "PVP" }
+
+local questLevelLegend
+do
+	local shown = { ELITE = true }
+	for _, kind in pairs(ns.QUEST_TAG_SUFFIXES) do
+		shown[kind] = true
+	end
+	local entries = {}
+	for _, kind in ipairs(LEGEND_ORDER) do
+		if shown[kind] then
+			entries[#entries + 1] =
+				L["QUEST_LEVEL_LEGEND_ENTRY"]:format(L["QUEST_SUFFIX_" .. kind], L["QUEST_TYPE_" .. kind])
+		end
+	end
+	questLevelLegend = L["QUEST_LEVEL_LEGEND"]:format(table.concat(entries, L["QUEST_LEVEL_LEGEND_SEPARATOR"]))
+end
+
+function ns.QuestLevelLegend()
+	return questLevelLegend
 end
 
 -- "[13]", or "[13D]" for a dungeon quest, and so on
@@ -245,7 +266,8 @@ end
 
 --[[
 	QuestInfo pieces, shared on every client by the quest giver window's detail and reward pages, and on
-	WoW Forever by the quest details and the map's details too. The quest details style them before
+	WoW Forever and Mists by the quest details and Blizzard's own (the map's on WoW Forever, the quest
+	log's on Mists) too. The quest details style them before
 	every repaint; elsewhere they follow the quest giver window cleanup (ns.ApplyQuestGiverCleanup),
 	going back to Blizzard's while it's off. A piece a client lacks is skipped
 ]]

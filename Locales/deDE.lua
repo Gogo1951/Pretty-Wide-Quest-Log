@@ -8,12 +8,12 @@ end
 --------------------------------------------------------------------------------
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
-L["ADDON_SHORT"] = "PWQL"
+L["ADDON_SHORT_NAME"] = "PWQL"
 L["CHAT_LOADED"] =
 	"Version %s. Die Einstellungen (einschließlich der Option, diese Nachricht zu deaktivieren) findest du unter Optionen > AddOns > Pretty Wide Quest Log. Gefällt dir dieses Add-on? Erzähl einem Freund davon, füge es auf CurseForge zu deinen Favoriten hinzu oder gib ihm auf GitHub einen Star. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "Aus Sicherheitsgründen kann das Optionsmenü im Kampf nicht geöffnet werden."
-L["CHAT_QUESTIE_MISSING"] =
-	"Viele Funktionen dieses Add-ons beruhen auf den Daten von Questie, daher sind ohne Questie einige Funktionen eingeschränkt."
+L["CHAT_QUESTIE_MISSING_FEATURES"] =
+	"Ohne Questie zeigt die Questkarte weniger, und Questreihen sowie die Abgabe-Übersicht bleiben verborgen. Aktiviere Questie in der AddOn-Liste, um sie zu sehen."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus ist ebenfalls aktiviert, und die beiden kommen sich beim Questlog in die Quere. Deaktiviere Wide Quest Log Plus in der AddOn-Liste und lade dann neu."
 
@@ -30,8 +30,8 @@ L["ENABLE_WIDE_QUEST_LOG"] = "Breites Questlog aktivieren"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Ersetzt Blizzards Questlog durch das breite, mit der Karte daneben. Wird nach einem Neuladen wirksam."
 L["ENABLE_QUALITY_OF_LIFE"] = "Komfortfunktionen aktivieren"
-L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Schaltet das aufgeräumte Questgeberfenster, dein eigenes Tempo beim Teilen von Quests, Flüsternachrichten bei fehlgeschlagenem Teilen sowie die Ansage und das Teilen von Dungeonquests ein. Schalte es aus, um Blizzards Questgeberfenster zurückzubekommen und im Standardtempo zu teilen."
+L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
+	"Räumt das Questgeberfenster auf und hilft deiner Gruppe, deine Quests zu bekommen: Tempo beim Teilen, Flüsternachrichten, wenn ein Teilen jemanden verfehlt, sowie Ansage und Teilen von Dungeonquests. Quests teilen im Menü einer Zone funktioniert in jedem Fall."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Breites Questlog aktivieren wird nach einem Neuladen wirksam, das dir beim Schließen des Optionsmenüs angeboten wird."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log wechselt das Questlog erst nach einem Neuladen. Jetzt neu laden?"
@@ -66,8 +66,9 @@ L["SORT_LEVEL_LOWEST"] = "Stufe, niedrigste zuerst"
 L["COMPLETED_FIRST"] = "Abgeschlossene Quests zuerst zeigen"
 L["COMPLETED_FIRST_DESCRIPTION"] = "Verschiebt Quests, die abgegeben werden können, an den Anfang ihrer Zone."
 L["SHOW_QUEST_LEVELS"] = "Queststufen anzeigen"
+-- TRANSLATORS: %s is the level tag for a level 40 dungeon quest, such as [40D], built from QUEST_SUFFIX_DUNGEON
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
-	"Setzt die Stufe und Art jeder Quest vor ihren Namen in der Liste, etwa [40D] für eine Dungeonquest der Stufe 40."
+	"Setzt die Stufe und Art jeder Quest vor ihren Namen in der Liste, etwa %s für eine Dungeonquest der Stufe 40."
 L["MARK_UNTRACKED"] = "Nicht verfolgte Quests markieren"
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"Verfolgte Quests verlieren ihr Häkchen %s, und nicht verfolgte Quests bekommen stattdessen ein Auge %s. Praktisch, wenn du fast alles verfolgst."
@@ -77,14 +78,20 @@ L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 L["SHOW_OBJECTIVE_AREAS"] = "Zielgebiete anzeigen"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
 	"Schattiert auf der Karte neben dem Questlog, wo die Gegner und Objekte jedes Ziels zu finden sind, mit einem Symbol pro Gebiet statt einem auf jedem Spawnpunkt. Benötigt Questie."
+L["NEEDS_QUESTIE_HINT"] = "Aktiviere Questie, um dies zu nutzen."
 L["WINDOW_SCALE"] = "Skalierung des Questlogs"
 L["WINDOW_SCALE_DESCRIPTION"] = "Macht das Questlog größer oder kleiner. Die Karte daneben wächst und schrumpft mit."
 L["MAP_SCALE"] = "Skalierung der Karte"
 L["MAP_SCALE_DESCRIPTION"] =
 	"Macht die Karte neben dem Questlog größer oder kleiner, zusätzlich zur Skalierung des Questlogs."
-L["RESET_WINDOW"] = "Größe und Position zurücksetzen"
-L["RESET_WINDOW_DESCRIPTION"] = "Setzt das Questlog auf seine Standardgröße und -position zurück."
-L["RESET_WINDOW_CONFIRM"] = "Questlog auf Standardgröße und -position zurücksetzen?"
+L["RESET_WINDOW_BUTTON"] = "Fenster zurücksetzen"
+L["RESET_WINDOW_SCALE_DESCRIPTION"] =
+	"Setzt Höhe und Skalierung des Questlogs sowie die Skalierung der Karte auf ihre Standardwerte zurück."
+L["RESET_WINDOW_MOVE_DESCRIPTION"] =
+	"Setzt Höhe und Skalierung des Questlogs sowie die Skalierung der Karte auf ihre Standardwerte zurück und bringt das Fenster an seine Ausgangsposition."
+L["RESET_WINDOW_SCALE_CONFIRM"] = "Höhe und Skalierung des Questlogs zurücksetzen?"
+L["RESET_WINDOW_MOVE_CONFIRM"] =
+	"Höhe und Skalierung des Questlogs sowie seine Position auf dem Bildschirm zurücksetzen?"
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -98,23 +105,22 @@ L["QUEST_GIVERS_DESCRIPTION"] = "Das Fenster, das ein Questgeber öffnet, in dem
 L["GIVER_CLEANUP"] = "Aufgeräumtes Questgeberfenster"
 L["GIVER_CLEANUP_DESCRIPTION"] =
 	"Gestaltet den Text des Questgeberfensters wie den des Questlogs, mit denselben Überschriften und Zeilenabständen, und zeigt unter der Quest die Quest-ID mit einem Link zu Wowhead."
-L["GIVER_LEVELS"] = "Queststufen anzeigen"
-L["GIVER_LEVELS_DESCRIPTION"] =
-	"Ergänzt die Questliste eines Questgebers um die Stufenkürzel des Questlogs, etwa [40D]."
+-- TRANSLATORS: %s is a level tag such as [40D], as in SHOW_QUEST_LEVELS_DESCRIPTION
+L["GIVER_LEVELS_DESCRIPTION"] = "Ergänzt die Questliste eines Questgebers um die Stufenkürzel des Questlogs, etwa %s."
 L["QUEST_SHARING_HEADER"] = "Quests teilen"
-L["QUEST_SHARING_DESCRIPTION"] =
-	"Quests teilen im Rechtsklickmenü einer Zone im Questlog bietet deiner Gruppe nacheinander jede Quest dieser Zone an, die das Spiel teilen lässt. Die folgenden Einstellungen bestimmen das Tempo und was passiert, wenn ein Gruppenmitglied eine verpasst."
+L["QUEST_SHARING_INTRO"] =
+	"Rechtsklicke im Questlog auf einen Zonennamen, um deiner Gruppe nacheinander alle Quests dieser Zone anzubieten, die du teilen kannst. Diese Einstellungen bestimmen das Tempo und was passiert, wenn jemand eine verpasst."
 L["SHARE_INTERVAL"] = "Sekunden zwischen dem Teilen"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Wie lange zwischen einer geteilten Quest und der nächsten gewartet wird, für Quests teilen und das Teilen von Dungeonquests. Je länger, desto mehr Zeit hat deine Gruppe, jede einzelne anzunehmen."
 L["SHARE_WHISPERS"] = "Bei fehlgeschlagenem Teilen anflüstern"
 L["SHARE_WHISPERS_DESCRIPTION"] =
-	"Ist ein Gruppenmitglied beschäftigt, zu weit weg oder hat ein volles Questlog, flüsterst du ihm, welche Quest du teilen wolltest, und bittest es, dich daran zu erinnern. Kann es die Quest gar nicht annehmen, wird nichts gesendet."
-L["OPTIONS_EXAMPLE"] = "Beispiel:"
-L["OPTIONS_EXAMPLE_QUEST_NAME"] = "Questname"
+	"Ist ein Gruppenmitglied beschäftigt, zu weit weg oder hat ein volles Questlog, flüsterst du ihm, welche Quest du teilen wolltest, und bittest es, dich daran zu erinnern. Nichts wird gesendet, wenn es die Voraussetzungen für die Quest nicht erfüllt, sie schon hat oder sie bereits erledigt hat."
+L["SAMPLE_EXAMPLE"] = "Beispiel: %s"
+L["SAMPLE_QUEST_LOADING"] = "Lade Quest-ID: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Dungeonquests"
-L["DUNGEON_QUESTS_DESCRIPTION"] =
-	"Diese greifen, wenn du mit deiner Gruppe einen Dungeon oder Schlachtzug betrittst, einmal pro Gruppe für jeden Dungeon. Eine Quest zählt, wenn sie in deinem Questlog unter dem Dungeon steht oder, mit Questie, wenn eines ihrer Ziele darin liegt. So werden auch Klassenquests erfasst."
+L["DUNGEON_QUESTS_INTRO"] =
+	"Wenn du mit deiner Gruppe einen Dungeon oder Schlachtzug betrittst, werden deine Quests dafür angesagt und geteilt, einmal pro Gruppe für jeden Dungeon. Mit Questie zählen auch Quests, deren Ziele darin liegen, Klassenquests eingeschlossen."
 L["DUNGEON_ANNOUNCE"] = "Automatische Ansage von Dungeonquests"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Sagt deiner Gruppe, welche deiner Quests im eben betretenen Dungeon noch offen sind, damit alle wissen, worauf sie achten müssen. Quests, die bereit zur Abgabe sind, werden ausgelassen."
@@ -157,8 +163,17 @@ L["QUEST_SUFFIX_RAID"] = "S"
 L["QUEST_SUFFIX_PVP"] = "P"
 L["QUEST_SUFFIX_GROUP"] = "G"
 L["QUEST_SUFFIX_ELITE"] = "E"
+-- TRANSLATORS: each QUEST_TYPE_* is what the matching QUEST_SUFFIX_* letter above stands for
+L["QUEST_TYPE_DUNGEON"] = "Dungeon"
+L["QUEST_TYPE_RAID"] = "Schlachtzug"
+L["QUEST_TYPE_GROUP"] = "Gruppe"
+L["QUEST_TYPE_ELITE"] = "Elite"
+L["QUEST_TYPE_PVP"] = "PvP"
+L["QUEST_LEVEL_LEGEND"] = "Buchstaben nach der Stufe: %s."
+L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s %s"
+L["QUEST_LEVEL_LEGEND_SEPARATOR"] = ", "
 L["QUEST_ID"] = "Quest-ID %d"
-L["QUEST_CHAIN"] = "Questreihe"
+L["QUEST_CHAIN_PROGRESS"] = "Questreihe (%d von %d)"
 L["DAILY_RESET"] = "Tägliche Quests werden in %s zurückgesetzt."
 L["WOWHEAD_LINK_TOOLTIP"] = "Klicken für einen Wowhead-Link."
 L["WOWHEAD_LINK_COPY"] = "Drücke Strg+C (Cmd+C auf dem Mac), um den Wowhead-Link zu kopieren."
@@ -177,7 +192,7 @@ L["RESIZE_TOOLTIP"] = "Ziehen, um die Größe des Questlogs zu ändern."
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_HINT"] = "Rechtsklick für weitere Optionen"
+L["ZONE_MENU_ACTIONS_HINT"] = "Rechtsklick, um Quests zu teilen oder graue abzubrechen"
 L["SHARE_ZONE_QUESTS"] = "%d Quests teilen"
 L["SHARE_ZONE_QUEST"] = "1 Quest teilen"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
@@ -197,11 +212,11 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "1 graue Quest abgebrochen."
 --------------------------------------------------------------------------------
 
 L["WHISPER_SHARE_FAILED"] =
-	"Ich wollte %s mit dir teilen, aber es hat nicht geklappt. Wenn du die Quest möchtest, sag einfach Bescheid, sobald du bereit bist, dann teile ich sie noch mal."
-L["WHISPER_SHARE_FAILED_AGAIN"] = "Das gilt auch für %s."
+	"Ich wollte %s mit dir teilen, aber es hat nicht geklappt. Wenn du die Quest möchtest, sag einfach Bescheid, sobald du bereit bist, dann teile ich sie noch mal"
+L["WHISPER_SHARE_FAILED_AGAIN"] = "Das gilt auch für %s"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "Ich habe hier %d Quests zu erledigen: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "Ich habe hier 1 Quest zu erledigen: %s"
-L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"
+L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Weitere Quests, die ich hier erledigen muss: %s"
 L["DUNGEON_QUESTS_SEPARATOR"] = ", "
 
 --------------------------------------------------------------------------------
