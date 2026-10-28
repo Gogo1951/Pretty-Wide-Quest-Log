@@ -58,7 +58,7 @@ function ns.BuildGeneralOptions()
 		enableQualityOfLife = ns.OptionsFeatureToggle(
 			"enableQualityOfLife",
 			"ENABLE_QUALITY_OF_LIFE",
-			"FEATURE_QUALITY_OF_LIFE_DESCRIPTION",
+			"FEATURE_QUALITY_OF_LIFE_SUMMARY",
 			14,
 			FEATURE_WIDTH,
 			ns.ApplyQuestGiverCleanup

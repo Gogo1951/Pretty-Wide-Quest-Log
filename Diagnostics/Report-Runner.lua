@@ -9,14 +9,12 @@ local STATUS_OK = ns.DIAGNOSTIC_STATUS_OK
 --------------------------------------------------------------------------------
 
 --[[
-    Every report the panel runs, by id, and the three tabs that group them.
+    Every report the panel runs, by id, and the four tabs that group them.
     Each tab's Run All runs its reports in this order, and each report's own
     button runs just that one. The Event Log and the Taint Log are live tools
-    rather than reports, so neither is here. The map reveal tables are the
-    add-on's only static data, and Validate Data has no check for them, so
-    ns.DIAGNOSTIC_DATA_SOURCES is empty and there is no Data tab
-    (README-Notes); a data file added later still reaches every list by its
-    manifest row alone, once the Data tab and Validate-Data.lua come back.
+    rather than reports, so neither is here. Data gets one report per entry in
+    ns.DIAGNOSTIC_DATA_SOURCES, so a new data file reaches every list by its
+    manifest row alone.
 
     A report either builds its text at once (build) or runs over several frames
     (start, handed a callback taking the text, its note and any problem, with
@@ -159,6 +157,7 @@ ns.DIAGNOSTIC_SECTIONS = {
 		reports = { "questLog", "tracking", "sharing", "map", "saved", "display", "addons" },
 	},
 	{ key = "code", label = D.SECTION_CODE, reports = { "events", "api", "libs" } },
+	{ key = "data", label = D.SECTION_DATA, reports = {} },
 	{ key = "localization", label = D.SECTION_LOCALIZATION, reports = { "locale", "names", "messages" } },
 }
 

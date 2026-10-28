@@ -10,11 +10,8 @@ ns.AddWideQuestLogPart(function()
 
 	-- Hooks only; the few writes Blizzard's code sees are unprotected on these clients (README-Technical: Taint).
 
-	--[[
-		ElvUI's skin can't know about this add-on's replacement art, so when ElvUI is loaded, hide Blizzard's
-		art but don't draw any parchment of our own
-	]]
-	local hideParchment = C_AddOns.IsAddOnLoaded("ElvUI")
+	-- Set once ElvUI's skin has drawn the window, which then shows no parchment at all (ns.HideQuestLogParchment)
+	local hideParchment = false
 
 	local function SetPanelAttribute(name, value)
 		if SetUIPanelAttribute then
@@ -35,6 +32,7 @@ ns.AddWideQuestLogPart(function()
 
 	QuestLogTitleText:ClearAllPoints()
 	QuestLogTitleText:SetPoint("TOP", QuestLogFrame, "TOP", 0, -17)
+	QuestLogTitleText:SetText(ns.BuildWindowTitle())
 
 	--[[
 		Which piece of Blizzard's art a texture is, if it's one of pieces (fileDataID -> name). On current
@@ -72,7 +70,7 @@ ns.AddWideQuestLogPart(function()
 			region:SetAlpha(0)
 		end
 	end
-	local LayoutArt = (not hideParchment) and ns.CreateWindowArt(QuestLogFrame, 1)
+	local LayoutArt, HideArt = ns.CreateWindowArt(QuestLogFrame, 1)
 
 	--[[
 		Some of the bottom row of buttons are pinned to the window's top edge; re-hang them off the bottom
@@ -163,9 +161,7 @@ ns.AddWideQuestLogPart(function()
 		QuestLogListScrollFrame:SetHeight(paneHeight)
 		QuestLogDetailScrollFrame:SetHeight(paneHeight)
 
-		if LayoutArt then
-			LayoutArt(height)
-		end
+		LayoutArt(height)
 		LayoutEmptyArt()
 
 		if ns.SetQuestRowCount(math.floor(paneHeight / rowHeight)) and QuestLogFrame:IsShown() then
@@ -189,6 +185,16 @@ ns.AddWideQuestLogPart(function()
 	end
 
 	ApplyHeight(BASE_HEIGHT)
+
+	--[[
+		ElvUI's skin draws the window as a backdrop of its own and can't know about this add-on's art, so
+		once it has (Classic-ElvUI.lua) no parchment shows. Without its skin the add-on's art stays
+	]]
+	function ns.HideQuestLogParchment()
+		hideParchment = true
+		HideArt()
+		LayoutEmptyArt()
+	end
 
 	--------------------------------------------------------------------------------
 	-- Hooks

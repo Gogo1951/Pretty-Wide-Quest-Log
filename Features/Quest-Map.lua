@@ -1,5 +1,8 @@
 local _, ns = ...
 
+-- The map comes with the wide quest log on every client whose TOC loads this file
+ns.hasQuestMap = true
+
 ns.AddWideQuestLogPart(function()
 	local L = ns.L
 	local LAYOUT = ns.LAYOUT
@@ -128,11 +131,30 @@ ns.AddWideQuestLogPart(function()
 	closeButton:SetFrameLevel(canvas:GetFrameLevel() + 10)
 	questMap.closeButton = closeButton
 
-	-- Remembered across sessions; shown unless it was closed
+	--[[
+		Remembered across sessions; shown unless it was closed. With no quests in the log there's nothing
+		to map, so the map and its button are hidden then, leaving what was remembered as it is
+	]]
+	local logEmpty = false
+
 	local function ApplyShown()
 		local shown = not ns.db.global.mapHidden
-		holder:SetShown(shown)
+		holder:SetShown(shown and not logEmpty)
+		toggleButton:SetShown(not logEmpty)
 		toggleButton:SetText(shown and L["HIDE_MAP"] or SHOW_MAP)
+	end
+
+	-- Each client's quest list says whether the log has any quests each time it updates
+	function questMap.SetLogEmpty(isEmpty)
+		isEmpty = isEmpty and true or false
+		if isEmpty ~= logEmpty then
+			logEmpty = isEmpty
+			ApplyShown()
+		end
+	end
+
+	function questMap.IsLogEmpty()
+		return logEmpty
 	end
 
 	local function SetShown(shown)

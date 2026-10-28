@@ -99,15 +99,15 @@ ns.MAP_REVEAL_OVERLAYS = {
 		["200:195:445:120"] = "270532",
 		["220:220:551:48"] = "270530",
 		["230:230:349:256"] = "2212608",
-		["240:255:0:148"] = "2212593",
 		["245:205:389:7"] = "2212606",
 		["245:205:498:209"] = "2212592",
-		["255:205:17:310"] = "270529",
-		["255:220:12:428"] = "270520",
 		["255:280:501:341"] = "270540, 270527",
+		["256:256:0:148"] = "2212593",
+		["256:256:12:428"] = "270520",
+		["256:256:148:384"] = "2212599",
+		["256:256:17:310"] = "270529",
 		["265:270:345:389"] = "270522, 270550, 270528, 270536",
 		["270:275:159:199"] = "270525, 270521, 2212603, 2212605",
-		["285:240:148:384"] = "2212599, 2212601",
 		["370:455:611:110"] = "270534, 270551, 270546, 270535",
 	},
 	[1209] = { -- Blasted Lands (1419)
@@ -122,7 +122,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 		["384:450:212:178"] = "391429, 391428, 391427, 391426",
 	},
 	[1210] = { -- Tirisfal Glades (1420)
-		["128:158:537:299"] = "273015",
+		["128:256:537:299"] = "273015",
 		["150:128:474:327"] = "273016",
 		["173:128:694:289"] = "273000",
 		["174:220:497:145"] = "273020",
@@ -865,7 +865,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 How We Got the Data
 
 Last Validated
-	Never.
+	2026-10-28, TBC Anniversary 2.5.6.70577
 
 Notes
 	- Every area of a zone's map that starts hidden until the character explores it, so the quest map can show the
@@ -878,6 +878,9 @@ Notes
 	  tile of the map art's tile size. No art ships with the add-on; these are the game's files.
 	- Copied whole from Leatrix Maps 2.5.43 (TBC Anniversary), Leatrix_Maps_Reveal.lua, by script. The zone
 	  name and uiMapID opening each row are Leatrix's.
+	- Checked against this client's own map overlay tables (wago.tools, below), which match every row but
+	  five: four areas in Badlands and one in Tirisfal Glades whose size the TBC Anniversary client changed, now
+	  the client's. The tables' placeholder areas, with no size or no textures, are left out.
 
 SQL (CMaNGOS)
 	TODO: Add SQL Query
@@ -886,5 +889,6 @@ Wowhead
 	None.
 
 wago.tools
-	None.
+	https://wago.tools/db2/WorldMapOverlay?build=2.5.6.70577
+	https://wago.tools/db2/WorldMapOverlayTile?build=2.5.6.70577
 ]]

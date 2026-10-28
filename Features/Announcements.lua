@@ -6,30 +6,45 @@ local GetColor = ns.GetColor
 -- Messaging
 --------------------------------------------------------------------------------
 
+-- A line for the player's own chat window, as ns:PrintMessage prints it
+function ns.BuildPrintLine(message)
+	return GetColor("INFO")
+		.. L["ADDON_TITLE"]
+		.. "|r "
+		.. GetColor("SEPARATOR")
+		.. "//"
+		.. "|r "
+		.. GetColor("TEXT")
+		.. message
+		.. "|r"
+end
+
+-- The quest log window's title: the print line's colors, the other way round ("Quest Log // PWQL")
+function ns.BuildWindowTitle()
+	return GetColor("TEXT")
+		.. QUEST_LOG
+		.. "|r "
+		.. GetColor("SEPARATOR")
+		.. "//"
+		.. "|r "
+		.. GetColor("INFO")
+		.. L["ADDON_SHORT_NAME"]
+		.. "|r"
+end
+
 function ns:PrintMessage(message)
-	print(
-		GetColor("INFO")
-			.. L["ADDON_TITLE"]
-			.. "|r "
-			.. GetColor("SEPARATOR")
-			.. "//"
-			.. "|r "
-			.. GetColor("TEXT")
-			.. message
-			.. "|r"
-	)
+	print(ns.BuildPrintLine(message))
 end
 
 --[[
-	A message for other players, not yet sent: the add-on's marker, its short name, so a whisper or a
-	line in group chat isn't half name (README-Notes), and the body from L[formatKey]. WoW Forever blocks raid-marker tokens in
-	chat, so the marker is left off there. Bodies can carry quest links, so pipes are kept: stripping them
-	would break the links
+	A message for other players, not yet sent: the add-on's marker, the body from L[formatKey], then its
+	short name. WoW Forever blocks raid-marker tokens in chat, so the marker is left off there. Bodies can
+	carry quest links, so pipes are kept: stripping them would break the links
 ]]
 function ns:BuildAnnounceMessage(formatKey, ...)
 	local body = L[formatKey]:format(...)
 	local marker = ns.FLAVOR ~= "Camelot" and (ns.TARGET_MARKER .. " ") or ""
-	return marker .. L["ADDON_SHORT"] .. " // " .. body
+	return marker .. body .. " // " .. L["ADDON_SHORT_NAME"]
 end
 
 -- The group's chat: instance group, then raid, then party; nil while solo, so ns:Announce sends nothing

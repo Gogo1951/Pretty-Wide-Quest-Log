@@ -1,7 +1,10 @@
 local _, ns = ...
 local L = ns.L
 
--- WoW Forever: the two-pane quest log as a window of its own (ns.LAYOUT).
+-- WoW Forever and Mists: the two-pane quest log as a window of its own (ns.LAYOUT).
+
+-- Built at once rather than on the Quest Log switch, which only decides whether it takes the quest log key (Core.lua)
+ns.questLogIsOwnWindow, ns.hasWideQuestLog = true, true
 
 local LAYOUT = ns.LAYOUT
 local BASE_WIDTH, BASE_HEIGHT, PANE_TOP, ROW_HEIGHT =
@@ -44,7 +47,7 @@ local LayoutArt = ns.CreateWindowArt(frame)
 
 local windowTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 windowTitle:SetPoint("TOP", 0, -17)
-windowTitle:SetText(QUEST_LOG)
+windowTitle:SetText(ns.BuildWindowTitle())
 
 local closeButton = CreateFrame("Button", nil, frame, "UIPanelCloseButtonNoScripts")
 closeButton:SetPoint("CENTER", frame, "TOPRIGHT", -46, -24)
@@ -95,7 +98,7 @@ end
 local trackButton = CreateBottomButton(TRACK_QUEST_ABBREV, 125, ForSelectedQuest(ns.ToggleTracking))
 trackButton:SetPoint("BOTTOMLEFT", LAYOUT.BUTTON_LEFT, LAYOUT.BUTTON_BOTTOM)
 
-local abandonButton = CreateBottomButton(ABANDON_QUEST, nil, ForSelectedQuest(QuestMapQuestOptions_AbandonQuest))
+local abandonButton = CreateBottomButton(ABANDON_QUEST, nil, ForSelectedQuest(ns.AskToAbandonQuest))
 abandonButton:SetPoint("LEFT", trackButton, "RIGHT")
 
 local exitButton = CreateBottomButton(EXIT, 77, function()
@@ -103,7 +106,7 @@ local exitButton = CreateBottomButton(EXIT, 77, function()
 end)
 exitButton:SetPoint("BOTTOMRIGHT", -LAYOUT.BUTTON_RIGHT, LAYOUT.BUTTON_BOTTOM)
 
-local shareButton = CreateBottomButton(SHARE_QUEST, nil, ForSelectedQuest(QuestMapQuestOptions_ShareQuest))
+local shareButton = CreateBottomButton(SHARE_QUEST, nil, ForSelectedQuest(ns.ShareQuest))
 shareButton:SetPoint("RIGHT", exitButton, "LEFT")
 
 -- The Ready to Turn In line sits centered between these two (Turn-In-Line.lua)
@@ -130,15 +133,13 @@ local function UpdateButtons()
 		return
 	end
 
-	local disabled = C_QuestLog.IsQuestDisabledForSession(questID)
-	abandonButton:SetEnabled(not disabled and C_QuestLog.CanAbandonQuest(questID))
-	shareButton:SetEnabled(not disabled and C_QuestLog.IsPushableQuest(questID) and IsInGroup())
+	local disabled = ns.IsQuestDisabledForSession(questID)
+	abandonButton:SetEnabled(not disabled and ns.CanAbandonQuest(questID))
+	shareButton:SetEnabled(not disabled and ns.IsPushableQuest(questID) and IsInGroup())
 
 	local tracked, trackable = ns.IsTracked(questID), ns.CanTrack(questID)
 	trackButton:SetText(tracked and UNTRACK_QUEST_ABBREV or TRACK_QUEST_ABBREV)
-	trackButton:SetEnabled(
-		trackable and ((tracked and QuestUtil.CanRemoveQuestWatch()) or (not tracked and not disabled))
-	)
+	trackButton:SetEnabled(trackable and ((tracked and ns.CanRemoveQuestWatch()) or (not tracked and not disabled)))
 	trackButton.untrackable = not trackable
 end
 
@@ -167,10 +168,10 @@ function ns.ShowQuest(questID)
 	state.scrollToQuestID = questID
 
 	-- Open the quest's zone if it's collapsed
-	local headerIndex = C_QuestLog.GetHeaderIndexForQuest(questID)
-	local header = headerIndex and C_QuestLog.GetInfo(headerIndex)
+	local headerIndex = ns.GetHeaderIndexForQuest(questID)
+	local header = headerIndex and ns.GetQuestLogEntry(headerIndex)
 	if header and header.isCollapsed then
-		ExpandQuestHeader(headerIndex)
+		ns.SetQuestZoneCollapsed(headerIndex, false)
 	end
 
 	if frame:IsShown() then
@@ -272,19 +273,31 @@ end)
 	the character pane and so on) open on top of this one, and a quest giver's takes the pieces the
 	quest details are drawn with, leaving them blank. So the two make way for each other, as Blizzard's
 	own windows do: this one closes when one of those opens, and closes any that are open when it opens
-	(out of combat, when Blizzard allows it). Bags aren't such windows, so they're left alone
+	(out of combat, when Blizzard allows it). Bags aren't such windows, so they're left alone, as is Blizzard's
+	own quest log on Mists while this window takes over from it (Mists-Quest-Log-Key.lua). The panel this
+	one last closed for is remembered until the next frame (ns.WasClosedForPanel)
 ]]
 local LEFT_PANEL_AREAS = { "left", "doublewide" }
+local closedForPanel
 hooksecurefunc("ShowUIPanel", function(panel)
-	if (not frame:IsShown()) or not panel or (panel == frame) then
+	if (not frame:IsShown()) or not panel or (panel == frame) or ns.IsTakenOverPanel(panel) then
 		return
 	end
 	local layout = UIPanelWindows[panel:GetName() or ""]
 	local area = (layout and layout.area) or panel:GetAttribute("UIPanelLayout-area")
 	if tContains(LEFT_PANEL_AREAS, area) then
 		frame:Hide()
+		closedForPanel = panel
+		C_Timer.After(0, function()
+			closedForPanel = nil
+		end)
 	end
 end)
+
+-- Whether this window closed for the panel in this same frame, so its opener can tell a close from an open
+function ns.WasClosedForPanel(panel)
+	return panel ~= nil and closedForPanel == panel
+end
 
 local function CloseLeftPanels()
 	if InCombatLockdown() then
@@ -331,14 +344,16 @@ end)
 local function Toggle()
 	frame:SetShown(not frame:IsShown())
 end
-ns.ToggleQuestLogWindow = Toggle -- The quest log key's button (Forever-Quest-Log-Key.lua)
+ns.ToggleQuestLogWindow = Toggle -- The quest log key's button (Quest-Log-Key.lua)
 
 function ns.ResetWindow()
 	ns.db.global.height, ns.db.global.point = nil, nil
 	ns.db.global.scale = ns.DATABASE_DEFAULTS.global.scale
 	ns.db.global.mapScale = ns.DATABASE_DEFAULTS.global.mapScale
 	frame:SetScale(ns.db.global.scale)
-	ns.ApplyMapScale()
+	if ns.hasQuestMap then
+		ns.ApplyMapScale()
+	end
 	frame:ClearAllPoints()
 	frame:SetPoint(unpack(DEFAULT_POINT))
 	ApplyHeight(BASE_HEIGHT)
@@ -364,7 +379,7 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-	The saved position, the quest log takeover (Forever-Quest-Log-Key.lua), and a refresh whenever Questie's tracker updates
+	The saved position, the quest log takeover (Forever-Quest-Log-Key.lua, Mists-Quest-Log-Key.lua), and a refresh whenever Questie's tracker updates
 	(untracking from its own menu doesn't always touch Blizzard's watch list). Core calls this once saved
 	variables have loaded
 ]]

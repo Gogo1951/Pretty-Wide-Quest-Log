@@ -43,12 +43,12 @@ function ns.ShowZoneMenuHint(owner)
 	GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
 	GameTooltip:AddLine(
 		GetColor("INFO")
-			.. L["ADDON_SHORT"]
+			.. L["ADDON_SHORT_NAME"]
 			.. "|r "
 			.. GetColor("SEPARATOR")
 			.. "//|r "
 			.. GetColor("TEXT")
-			.. L["ZONE_MENU_HINT"]
+			.. L["ZONE_MENU_ACTIONS_HINT"]
 			.. "|r"
 	)
 	GameTooltip:Show()

@@ -8,12 +8,12 @@ end
 --------------------------------------------------------------------------------
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
-L["ADDON_SHORT"] = "PWQL"
+L["ADDON_SHORT_NAME"] = "PWQL"
 L["CHAT_LOADED"] =
 	"版本 %s。設定（包括關閉此訊息的選項）位於 選項 > 插件 > Pretty Wide Quest Log。喜歡這個插件嗎？推薦給朋友，在 CurseForge 上收藏，或在 GitHub 上按 Star 吧。(="
 L["CHAT_OPTIONS_IN_COMBAT"] = "基於安全考量，戰鬥中無法開啟設定介面。"
-L["CHAT_QUESTIE_MISSING"] =
-	"本插件的許多功能仰賴 Questie 的資料，因此沒有 Questie 時部分功能會受限。"
+L["CHAT_QUESTIE_MISSING_FEATURES"] =
+	"沒有 Questie 時，任務地圖顯示的內容會變少，任務鏈和回報總計也會隱藏。請在插件列表中啟用 Questie 以顯示它們。"
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus 也已啟用，兩者會互相搶奪任務日誌。請在插件列表中停用 Wide Quest Log Plus，然後重新載入介面。"
 
@@ -30,8 +30,8 @@ L["ENABLE_WIDE_QUEST_LOG"] = "啟用寬版任務日誌"
 L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"將暴雪任務日誌換成寬版任務日誌，地圖就在旁邊。重新載入介面後生效。"
 L["ENABLE_QUALITY_OF_LIFE"] = "啟用便利功能"
-L["FEATURE_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"開啟任務NPC視窗整理、自訂分享任務的節奏、分享任務失敗時的密語，以及地城任務的通報和分享。關閉後恢復暴雪的任務NPC視窗，並以預設節奏分享。"
+L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
+	"整理任務NPC視窗，並幫助隊友接到你的任務：分享節奏、分享未送達時的密語，以及地城任務的通報和分享。區域的分享任務無論開關都能使用。"
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"啟用寬版任務日誌需要重新載入介面才會生效，關閉設定介面時會提示你重新載入。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新載入介面才能切換任務日誌。現在重新載入嗎？"
@@ -65,8 +65,9 @@ L["SORT_LEVEL_LOWEST"] = "等級，由低到高"
 L["COMPLETED_FIRST"] = "優先顯示已完成任務"
 L["COMPLETED_FIRST_DESCRIPTION"] = "將可以回報的任務移到所在區域的頂端。"
 L["SHOW_QUEST_LEVELS"] = "顯示任務等級"
+-- TRANSLATORS: %s is the level tag for a level 40 dungeon quest, such as [40D], built from QUEST_SUFFIX_DUNGEON
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
-	"在清單中每個任務名稱前顯示其等級和類型，例如 [40副] 表示40級地城任務。"
+	"在清單中每個任務名稱前顯示其等級和類型，例如 %s 表示40級地城任務。"
 L["MARK_UNTRACKED"] = "標記未追蹤的任務"
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"已追蹤的任務不再顯示勾號 %s，改為在未追蹤的任務前顯示眼睛 %s。如果你幾乎追蹤所有任務，會很方便。"
@@ -75,13 +76,17 @@ L["CLOSE_IN_COMBAT_DESCRIPTION"] = "戰鬥開始時關閉任務日誌，避免�
 L["SHOW_OBJECTIVE_AREAS"] = "顯示目標範圍"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
 	"在任務日誌旁的地圖上，以陰影標出每個目標的怪物和物件所在的範圍，每個範圍只顯示一個圖示，而不是每個重生點各顯示一個。需要 Questie。"
+L["NEEDS_QUESTIE_HINT"] = "啟用 Questie 後才能使用此功能。"
 L["WINDOW_SCALE"] = "任務日誌縮放"
 L["WINDOW_SCALE_DESCRIPTION"] = "放大或縮小任務日誌。旁邊的地圖會隨之一起縮放。"
 L["MAP_SCALE"] = "地圖縮放"
 L["MAP_SCALE_DESCRIPTION"] = "在任務日誌縮放的基礎上，放大或縮小任務日誌旁的地圖。"
-L["RESET_WINDOW"] = "重設大小和位置"
-L["RESET_WINDOW_DESCRIPTION"] = "將任務日誌恢復為預設大小和位置。"
-L["RESET_WINDOW_CONFIRM"] = "要將任務日誌重設為預設大小和位置嗎？"
+L["RESET_WINDOW_BUTTON"] = "重設視窗"
+L["RESET_WINDOW_SCALE_DESCRIPTION"] = "將任務日誌的高度和縮放以及地圖縮放恢復為預設值。"
+L["RESET_WINDOW_MOVE_DESCRIPTION"] =
+	"將任務日誌的高度和縮放以及地圖縮放恢復為預設值，並將視窗移回初始位置。"
+L["RESET_WINDOW_SCALE_CONFIRM"] = "要重設任務日誌的高度和縮放嗎？"
+L["RESET_WINDOW_MOVE_CONFIRM"] = "要重設任務日誌的高度、縮放及其在螢幕上的位置嗎？"
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -95,22 +100,22 @@ L["QUEST_GIVERS_DESCRIPTION"] = "任務NPC開啟的視窗，你在這裡接受�
 L["GIVER_CLEANUP"] = "任務NPC視窗整理"
 L["GIVER_CLEANUP_DESCRIPTION"] =
 	"讓任務NPC視窗的文字排版與任務日誌一致，使用相同的標題和行距，並在任務下方顯示連結到 Wowhead 的任務ID。"
-L["GIVER_LEVELS"] = "顯示任務等級"
-L["GIVER_LEVELS_DESCRIPTION"] = "在任務NPC的任務清單中加上任務日誌的等級標籤，例如 [40副]。"
+-- TRANSLATORS: %s is a level tag such as [40D], as in SHOW_QUEST_LEVELS_DESCRIPTION
+L["GIVER_LEVELS_DESCRIPTION"] = "在任務NPC的任務清單中加上任務日誌的等級標籤，例如 %s。"
 L["QUEST_SHARING_HEADER"] = "任務分享"
-L["QUEST_SHARING_DESCRIPTION"] =
-	"在任務日誌中右鍵點擊區域，選單裡的分享任務會把該區域中遊戲允許分享的每個任務逐一分享給隊伍。下方的選項設定分享的節奏，以及隊友錯過任務時該怎麼辦。"
+L["QUEST_SHARING_INTRO"] =
+	"在任務日誌中右鍵點擊區域名稱，即可把該區域中你能分享的所有任務逐一分享給隊伍。這些選項設定分享的節奏，以及有人錯過任務時該怎麼辦。"
 L["SHARE_INTERVAL"] = "分享間隔秒數"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"分享一個任務後到下一個任務之間的等待時間，適用於分享任務和地城任務分享。時間越長，隊友就有越多時間接受每個任務。"
 L["SHARE_WHISPERS"] = "分享失敗時密語"
 L["SHARE_WHISPERS_DESCRIPTION"] =
-	"當隊友正忙、距離太遠或任務日誌已滿時，密語告訴對方你嘗試分享的任務，並請對方提醒你。如果對方無法接受該任務，則不傳送任何訊息。"
-L["OPTIONS_EXAMPLE"] = "範例："
-L["OPTIONS_EXAMPLE_QUEST_NAME"] = "任務名稱"
+	"當隊友正忙、距離太遠或任務日誌已滿時，密語告訴對方你嘗試分享的任務，並請對方提醒你。如果對方不符合任務條件、已經接了該任務或已經完成，則不傳送任何訊息。"
+L["SAMPLE_EXAMPLE"] = "範例：%s"
+L["SAMPLE_QUEST_LOADING"] = "正在載入任務ID：%d"
 L["DUNGEON_QUESTS_HEADER"] = "地城任務"
-L["DUNGEON_QUESTS_DESCRIPTION"] =
-	"當你和隊伍進入地城或團隊副本時觸發，每支隊伍在每個地城只觸發一次。任務日誌中列在該地城下的任務都算在內；裝有Questie時，任何目標位於其中的任務也算，職業任務也能找到。"
+L["DUNGEON_QUESTS_INTRO"] =
+	"當你和隊伍進入地城或團隊副本時，會通報並分享你在其中的任務，每支隊伍在每個地城只進行一次。裝有 Questie 時，目標位於其中的任務也算在內，包括職業任務。"
 L["DUNGEON_ANNOUNCE"] = "地城任務自動通報"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"告訴隊友你在剛進入的地城裡還有哪些任務要做，讓大家知道要留意什麼。可以回報的任務不會列出。"
@@ -153,8 +158,17 @@ L["QUEST_SUFFIX_RAID"] = "團"
 L["QUEST_SUFFIX_PVP"] = "戰"
 L["QUEST_SUFFIX_GROUP"] = "組"
 L["QUEST_SUFFIX_ELITE"] = "精"
+-- TRANSLATORS: each QUEST_TYPE_* is what the matching QUEST_SUFFIX_* letter above stands for
+L["QUEST_TYPE_DUNGEON"] = "地城"
+L["QUEST_TYPE_RAID"] = "團隊副本"
+L["QUEST_TYPE_GROUP"] = "組隊"
+L["QUEST_TYPE_ELITE"] = "精英"
+L["QUEST_TYPE_PVP"] = "PvP"
+L["QUEST_LEVEL_LEGEND"] = "等級後的字：%s。"
+L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s（%s）"
+L["QUEST_LEVEL_LEGEND_SEPARATOR"] = "、"
 L["QUEST_ID"] = "任務ID %d"
-L["QUEST_CHAIN"] = "任務鏈"
+L["QUEST_CHAIN_PROGRESS"] = "任務鏈（%d/%d）"
 L["DAILY_RESET"] = "每日任務將在 %s 後重置。"
 L["WOWHEAD_LINK_TOOLTIP"] = "點擊取得 Wowhead 連結。"
 L["WOWHEAD_LINK_COPY"] = "按 Ctrl+C（Mac 上為 Cmd+C）複製 Wowhead 連結。"
@@ -173,7 +187,7 @@ L["RESIZE_TOOLTIP"] = "拖曳以調整任務日誌大小。"
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_HINT"] = "右鍵點擊查看更多選項"
+L["ZONE_MENU_ACTIONS_HINT"] = "右鍵點擊可分享任務或放棄灰色任務"
 L["SHARE_ZONE_QUESTS"] = "分享 %d 個任務"
 L["SHARE_ZONE_QUEST"] = "分享 1 個任務"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] = "把本區域中遊戲允許分享的任務分享給隊伍，每 %d 秒一個。"
@@ -192,11 +206,11 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "已放棄 1 個灰色任務。"
 --------------------------------------------------------------------------------
 
 L["WHISPER_SHARE_FAILED"] =
-	"我剛才想把 %s 分享給你，但沒成功。如果需要，等你準備好時叫我一聲，我再分享一次。"
-L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 也一樣。"
+	"我剛才想把 %s 分享給你，但沒成功。如果需要，等你準備好時叫我一聲，我再分享一次"
+L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 也一樣"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "我在這裡還有 %d 個任務要做：%s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "我在這裡還有 1 個任務要做：%s"
-L["DUNGEON_QUESTS_ANNOUNCE_MORE"] = "%s"
+L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "我在這裡還有更多任務要做：%s"
 L["DUNGEON_QUESTS_SEPARATOR"] = "、"
 
 --------------------------------------------------------------------------------

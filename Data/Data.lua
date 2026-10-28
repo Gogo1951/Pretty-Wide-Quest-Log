@@ -35,6 +35,7 @@ local WOWHEAD_QUEST_URLS = {
 	Vanilla = "https://www.wowhead.com/classic/quest=",
 	TBC = "https://www.wowhead.com/tbc/quest=",
 	Camelot = "https://www.wowhead.com/classic/quest=",
+	Mists = "https://www.wowhead.com/mop-classic/quest=",
 }
 ns.WOWHEAD_QUEST_URL = WOWHEAD_QUEST_URLS[ns.FLAVOR]
 
@@ -55,6 +56,19 @@ ns.PALETTE = {
 	OFF = "CC3333", -- Red: Off
 	SEPARATOR = "AAAAAA", -- Gray: Separators, Dividers
 	MUTED = "808080", -- Dark Gray: Meta-data, Version Numbers
+}
+
+ns.CLASS_COLORS = {
+	DEATHKNIGHT = "C41E3A",
+	DRUID = "FF7C0A",
+	HUNTER = "AAD372",
+	MAGE = "3FC7EB",
+	PALADIN = "F48CBA",
+	PRIEST = "FFFFFF",
+	ROGUE = "FFF468",
+	SHAMAN = "0070DD",
+	WARLOCK = "8788EE",
+	WARRIOR = "C69B6D",
 }
 
 --------------------------------------------------------------------------------

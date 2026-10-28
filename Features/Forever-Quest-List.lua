@@ -28,39 +28,36 @@ local MINUS_TEXTURE = "Interface\\Buttons\\UI-MinusButton-Up"
 local TITLE_HIGHLIGHT = "Interface\\QuestFrame\\UI-QuestLogTitleHighlight"
 
 local function ToggleHeader(questLogIndex)
-	local entry = C_QuestLog.GetInfo(questLogIndex)
+	local entry = ns.GetQuestLogEntry(questLogIndex)
 	if not entry then
 		return
 	end
-	if entry.isCollapsed then
-		ExpandQuestHeader(questLogIndex)
-	else
-		CollapseQuestHeader(questLogIndex)
-	end
+	ns.SetQuestZoneCollapsed(questLogIndex, not entry.isCollapsed)
 	ns.RequestUpdate()
 end
 
 -- Every zone starts the session open; collapsing one only lasts until the next login or reload
 function ns.ExpandAllZones()
-	for index = C_QuestLog.GetNumQuestLogEntries(), 1, -1 do
-		local entry = C_QuestLog.GetInfo(index)
+	ns.ShowEveryQuestLogEntry()
+	for index = ns.GetNumQuestLogEntries(), 1, -1 do
+		local entry = ns.GetQuestLogEntry(index)
 		if entry and entry.isHeader and entry.isCollapsed then
-			ExpandQuestHeader(index)
+			ns.SetQuestZoneCollapsed(index, false)
 		end
 	end
 end
 
 -- The tag at the right of a quest's row: (Failed), (Complete), or its type
-local function GetQuestTag(questID)
-	if C_QuestLog.IsFailed(questID) then
+local function GetQuestTag(data)
+	if data.isFailed then
 		return FAILED
-	elseif C_QuestLog.IsComplete(questID) then
+	elseif data.isComplete then
 		return COMPLETE
 	end
-	local tagDetails = C_QuestLog.GetQuestTagInfo(questID)
-	if tagDetails and tagDetails.tagName then
-		return tagDetails.tagName
-	elseif C_QuestLog.IsEliteQuest(questID) then
+	local _, isElite, tagName = ns.GetQuestTagByID(data.questID)
+	if tagName then
+		return tagName
+	elseif isElite then
 		return ELITE
 	end
 end
@@ -71,7 +68,7 @@ end
 	quest disabled for the session, when the server gives no rating
 ]]
 local function GetQuestColor(data)
-	local difficulty = not C_QuestLog.IsQuestDisabledForSession(data.questID)
+	local difficulty = not ns.IsQuestDisabledForSession(data.questID)
 		and C_PlayerInfo.GetContentDifficultyQuestForPlayer
 		and C_PlayerInfo.GetContentDifficultyQuestForPlayer(data.questID)
 	if difficulty and GetDifficultyColor then
@@ -105,11 +102,11 @@ local function OpenQuestMenu(row)
 			ns.ToggleTracking(questID)
 		end):SetEnabled(ns.CanTrack(questID))
 		root:CreateButton(SHARE_QUEST, function()
-			QuestMapQuestOptions_ShareQuest(questID)
-		end):SetEnabled(C_QuestLog.IsPushableQuest(questID) and IsInGroup())
-		if C_QuestLog.CanAbandonQuest(questID) then
+			ns.ShareQuest(questID)
+		end):SetEnabled(ns.IsPushableQuest(questID) and IsInGroup())
+		if ns.CanAbandonQuest(questID) then
 			root:CreateButton(ABANDON_QUEST, function()
-				QuestMapQuestOptions_AbandonQuest(questID)
+				ns.AskToAbandonQuest(questID)
 			end)
 		end
 	end)
@@ -217,20 +214,15 @@ local function InitRow(row, data)
 		row.Selected:Hide()
 	else
 		local questID = data.questID
-		local tagDetails = C_QuestLog.GetQuestTagInfo(questID)
-		local elite = C_QuestLog.IsEliteQuest(questID) or (tagDetails and tagDetails.isElite)
+		local tagID, elite = ns.GetQuestTagByID(questID)
 		local textX = LAYOUT.QUEST_TEXT_X + ns.ShowVoiceOverButton(row, questID)
 		row.Text:SetPoint("LEFT", textX, 0)
 		row.Icon:Hide()
 		row.Text:SetText(
-			ns.QuestListTitle(
-				data.difficultyLevel or data.level,
-				data.title,
-				ns.QuestSuffix(tagDetails and tagDetails.tagID, elite)
-			)
+			ns.QuestListTitle(data.difficultyLevel or data.level, data.title, ns.QuestSuffix(tagID, elite))
 		)
 
-		local tag = GetQuestTag(questID)
+		local tag = GetQuestTag(data)
 		if tag then
 			row.Tag:SetText(PARENS_TEMPLATE and PARENS_TEMPLATE:format(tag) or ("(" .. tag .. ")"))
 		end
@@ -240,7 +232,7 @@ local function InitRow(row, data)
 		if row.Text:GetStringWidth() > room then
 			row.Text:SetWidth(room)
 		end
-		ns.ShowTrackingMark(row.Check, ns.IsTracked(questID))
+		ns.ShowTrackingMark(row.Check, ns.IsTracked(questID, data.questLogIndex))
 		row.Selected:SetShown(questID == state.selectedQuestID)
 	end
 
@@ -265,14 +257,10 @@ ns.listButtons = { expandButton, trackButton } -- The map's Show Map button foll
 expandButton:SetScript("OnClick", function(self)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	local collapse = not self.allCollapsed
-	for index = 1, C_QuestLog.GetNumQuestLogEntries() do
-		local entry = C_QuestLog.GetInfo(index)
+	for index = 1, ns.GetNumQuestLogEntries() do
+		local entry = ns.GetQuestLogEntry(index)
 		if entry and entry.isHeader and entry.isCollapsed ~= collapse then
-			if collapse then
-				CollapseQuestHeader(index)
-			else
-				ExpandQuestHeader(index)
-			end
+			ns.SetQuestZoneCollapsed(index, collapse)
 		end
 	end
 	ns.RequestUpdate()
@@ -294,17 +282,17 @@ local function UpdateListButtons(quests, allCollapsed)
 
 	local questIDs, anyTracked, trackAll = {}, false, false
 	for _, quest in ipairs(quests) do
-		local questID = quest.questID
+		local questID, questLogIndex = quest.questID, quest.questLogIndex
 		questIDs[#questIDs + 1] = questID
-		if ns.IsTracked(questID) then
+		if ns.IsTracked(questID, questLogIndex) then
 			anyTracked = true
-		elseif ns.CanTrack(questID) and ns.HasRoomToTrack(questID) then
+		elseif ns.CanTrack(questID) and ns.HasRoomToTrack(questID, questLogIndex) then
 			trackAll = true
 		end
 	end
 	trackButton.questIDs, trackButton.trackAll = questIDs, trackAll
 	trackButton:SetText(trackAll and L["TRACK_ALL"] or L["UNTRACK_ALL"])
-	trackButton:SetEnabled(trackAll or (anyTracked and QuestUtil.CanRemoveQuestWatch()))
+	trackButton:SetEnabled(trackAll or (anyTracked and ns.CanRemoveQuestWatch()))
 end
 
 --------------------------------------------------------------------------------
@@ -313,6 +301,24 @@ end
 
 -- Zone ranks frozen while the window stays open (ns.SortZones)
 local zoneOrder
+
+--[[
+	Whether a quest entry is complete or failed: the entry's own field where it carries one, as Mists'
+	does, else asked by quest ID, which on Mists would walk the whole log for every quest
+]]
+local function EntryIsComplete(entry)
+	if entry.isComplete ~= nil then
+		return entry.isComplete
+	end
+	return ns.IsQuestComplete(entry.questID)
+end
+
+local function EntryIsFailed(entry)
+	if entry.isFailed ~= nil then
+		return entry.isFailed
+	end
+	return ns.IsQuestFailed(entry.questID)
+end
 
 --[[
 	Same visibility rules as the map's quest list: no hidden quests, world quests or bonus objectives,
@@ -325,24 +331,21 @@ local function BuildEntries()
 	local entries, zones = {}, {}
 	local header
 
-	for index = 1, C_QuestLog.GetNumQuestLogEntries() do
-		local entry = C_QuestLog.GetInfo(index)
+	ns.ShowEveryQuestLogEntry()
+	for index = 1, ns.GetNumQuestLogEntries() do
+		local entry = ns.GetQuestLogEntry(index)
 		if entry and entry.isHeader then
 			header = entry
 			header.quests = {}
 			header.sortKey = ns.NameSortKey(header.title)
 			header.sortIndex = header.questLogIndex
 			zones[#zones + 1] = header
-		elseif
-			entry
-			and not entry.isHidden
-			and not entry.isTask
-			and (not entry.isBounty or C_QuestLog.IsComplete(entry.questID))
-		then
+		elseif entry and not entry.isHidden and not entry.isTask and (not entry.isBounty or EntryIsComplete(entry)) then
 			entry.sortLevel = entry.difficultyLevel or entry.level or 0
 			entry.sortIndex = entry.questLogIndex
 			entry.sortKey = ns.NameSortKey(entry.title)
-			entry.isComplete = C_QuestLog.IsComplete(entry.questID)
+			entry.isComplete = EntryIsComplete(entry)
+			entry.isFailed = EntryIsFailed(entry)
 			entry.zone = header and header.title
 			if header then
 				header.quests[#header.quests + 1] = entry
@@ -392,7 +395,7 @@ end
 	showing, or failing that the first one under a collapsed zone
 ]]
 local function ValidateSelection(entries, quests)
-	if state.selectedQuestID and C_QuestLog.GetLogIndexForQuestID(state.selectedQuestID) then
+	if state.selectedQuestID and ns.GetLogIndexForQuestID(state.selectedQuestID) then
 		return
 	end
 	state.selectedQuestID = nil
@@ -456,6 +459,10 @@ function ns.UpdateQuestList()
 	ns.UpdateTurnInLine(turnInLine, ready)
 
 	noQuestsText:SetShown(#quests == 0)
+	-- A client whose TOC lists no map has none (Quest-Map.lua)
+	if ns.questMap then
+		ns.questMap.SetLogEmpty(#quests == 0)
+	end
 	UpdateListButtons(quests, allCollapsed)
 
 	UpdateList(entries)

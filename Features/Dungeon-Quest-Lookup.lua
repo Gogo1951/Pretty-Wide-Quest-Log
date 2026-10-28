@@ -169,22 +169,37 @@ local function QuestieQuestIn(questID, dungeon)
 	return false
 end
 
+--[[
+	Whether Questie lists the quest under a world event (a holiday or the Darkmoon Faire). These are
+	never a dungeon's own quests, though Questie can still place one there
+]]
+local function IsEventQuest(questID)
+	local questieEvent = ns.ImportQuestieModule("QuestieEvent")
+	if not (questieEvent and type(questieEvent.IsEventQuest) == "function") then
+		return false
+	end
+	local found, isEvent = pcall(questieEvent.IsEventQuest, questID)
+	return found and isEvent == true
+end
+
 --------------------------------------------------------------------------------
 -- The Dungeon's Quests
 --------------------------------------------------------------------------------
 
 --[[
 	The quests in the log for the dungeon, in quest log order (ns.LogQuests): those listed under its
-	header, and those Questie places there. Without Questie, the header alone decides. Each is marked
-	with what placed it, for the Sharing Context report
+	header, and those Questie places there, leaving out world event quests. Without Questie, the header
+	alone decides. Each is marked with what placed it, for the Sharing Context report
 ]]
 function ns.DungeonQuests(dungeon)
 	local quests = {}
 	for _, quest in ipairs(ns.LogQuests()) do
-		if dungeon.names[quest.zoneTitle or ""] then
-			quest.matchedBy = "header"
-		elseif QuestieQuestIn(quest.questID, dungeon) then
-			quest.matchedBy = "Questie"
+		if not IsEventQuest(quest.questID) then
+			if dungeon.names[quest.zoneTitle or ""] then
+				quest.matchedBy = "header"
+			elseif QuestieQuestIn(quest.questID, dungeon) then
+				quest.matchedBy = "Questie"
+			end
 		end
 		if quest.matchedBy then
 			quests[#quests + 1] = quest

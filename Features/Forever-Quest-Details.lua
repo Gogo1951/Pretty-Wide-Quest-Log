@@ -26,14 +26,19 @@ detail.ContrastBG = detail:CreateTexture(nil, "BACKGROUND", nil, -1)
 detail.ContrastBG:SetAllPoints()
 detail.ContrastBG:Hide()
 
--- The scroll bar sits in the slot to the right of the parchment
-local detailScroll = CreateFrame("ScrollFrame", nil, detail, "ScrollFrameTemplate")
+--[[
+	The scroll bar sits in the slot to the right of the parchment. It's the quest list's slim bar, set up
+	here rather than taken from ScrollFrameTemplate, whose bar is a different style on each client (wider,
+	with round buttons, on Mists)
+]]
+local detailScroll = CreateFrame("ScrollFrame", nil, detail)
 detailScroll:SetPoint("TOPLEFT", 0, -2)
 detailScroll:SetPoint("BOTTOMRIGHT", 0, 2)
+local detailBar = CreateFrame("EventFrame", nil, detailScroll, "MinimalScrollBar")
 local scrollBarX = (LAYOUT.DETAIL_SCROLL_SLOT_X - 4) - LAYOUT.PARCHMENT_RIGHT
-detailScroll.ScrollBar:ClearAllPoints()
-detailScroll.ScrollBar:SetPoint("TOPLEFT", detailScroll, "TOPRIGHT", scrollBarX, -4)
-detailScroll.ScrollBar:SetPoint("BOTTOMLEFT", detailScroll, "BOTTOMRIGHT", scrollBarX, 4)
+detailBar:SetPoint("TOPLEFT", detailScroll, "TOPRIGHT", scrollBarX, -4)
+detailBar:SetPoint("BOTTOMLEFT", detailScroll, "BOTTOMRIGHT", scrollBarX, 4)
+ScrollUtil.InitScrollFrameWithScrollBar(detailScroll, detailBar)
 
 local detailChild = CreateFrame("Frame", nil, detailScroll)
 detailChild:SetSize(LAYOUT.PARCHMENT_RIGHT - LAYOUT.PARCHMENT_LEFT, 300)
@@ -43,9 +48,17 @@ detailScroll:SetScrollChild(detailChild)
 	The quest giver window and Blizzard's own quest detail panes use the same QuestInfo elements as this
 	one. Taking them while one of those is open would blank it (mid turn-in, say), so wait until it closes
 ]]
+--[[
+	Blizzard's own quest log on Mists (QuestLogFrame, and QuestLogDetailFrame when its details pop out on
+	their own) and WoW Forever's quest detail popup are the others
+]]
+local QUEST_INFO_BORROWERS = { QuestFrame, QuestLogPopupDetailFrame, QuestLogFrame, QuestLogDetailFrame }
+
 local function QuestInfoInUseElsewhere()
-	if (QuestFrame and QuestFrame:IsShown()) or (QuestLogPopupDetailFrame and QuestLogPopupDetailFrame:IsShown()) then
-		return true
+	for _, borrower in pairs(QUEST_INFO_BORROWERS) do
+		if borrower:IsShown() then
+			return true
+		end
 	end
 	local mapDetails = QuestMapFrame and QuestMapFrame.DetailsFrame
 	return (mapDetails and mapDetails:IsVisible()) and true or false
@@ -57,10 +70,10 @@ questIDRow:SetSize(LAYOUT.CONTENT_WIDTH, 14)
 questIDRow.Text = questIDRow:CreateFontString(nil, "ARTWORK", "QuestFontNormalSmall")
 questIDRow.Text:SetPoint("RIGHT")
 questIDRow.Text:SetJustifyH("RIGHT")
-ns.LinkQuestIDToWowhead(questIDRow, questIDRow.Text, C_QuestLog.GetSelectedQuest)
+ns.LinkQuestIDToWowhead(questIDRow, questIDRow.Text, ns.GetSelectedQuestID)
 
 local function QuestInfo_ShowQuestID()
-	ns.StyleQuestID(questIDRow.Text, C_QuestLog.GetSelectedQuest(), QuestInfoDescriptionText)
+	ns.StyleQuestID(questIDRow.Text, ns.GetSelectedQuestID(), QuestInfoDescriptionText)
 	questIDRow.Text:ClearAllPoints()
 	questIDRow.Text:SetPoint("RIGHT", -ns.TwoSpacesWide(QuestInfoDescriptionText), 0)
 	questIDRow:Show()
@@ -70,7 +83,7 @@ end
 -- The quest chain (Quest-Chain.lua), shown between the rewards and the quest ID when there is one
 local chainSection = ns.CreateQuestChainSection(detailChild)
 local function QuestInfo_ShowQuestChain()
-	local questID = C_QuestLog.GetSelectedQuest()
+	local questID = ns.GetSelectedQuestID()
 	if ns.UpdateQuestChainSection(chainSection, questID, QuestInfoDescriptionHeader, QuestInfoDescriptionText) then
 		return chainSection
 	end
@@ -168,7 +181,7 @@ function ns.DisplayQuestDetails(resetScroll)
 		return
 	end
 
-	C_QuestLog.SetSelectedQuest(state.selectedQuestID)
+	ns.SelectQuest(state.selectedQuestID)
 	detail.questID = state.selectedQuestID
 
 	if QuestTextContrast and QuestTextContrast.IsEnabled() then
@@ -181,13 +194,17 @@ function ns.DisplayQuestDetails(resetScroll)
 	ns.StyleQuestInfo() -- Again, in case anything restyled the shared text since
 	QuestInfo_Display(LOG_TEMPLATE, detailChild)
 
+	-- Mists' quest text sets these two 270 wide whatever the template's width
+	QuestInfoDescriptionText:SetWidth(LAYOUT.CONTENT_WIDTH)
+	QuestInfoObjectivesText:SetWidth(LAYOUT.CONTENT_WIDTH)
+
 	--[[
 		Just the quest's name: Blizzard decorates it with the quest type's icon, and that and the level
 		are already in the list
 	]]
-	local title = C_QuestLog.GetTitleForQuestID(state.selectedQuestID)
+	local title = ns.GetQuestTitleByID(state.selectedQuestID)
 	if title then
-		if IsCurrentQuestFailed() then
+		if IsCurrentQuestFailed() and QUEST_TITLE_FORMAT_FAILED then
 			title = QUEST_TITLE_FORMAT_FAILED:format(title)
 		end
 		QuestInfoTitleHeader:SetText(title)
@@ -195,11 +212,12 @@ function ns.DisplayQuestDetails(resetScroll)
 
 	--[[
 		Objective lines: check, name and a right-aligned count. Blizzard's lines follow the leaderboard,
-		skipping spell and log objectives, after an optional waypoint line
+		skipping spell and log objectives, after an optional waypoint line (WoW Forever only)
 	]]
 	ns.ClearObjectiveCounts()
 	local lines = QuestInfoObjectivesFrame.Objectives
-	local lineIndex = C_QuestLog.GetNextWaypointText(state.selectedQuestID) and 1 or 0
+	local waypoint = C_QuestLog.GetNextWaypointText and C_QuestLog.GetNextWaypointText(state.selectedQuestID)
+	local lineIndex = waypoint and 1 or 0
 	for index = 1, GetNumQuestLeaderBoards() do
 		local text, objectiveType, finished = GetQuestLogLeaderBoard(index)
 		if objectiveType ~= "spell" and objectiveType ~= "log" then
@@ -267,10 +285,14 @@ function ns.DisplayQuestDetails(resetScroll)
 end
 
 -- Take the QuestInfo elements back once whatever borrowed them closes
-for _, borrower in pairs({ QuestFrame, QuestLogPopupDetailFrame, QuestMapFrame and QuestMapFrame.DetailsFrame or nil }) do
-	borrower:HookScript("OnHide", function()
-		ns.RequestUpdate()
-	end)
+local function RequestUpdate()
+	ns.RequestUpdate()
+end
+for _, borrower in pairs(QUEST_INFO_BORROWERS) do
+	borrower:HookScript("OnHide", RequestUpdate)
+end
+if QuestMapFrame and QuestMapFrame.DetailsFrame then
+	QuestMapFrame.DetailsFrame:HookScript("OnHide", RequestUpdate)
 end
 
 function ns.SetQuestDetailsHeight(height)

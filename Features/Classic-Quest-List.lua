@@ -305,6 +305,10 @@ ns.AddWideQuestLogPart(function()
 		local indexes = ListedIndexes(currentOrder)
 		UpdateListButtons(indexes)
 		UpdateTurnInLine(indexes)
+		-- The map's part builds after this one, and a client whose TOC lists no map has none (Quest-Map.lua)
+		if ns.questMap then
+			ns.questMap.SetLogEmpty(GetNumQuestLogEntries() == 0)
+		end
 	end
 
 	--------------------------------------------------------------------------------

@@ -3,7 +3,12 @@ local _, ns = ...
 local GetClientHeader = ns.GetDiagnosticClientHeader
 local CountKeys = ns.CountDiagnosticKeys
 
-local IS_FOREVER = ns.FLAVOR == "Camelot"
+-- WoW Forever and Mists: the quest log is a window of the add-on's own (Forever-Quest-Log.lua)
+local OWN_WINDOW = ns.questLogIsOwnWindow == true
+-- Classic Era and TBC: Blizzard's quest log, widened (Core.lua)
+local IS_WIDENED_BLIZZARD_LOG = not OWN_WINDOW and ns.hasWideQuestLog == true
+-- WoW Forever: the quest log calls by quest ID. The other clients have only the older calls by quest log index
+local QUEST_ID_API = C_QuestLog.GetInfo ~= nil
 
 --------------------------------------------------------------------------------
 -- API Endpoints
@@ -12,9 +17,10 @@ local IS_FOREVER = ns.FLAVOR == "Camelot"
 --[[
 	Existence and shape checks only: read-only, no side effects, no protected
 	calls. One row per API the add-on calls or replaces, and per Blizzard frame
-	or table its files reach for at load, wherever it lives. The two clients'
-	quest logs share nothing, so each client checks the shared rows plus its own
-	quest log's.
+	or table its files reach for at load, wherever it lives. Each client checks
+	the shared rows plus its own quest log's: the window of the add-on's own
+	(WoW Forever and Mists) or the Blizzard quest log it widens (Classic Era and
+	TBC), and the quest log calls by quest ID (WoW Forever) or by quest log index.
 ]]
 
 local function Resolve(path)
@@ -107,9 +113,11 @@ local SHARED_FUNCTIONS = {
 	"MapCanvasMixin.OnShow",
 	"GossipSharedAvailableQuestButtonMixin.Setup",
 	"GossipSharedActiveQuestButtonMixin.Setup",
+	-- The Example lines ask for a sample quest's title that hasn't loaded (Options-Quality-of-Life.lua)
+	"C_QuestLog.RequestLoadQuestByID",
 }
 
--- The quest giver window's pieces, the quest text fonts, and the map's canvas, built in Features/Quest-Map.xml
+-- The quest giver window's pieces, the quest text fonts, and the mixins the map's canvas is built from
 local SHARED_TABLES = {
 	"Enum.SeasonID",
 	"QuestDifficultyColors",
@@ -129,8 +137,6 @@ local SHARED_TABLES = {
 	"MapCanvasDataProviderMixin",
 	"MapCanvasPinMixin",
 	"WowStyle2DropdownMixin",
-	"PrettyWideQuestLogMapFrame",
-	"PrettyWideQuestLogMapFrame.ScrollContainer",
 	"GossipSharedAvailableQuestButtonMixin",
 	"GossipSharedActiveQuestButtonMixin",
 	"QuestFrameGreetingPanel",
@@ -142,32 +148,20 @@ local SHARED_TABLES = {
 	"GameTooltip",
 	"NORMAL_FONT_COLOR",
 	"RED_FONT_COLOR",
+	-- The chat colors the Example lines take; without it they fall back to the default colors
+	"ChatTypeInfo",
 }
 
-local CLASSIC_FUNCTIONS = {
+-- The quest log index calls the zone menu (Classic-Zone-Actions.lua) and these reports read the log with
+local LOG_INDEX_FUNCTIONS = {
 	"QuestLog_Update",
-	"QuestLog_UpdateQuestDetails",
-	"QuestFrameItems_Update",
-	"SetUIPanelAttribute",
 	"GetNumQuestLogEntries",
 	"GetQuestLogTitle",
 	"GetQuestLogSelection",
 	"GetQuestTagInfo",
-	"QuestFrameGreetingPanel_OnShow",
-	"C_QuestLog.GetQuestInfo",
 	"GetNumQuestLeaderBoards",
-	"GetQuestLogLeaderBoard",
-	"FauxScrollFrame_Update",
-	"FauxScrollFrame_GetOffset",
-	"QuestLog_SetSelection",
 	"IsQuestWatched",
-	"IsUnitOnQuest",
-	"AutoQuestWatch_Insert",
-	"RemoveQuestWatch",
 	"GetNumQuestWatches",
-	"GetQuestIDFromLogIndex",
-	"QuestWatch_Update",
-	"QuestLogCollapseAllButton_OnClick",
 	"SelectQuestLogEntry",
 	"GetQuestLogPushable",
 	"CollapseQuestHeader",
@@ -175,9 +169,25 @@ local CLASSIC_FUNCTIONS = {
 	"AbandonQuest",
 }
 
+local CLASSIC_FUNCTIONS = {
+	"QuestLog_UpdateQuestDetails",
+	"QuestFrameItems_Update",
+	"SetUIPanelAttribute",
+	"QuestFrameGreetingPanel_OnShow",
+	"GetQuestLogLeaderBoard",
+	"FauxScrollFrame_Update",
+	"FauxScrollFrame_GetOffset",
+	"QuestLog_SetSelection",
+	"IsUnitOnQuest",
+	"AutoQuestWatch_Insert",
+	"RemoveQuestWatch",
+	"GetQuestIDFromLogIndex",
+	"QuestWatch_Update",
+	"QuestLogCollapseAllButton_OnClick",
+}
+
 -- Blizzard's quest log pieces the widened layout moves, resizes or restyles
 local CLASSIC_TABLES = {
-	"QuestLogFrame",
 	"QuestLogTitleText",
 	"QuestLogTitle1",
 	"QuestLogListScrollFrame",
@@ -210,7 +220,60 @@ local CLASSIC_TABLES = {
 	"HIGHLIGHT_FONT_COLOR",
 }
 
-local FOREVER_FUNCTIONS = {
+-- The window of its own on WoW Forever and Mists (Forever-Quest-Log.lua and the files after it)
+local OWN_WINDOW_FUNCTIONS = {
+	"C_QuestLog.GetMaxNumQuestsCanAccept",
+	"GetNumQuestLeaderBoards",
+	"GetQuestLogLeaderBoard",
+	"ToggleQuestLog",
+	"QuestInfo_ShowTitle",
+	"QuestInfo_ShowObjectivesText",
+	"QuestInfo_ShowDescriptionText",
+	"QuestInfo_ShowDescriptionHeader",
+	"QuestInfo_ShowRewards",
+	"QuestInfo_ShowSpacer",
+	"CreateScrollBoxListLinearView",
+	"CreateDataProvider",
+	"ScrollUtil.InitScrollBoxListWithScrollBar",
+	"ScrollUtil.InitScrollFrameWithScrollBar",
+	"ChatFrameUtil.TryInsertQuestLinkForQuestID",
+	"QuestTextContrast.IsEnabled",
+	"QuestTextContrast.GetDefaultBackgroundAtlas",
+	"CopyTable",
+	"IsCurrentQuestFailed",
+	"ShowUIPanel",
+	"GetUIPanel",
+	"IsShiftKeyDown",
+	-- The quest log key, bound over to the window's own button (Quest-Log-Key.lua)
+	"GetBindingKey",
+	"ClearOverrideBindings",
+	"SetOverrideBindingClick",
+}
+
+local OWN_WINDOW_TABLES = {
+	"QUEST_TEMPLATE_LOG",
+	"QuestMapFrame",
+	"QuestMapFrame.DetailsFrame",
+	"QuestFrame",
+	"QuestInfoFrame",
+	"QuestInfoObjectivesFrame",
+	"QuestInfoTitleHeader",
+	"QuestInfoObjectivesHeader",
+	"QuestInfoObjectivesText",
+	"QuestInfoDescriptionHeader",
+	"QuestInfoRewardText",
+	"QuestInfoSpacerFrame",
+	"QuestInfoRewardsFrame.MoneyFrame",
+	"QuestInfoRewardsFrame.ItemReceiveText",
+	"QuestInfoRewardsFrame.XPFrame.ReceiveText",
+	"QuestDifficultyHighlightColors",
+	"ScrollBoxConstants",
+	"UIPanelWindows",
+	"UISpecialFrames",
+}
+
+-- WoW Forever's quest log calls by quest ID (Utilities.lua, Forever-Tracking.lua, Forever-Zone-Actions.lua)
+local QUEST_ID_FUNCTIONS = {
 	"C_QuestLog.GetInfo",
 	"C_QuestLog.GetNumQuestLogEntries",
 	"C_QuestLog.GetQuestTagInfo",
@@ -232,77 +295,95 @@ local FOREVER_FUNCTIONS = {
 	"C_QuestLog.AbandonQuest",
 	"C_QuestLog.IsPushableQuest",
 	"C_QuestLog.IsQuestDisabledForSession",
-	"C_QuestLog.GetMaxNumQuestsCanAccept",
-	"C_QuestLog.GetMaxNumQuests",
-	"C_QuestLog.GetNextWaypointForMap",
 	"C_PlayerInfo.GetContentDifficultyQuestForPlayer",
 	"GetDifficultyColor",
 	"CollapseQuestHeader",
-	"GetNumQuestLeaderBoards",
-	"GetQuestLogLeaderBoard",
 	"QuestUtils_IsQuestWatched",
 	"QuestUtil.CanRemoveQuestWatch",
 	"QuestMapQuestOptions_AbandonQuest",
 	"QuestMapQuestOptions_ShareQuest",
-	"ToggleQuestLog",
-	"QuestMapFrame_OpenToQuestDetails",
-	"QuestInfo_ShowTitle",
-	"QuestInfo_ShowObjectivesText",
-	"QuestInfo_ShowDescriptionText",
-	"QuestInfo_ShowDescriptionHeader",
-	"QuestInfo_ShowRewards",
-	"QuestInfo_ShowSpacer",
-	"CreateScrollBoxListLinearView",
-	"CreateDataProvider",
-	"ScrollUtil.InitScrollBoxListWithScrollBar",
-	"ChatFrameUtil.TryInsertQuestLinkForQuestID",
-	"QuestTextContrast.IsEnabled",
-	"QuestTextContrast.GetDefaultBackgroundAtlas",
-	"CopyTable",
-	"IsCurrentQuestFailed",
 	"GetQuestLink",
-	"ShowUIPanel",
-	"GetUIPanel",
-	"GetQuestUiMapID",
-	"GetQuestsOnMapCached",
-	"C_TaskQuest.DoesMapShowTaskQuestObjectives",
-	"IsShiftKeyDown",
-	-- The quest log key, bound over to the window's own button (Forever-Quest-Log-Key.lua)
-	"GetBindingKey",
-	"ClearOverrideBindings",
-	"SetOverrideBindingClick",
 }
 
-local FOREVER_TABLES = {
-	"QUEST_TEMPLATE_LOG",
-	"QuestMapFrame",
-	"QuestMapFrame.DetailsFrame",
-	-- The micro menu button and tracker clicks open it first, and the window takes over from it
-	"WorldMapFrame",
-	"QuestFrame",
+local QUEST_ID_TABLES = {
 	"QuestLogPopupDetailFrame",
-	"QuestInfoFrame",
-	"QuestInfoObjectivesFrame",
-	"QuestInfoTitleHeader",
-	"QuestInfoObjectivesHeader",
-	"QuestInfoObjectivesText",
-	"QuestInfoDescriptionHeader",
-	"QuestInfoRewardText",
-	"QuestInfoSpacerFrame",
-	"QuestInfoRewardsFrame.MoneyFrame",
-	"QuestInfoRewardsFrame.ItemReceiveText",
-	"QuestInfoRewardsFrame.XPFrame.ReceiveText",
 	"QuestFrameGreetingPanel.titleButtonPool",
 	"Enum.RelativeContentDifficulty",
-	"QuestDifficultyHighlightColors",
-	"ScrollBoxConstants",
-	"UIPanelWindows",
-	"UISpecialFrames",
-	"FogOfWarDataProviderMixin",
+}
+
+-- The window on Mists, over the quest log index calls above (Utilities.lua, Mists-Tracking.lua, Mists-Quest-Portrait.lua)
+local INDEX_WINDOW_FUNCTIONS = {
+	"AddQuestWatch",
+	"RemoveQuestWatch",
+	"WatchFrame_Update",
+	"CanAbandonQuest",
+	"GetAbandonQuestItems",
+	"GetAbandonQuestName",
+	"GetQuestLogPortraitGiver",
+	-- Without it, every quest with a giver shows the giver's model
+	"QuestLogShouldShowPortrait",
+}
+
+-- Blizzard's quest log on Mists, which the window takes over from (Mists-Quest-Log-Key.lua), and the giver model's template
+local INDEX_WINDOW_TABLES = {
+	"QuestLogDetailFrame",
+	"QuestLogDetailScrollChildFrame",
+	"PanningModelSceneMixin",
+}
+
+local function IsFunction(path)
+	return type(Resolve(path)) == "function"
+end
+
+--[[
+	The quest title and tag by quest ID, on every client but WoW Forever, take whichever call the client
+	has (Utilities.lua), so each row passes where one of them is there
+]]
+local QUEST_LOOKUP_ROUTES = {
+	{
+		"C_QuestLog.GetTitleForQuestID or C_QuestLog.GetQuestInfo",
+		function()
+			return IsFunction("C_QuestLog.GetTitleForQuestID") or IsFunction("C_QuestLog.GetQuestInfo")
+		end,
+	},
+	{
+		"C_QuestLog.GetQuestTagInfo with C_QuestLog.IsEliteQuest, or GetQuestTagInfo",
+		function()
+			if C_QuestLog.GetQuestTagInfo then
+				return IsFunction("C_QuestLog.IsEliteQuest")
+			end
+			return IsFunction("GetQuestTagInfo")
+		end,
+	},
+}
+
+-- The map's layers beside the window (Forever-Quest-Map.lua)
+local OWN_WINDOW_MAP_FUNCTIONS = {
+	"C_QuestLog.GetMaxNumQuests",
+	"GetQuestUiMapID",
+	"C_TaskQuest.DoesMapShowTaskQuestObjectives",
+	"QuestBlobPinMixin.TryDrawQuest",
+}
+
+local OWN_WINDOW_MAP_TABLES = {
 	"QuestBlobDataProviderMixin",
 	"QuestDataProviderMixin",
 	"DungeonEntranceDataProviderMixin",
 	"FlightPointDataProviderMixin",
+}
+
+-- WoW Forever's quest markers, and its takeover from Blizzard's map (Forever-Quest-Map.lua, Forever-Quest-Log-Key.lua)
+local FOREVER_MAP_FUNCTIONS = {
+	"QuestMapFrame_OpenToQuestDetails",
+	"C_QuestLog.GetNextWaypointForMap",
+	"GetQuestsOnMapCached",
+	"QuestDataProviderMixin.UpdatePing",
+}
+
+-- Mists' numbered quest markers (Forever-Quest-Map.lua)
+local MISTS_MAP_FUNCTIONS = {
+	"C_QuestLog.GetQuestsOnMap",
+	"QuestDataProviderMixin.AssignMissingNumbersToPins",
 }
 
 ns.DIAGNOSTIC_API_CHECKS = {}
@@ -311,18 +392,64 @@ Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", SHARED_TABLES))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_LOG" }))
 -- Group chat goes to the instance group only where this exists; without it, raid or party (Announcements.lua)
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "LE_PARTY_CATEGORY_INSTANCE" }))
-if IS_FOREVER then
-	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", FOREVER_FUNCTIONS))
-	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", FOREVER_TABLES))
-	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "Constants.QuestWatchConsts.MAX_QUEST_WATCHES" }))
+-- The map's frame, built in Features/Quest-Map.xml, which only a client with the map lists (Quest-Map.lua)
+if ns.hasQuestMap then
 	Append(
 		ns.DIAGNOSTIC_API_CHECKS,
-		Rows(
-			"string",
-			{ "QUEST_TITLE_FORMAT_FAILED", "PARENS_TEMPLATE", "RED_FONT_COLOR_CODE", "HIGHLIGHT_FONT_COLOR_CODE" }
-		)
+		Rows("table", {
+			"PrettyWideQuestLogMapFrame",
+			"PrettyWideQuestLogMapFrame.ScrollContainer",
+			-- The map's border, and the giver model's box on Mists
+			"BackdropTemplateMixin",
+		})
 	)
+end
+if OWN_WINDOW then
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", OWN_WINDOW_FUNCTIONS))
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", OWN_WINDOW_TABLES))
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "RED_FONT_COLOR_CODE", "HIGHLIGHT_FONT_COLOR_CODE" }))
+	-- The window's failed quest title and the list's tag fall back to their own text without these
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_TITLE_FORMAT_FAILED", "PARENS_TEMPLATE" }))
+end
+if QUEST_ID_API then
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", QUEST_ID_FUNCTIONS))
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", QUEST_ID_TABLES))
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "Constants.QuestWatchConsts.MAX_QUEST_WATCHES" }))
 else
+	Append(ns.DIAGNOSTIC_API_CHECKS, QUEST_LOOKUP_ROUTES)
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", LOG_INDEX_FUNCTIONS))
+	-- The zone menu redraws Blizzard's quest log only while it's open
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", { "QuestLogFrame" }))
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "MAX_WATCHABLE_QUESTS" }))
+	if OWN_WINDOW then
+		Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", INDEX_WINDOW_FUNCTIONS))
+		Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", INDEX_WINDOW_TABLES))
+		-- The quest giver's model, posed as Blizzard poses its own (Mists-Quest-Portrait.lua)
+		Append(
+			ns.DIAGNOSTIC_API_CHECKS,
+			Rows(
+				"number",
+				{ "QUEST_FRAME_MODEL_SCENE_ID", "CAMERA_TRANSITION_TYPE_IMMEDIATE", "CAMERA_MODIFICATION_TYPE_DISCARD" }
+			)
+		)
+		Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_WATCH_TOO_MANY" }))
+	end
+end
+if OWN_WINDOW and ns.hasQuestMap then
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", OWN_WINDOW_MAP_FUNCTIONS))
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", OWN_WINDOW_MAP_TABLES))
+	if QUEST_ID_API then
+		Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", FOREVER_MAP_FUNCTIONS))
+		-- The micro menu button and tracker clicks open it first, and the window takes over from it; Mists has no fog layer to draw
+		Append(
+			ns.DIAGNOSTIC_API_CHECKS,
+			Rows("table", { "WorldMapFrame", "FogOfWarDataProviderMixin", "FogOfWarFrameMixin" })
+		)
+	else
+		Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", MISTS_MAP_FUNCTIONS))
+	end
+end
+if IS_WIDENED_BLIZZARD_LOG then
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", CLASSIC_FUNCTIONS))
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", CLASSIC_TABLES))
 	Append(
@@ -330,7 +457,6 @@ else
 		Rows("number", {
 			"QUESTS_DISPLAYED",
 			"QUESTLOG_QUEST_HEIGHT",
-			"MAX_WATCHABLE_QUESTS",
 			"QUEST_WATCH_NO_EXPIRE",
 		})
 	)
@@ -347,8 +473,62 @@ end
 -- Data Sources
 --------------------------------------------------------------------------------
 
--- The map reveal tables are the only static data, and Validate Data has no check for them (README-Notes: No Data tab).
-ns.DIAGNOSTIC_DATA_SOURCES = {}
+--[[
+	One entry per data file, and one report row per entry on the Data tab. Each entry's label is the
+	table-name part of its file name. The map reveal tables are keyed by map art ID, which no client API
+	looks up, so they're checked against the art the client's own maps are drawn on ("mapArt"). The quest
+	tags are keyed by QuestInfo ID, which nothing on the client lists, so they print their row count
+	("other"). The sample dungeon is a single area ID beside the sample quests rather than a table of its
+	own, so its source reaches it through the quest table's file and names the constant in a DATA_ column.
+]]
+local function KeyId(id)
+	return id
+end
+
+local function ListedId(_, questID)
+	return questID
+end
+
+-- The sample dungeon, and the sample zone where the flavor has one
+local function CollectSampleAreas()
+	local areaID = ns.SAMPLE_DUNGEON_AREA_ID
+	local rows = { { id = areaID, key = "SAMPLE_DUNGEON_AREA_ID", row = areaID } }
+	if ns.SAMPLE_ZONE_AREA_ID then
+		rows[#rows + 1] = { id = ns.SAMPLE_ZONE_AREA_ID, key = "SAMPLE_ZONE_AREA_ID", row = ns.SAMPLE_ZONE_AREA_ID }
+	end
+	return rows
+end
+
+ns.DIAGNOSTIC_DATA_SOURCES = {
+	-- { label, sources = { { table, kind, rowId or collect, dataColumns } } }
+	{
+		label = "Map-Reveal",
+		sources = { { table = "MAP_REVEAL_OVERLAYS", kind = "mapArt", rowId = KeyId } },
+	},
+	{
+		label = "Quest-Tags",
+		sources = { { table = "QUEST_TAG_SUFFIXES", kind = "other" } },
+	},
+	{
+		label = "Sample-Quests",
+		sources = {
+			{ table = "SAMPLE_QUEST_IDS", kind = "quest", rowId = ListedId },
+			{
+				table = "SAMPLE_QUEST_IDS",
+				kind = "area",
+				collect = CollectSampleAreas,
+				dataColumns = {
+					{
+						"DATA_CONSTANT",
+						function(key)
+							return key
+						end,
+					},
+				},
+			},
+		},
+	},
+}
 
 --------------------------------------------------------------------------------
 -- Name Lookups
@@ -359,7 +539,9 @@ ns.DIAGNOSTIC_DATA_SOURCES = {}
 	tab's Game Names report, read exactly as the features read it: the global
 	itself, so each one's id is its own constant name. ELITE is matched as well
 	as shown on Classic Era and TBC, where it is how the list tells an elite
-	quest from its tag. The add-on stores no other game record by ID.
+	quest from its tag. The Quality of Life panel's Example lines also name the
+	flavor's sample quests, dungeon and zone by ID (Sample-Quests data), read through
+	the same calls the panel makes.
 ]]
 local function UiLabel(constant)
 	return {
@@ -390,11 +572,13 @@ local SHARED_LABELS = {
 	"ERR_QUEST_PUSH_BUSY_S",
 	"ERR_QUEST_PUSH_TOO_FAR_S",
 	"ERR_QUEST_PUSH_LOG_FULL_S",
+	-- How the Example lines lead a whisper and a line of party chat (Options-Quality-of-Life.lua)
+	"CHAT_WHISPER_GET",
+	"CHAT_PARTY_GET",
 }
 
-local CLASSIC_LABELS = { "QUEST_WATCH_TOO_MANY" }
-
-local FOREVER_LABELS = {
+-- The window's own text (WoW Forever and Mists)
+local OWN_WINDOW_LABELS = {
 	"QUEST_LOG_COUNT_TEMPLATE",
 	"QUESTLOG_NO_QUESTS_TEXT",
 	"TRACK_QUEST_ABBREV",
@@ -404,9 +588,13 @@ local FOREVER_LABELS = {
 	"ABANDON_QUEST",
 	"SHARE_QUEST",
 	"EXIT",
-	"OBJECTIVES_WATCH_TOO_MANY",
 	"PARENS_TEMPLATE",
 	"QUEST_TITLE_FORMAT_FAILED",
+}
+
+-- A full watch list's message on WoW Forever (Forever-Tracking.lua)
+local QUEST_ID_LABELS = {
+	"OBJECTIVES_WATCH_TOO_MANY",
 }
 
 ns.DIAGNOSTIC_NAME_LOOKUPS = {}
@@ -417,14 +605,57 @@ local function AddLabels(constants)
 end
 
 AddLabels(SHARED_LABELS)
-if IS_FOREVER then
-	AddLabels(FOREVER_LABELS)
-else
-	AddLabels(CLASSIC_LABELS)
-	-- The daily tag, on the client that has daily quests (see LE_QUEST_FREQUENCY_DAILY above)
-	if ns.FLAVOR == "TBC" then
-		AddLabels({ "DAILY", "DAILY_QUEST_TAG_TEMPLATE" })
-	end
+if OWN_WINDOW then
+	AddLabels(OWN_WINDOW_LABELS)
+end
+if QUEST_ID_API then
+	AddLabels(QUEST_ID_LABELS)
+elseif ns.hasWideQuestLog then
+	-- A full watch list's message (Classic-Tracking.lua, Mists-Tracking.lua)
+	AddLabels({ "QUEST_WATCH_TOO_MANY" })
+end
+-- The daily tag, on the client that has daily quests (see LE_QUEST_FREQUENCY_DAILY above)
+if IS_WIDENED_BLIZZARD_LOG and ns.FLAVOR == "TBC" then
+	AddLabels({ "DAILY", "DAILY_QUEST_TAG_TEMPLATE" })
+end
+
+-- The sample quests' titles load late, so each row asks for its quest the way the panel does
+for _, questID in ipairs(ns.SAMPLE_QUEST_IDS or {}) do
+	ns.DIAGNOSTIC_NAME_LOOKUPS[#ns.DIAGNOSTIC_NAME_LOOKUPS + 1] = {
+		constant = "SAMPLE_QUEST_IDS",
+		kind = "quest",
+		id = questID,
+		lookup = function()
+			return ns.GetQuestTitleByID(questID)
+		end,
+		request = function()
+			if C_QuestLog.RequestLoadQuestByID then
+				C_QuestLog.RequestLoadQuestByID(questID)
+			end
+		end,
+	}
+end
+
+if ns.SAMPLE_DUNGEON_AREA_ID then
+	ns.DIAGNOSTIC_NAME_LOOKUPS[#ns.DIAGNOSTIC_NAME_LOOKUPS + 1] = {
+		constant = "SAMPLE_DUNGEON_AREA_ID",
+		kind = "area",
+		id = ns.SAMPLE_DUNGEON_AREA_ID,
+		lookup = function()
+			return C_Map.GetAreaInfo(ns.SAMPLE_DUNGEON_AREA_ID)
+		end,
+	}
+end
+
+if ns.SAMPLE_ZONE_AREA_ID then
+	ns.DIAGNOSTIC_NAME_LOOKUPS[#ns.DIAGNOSTIC_NAME_LOOKUPS + 1] = {
+		constant = "SAMPLE_ZONE_AREA_ID",
+		kind = "area",
+		id = ns.SAMPLE_ZONE_AREA_ID,
+		lookup = function()
+			return C_Map.GetAreaInfo(ns.SAMPLE_ZONE_AREA_ID)
+		end,
+	}
 end
 
 --------------------------------------------------------------------------------
@@ -455,11 +686,15 @@ local function Shown(frame)
 	return frame:IsShown() and "shown" or "hidden"
 end
 
--- The quest selected in the quest log, as the features read it: its ID and title, or nil
+--[[
+	The quest selected in the quest log, as the features read it: its ID and title, and its quest log index
+	where the log is read by index; or nil
+]]
 local function SelectedQuest()
-	if IS_FOREVER then
+	if OWN_WINDOW then
 		local questID = ns.questLog and ns.questLog.selectedQuestID
-		return questID, questID and C_QuestLog.GetTitleForQuestID(questID)
+		local index = questID and not QUEST_ID_API and ns.GetLogIndexForQuestID(questID) or nil
+		return questID, questID and ns.GetQuestTitleByID(questID), index
 	end
 	local index = GetQuestLogSelection()
 	local title, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(index)
@@ -490,7 +725,7 @@ end
 	quests and knows only the selected quest's pushable (nil for the rest)
 ]]
 local function LogQuests()
-	if IS_FOREVER then
+	if QUEST_ID_API then
 		return ns.LogQuests(), 0
 	end
 	local quests, zoneTitle, collapsed = {}, nil, 0
@@ -527,7 +762,7 @@ ns.DiagnosticLogQuests = LogQuests
 	the feature's own list, which selects every quest, is swapped out for the length of the call
 ]]
 local function DungeonQuests(dungeon)
-	if IS_FOREVER then
+	if QUEST_ID_API then
 		return ns.DungeonQuests(dungeon)
 	end
 	local featureLogQuests = ns.LogQuests
@@ -576,14 +811,14 @@ local function ElvUIQuestSkin(lines)
 		tostring(type(blizzard) == "table" and blizzard.enable),
 		tostring(type(blizzard) == "table" and blizzard.quest)
 	)
-	if not IS_FOREVER then
+	if IS_WIDENED_BLIZZARD_LOG then
 		lines[#lines + 1] =
 			string.format("ElvUI backdrop on the quest log: %s", YesNo(QuestLogFrame and QuestLogFrame.backdrop))
 	end
 end
 
 -- The overlay's pieces each client's quest list calls (Classic-VoiceOver.lua, Forever-VoiceOver.lua)
-local VOICEOVER_OVERLAY_PIECES = IS_FOREVER and { "MakePlayButton", "BindPlayButton", "SetPlayButtonState" }
+local VOICEOVER_OVERLAY_PIECES = OWN_WINDOW and { "MakePlayButton", "BindPlayButton", "SetPlayButtonState" }
 	or {
 		"Update",
 		"displayedButtons",
@@ -634,18 +869,9 @@ end
 
 -- Whether any zone header in the quest log is the player's zone
 local function CurrentZoneHeaderListed()
-	if IS_FOREVER then
-		for index = 1, C_QuestLog.GetNumQuestLogEntries() do
-			local entry = C_QuestLog.GetInfo(index)
-			if entry and entry.isHeader and ns.IsCurrentZone(entry.title) then
-				return true
-			end
-		end
-		return false
-	end
-	for index = 1, GetNumQuestLogEntries() do
-		local title, _, _, isHeader = GetQuestLogTitle(index)
-		if isHeader and ns.IsCurrentZone(title) then
+	for index = 1, ns.GetNumQuestLogEntries() do
+		local entry = ns.GetQuestLogEntry(index)
+		if entry and entry.isHeader and ns.IsCurrentZone(entry.title) then
 			return true
 		end
 	end
@@ -662,19 +888,20 @@ function ns:BuildQuestLogContextReport()
 	Setting(lines, "Quest Log switch (this profile)", "enableWideQuestLog")
 	lines[#lines + 1] = string.format("Wide quest log running this session: %s", YesNo(ns.wideQuestLogActive))
 	local wanted = ns.db and ns.db.profile.enableWideQuestLog
-	if ns.db and (wanted and true or false) ~= (ns.wideQuestLogActive == true) then
+	if ns.hasWideQuestLog and ns.db and (wanted and true or false) ~= (ns.wideQuestLogActive == true) then
 		lines[#lines + 1] = "  The switch and this session differ: it takes effect at the next /reload."
 	end
-	if IS_FOREVER then
-		lines[#lines + 1] = "Quest log: the add-on's own window (WoW Forever)"
+	if OWN_WINDOW then
+		lines[#lines + 1] = "Quest log: the add-on's own window"
 		lines[#lines + 1] = string.format(
 			"Quest log key and tracker clicks taken over this session: %s",
 			YesNo(ns.questLogTakenOver == true)
 		)
 		--[[
-			While taken over, each quest log key opens the window's own button, which can't be set in combat;
-			the micro menu button and tracker clicks open the world map, which the window takes over from
-			only out of combat (Forever-Quest-Log-Key.lua)
+			While taken over, each quest log key opens the window's own button, which can't be set in combat
+			(Quest-Log-Key.lua); the micro menu button and tracker clicks open the world map (WoW Forever) or
+			Blizzard's quest log (Mists), which the window takes over from only out of combat
+			(Forever-Quest-Log-Key.lua, Mists-Quest-Log-Key.lua)
 		]]
 		local keys = { GetBindingKey("TOGGLEQUESTLOG") }
 		lines[#lines + 1] = string.format("Quest log key: %s", #keys > 0 and table.concat(keys, ", ") or "(not bound)")
@@ -689,29 +916,35 @@ function ns:BuildQuestLogContextReport()
 			"Blizzard window open on the left: %s",
 			leftPanel and tostring(leftPanel:GetName() or "unnamed") or "(none)"
 		)
-		lines[#lines + 1] = string.format("Quest log entries: %d", C_QuestLog.GetNumQuestLogEntries())
+		lines[#lines + 1] = string.format("Quest log entries: %d", ns.GetNumQuestLogEntries())
+		local GetEntryCounts = C_QuestLog.GetNumQuestLogEntries or GetNumQuestLogEntries
 		lines[#lines + 1] = string.format(
 			"Quests held / most allowed: %s / %s",
-			tostring(C_QuestLog.GetNumQuestLogEntries and select(2, C_QuestLog.GetNumQuestLogEntries())),
+			tostring(select(2, GetEntryCounts())),
 			tostring(C_QuestLog.GetMaxNumQuestsCanAccept and C_QuestLog.GetMaxNumQuestsCanAccept())
 		)
-	else
+	elseif IS_WIDENED_BLIZZARD_LOG then
 		lines[#lines + 1] = "Quest log: Blizzard's quest log, widened"
 		lines[#lines + 1] = string.format("Quest log window: %s", Shown(QuestLogFrame))
 		lines[#lines + 1] = string.format("Quest log entries: %d", GetNumQuestLogEntries())
 		lines[#lines + 1] = string.format("List rows (QUESTS_DISPLAYED): %s", tostring(QUESTS_DISPLAYED))
+		-- The parchment hides for good as the window opens with ElvUI's quest skin drawn on it (Classic-ElvUI.lua)
+		local E = type(ElvUI) == "table" and ElvUI[1]
+		local elvSkin = QuestLogFrame and QuestLogFrame.backdrop and E and E.GetModule and E:GetModule("Skins", true)
 		lines[#lines + 1] = string.format(
-			"Own parchment drawn: %s (off while ElvUI is loaded)",
-			YesNo(not C_AddOns.IsAddOnLoaded("ElvUI"))
+			"Own parchment drawn: %s (not once the quest log opens with ElvUI's quest skin on it)",
+			YesNo(not elvSkin)
 		)
+	else
+		lines[#lines + 1] =
+			"Quest log: Blizzard's own (no wide quest log on this client yet, so the switch does nothing)"
+		lines[#lines + 1] = string.format("Quest log window: %s", Shown(QuestLogFrame))
+		lines[#lines + 1] = string.format("Quest log entries: %d", ns.GetNumQuestLogEntries())
 	end
 	SelectedQuestLine(lines)
-	if IS_FOREVER then
+	if OWN_WINDOW then
 		-- The quest ID under the details is Blizzard's selection, which the add-on sets as it shows a quest
-		lines[#lines + 1] = string.format(
-			"Blizzard's selected quest: %s",
-			tostring(C_QuestLog.GetSelectedQuest and C_QuestLog.GetSelectedQuest())
-		)
+		lines[#lines + 1] = string.format("Blizzard's selected quest: %s", tostring(ns.GetSelectedQuestID()))
 	end
 
 	-- The quest giver window shows no quest ID while the game gives it none (0)
@@ -721,20 +954,51 @@ function ns:BuildQuestLogContextReport()
 		lines[#lines + 1] = string.format("  Its quest ID: %s", tostring(GetQuestID and GetQuestID()))
 	end
 
-	if IS_FOREVER then
+	if OWN_WINDOW then
 		--[[
 			The quest details share Blizzard's quest text pieces, so they stay
 			blank while the quest giver window or any of these has them
-			(Forever-Quest-Details.lua).
+			(Forever-Quest-Details.lua). The detail popup is WoW Forever's;
+			Blizzard's quest log and its details window are Mists'.
 		]]
 		local mapDetails = QuestMapFrame and QuestMapFrame.DetailsFrame
-		lines[#lines + 1] = string.format("Quest detail popup: %s", Shown(QuestLogPopupDetailFrame))
+		if QUEST_ID_API then
+			lines[#lines + 1] = string.format("Quest detail popup: %s", Shown(QuestLogPopupDetailFrame))
+		else
+			lines[#lines + 1] = string.format("Blizzard's quest log: %s", Shown(QuestLogFrame))
+			lines[#lines + 1] = string.format("Blizzard's quest details window: %s", Shown(QuestLogDetailFrame))
+		end
 		lines[#lines + 1] =
 			string.format("World map quest details visible: %s", YesNo(mapDetails and mapDetails:IsVisible()))
 		lines[#lines + 1] = string.format(
 			"Quest Text Contrast on: %s",
 			tostring(QuestTextContrast and QuestTextContrast.IsEnabled and QuestTextContrast.IsEnabled())
 		)
+	end
+	if OWN_WINDOW and not QUEST_ID_API then
+		--[[
+			Mists: the giver's model beside the window shows for Blizzard's selected quest, once the details
+			show that quest too, while the game gives it a model (portrait not 0) and lets it show. It goes
+			under the map while the map is open, and hides when there's too little room there
+			(Mists-Quest-Portrait.lua)
+		]]
+		local portrait, _, name, mount, modelSceneID
+		if GetQuestLogPortraitGiver then
+			portrait, _, name, mount, modelSceneID = GetQuestLogPortraitGiver()
+		end
+		lines[#lines + 1] = string.format(
+			"Quest giver model for Blizzard's selected quest: %s (%s), mount %s, scene %s",
+			tostring(portrait),
+			tostring(name),
+			tostring(mount),
+			tostring(modelSceneID)
+		)
+		lines[#lines + 1] = string.format(
+			"Blizzard lets the giver show: %s",
+			QuestLogShouldShowPortrait and YesNo(QuestLogShouldShowPortrait()) or "yes (no check on this client)"
+		)
+		local holder = ns.questMap and ns.questMap.holder
+		lines[#lines + 1] = string.format("Map open beside the window: %s", YesNo(holder and holder:IsShown()))
 	end
 
 	-- /pwql refuses to open the options in combat; on WoW Forever the quest log also can't close the windows on the left
@@ -817,7 +1081,20 @@ function ns:BuildQuestLogContextReport()
 			"Selected quest's chain: %s",
 			parts and string.format("part %d of %d", position, #parts) or "(none)"
 		)
+		-- The letter after its level comes from its tag through this flavor's tag table (Quest-Display.lua)
+		local tagID, isElite = ns.GetQuestTagByID(selectedID)
+		local suffix = ns.QuestSuffix(tagID, isElite)
+		lines[#lines + 1] = string.format(
+			"Selected quest's tag: %s, elite: %s, letter after its level: %s",
+			tostring(tagID),
+			YesNo(isElite),
+			suffix ~= "" and suffix or "(none)"
+		)
 	end
+	lines[#lines + 1] = string.format(
+		"Quest tags with a letter on this client: %s",
+		type(ns.QUEST_TAG_SUFFIXES) == "table" and CountKeys(ns.QUEST_TAG_SUFFIXES) or "missing"
+	)
 	lines[#lines + 1] = string.format("ElvUI: %s", Loaded("ElvUI"))
 	ElvUIQuestSkin(lines)
 	lines[#lines + 1] = string.format("VoiceOver: %s", Loaded("AI_VoiceOver"))
@@ -842,7 +1119,7 @@ function ns:BuildTrackingContextReport()
 	local lines = { GetClientHeader(), "" }
 
 	Setting(lines, "Mark untracked quests", "markUntracked")
-	if IS_FOREVER then
+	if QUEST_ID_API then
 		lines[#lines + 1] = string.format(
 			"Watch list: %s / %s",
 			tostring(C_QuestLog.GetNumQuestWatches()),
@@ -874,7 +1151,7 @@ function ns:BuildTrackingContextReport()
 	end
 	-- The tracking marks and Untrack All go by Questie's tracker once it has taken over (Tracking-Mark.lua)
 	lines[#lines + 1] = string.format("Questie's tracker has taken over: %s", YesNo(ns.IsQuestieTracking()))
-	if IS_FOREVER then
+	if QUEST_ID_API then
 		local player = ns.ImportQuestieModule("QuestiePlayer")
 		local log = player and player.currentQuestlog
 		lines[#lines + 1] = string.format("QuestiePlayer module: %s", player and "found" or "not found")
@@ -900,7 +1177,7 @@ function ns:BuildTrackingContextReport()
 	lines[#lines + 1] = ""
 	local questID, _, index = SelectedQuest()
 	SelectedQuestLine(lines)
-	if questID and IS_FOREVER then
+	if questID and QUEST_ID_API then
 		lines[#lines + 1] = string.format("  Tracked: %s", YesNo(ns.IsTracked(questID)))
 		lines[#lines + 1] = string.format("  Can be tracked (Questie can show it): %s", YesNo(ns.CanTrack(questID)))
 		lines[#lines + 1] = string.format("  Room on the watch list: %s", YesNo(ns.HasRoomToTrack(questID)))
@@ -969,6 +1246,20 @@ local function DungeonQuestLines(lines)
 	)
 	lines[#lines + 1] =
 		string.format("Questie lookups the dungeon match uses: %s", QuestieQueries(DUNGEON_QUESTIE_QUERIES))
+	-- World event quests never count for a dungeon, though Questie can place one there (Dungeon-Quest-Lookup.lua)
+	local questieEvent = ns.ImportQuestieModule("QuestieEvent")
+	if questieEvent and type(questieEvent.IsEventQuest) == "function" then
+		local eventQuests = 0
+		for _, quest in ipairs((LogQuests())) do
+			local found, isEvent = pcall(questieEvent.IsEventQuest, quest.questID)
+			if found and isEvent == true then
+				eventQuests = eventQuests + 1
+			end
+		end
+		lines[#lines + 1] = string.format("Quests in the log left out as world event quests: %d", eventQuests)
+	else
+		lines[#lines + 1] = "Questie world event quest list: not found, so no quest is left out as one"
+	end
 	local dungeon = ns.CurrentDungeon()
 	local _, instanceType, _, _, _, _, _, instanceID = GetInstanceInfo()
 	if not dungeon then
@@ -1016,17 +1307,20 @@ local function DungeonQuestLines(lines)
 	end
 end
 
--- The zone header a quest is listed under, or nil; index is its quest log index on Classic Era and TBC
-local function QuestZone(questID, index)
-	if IS_FOREVER then
+--[[
+	The zone header a quest is listed under, or nil. By quest log index, a quest under a zone collapsed in
+	Blizzard's log isn't listed at all, which on Mists can be every zone while the window is shut, so the
+	log is read with every zone open (ns.LogQuests)
+]]
+local function QuestZone(questID)
+	if QUEST_ID_API then
 		local headerIndex = C_QuestLog.GetHeaderIndexForQuest(questID)
 		local header = headerIndex and C_QuestLog.GetInfo(headerIndex)
 		return header and header.title
 	end
-	for entry = index or 0, 1, -1 do
-		local title, _, _, isHeader = GetQuestLogTitle(entry)
-		if isHeader then
-			return title
+	for _, quest in ipairs(ns.LogQuests()) do
+		if quest.questID == questID then
+			return quest.zoneTitle
 		end
 	end
 end
@@ -1041,7 +1335,7 @@ local function ZoneMenuLines(lines, zoneTitle)
 	if not zoneTitle then
 		return
 	end
-	if IS_FOREVER then
+	if QUEST_ID_API then
 		local shareable, total = ns.ShareableZoneQuests(zoneTitle)
 		lines[#lines + 1] = string.format(
 			"  Zone menu: %d of %d quests can be shared, %d gray",
@@ -1086,17 +1380,21 @@ function ns:BuildSharingContextReport()
 	lines[#lines + 1] = string.format("In a group: %s", YesNo(IsInGroup()))
 	lines[#lines + 1] = string.format("Share run in progress: %s", YesNo(ns.sharingQuests))
 	lines[#lines + 1] = string.format("Seconds between shares in use: %s", tostring(ns.db and ns.GetShareInterval()))
-	local questID, _, index = SelectedQuest()
+	local questID = SelectedQuest()
 	SelectedQuestLine(lines)
 	if questID then
 		local pushable
-		if IS_FOREVER then
+		if QUEST_ID_API then
 			pushable = C_QuestLog.IsPushableQuest(questID)
-		else
-			pushable = GetQuestLogPushable() -- Reads the selected quest, the one above
+		elseif ns.GetSelectedQuestID() == questID then
+			-- Reads Blizzard's selected quest, which on Mists can be another than the window's
+			pushable = GetQuestLogPushable() and true or false
 		end
-		lines[#lines + 1] = string.format("  The game lets you share it: %s", YesNo(pushable))
-		ZoneMenuLines(lines, QuestZone(questID, index))
+		lines[#lines + 1] = string.format(
+			"  The game lets you share it: %s",
+			pushable == nil and "not checked (Blizzard's selected quest is another)" or YesNo(pushable)
+		)
+		ZoneMenuLines(lines, QuestZone(questID))
 	end
 
 	-- A whisper goes out only with both switches on, for a result within the share interval of the share
@@ -1132,6 +1430,25 @@ function ns:BuildSharingContextReport()
 		)
 	lines[#lines + 1] = string.format("Questie quest links: %s", hasLinks and "found" or "not found")
 
+	-- The Example lines under the sharing settings name these; a client with no sample quests shows none (Options-Quality-of-Life.lua)
+	local samples, titled = ns.SAMPLE_QUEST_IDS or {}, 0
+	for _, sampleID in ipairs(samples) do
+		if ns.GetQuestTitleByID(sampleID) then
+			titled = titled + 1
+		end
+	end
+	lines[#lines + 1] = string.format("Example lines' sample quests: %d, titles loaded: %d", #samples, titled)
+	lines[#lines + 1] = string.format(
+		"Example lines' sample dungeon: %s (%s)",
+		tostring(ns.SAMPLE_DUNGEON_AREA_ID),
+		tostring(ns.SAMPLE_DUNGEON_AREA_ID and C_Map.GetAreaInfo(ns.SAMPLE_DUNGEON_AREA_ID))
+	)
+	lines[#lines + 1] = string.format(
+		"Example lines' sample zone: %s (%s)",
+		tostring(ns.SAMPLE_ZONE_AREA_ID),
+		tostring(ns.SAMPLE_ZONE_AREA_ID and C_Map.GetAreaInfo(ns.SAMPLE_ZONE_AREA_ID))
+	)
+
 	DungeonQuestLines(lines)
 
 	return table.concat(lines, "\n")
@@ -1161,38 +1478,49 @@ local function MapRevealLine(mapID)
 	return string.format("Map art: %s, areas listed: %d, explored: %d", artID, listed, explored and #explored or 0)
 end
 
--- The map draws only these: no route lines, and nothing Questie's settings hide or fade out (Questie-Map.lua)
-local function IsDrawnIcon(icon)
+-- The map draws only these: no route lines, and nothing faded out entirely, though Questie may hide them itself (Questie-Map.lua)
+-- Why the map leaves an icon out, or nil when it draws it (Questie-Map.lua's IsShownIcon)
+local function SkipReason(icon)
 	local texture = icon.texture
-	if icon.type == "line" or icon.hidden or type(texture) ~= "table" or not texture.GetVertexColor then
-		return false
+	if icon.type == "line" then
+		return "route line"
+	elseif type(texture) ~= "table" or not texture.GetVertexColor then
+		return "no texture"
 	end
 	local _, _, _, alpha = texture:GetVertexColor()
-	return (alpha or 0) > 0
+	if (alpha or 0) <= 0 then
+		return "faded out entirely"
+	end
 end
 
 --[[
 	Questie's icons on the world map for a quest, as Questie-Map.lua finds
 	them: the total, per map how many the map draws and how many it leaves
-	out, and how many of the quest's carry Questie's scale for their kind
-	(the map draws the rest at its base size).
+	out, how many of the quest's carry Questie's scale for their kind (the
+	map draws the rest at its base size), and why the left-out ones were,
+	by Questie's kind of icon ("complete", "monster").
 ]]
 local function QuestieIcons(pins, questID)
-	local total, drawn, skipped, scaled = 0, {}, {}, 0
+	local total, drawn, skipped, scaled, reasons = 0, {}, {}, 0, {}
 	for icon, placement in pairs(pins) do
 		if type(icon) == "table" and type(icon.data) == "table" and type(placement) == "table" then
 			total = total + 1
 			local mapID = placement.uiMapID
 			if questID and icon.data.Id == questID and mapID then
-				local counts = IsDrawnIcon(icon) and drawn or skipped
+				local reason = SkipReason(icon)
+				local counts = reason and skipped or drawn
 				counts[mapID] = (counts[mapID] or 0) + 1
+				if reason then
+					local key = string.format("%s (%s)", reason, tostring(icon.data.Type))
+					reasons[key] = (reasons[key] or 0) + 1
+				end
 				if icon.data.GetIconScale then
 					scaled = scaled + 1
 				end
 			end
 		end
 	end
-	return total, drawn, skipped, scaled
+	return total, drawn, skipped, scaled, reasons
 end
 
 -- Questie's calls that Questie-Map.lua hooks, so the map redraws as icons come and go
@@ -1258,7 +1586,7 @@ local function ObjectiveAreaLines(lines, pins, questID, mapID)
 			and type(objective.spawnList) == "table"
 			and type(placement) == "table"
 			and placement.uiMapID == mapID
-			and IsDrawnIcon(icon)
+			and not SkipReason(icon)
 			and not seen[objective]
 		then
 			seen[objective] = true
@@ -1286,6 +1614,10 @@ function ns:BuildMapContextReport()
 
 	lines[#lines + 1] =
 		string.format("Map closed with Hide Map (remembered): %s", YesNo(ns.db and ns.db.global.mapHidden))
+	lines[#lines + 1] = string.format(
+		"Map hidden as the quest log is empty: %s",
+		YesNo(questMap and questMap.IsLogEmpty and questMap.IsLogEmpty())
+	)
 	lines[#lines + 1] = string.format("Map frame built: %s", YesNo(questMap and questMap.holder))
 	if questMap and questMap.holder then
 		lines[#lines + 1] = string.format("Map: %s", Shown(questMap.holder))
@@ -1314,7 +1646,7 @@ function ns:BuildMapContextReport()
 	lines[#lines + 1] = ""
 	local questID = SelectedQuest()
 	SelectedQuestLine(lines)
-	if questID and IS_FOREVER then
+	if questID and OWN_WINDOW then
 		lines[#lines + 1] = MapLine("  Blizzard's zone for it", GetQuestUiMapID(questID))
 	end
 	-- Where the map goes without Questie's icons; on WoW Forever only where Blizzard's zone above is 0 (Questie-Map.lua)
@@ -1342,7 +1674,7 @@ function ns:BuildMapContextReport()
 	end
 	local pins = pinsLibrary and pinsLibrary.worldmapPins
 	if type(pins) == "table" then
-		local total, drawn, skipped, scaled = QuestieIcons(pins, questID)
+		local total, drawn, skipped, scaled, reasons = QuestieIcons(pins, questID)
 		lines[#lines + 1] = string.format("Questie world map icons placed: %d", total)
 		local maps, seen = {}, {}
 		for _, counts in ipairs({ drawn, skipped }) do
@@ -1361,27 +1693,45 @@ function ns:BuildMapContextReport()
 		if #maps > 0 then
 			lines[#lines + 1] = string.format("  Sized by Questie's scale for their kind: %d", scaled)
 		end
+		for reason, count in pairs(reasons) do
+			lines[#lines + 1] = string.format("  Left out, %s: %d", reason, count)
+		end
 	end
 	local questieProfile = QuestieProfile()
 	if questieProfile then
 		-- The colored glow behind objective icons shows only with Questie's own always-glow setting on
 		lines[#lines + 1] = string.format("Questie always glow on map: %s", tostring(questieProfile.alwaysGlowMap))
+		-- Questie hides or fades its own icons by these; the map still draws the ones it hides (Questie-Map.lua)
+		-- Questie's icon switch, which its world map button, its minimap button and /questie toggle all flip
+		lines[#lines + 1] = string.format("Questie icons on: %s", tostring(questieProfile.enabled))
+		lines[#lines + 1] = string.format(
+			"Questie map icons / objectives / turn-ins: %s / %s / %s",
+			tostring(questieProfile.enableMapIcons),
+			tostring(questieProfile.enableObjectives),
+			tostring(questieProfile.enableTurnins)
+		)
+		lines[#lines + 1] = string.format(
+			"Questie hides untracked / unexplored icons: %s / %s, fade level %s",
+			tostring(questieProfile.hideUntrackedQuestsMapIcons),
+			tostring(questieProfile.hideUnexploredMapIcons),
+			tostring(questieProfile.iconFadeLevel)
+		)
 	end
 	lines[#lines + 1] = string.format(
 		"Map follows Questie's icons for: %s",
 		tostring(questMap and questMap.questieQuestID or "(no quest)")
 	)
-	if IS_FOREVER then
+	if OWN_WINDOW then
 		--[[
 			Blizzard's objective area and quest marker draw the selected quest only, and nothing while Questie's
-			icons have it, with a marker at its next waypoint when its objectives are in another zone
-			(Forever-Quest-Map.lua)
+			icons have it, with a marker at its next waypoint when its objectives are in another zone (WoW
+			Forever only) (Forever-Quest-Map.lua). On Mists they draw only for quests it has map data for
 		]]
 		local blizzardID = questID ~= (questMap and questMap.questieQuestID) and questID or nil
 		lines[#lines + 1] =
 			string.format("Blizzard's objective area and quest marker drawn for: %s", tostring(blizzardID or "(none)"))
 		local mapID = canvas and canvas:GetMapID()
-		if blizzardID and mapID then
+		if blizzardID and mapID and C_QuestLog.GetNextWaypointForMap then
 			local x, y = C_QuestLog.GetNextWaypointForMap(blizzardID, mapID)
 			lines[#lines + 1] = string.format(
 				"  Next waypoint on the map shown: %s",

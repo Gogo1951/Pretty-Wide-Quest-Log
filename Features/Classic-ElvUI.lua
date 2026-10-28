@@ -4,8 +4,9 @@ local _, ns = ...
 	Classic Era and TBC under ElvUI. ElvUI skins Blizzard's quest log, but not the buttons, map and
 	dropdown this add-on adds to it, and its see-through backdrop lets whatever sits behind the window,
 	Questie's tracker say, show through the quest text. ElvUI skins the window after this file loads, so the first time the
-	window opens this makes the skin's backdrop opaque and styles the add-on's own pieces ElvUI's way.
-	Nothing happens without ElvUI or with its quest skin turned off, as the window then has no backdrop
+	window opens this hides the add-on's parchment, makes the skin's backdrop opaque and styles the add-on's
+	own pieces ElvUI's way. Nothing happens without ElvUI or with its quest skin turned off, as the window
+	then has no backdrop and keeps the add-on's parchment
 ]]
 
 ns.AddWideQuestLogPart(function()
@@ -33,6 +34,7 @@ ns.AddWideQuestLogPart(function()
 		end
 		skinned = true
 
+		ns.HideQuestLogParchment()
 		MakeOpaque(backdrop)
 		for _, button in ipairs(ns.listButtons) do
 			skins:HandleButton(button, true)

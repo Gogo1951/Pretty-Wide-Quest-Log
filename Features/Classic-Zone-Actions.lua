@@ -1,6 +1,6 @@
 local _, ns = ...
 
--- Classic Era and TBC: the quest log calls behind the zone menu (Zone-Menu.lua), by quest ID.
+-- Classic Era, TBC and Mists: the quest log calls behind the zone menu (Zone-Menu.lua), by quest ID.
 
 --------------------------------------------------------------------------------
 -- Finding Quests
@@ -18,6 +18,17 @@ end
 -- The quest selected in Blizzard's quest log, as its quest ID and title; nothing while a zone or nothing is selected
 function ns.SelectedQuest()
 	local title, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(GetQuestLogSelection())
+	if title and not isHeader then
+		return questID, title
+	end
+end
+
+-- The quest a share goes out for: the log entry QuestLogPushQuest is given, or the selected quest when it's given none
+function ns.SharedQuest(questLogIndex)
+	if not questLogIndex then
+		return ns.SelectedQuest()
+	end
+	local title, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(questLogIndex)
 	if title and not isHeader then
 		return questID, title
 	end
@@ -139,9 +150,9 @@ function ns.LogQuests()
 end
 
 --[[
-	The quests in a zone the list draws gray (GetQuestDifficultyColor, as Classic-Quest-List.lua colors
-	rows), as { questID, title, level, suffix }, suffix being the letter after the level ("D"). A
-	collapsed zone is opened to look and closed again, and the player's selection put back
+	The quests in a zone the quest list draws gray (GetQuestDifficultyColor, given what the list gives it),
+	as { questID, title, level, suffix }, suffix being the letter after the level ("D"). A collapsed zone is
+	opened to look and closed again, and the player's selection put back
 ]]
 function ns.GrayQuests(zoneTitle)
 	local headerIndex, collapsed = FindZoneHeader(zoneTitle)
@@ -155,11 +166,11 @@ function ns.GrayQuests(zoneTitle)
 
 	local quests = {}
 	for index = headerIndex + 1, GetNumQuestLogEntries() do
-		local title, level, _, isHeader, _, _, _, questID = GetQuestLogTitle(index)
+		local title, level, _, isHeader, _, _, _, questID, _, _, _, _, _, _, _, _, isScaling = GetQuestLogTitle(index)
 		if isHeader then
 			break
 		end
-		if questID and GetQuestDifficultyColor(level) == QuestDifficultyColors.trivial then
+		if questID and GetQuestDifficultyColor(level, isScaling, questID) == QuestDifficultyColors.trivial then
 			quests[#quests + 1] = {
 				questID = questID,
 				title = title,

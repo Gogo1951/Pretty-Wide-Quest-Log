@@ -53,6 +53,11 @@ function ns.HasRoomToTrack(questID)
 		or C_QuestLog.GetNumQuestWatches() < Constants.QuestWatchConsts.MAX_QUEST_WATCHES
 end
 
+-- Whether a watch can be taken off the watch list now: the game refuses at times
+function ns.CanRemoveQuestWatch()
+	return QuestUtil.CanRemoveQuestWatch()
+end
+
 local function Untrack(questID, tracker)
 	if
 		tracker
@@ -62,7 +67,7 @@ local function Untrack(questID, tracker)
 	then
 		return
 	end
-	if QuestUtil.CanRemoveQuestWatch() then
+	if ns.CanRemoveQuestWatch() then
 		C_QuestLog.RemoveQuestWatch(questID) -- Also untracks it in Questie
 	end
 end
