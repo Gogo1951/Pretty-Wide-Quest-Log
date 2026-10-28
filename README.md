@@ -16,7 +16,7 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 
 🌍 **Follow Quests Across Zones** // Some quests take you all over the world. Switch between every zone a quest visits, right from the map, and keep the whole journey in view.
 
-<img width="800" src="https://github.com/user-attachments/assets/8637f1aa-bd9d-431f-af11-243b2fb1d716" />
+<img width="800" src="https://github.com/user-attachments/assets/052eb021-d91b-45b3-849d-5202897f6baa" />
 
 ### Example Messages
 
