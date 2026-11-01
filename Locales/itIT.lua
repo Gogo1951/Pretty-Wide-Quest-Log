@@ -32,7 +32,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Sostituisce il registro delle missioni di Blizzard con quello largo, con la mappa accanto. Ha effetto dopo un ricaricamento."
 L["ENABLE_QUALITY_OF_LIFE"] = "Attiva funzioni di comodità"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Riordina la finestra del datore di missioni e aiuta il tuo gruppo a prendere le tue missioni: ritmo di condivisione, sussurri quando una condivisione non raggiunge qualcuno, e annuncio e condivisione delle missioni delle spedizioni. Condividi missioni di una zona funziona in ogni caso."
+	"Riordina la finestra del datore di missioni e aiuta il tuo gruppo a prendere le tue missioni: ritmo di condivisione, sussurri quando una condivisione non raggiunge qualcuno, e annuncio e condivisione delle missioni delle spedizioni. Il clic destro sul nome di una zona per condividere funziona in ogni caso."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Attiva registro delle missioni largo ha effetto dopo un ricaricamento, che ti verrà proposto alla chiusura dell'interfaccia delle opzioni."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia registro delle missioni dopo un ricaricamento. Ricaricare ora?"
@@ -46,9 +46,13 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Apre l'interfaccia delle opzioni di questo a
 
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Sostituisce il registro delle missioni di Blizzard con uno largo: le tue missioni elencate per zona, con accanto i dettagli della missione selezionata e la sua mappa."
-L["QUEST_LOG_LAYOUT_HEADER"] = "Layout del registro delle missioni"
-L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
-	"Ordina le missioni come preferisci, scegli cosa mostra ogni riga e adatta le dimensioni della finestra e della mappa al tuo schermo."
+L["QUEST_LOG_SORTING_HEADER"] = "Ordinamento"
+L["QUEST_LOG_SORTING_DESCRIPTION"] = "Scegli l'ordine delle tue zone e delle missioni sotto di esse."
+L["QUEST_LOG_ROWS_HEADER"] = "Righe delle missioni"
+L["QUEST_LOG_ROWS_DESCRIPTION"] = "Scegli cosa mostra ogni riga."
+L["QUEST_LOG_WINDOW_MAP_HEADER"] = "Finestra e mappa"
+L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] =
+	"Adatta le dimensioni della finestra e della mappa al tuo schermo e scegli come si comportano."
 L["ZONE_ORDER"] = "Ordine delle zone"
 L["ZONE_ORDER_DESCRIPTION"] = "Cambia l'ordine delle zone nell'elenco delle missioni."
 L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "Livello medio, prima il più alto (predefinito)"
@@ -71,6 +75,7 @@ L["SHOW_QUEST_LEVELS"] = "Mostra i livelli delle missioni"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
 	"Mette il livello e il tipo di ogni missione davanti al suo nome nell'elenco, come %s per una missione da spedizione di livello 40."
 L["MARK_UNTRACKED"] = "Segna le missioni non seguite"
+-- TRANSLATORS: each %s is an icon that follows the word it pictures
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"Le missioni seguite perdono la spunta %s e quelle non seguite hanno invece un occhio %s. Utile se segui quasi tutto."
 L["CLOSE_IN_COMBAT"] = "Chiudi all'inizio del combattimento"
@@ -78,7 +83,7 @@ L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 	"Chiude il registro delle missioni quando inizia un combattimento, così non copre mai l'azione."
 L["SHOW_OBJECTIVE_AREAS"] = "Mostra le aree degli obiettivi"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
-	"Ombreggia sulla mappa accanto al registro delle missioni i punti in cui si trovano i nemici e gli oggetti di ogni obiettivo, con un'icona per area invece di una su ogni punto di comparsa. Richiede Questie."
+	"Ombreggia sulla mappa accanto al registro delle missioni i punti in cui si trovano i nemici e gli oggetti di ogni obiettivo, con un'icona per area invece di una su ogni punto di comparsa."
 L["NEEDS_QUESTIE_HINT"] = "Attiva Questie per usare questa opzione."
 L["WINDOW_SCALE"] = "Scala del registro delle missioni"
 L["WINDOW_SCALE_DESCRIPTION"] =
@@ -91,9 +96,19 @@ L["RESET_WINDOW_SCALE_DESCRIPTION"] =
 	"Riporta l'altezza e la scala del registro delle missioni, e la scala della mappa, ai valori predefiniti."
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
 	"Riporta l'altezza e la scala del registro delle missioni, e la scala della mappa, ai valori predefiniti, e riporta la finestra nella sua posizione iniziale."
-L["RESET_WINDOW_SCALE_CONFIRM"] = "Ripristinare l'altezza e la scala del registro delle missioni?"
+L["RESET_WINDOW_SCALE_CONFIRM"] =
+	"Ripristinare l'altezza e la scala del registro delle missioni, e la scala della mappa?"
 L["RESET_WINDOW_MOVE_CONFIRM"] =
-	"Ripristinare l'altezza e la scala del registro delle missioni, e la sua posizione sullo schermo?"
+	"Ripristinare l'altezza e la scala del registro delle missioni, la scala della mappa e la posizione della finestra sullo schermo?"
+L["HANDY_CLICKS_HEADER"] = "Clic utili"
+L["HANDY_CLICK_ZONE"] = "Clic destro sul nome di una zona"
+L["HANDY_CLICK_ZONE_DESCRIPTION"] = "Condividi le sue missioni o abbandona quelle grigie."
+L["HANDY_CLICK_TRACK"] = "Maiusc-clic su una missione"
+L["HANDY_CLICK_TRACK_DESCRIPTION"] = "Seguila o smetti di seguirla."
+L["HANDY_CLICK_MENU"] = "Clic destro su una missione"
+L["HANDY_CLICK_MENU_DESCRIPTION"] = "Seguila, condividila o abbandonala."
+L["HANDY_CLICK_ID"] = "Clic su un ID missione"
+L["HANDY_CLICK_ID_DESCRIPTION"] = "Ottieni il suo link a Wowhead."
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -113,9 +128,11 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 L["QUEST_SHARING_HEADER"] = "Condivisione delle missioni"
 L["QUEST_SHARING_INTRO"] =
 	"Fai clic destro sul nome di una zona nel registro delle missioni per offrire al tuo gruppo, una dopo l'altra, tutte le sue missioni che puoi condividere. Queste opzioni regolano il ritmo e cosa succede quando qualcuno ne perde una."
+L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
+	"Il clic destro sul nome di una zona richiede Attiva registro delle missioni largo. La condivisione delle missioni delle spedizioni funziona in ogni caso."
 L["SHARE_INTERVAL"] = "Secondi tra le condivisioni"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"Quanto attendere tra una missione condivisa e la successiva, per Condividi missioni e per la condivisione delle missioni delle spedizioni. Più è lungo, più tempo ha il tuo gruppo per accettare ciascuna."
+	"Quanto attendere tra una missione condivisa e la successiva, quando condividi le missioni di una zona o di una spedizione. Più è lungo, più tempo ha il tuo gruppo per accettare ciascuna."
 L["SHARE_WHISPERS"] = "Sussurra quando una condivisione non riesce"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Quando un membro del gruppo è occupato, troppo lontano o ha il registro delle missioni pieno, gli sussurra quale missione hai provato a condividere e gli chiede di ricordartelo. Non viene inviato nulla se non ha i requisiti per la missione, ce l'ha già o l'ha già completata."
@@ -195,7 +212,7 @@ L["RESIZE_TOOLTIP"] = "Trascina per ridimensionare il registro delle missioni."
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "Clic destro per condividere le missioni o abbandonare quelle grigie"
+L["ZONE_MENU_ACTIONS_HINT"] = "Clic destro per condividere le missioni o abbandonare quelle grigie."
 L["SHARE_ZONE_QUESTS"] = "Condividi %d missioni"
 L["SHARE_ZONE_QUEST"] = "Condividi 1 missione"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =

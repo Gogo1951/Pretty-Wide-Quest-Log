@@ -197,6 +197,11 @@ ns.AddWideQuestLogPart(function()
 	dailyResetText:SetPoint("TOPLEFT", QuestLogQuestTitle, "BOTTOMLEFT", 0, -LAYOUT.TITLE_SPACE_BELOW)
 	dailyResetText:Hide()
 
+	-- Skins (ElvUI) recolor the description in hooks that may run after this line is styled, so it follows them
+	hooksecurefunc(QuestLogQuestDescription, "SetTextColor", function()
+		dailyResetText:SetTextColor(QuestLogQuestDescription:GetTextColor())
+	end)
+
 	local function ShowDailyReset()
 		local _, _, _, _, _, _, frequency = GetQuestLogTitle(GetQuestLogSelection())
 		local daily = ns.IsDailyFrequency(frequency) and GetQuestResetTime and GetQuestResetTime()

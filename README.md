@@ -98,24 +98,16 @@ Never lose your place in a long chain again. With Questie installed, the selecte
 
 ### 🟢 Pairs With
 
-* rickrob's [Guidelime](https://www.curseforge.com/wow/addons/guidelime)
-* Leatrix's [Leatrix Maps](https://www.curseforge.com/wow/addons/leatrix-maps)
 * TheCrux\_BB's [Questie](https://www.curseforge.com/wow/addons/questie)
 * RestedXP's [RestedXP Guide](https://www.curseforge.com/wow/addons/restedxp-guide)
+* rustykey's [Spoken](https://www.curseforge.com/wow/addons/spoken)
+* jnwhiteh's [TomTom](https://www.curseforge.com/wow/addons/tomtom)
 * MrThinger's [VoiceOver (Classic)](https://www.curseforge.com/wow/addons/voiceover)
-
-### 🟡 Overlaps
-
-* nanderson11's [AtlasQuest - Fan Update](https://www.curseforge.com/wow/addons/atlas-quest-fan-update)
-* Peterodox's [Dialogue UI](https://www.curseforge.com/wow/addons/dialogueui)
-* ExehnTV's [DungeonJournal](https://www.curseforge.com/wow/addons/dungeonjournal)
-* MunkDev's [Immersion](https://www.curseforge.com/wow/addons/immersion)
-* Leatrix's [Leatrix Plus](https://www.curseforge.com/wow/addons/leatrix-plus)
 
 ### 🔴 Alternatives
 
 * DarrenKosick's [BetterQuestLog](https://www.curseforge.com/wow/addons/betterquestlog)
 * Kerzo's [Kerzo Classic Quest Log](https://www.curseforge.com/wow/addons/kerzo-classic-quest-log)
 * Drathnis's [QuestLogPlus](https://www.curseforge.com/wow/addons/questlog-plus)
-* StreamBuddies's [StBu MasterQuestLog](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
-* StreamBuddies's [StBu QuestLogLayout](https://www.curseforge.com/wow/addons/sb-questloglayout)
+* bitekenny's [StBu MasterQuestLog](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
+* bitekenny's [StBu QuestLogLayout](https://www.curseforge.com/wow/addons/sb-questloglayout)

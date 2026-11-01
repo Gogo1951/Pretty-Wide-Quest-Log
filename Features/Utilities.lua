@@ -351,6 +351,19 @@ function ns.GetShareInterval()
 	return profile.enableQualityOfLife and profile.shareInterval or ns.DATABASE_DEFAULTS.profile.shareInterval
 end
 
+-- Says on hover why a Share Quest button is grayed out when the player isn't in a party; hooked, as Classic's is Blizzard's
+function ns.ExplainShareButton(button)
+	button:SetMotionScriptsWhileDisabled(true)
+	button:HookScript("OnEnter", function(self)
+		if not self:IsEnabled() and not IsInGroup() then
+			GameTooltip:SetOwner(self, "ANCHOR_TOP")
+			GameTooltip_SetTitle(GameTooltip, ERR_NOT_IN_GROUP)
+			GameTooltip:Show()
+		end
+	end)
+	button:HookScript("OnLeave", GameTooltip_Hide)
+end
+
 --------------------------------------------------------------------------------
 -- Sorting
 --------------------------------------------------------------------------------

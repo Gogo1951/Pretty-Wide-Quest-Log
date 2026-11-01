@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Ersetzt Blizzards Questlog durch das breite, mit der Karte daneben. Wird nach einem Neuladen wirksam."
 L["ENABLE_QUALITY_OF_LIFE"] = "Komfortfunktionen aktivieren"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Räumt das Questgeberfenster auf und hilft deiner Gruppe, deine Quests zu bekommen: Tempo beim Teilen, Flüsternachrichten, wenn ein Teilen jemanden verfehlt, sowie Ansage und Teilen von Dungeonquests. Quests teilen im Menü einer Zone funktioniert in jedem Fall."
+	"Räumt das Questgeberfenster auf und hilft deiner Gruppe, deine Quests zu bekommen: Tempo beim Teilen, Flüsternachrichten, wenn ein Teilen jemanden verfehlt, sowie Ansage und Teilen von Dungeonquests. Das Teilen per Rechtsklick auf einen Zonennamen funktioniert in jedem Fall."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Breites Questlog aktivieren wird nach einem Neuladen wirksam, das dir beim Schließen des Optionsmenüs angeboten wird."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log wechselt das Questlog erst nach einem Neuladen. Jetzt neu laden?"
@@ -45,9 +45,13 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Öffnet das Optionsmenü für dieses Add-on.
 
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Ersetzt Blizzards Questlog durch ein breites: deine Quests nach Zone sortiert, daneben die Details der gewählten Quest und ihre Karte."
-L["QUEST_LOG_LAYOUT_HEADER"] = "Aufbau des Questlogs"
-L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
-	"Sortiere deine Quests so, wie du spielst, wähle, was jede Zeile zeigt, und passe Fenster und Karte an deinen Bildschirm an."
+L["QUEST_LOG_SORTING_HEADER"] = "Sortierung"
+L["QUEST_LOG_SORTING_DESCRIPTION"] = "Wähle die Reihenfolge deiner Zonen und der Quests darunter."
+L["QUEST_LOG_ROWS_HEADER"] = "Questzeilen"
+L["QUEST_LOG_ROWS_DESCRIPTION"] = "Wähle, was jede Zeile zeigt."
+L["QUEST_LOG_WINDOW_MAP_HEADER"] = "Fenster & Karte"
+L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] =
+	"Passe Fenster und Karte an deinen Bildschirm an und wähle, wie sie sich verhalten."
 L["ZONE_ORDER"] = "Reihenfolge der Zonen"
 L["ZONE_ORDER_DESCRIPTION"] = "Ändert die Reihenfolge der Zonen in der Questliste."
 L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "Durchschnittsstufe, höchste zuerst (Standard)"
@@ -70,6 +74,7 @@ L["SHOW_QUEST_LEVELS"] = "Queststufen anzeigen"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
 	"Setzt die Stufe und Art jeder Quest vor ihren Namen in der Liste, etwa %s für eine Dungeonquest der Stufe 40."
 L["MARK_UNTRACKED"] = "Nicht verfolgte Quests markieren"
+-- TRANSLATORS: each %s is an icon that follows the word it pictures
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"Verfolgte Quests verlieren ihr Häkchen %s, und nicht verfolgte Quests bekommen stattdessen ein Auge %s. Praktisch, wenn du fast alles verfolgst."
 L["CLOSE_IN_COMBAT"] = "Bei Kampfbeginn schließen"
@@ -77,7 +82,7 @@ L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 	"Schließt das Questlog, sobald ein Kampf beginnt, damit es nie das Geschehen verdeckt."
 L["SHOW_OBJECTIVE_AREAS"] = "Zielgebiete anzeigen"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
-	"Schattiert auf der Karte neben dem Questlog, wo die Gegner und Objekte jedes Ziels zu finden sind, mit einem Symbol pro Gebiet statt einem auf jedem Spawnpunkt. Benötigt Questie."
+	"Schattiert auf der Karte neben dem Questlog, wo die Gegner und Objekte jedes Ziels zu finden sind, mit einem Symbol pro Gebiet statt einem auf jedem Spawnpunkt."
 L["NEEDS_QUESTIE_HINT"] = "Aktiviere Questie, um dies zu nutzen."
 L["WINDOW_SCALE"] = "Skalierung des Questlogs"
 L["WINDOW_SCALE_DESCRIPTION"] = "Macht das Questlog größer oder kleiner. Die Karte daneben wächst und schrumpft mit."
@@ -89,9 +94,18 @@ L["RESET_WINDOW_SCALE_DESCRIPTION"] =
 	"Setzt Höhe und Skalierung des Questlogs sowie die Skalierung der Karte auf ihre Standardwerte zurück."
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
 	"Setzt Höhe und Skalierung des Questlogs sowie die Skalierung der Karte auf ihre Standardwerte zurück und bringt das Fenster an seine Ausgangsposition."
-L["RESET_WINDOW_SCALE_CONFIRM"] = "Höhe und Skalierung des Questlogs zurücksetzen?"
+L["RESET_WINDOW_SCALE_CONFIRM"] = "Höhe und Skalierung des Questlogs sowie die Skalierung der Karte zurücksetzen?"
 L["RESET_WINDOW_MOVE_CONFIRM"] =
-	"Höhe und Skalierung des Questlogs sowie seine Position auf dem Bildschirm zurücksetzen?"
+	"Höhe und Skalierung des Questlogs, die Skalierung der Karte und die Position des Fensters auf dem Bildschirm zurücksetzen?"
+L["HANDY_CLICKS_HEADER"] = "Praktische Klicks"
+L["HANDY_CLICK_ZONE"] = "Rechtsklick auf einen Zonennamen"
+L["HANDY_CLICK_ZONE_DESCRIPTION"] = "Teile ihre Quests oder brich ihre grauen ab."
+L["HANDY_CLICK_TRACK"] = "Umschalt-Klick auf eine Quest"
+L["HANDY_CLICK_TRACK_DESCRIPTION"] = "Verfolge sie oder beende die Verfolgung."
+L["HANDY_CLICK_MENU"] = "Rechtsklick auf eine Quest"
+L["HANDY_CLICK_MENU_DESCRIPTION"] = "Verfolge sie, teile sie oder brich sie ab."
+L["HANDY_CLICK_ID"] = "Klick auf eine Quest-ID"
+L["HANDY_CLICK_ID_DESCRIPTION"] = "Hol dir ihren Wowhead-Link."
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -110,9 +124,11 @@ L["GIVER_LEVELS_DESCRIPTION"] = "Ergänzt die Questliste eines Questgebers um di
 L["QUEST_SHARING_HEADER"] = "Quests teilen"
 L["QUEST_SHARING_INTRO"] =
 	"Rechtsklicke im Questlog auf einen Zonennamen, um deiner Gruppe nacheinander alle Quests dieser Zone anzubieten, die du teilen kannst. Diese Einstellungen bestimmen das Tempo und was passiert, wenn jemand eine verpasst."
+L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
+	"Der Rechtsklick auf einen Zonennamen benötigt Breites Questlog aktivieren. Das Teilen von Dungeonquests funktioniert in jedem Fall."
 L["SHARE_INTERVAL"] = "Sekunden zwischen dem Teilen"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"Wie lange zwischen einer geteilten Quest und der nächsten gewartet wird, für Quests teilen und das Teilen von Dungeonquests. Je länger, desto mehr Zeit hat deine Gruppe, jede einzelne anzunehmen."
+	"Wie lange zwischen einer geteilten Quest und der nächsten gewartet wird, wenn du die Quests einer Zone oder eines Dungeons teilst. Je länger, desto mehr Zeit hat deine Gruppe, jede einzelne anzunehmen."
 L["SHARE_WHISPERS"] = "Bei fehlgeschlagenem Teilen anflüstern"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Ist ein Gruppenmitglied beschäftigt, zu weit weg oder hat ein volles Questlog, flüsterst du ihm, welche Quest du teilen wolltest, und bittest es, dich daran zu erinnern. Nichts wird gesendet, wenn es die Voraussetzungen für die Quest nicht erfüllt, sie schon hat oder sie bereits erledigt hat."
@@ -192,7 +208,7 @@ L["RESIZE_TOOLTIP"] = "Ziehen, um die Größe des Questlogs zu ändern."
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "Rechtsklick, um Quests zu teilen oder graue abzubrechen"
+L["ZONE_MENU_ACTIONS_HINT"] = "Rechtsklick, um Quests zu teilen oder graue abzubrechen."
 L["SHARE_ZONE_QUESTS"] = "%d Quests teilen"
 L["SHARE_ZONE_QUEST"] = "1 Quest teilen"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =

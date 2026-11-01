@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"将暴雪任务日志换成宽版任务日志，地图就在旁边。重新加载界面后生效。"
 L["ENABLE_QUALITY_OF_LIFE"] = "启用便利功能"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"整理任务NPC窗口，并帮助队友接到你的任务：分享节奏、分享未送达时的密语，以及地下城任务的通报和分享。区域的分享任务无论开关都可使用。"
+	"整理任务NPC窗口，并帮助队友接到你的任务：分享节奏、分享未送达时的密语，以及地下城任务的通报和分享。右键点击区域名称进行分享，无论开关都可使用。"
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"启用宽版任务日志需要重新加载界面才能生效，关闭设置界面时会提示你重新加载。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新加载界面才能切换任务日志。现在重新加载吗？"
@@ -45,9 +45,13 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "打开此插件的设置界面。"
 
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"用宽版任务日志替换暴雪任务日志：任务按区域列出，旁边显示所选任务的详情及其地图。"
-L["QUEST_LOG_LAYOUT_HEADER"] = "任务日志布局"
-L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
-	"按你的玩法排列任务，选择每行显示的内容，并调整窗口和地图大小以适合你的屏幕。"
+L["QUEST_LOG_SORTING_HEADER"] = "排序"
+L["QUEST_LOG_SORTING_DESCRIPTION"] = "选择区域及其下任务的顺序。"
+L["QUEST_LOG_ROWS_HEADER"] = "任务行"
+L["QUEST_LOG_ROWS_DESCRIPTION"] = "选择每行显示的内容。"
+L["QUEST_LOG_WINDOW_MAP_HEADER"] = "窗口与地图"
+L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] =
+	"调整窗口和地图大小以适合你的屏幕，并选择它们的行为方式。"
 L["ZONE_ORDER"] = "区域顺序"
 L["ZONE_ORDER_DESCRIPTION"] = "更改任务列表中区域的顺序。"
 L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "平均等级，从高到低（默认）"
@@ -69,13 +73,14 @@ L["SHOW_QUEST_LEVELS"] = "显示任务等级"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
 	"在列表中每个任务名称前显示其等级和类型，例如 %s 表示40级地下城任务。"
 L["MARK_UNTRACKED"] = "标记未追踪的任务"
+-- TRANSLATORS: each %s is an icon that follows the word it pictures
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"已追踪的任务不再显示对勾 %s，改为在未追踪的任务前显示眼睛 %s。如果你几乎追踪所有任务，会很方便。"
 L["CLOSE_IN_COMBAT"] = "战斗开始时关闭"
 L["CLOSE_IN_COMBAT_DESCRIPTION"] = "战斗开始时关闭任务日志，避免遮挡战斗画面。"
 L["SHOW_OBJECTIVE_AREAS"] = "显示目标范围"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
-	"在任务日志旁的地图上，用阴影标出每个目标的怪物和物体所在的范围，每个范围只显示一个图标，而不是每个刷新点各显示一个。需要 Questie。"
+	"在任务日志旁的地图上，用阴影标出每个目标的怪物和物体所在的范围，每个范围只显示一个图标，而不是每个刷新点各显示一个。"
 L["NEEDS_QUESTIE_HINT"] = "启用 Questie 后才能使用此功能。"
 L["WINDOW_SCALE"] = "任务日志缩放"
 L["WINDOW_SCALE_DESCRIPTION"] = "放大或缩小任务日志。旁边的地图会随之一起缩放。"
@@ -85,8 +90,18 @@ L["RESET_WINDOW_BUTTON"] = "重置窗口"
 L["RESET_WINDOW_SCALE_DESCRIPTION"] = "将任务日志的高度和缩放以及地图缩放恢复为默认值。"
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
 	"将任务日志的高度和缩放以及地图缩放恢复为默认值，并将窗口移回初始位置。"
-L["RESET_WINDOW_SCALE_CONFIRM"] = "重置任务日志的高度和缩放？"
-L["RESET_WINDOW_MOVE_CONFIRM"] = "重置任务日志的高度、缩放及其在屏幕上的位置？"
+L["RESET_WINDOW_SCALE_CONFIRM"] = "重置任务日志的高度和缩放以及地图缩放？"
+L["RESET_WINDOW_MOVE_CONFIRM"] =
+	"重置任务日志的高度和缩放、地图缩放以及窗口在屏幕上的位置？"
+L["HANDY_CLICKS_HEADER"] = "实用点击"
+L["HANDY_CLICK_ZONE"] = "右键点击区域名称"
+L["HANDY_CLICK_ZONE_DESCRIPTION"] = "分享该区域的任务，或放弃其中的灰色任务。"
+L["HANDY_CLICK_TRACK"] = "Shift+点击任务"
+L["HANDY_CLICK_TRACK_DESCRIPTION"] = "追踪或取消追踪该任务。"
+L["HANDY_CLICK_MENU"] = "右键点击任务"
+L["HANDY_CLICK_MENU_DESCRIPTION"] = "追踪、分享或放弃该任务。"
+L["HANDY_CLICK_ID"] = "点击任务ID"
+L["HANDY_CLICK_ID_DESCRIPTION"] = "获取其 Wowhead 链接。"
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -105,9 +120,11 @@ L["GIVER_LEVELS_DESCRIPTION"] = "在任务NPC的任务列表中加上任务日�
 L["QUEST_SHARING_HEADER"] = "任务分享"
 L["QUEST_SHARING_INTRO"] =
 	"在任务日志中右键点击区域名称，即可把该区域中你能分享的所有任务逐一分享给队伍。这些选项设置分享的节奏，以及有人错过任务时该怎么办。"
+L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
+	"右键点击区域名称需要启用宽版任务日志。地下城任务分享无论开关都可使用。"
 L["SHARE_INTERVAL"] = "分享间隔秒数"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"分享一个任务后到下一个任务之间的等待时间，适用于分享任务和地下城任务分享。时间越长，队友就有越多时间接受每个任务。"
+	"分享一个任务后到下一个任务之间的等待时间，适用于分享区域或地下城的任务时。时间越长，队友就有越多时间接受每个任务。"
 L["SHARE_WHISPERS"] = "分享失败时密语"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"当队友正忙、距离太远或任务日志已满时，密语告诉对方你尝试分享的任务，并请对方提醒你。如果对方不符合任务条件、已经接了该任务或已经完成，则不发送任何消息。"
@@ -187,7 +204,7 @@ L["RESIZE_TOOLTIP"] = "拖动以调整任务日志大小。"
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "右键点击可分享任务或放弃灰色任务"
+L["ZONE_MENU_ACTIONS_HINT"] = "右键点击可分享任务或放弃灰色任务。"
 L["SHARE_ZONE_QUESTS"] = "分享 %d 个任务"
 L["SHARE_ZONE_QUEST"] = "分享 1 个任务"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] = "把本区域中游戏允许分享的任务分享给队伍，每 %d 秒一个。"

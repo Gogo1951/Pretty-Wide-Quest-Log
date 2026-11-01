@@ -123,6 +123,7 @@ read_globals = {
 	"LE_PARTY_CATEGORY_INSTANCE",
 	"LE_QUEST_FREQUENCY_DAILY",
 	"LibStub",
+	"MAP_CANVAS_MOUSE_WHEEL_ZOOM_BEHAVIOR_NONE",
 	"MapCanvasMixin",
 	"MapCanvasDataProviderMixin",
 	"MapExplorationDataProviderMixin",

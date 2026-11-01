@@ -111,6 +111,7 @@ shareButton:SetPoint("RIGHT", exitButton, "LEFT")
 
 -- The Ready to Turn In line sits centered between these two (Turn-In-Line.lua)
 ns.abandonButton, ns.shareButton = abandonButton, shareButton
+ns.ExplainShareButton(shareButton)
 
 -- Say why the button is grayed out for quests Questie can't track
 trackButton:SetMotionScriptsWhileDisabled(true)

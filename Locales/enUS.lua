@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Swaps Blizzard's quest log for the wide one, with the map beside it. Takes effect after a reload."
 L["ENABLE_QUALITY_OF_LIFE"] = "Enable Quality of Life"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Tidies the quest giver window and helps your group get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. A zone's Share Quests works either way."
+	"Tidies the quest giver window and helps your group get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. Right-clicking a zone name to share works either way."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Enable Wide Quest Log takes effect after a reload, offered when you close the Options Interface."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
@@ -45,9 +45,12 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Opens the Options Interface for this add-on.
 
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Replaces Blizzard's quest log with a wide one: your quests listed by zone, with the selected quest's details and its map beside them."
-L["QUEST_LOG_LAYOUT_HEADER"] = "Quest Log Layout"
-L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
-	"Sort your quests the way you play, choose what each row shows, and size the window and map to fit your screen."
+L["QUEST_LOG_SORTING_HEADER"] = "Sorting"
+L["QUEST_LOG_SORTING_DESCRIPTION"] = "Choose the order of your zones and the quests under them."
+L["QUEST_LOG_ROWS_HEADER"] = "Quest Rows"
+L["QUEST_LOG_ROWS_DESCRIPTION"] = "Choose what each row shows."
+L["QUEST_LOG_WINDOW_MAP_HEADER"] = "Window & Map"
+L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] = "Size the window and map to fit your screen, and choose how they behave."
 L["ZONE_ORDER"] = "Zone Order"
 L["ZONE_ORDER_DESCRIPTION"] = "Changes the order of the zones in the quest list."
 L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "Average Level, Highest First (Default)"
@@ -69,13 +72,14 @@ L["SHOW_QUEST_LEVELS"] = "Show Quest Levels"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
 	"Puts each quest's level and type in front of its name in the list, like %s for a level 40 dungeon quest."
 L["MARK_UNTRACKED"] = "Mark Untracked Quests"
+-- TRANSLATORS: each %s is an icon that follows the word it pictures
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"Tracked quests lose their checkmark %s, and untracked quests get an eye %s instead. Handy if you track almost everything."
 L["CLOSE_IN_COMBAT"] = "Close When Combat Starts"
 L["CLOSE_IN_COMBAT_DESCRIPTION"] = "Closes the quest log when a fight starts, so it never covers the action."
 L["SHOW_OBJECTIVE_AREAS"] = "Show Objective Areas"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
-	"Shades where each objective's mobs and objects are found on the map beside the quest log, with one icon in each area instead of one on every spawn. Needs Questie."
+	"Shades where each objective's mobs and objects are found on the map beside the quest log, with one icon in each area instead of one on every spawn."
 L["NEEDS_QUESTIE_HINT"] = "Turn on Questie to use this."
 L["WINDOW_SCALE"] = "Quest Log Scale"
 L["WINDOW_SCALE_DESCRIPTION"] = "Makes the quest log bigger or smaller. The map beside it grows and shrinks with it."
@@ -86,8 +90,18 @@ L["RESET_WINDOW_SCALE_DESCRIPTION"] =
 	"Puts the quest log's height and scale, and the map's scale, back to their defaults."
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
 	"Puts the quest log's height and scale, and the map's scale, back to their defaults, and moves the window back to its starting spot."
-L["RESET_WINDOW_SCALE_CONFIRM"] = "Reset the quest log's height and scale?"
-L["RESET_WINDOW_MOVE_CONFIRM"] = "Reset the quest log's height and scale, and its spot on screen?"
+L["RESET_WINDOW_SCALE_CONFIRM"] = "Reset the quest log's height and scale, and the map's scale?"
+L["RESET_WINDOW_MOVE_CONFIRM"] =
+	"Reset the quest log's height and scale, the map's scale, and the window's spot on screen?"
+L["HANDY_CLICKS_HEADER"] = "Handy Clicks"
+L["HANDY_CLICK_ZONE"] = "Right-Click a Zone Name"
+L["HANDY_CLICK_ZONE_DESCRIPTION"] = "Share its quests or abandon its gray ones."
+L["HANDY_CLICK_TRACK"] = "Shift-Click a Quest"
+L["HANDY_CLICK_TRACK_DESCRIPTION"] = "Track or untrack it."
+L["HANDY_CLICK_MENU"] = "Right-Click a Quest"
+L["HANDY_CLICK_MENU_DESCRIPTION"] = "Track it, share it, or abandon it."
+L["HANDY_CLICK_ID"] = "Click a Quest ID"
+L["HANDY_CLICK_ID_DESCRIPTION"] = "Get its Wowhead link."
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -106,9 +120,11 @@ L["GIVER_LEVELS_DESCRIPTION"] = "Adds the quest log's level tags, like %s, to a 
 L["QUEST_SHARING_HEADER"] = "Quest Sharing"
 L["QUEST_SHARING_INTRO"] =
 	"Right-click a zone name in the quest log to offer your party all of its quests you can share, one after another. These settings set the pace and what happens when someone misses one."
+L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
+	"Right-clicking a zone name needs Enable Wide Quest Log. Dungeon quest sharing works either way."
 L["SHARE_INTERVAL"] = "Seconds Between Shares"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"How long to wait between one shared quest and the next, for Share Quests and dungeon quest sharing. Longer gives your party more time to accept each one."
+	"How long to wait between one shared quest and the next, when you share a zone's quests or a dungeon's. Longer gives your party more time to accept each one."
 L["SHARE_WHISPERS"] = "Whisper When a Share Fails"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"When a party member is busy, too far away, or has a full quest log, whispers them which quest you tried to share and asks them to remind you. Nothing is sent when they aren't eligible for the quest, are already on it, or have done it."
@@ -188,7 +204,7 @@ L["RESIZE_TOOLTIP"] = "Drag to resize the quest log."
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "Right-Click to Share Quests or Abandon Gray Ones"
+L["ZONE_MENU_ACTIONS_HINT"] = "Right-click to share quests or abandon gray ones."
 L["SHARE_ZONE_QUESTS"] = "Share %d Quests"
 L["SHARE_ZONE_QUEST"] = "Share 1 Quest"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =

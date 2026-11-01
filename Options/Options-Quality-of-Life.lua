@@ -7,6 +7,13 @@ local function Hidden()
 	return not ns.db.profile.enableQualityOfLife
 end
 
+-- A zone's right-click menu is part of the wide quest log, so a line under the sharing intro says so while it's off
+local function ZoneShareNeedsLog()
+	if not Hidden() and not ns.db.profile.enableWideQuestLog then
+		return L["ZONE_SHARE_NEEDS_WIDE_LOG"]
+	end
+end
+
 local function Toggle(key, nameKey, order)
 	return {
 		type = "toggle",
@@ -197,6 +204,7 @@ function ns.BuildQualityOfLifeOptions()
 			headerQuestSharing = ns.OptionsHeader(L["QUEST_SHARING_HEADER"], 21, Hidden),
 			spaceQuestSharing1 = ns.OptionsSpacer(22, Hidden),
 			descQuestSharing = ns.OptionsDesc(L["QUEST_SHARING_INTRO"], 23, Hidden),
+			zoneShareNeedsLog = ns.OptionsStatusLine(ZoneShareNeedsLog, 23.5),
 			spaceQuestSharing2 = ns.OptionsSpacer(24, Hidden),
 			shareIntervalLabel = ns.OptionsRowLabel(L["SHARE_INTERVAL"], 25, nil, Hidden),
 			shareInterval = {

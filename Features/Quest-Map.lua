@@ -54,6 +54,9 @@ ns.AddWideQuestLogPart(function()
 	canvas:SetParent(holder)
 	canvas:SetFrameLevel(holder:GetFrameLevel() + 1)
 
+	-- The map always shows the whole zone. The wheel stays enabled, so it doesn't zoom the camera instead
+	canvas.ScrollContainer:SetMouseWheelZoomMode(MAP_CANVAS_MOUSE_WHEEL_ZOOM_BEHAVIOR_NONE)
+
 	-- Same proportions as Blizzard's map art, HEIGHT_SHARE as tall as the visible window
 	local function LayOut()
 		holder:ClearAllPoints()
@@ -86,8 +89,14 @@ ns.AddWideQuestLogPart(function()
 		canvas:OnFrameSizeChanged()
 	end)
 
+	-- A client can know a map it has no art for, as with some dungeons Questie names, and the canvas can't draw one
+	function questMap.CanShowMap(mapID)
+		local layers = mapID and C_Map.GetMapArtLayers(mapID)
+		return layers and #layers > 0 or false
+	end
+
 	function questMap.ShowMap(mapID)
-		if not mapID then
+		if not questMap.CanShowMap(mapID) then
 			return
 		end
 		canvas:SetMapID(mapID)

@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Troca o registro de missões da Blizzard pelo largo, com o mapa ao lado. Entra em vigor após recarregar."
 L["ENABLE_QUALITY_OF_LIFE"] = "Ativar melhorias de conveniência"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Organiza a janela de missões do PNJ e ajuda seu grupo a pegar suas missões: ritmo de compartilhamento, sussurros quando um compartilhamento não chega a alguém, e anúncio e compartilhamento de missões de masmorra. Compartilhar missões de uma zona funciona de qualquer jeito."
+	"Organiza a janela de missões do PNJ e ajuda seu grupo a pegar suas missões: ritmo de compartilhamento, sussurros quando um compartilhamento não chega a alguém, e anúncio e compartilhamento de missões de masmorra. Compartilhar com o botão direito no nome de uma zona funciona de qualquer jeito."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Ativar registro de missões largo entra em vigor após recarregar, o que será oferecido quando você fechar a interface de opções."
 L["RELOAD_PROMPT"] = "O Pretty Wide Quest Log troca de registro de missões após recarregar. Recarregar agora?"
@@ -45,9 +45,13 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Abre a interface de opções deste add-on."
 
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Substitui o registro de missões da Blizzard por um largo: suas missões listadas por zona, com os detalhes da missão selecionada e o mapa dela ao lado."
-L["QUEST_LOG_LAYOUT_HEADER"] = "Layout do registro de missões"
-L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
-	"Ordene suas missões do seu jeito, escolha o que cada linha mostra e ajuste o tamanho da janela e do mapa à sua tela."
+L["QUEST_LOG_SORTING_HEADER"] = "Ordenação"
+L["QUEST_LOG_SORTING_DESCRIPTION"] = "Escolha a ordem das suas zonas e das missões dentro delas."
+L["QUEST_LOG_ROWS_HEADER"] = "Linhas de missões"
+L["QUEST_LOG_ROWS_DESCRIPTION"] = "Escolha o que cada linha mostra."
+L["QUEST_LOG_WINDOW_MAP_HEADER"] = "Janela e mapa"
+L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] =
+	"Ajuste o tamanho da janela e do mapa à sua tela e escolha como eles se comportam."
 L["ZONE_ORDER"] = "Ordem das zonas"
 L["ZONE_ORDER_DESCRIPTION"] = "Muda a ordem das zonas na lista de missões."
 L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "Nível médio, maior primeiro (padrão)"
@@ -70,6 +74,7 @@ L["SHOW_QUEST_LEVELS"] = "Mostrar níveis das missões"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
 	"Coloca o nível e o tipo de cada missão antes do nome dela na lista, como %s para uma missão de masmorra de nível 40."
 L["MARK_UNTRACKED"] = "Marcar missões não acompanhadas"
+-- TRANSLATORS: each %s is an icon that follows the word it pictures
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"Missões acompanhadas perdem a marca de seleção %s, e missões não acompanhadas ganham um olho %s no lugar. Útil se você acompanha quase tudo."
 L["CLOSE_IN_COMBAT"] = "Fechar ao entrar em combate"
@@ -77,7 +82,7 @@ L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 	"Fecha o registro de missões quando uma luta começa, para que ele nunca cubra a ação."
 L["SHOW_OBJECTIVE_AREAS"] = "Mostrar áreas dos objetivos"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
-	"Sombreia no mapa ao lado do registro de missões onde ficam os inimigos e objetos de cada objetivo, com um ícone em cada área em vez de um em cada ponto de surgimento. Requer o Questie."
+	"Sombreia no mapa ao lado do registro de missões onde ficam os inimigos e objetos de cada objetivo, com um ícone em cada área em vez de um em cada ponto de surgimento."
 L["NEEDS_QUESTIE_HINT"] = "Ative o Questie para usar isto."
 L["WINDOW_SCALE"] = "Escala do registro de missões"
 L["WINDOW_SCALE_DESCRIPTION"] =
@@ -90,8 +95,18 @@ L["RESET_WINDOW_SCALE_DESCRIPTION"] =
 	"Volta a altura e a escala do registro de missões, e a escala do mapa, aos valores padrão."
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
 	"Volta a altura e a escala do registro de missões, e a escala do mapa, aos valores padrão, e leva a janela de volta ao lugar inicial."
-L["RESET_WINDOW_SCALE_CONFIRM"] = "Redefinir a altura e a escala do registro de missões?"
-L["RESET_WINDOW_MOVE_CONFIRM"] = "Redefinir a altura e a escala do registro de missões, e o lugar dele na tela?"
+L["RESET_WINDOW_SCALE_CONFIRM"] = "Redefinir a altura e a escala do registro de missões, e a escala do mapa?"
+L["RESET_WINDOW_MOVE_CONFIRM"] =
+	"Redefinir a altura e a escala do registro de missões, a escala do mapa e o lugar da janela na tela?"
+L["HANDY_CLICKS_HEADER"] = "Cliques úteis"
+L["HANDY_CLICK_ZONE"] = "Clique direito no nome de uma zona"
+L["HANDY_CLICK_ZONE_DESCRIPTION"] = "Compartilhe as missões dela ou abandone as cinzas."
+L["HANDY_CLICK_TRACK"] = "Shift-clique em uma missão"
+L["HANDY_CLICK_TRACK_DESCRIPTION"] = "Acompanhe a missão ou deixe de acompanhá-la."
+L["HANDY_CLICK_MENU"] = "Clique direito em uma missão"
+L["HANDY_CLICK_MENU_DESCRIPTION"] = "Acompanhe, compartilhe ou abandone a missão."
+L["HANDY_CLICK_ID"] = "Clique em um ID de missão"
+L["HANDY_CLICK_ID_DESCRIPTION"] = "Obtenha o link dela no Wowhead."
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -111,9 +126,11 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 L["QUEST_SHARING_HEADER"] = "Compartilhamento de missões"
 L["QUEST_SHARING_INTRO"] =
 	"Clique com o botão direito no nome de uma zona no registro de missões para oferecer ao seu grupo, uma após a outra, todas as missões dela que você pode compartilhar. Estas opções definem o ritmo e o que acontece quando alguém perde uma."
+L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
+	"O clique direito no nome de uma zona requer Ativar registro de missões largo. O compartilhamento de missões de masmorra funciona de qualquer jeito."
 L["SHARE_INTERVAL"] = "Segundos entre compartilhamentos"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"Quanto tempo esperar entre uma missão compartilhada e a próxima, em Compartilhar missões e no compartilhamento de missões de masmorra. Quanto maior, mais tempo o seu grupo tem para aceitar cada uma."
+	"Quanto tempo esperar entre uma missão compartilhada e a próxima, ao compartilhar as missões de uma zona ou de uma masmorra. Quanto maior, mais tempo o seu grupo tem para aceitar cada uma."
 L["SHARE_WHISPERS"] = "Sussurrar quando um compartilhamento falhar"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Quando um membro do grupo está ocupado, longe demais ou com o registro de missões cheio, sussurra para ele qual missão você tentou compartilhar e pede que ele te lembre. Nada é enviado quando ele não atende aos requisitos da missão, já está com ela ou já a concluiu."
@@ -193,7 +210,7 @@ L["RESIZE_TOOLTIP"] = "Arraste para redimensionar o registro de missões."
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "Clique direito para compartilhar missões ou abandonar as cinzas"
+L["ZONE_MENU_ACTIONS_HINT"] = "Clique direito para compartilhar missões ou abandonar as cinzas."
 L["SHARE_ZONE_QUESTS"] = "Compartilhar %d missões"
 L["SHARE_ZONE_QUEST"] = "Compartilhar 1 missão"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
