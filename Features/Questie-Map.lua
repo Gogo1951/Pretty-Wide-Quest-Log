@@ -67,7 +67,9 @@ ns.AddWideQuestLogPart(function()
 		end
 		local zones = {}
 		for mapID in pairs(counts) do
-			zones[#zones + 1] = mapID
+			if questMap.CanShowMap(mapID) then
+				zones[#zones + 1] = mapID
+			end
 		end
 		table.sort(zones, function(a, b)
 			if counts[a] ~= counts[b] then
@@ -82,7 +84,7 @@ ns.AddWideQuestLogPart(function()
 	local function AreaMapID(ZoneDB, areaID)
 		local parentID = areaID and ZoneDB.GetParentZoneId and ZoneDB:GetParentZoneId(areaID)
 		local mapID = areaID and ZoneDB:GetUiMapIdByAreaId(parentID or areaID)
-		return mapID and C_Map.GetMapInfo(mapID) and mapID or nil
+		return questMap.CanShowMap(mapID) and mapID or nil
 	end
 
 	-- The area holding most of an NPC's or object's spawns in Questie's database

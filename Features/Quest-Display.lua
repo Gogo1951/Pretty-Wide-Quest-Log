@@ -71,23 +71,37 @@ local function QuestIDText(questID)
 	return format(L["QUEST_ID"], questID)
 end
 
+-- A quest ID and its chain link, if it has one, in source's color
+local function ColorQuestID(text, source)
+	local r, g, b = source:GetTextColor()
+	text:SetTextColor(r, g, b)
+	local label = QuestIDText(text.questID)
+	if text.linksToWowhead then
+		label =
+			format("|T%s:0:0:0:0:32:32:0:32:0:32:%d:%d:%d|t %s", ns.WOWHEAD_LINK_ICON, r * 255, g * 255, b * 255, label)
+	end
+	text:SetText(label)
+end
+
 --[[
 	Shows a quest ID in a FontString, in the same font and color as source (the description) but
-	smaller. One that links to Wowhead starts with a chain link, in the same color
+	smaller. One that links to Wowhead starts with a chain link, in the same color. Skins (ElvUI) recolor
+	the description in hooks that may run after this, so the first quest shown would keep Blizzard's
+	parchment color. It follows each later recoloring of source instead
 ]]
 function ns.StyleQuestID(text, questID, source)
 	local file, size, flags = source:GetFont()
 	if file and size then
 		text:SetFont(file, size - ns.LAYOUT.QUEST_ID_FONT_SHRINK, flags)
 	end
-	local r, g, b = source:GetTextColor()
-	text:SetTextColor(r, g, b)
-	local label = QuestIDText(questID)
-	if text.linksToWowhead then
-		label =
-			format("|T%s:0:0:0:0:32:32:0:32:0:32:%d:%d:%d|t %s", ns.WOWHEAD_LINK_ICON, r * 255, g * 255, b * 255, label)
+	text.questID = questID
+	ColorQuestID(text, source)
+	if not text.followsSourceColor then
+		text.followsSourceColor = true
+		hooksecurefunc(source, "SetTextColor", function()
+			ColorQuestID(text, source)
+		end)
 	end
-	text:SetText(label)
 end
 
 --[[

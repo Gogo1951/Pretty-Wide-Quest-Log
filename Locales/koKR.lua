@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"블리자드 퀘스트 목록을 지도가 옆에 붙은 넓은 퀘스트 목록으로 바꿉니다. UI를 다시 불러온 후에 적용됩니다."
 L["ENABLE_QUALITY_OF_LIFE"] = "편의 기능 사용"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"퀘스트 NPC 창을 정리하고 파티원이 내 퀘스트를 받도록 돕습니다. 공유 속도 조절, 공유를 놓친 파티원에게 귓속말, 던전 퀘스트 알림과 공유가 포함됩니다. 지역의 퀘스트 공유는 이 설정과 관계없이 작동합니다."
+	"퀘스트 NPC 창을 정리하고 파티원이 내 퀘스트를 받도록 돕습니다. 공유 속도 조절, 공유를 놓친 파티원에게 귓속말, 던전 퀘스트 알림과 공유가 포함됩니다. 지역 이름을 오른쪽 클릭해 공유하는 기능은 이 설정과 관계없이 작동합니다."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"넓은 퀘스트 목록 사용은 UI를 다시 불러온 후에 적용되며, 설정 창을 닫을 때 다시 불러오기를 안내합니다."
 L["RELOAD_PROMPT"] =
@@ -46,9 +46,13 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "이 애드온의 설정 창을 엽니다."
 
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"블리자드 퀘스트 목록을 넓은 목록으로 바꿉니다. 퀘스트가 지역별로 나열되고, 옆에 선택한 퀘스트의 세부 정보와 지도가 표시됩니다."
-L["QUEST_LOG_LAYOUT_HEADER"] = "퀘스트 목록 구성"
-L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
-	"플레이 방식에 맞게 퀘스트를 정렬하고, 각 줄에 표시할 내용을 고르고, 창과 지도 크기를 화면에 맞게 조절하세요."
+L["QUEST_LOG_SORTING_HEADER"] = "정렬"
+L["QUEST_LOG_SORTING_DESCRIPTION"] = "지역과 그 아래 퀘스트의 순서를 고르세요."
+L["QUEST_LOG_ROWS_HEADER"] = "퀘스트 줄"
+L["QUEST_LOG_ROWS_DESCRIPTION"] = "각 줄에 표시할 내용을 고르세요."
+L["QUEST_LOG_WINDOW_MAP_HEADER"] = "창 및 지도"
+L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] =
+	"창과 지도 크기를 화면에 맞게 조절하고, 어떻게 동작할지 고르세요."
 L["ZONE_ORDER"] = "지역 순서"
 L["ZONE_ORDER_DESCRIPTION"] = "퀘스트 목록에서 지역의 순서를 바꿉니다."
 L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "평균 레벨, 높은 순 (기본값)"
@@ -71,6 +75,7 @@ L["SHOW_QUEST_LEVELS"] = "퀘스트 레벨 표시"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
 	"목록에서 각 퀘스트 이름 앞에 레벨과 유형을 붙입니다. 예를 들어 40레벨 던전 퀘스트는 %s(으)로 표시됩니다."
 L["MARK_UNTRACKED"] = "추적하지 않는 퀘스트 표시"
+-- TRANSLATORS: each %s is an icon that follows the word it pictures
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"추적 중인 퀘스트의 체크 %s 표시가 사라지고, 대신 추적하지 않는 퀘스트에 눈 %s 표시가 붙습니다. 거의 모든 퀘스트를 추적한다면 유용합니다."
 L["CLOSE_IN_COMBAT"] = "전투 시작 시 닫기"
@@ -78,7 +83,7 @@ L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 	"전투가 시작되면 퀘스트 목록을 닫아 화면을 가리지 않게 합니다."
 L["SHOW_OBJECTIVE_AREAS"] = "목표 구역 표시"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
-	"퀘스트 목록 옆 지도에 각 목표의 몬스터와 사물이 있는 곳을 음영으로 표시하고, 생성 지점마다 아이콘을 두는 대신 구역마다 아이콘을 하나만 표시합니다. Questie가 필요합니다."
+	"퀘스트 목록 옆 지도에 각 목표의 몬스터와 사물이 있는 곳을 음영으로 표시하고, 생성 지점마다 아이콘을 두는 대신 구역마다 아이콘을 하나만 표시합니다."
 L["NEEDS_QUESTIE_HINT"] = "이 기능을 사용하려면 Questie를 켜세요."
 L["WINDOW_SCALE"] = "퀘스트 목록 크기 비율"
 L["WINDOW_SCALE_DESCRIPTION"] =
@@ -91,8 +96,19 @@ L["RESET_WINDOW_SCALE_DESCRIPTION"] =
 	"퀘스트 목록의 높이와 크기 비율, 지도 크기 비율을 기본값으로 되돌립니다."
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
 	"퀘스트 목록의 높이와 크기 비율, 지도 크기 비율을 기본값으로 되돌리고, 창을 처음 위치로 옮깁니다."
-L["RESET_WINDOW_SCALE_CONFIRM"] = "퀘스트 목록의 높이와 크기 비율을 초기화할까요?"
-L["RESET_WINDOW_MOVE_CONFIRM"] = "퀘스트 목록의 높이와 크기 비율, 화면 위치를 초기화할까요?"
+L["RESET_WINDOW_SCALE_CONFIRM"] =
+	"퀘스트 목록의 높이와 크기 비율, 지도 크기 비율을 초기화할까요?"
+L["RESET_WINDOW_MOVE_CONFIRM"] =
+	"퀘스트 목록의 높이와 크기 비율, 지도 크기 비율, 창의 화면 위치를 초기화할까요?"
+L["HANDY_CLICKS_HEADER"] = "유용한 클릭"
+L["HANDY_CLICK_ZONE"] = "지역 이름 오른쪽 클릭"
+L["HANDY_CLICK_ZONE_DESCRIPTION"] = "그 지역의 퀘스트를 공유하거나 회색 퀘스트를 포기합니다."
+L["HANDY_CLICK_TRACK"] = "퀘스트 Shift-클릭"
+L["HANDY_CLICK_TRACK_DESCRIPTION"] = "추적하거나 추적을 해제합니다."
+L["HANDY_CLICK_MENU"] = "퀘스트 오른쪽 클릭"
+L["HANDY_CLICK_MENU_DESCRIPTION"] = "추적, 공유 또는 포기합니다."
+L["HANDY_CLICK_ID"] = "퀘스트 ID 클릭"
+L["HANDY_CLICK_ID_DESCRIPTION"] = "Wowhead 링크를 받습니다."
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -113,9 +129,11 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 L["QUEST_SHARING_HEADER"] = "퀘스트 공유"
 L["QUEST_SHARING_INTRO"] =
 	"퀘스트 목록에서 지역 이름을 오른쪽 클릭하면 그 지역에서 공유할 수 있는 퀘스트를 모두 하나씩 차례로 파티에 제안합니다. 이 설정에서 그 속도와 누군가 퀘스트를 놓쳤을 때 어떻게 할지 정합니다."
+L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
+	"지역 이름을 오른쪽 클릭하려면 넓은 퀘스트 목록 사용이 필요합니다. 던전 퀘스트 공유는 이 설정과 관계없이 작동합니다."
 L["SHARE_INTERVAL"] = "공유 간격(초)"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"공유한 퀘스트 하나와 다음 퀘스트 사이에 기다리는 시간으로, 퀘스트 공유와 던전 퀘스트 공유에 적용됩니다. 길수록 파티원이 각 퀘스트를 수락할 시간이 늘어납니다."
+	"공유한 퀘스트 하나와 다음 퀘스트 사이에 기다리는 시간으로, 지역이나 던전의 퀘스트를 공유할 때 적용됩니다. 길수록 파티원이 각 퀘스트를 수락할 시간이 늘어납니다."
 L["SHARE_WHISPERS"] = "공유 실패 시 귓속말"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"파티원이 다른 일을 하고 있거나, 너무 멀리 있거나, 퀘스트 목록이 가득 찼을 때 공유하려던 퀘스트를 귓속말로 알려 주고 다시 말해 달라고 부탁합니다. 파티원이 퀘스트를 받을 자격이 없거나, 이미 진행 중이거나, 이미 완료했다면 아무것도 보내지 않습니다."
@@ -196,7 +214,7 @@ L["RESIZE_TOOLTIP"] = "끌어서 퀘스트 목록 크기를 조절합니다."
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "오른쪽 클릭으로 퀘스트 공유 또는 회색 퀘스트 포기"
+L["ZONE_MENU_ACTIONS_HINT"] = "오른쪽 클릭으로 퀘스트를 공유하거나 회색 퀘스트를 포기합니다."
 L["SHARE_ZONE_QUESTS"] = "퀘스트 %d개 공유"
 L["SHARE_ZONE_QUEST"] = "퀘스트 1개 공유"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =

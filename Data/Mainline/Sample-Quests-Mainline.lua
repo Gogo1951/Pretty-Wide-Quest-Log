@@ -3,6 +3,9 @@ local _, ns = ...
 -- questId, -- Quest Name
 ns.SAMPLE_QUEST_IDS = {}
 
+ns.SAMPLE_DUNGEON_AREA_ID = nil
+ns.SAMPLE_ZONE_AREA_ID = nil
+
 --[[
 How We Got the Data
 

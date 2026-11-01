@@ -55,10 +55,10 @@ Locales/zhTW.lua
 Data/Flavor.lua
 Data/Data.lua
 Data/Vanilla/Map-Reveal-Vanilla.lua
-Data/Discovery/Map-Reveal-Discovery.lua
 Data/Vanilla/Quest-Tags-Vanilla.lua
-Data/Discovery/Quest-Tags-Discovery.lua
 Data/Vanilla/Sample-Quests-Vanilla.lua
+Data/Discovery/Map-Reveal-Discovery.lua
+Data/Discovery/Quest-Tags-Discovery.lua
 Data/Discovery/Sample-Quests-Discovery.lua
 Data/Default-Settings.lua
 

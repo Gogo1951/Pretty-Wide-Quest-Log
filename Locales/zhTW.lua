@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"將暴雪任務日誌換成寬版任務日誌，地圖就在旁邊。重新載入介面後生效。"
 L["ENABLE_QUALITY_OF_LIFE"] = "啟用便利功能"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"整理任務NPC視窗，並幫助隊友接到你的任務：分享節奏、分享未送達時的密語，以及地城任務的通報和分享。區域的分享任務無論開關都能使用。"
+	"整理任務NPC視窗，並幫助隊友接到你的任務：分享節奏、分享未送達時的密語，以及地城任務的通報和分享。右鍵點擊區域名稱進行分享，無論開關都能使用。"
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"啟用寬版任務日誌需要重新載入介面才會生效，關閉設定介面時會提示你重新載入。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新載入介面才能切換任務日誌。現在重新載入嗎？"
@@ -45,9 +45,13 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "開啟此插件的設定介面。"
 
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"以寬版任務日誌取代暴雪任務日誌：任務依區域列出，旁邊顯示所選任務的詳細資訊及其地圖。"
-L["QUEST_LOG_LAYOUT_HEADER"] = "任務日誌版面"
-L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
-	"依你的玩法排列任務，選擇每列顯示的內容，並調整視窗和地圖大小以符合你的螢幕。"
+L["QUEST_LOG_SORTING_HEADER"] = "排序"
+L["QUEST_LOG_SORTING_DESCRIPTION"] = "選擇區域及其下任務的順序。"
+L["QUEST_LOG_ROWS_HEADER"] = "任務列"
+L["QUEST_LOG_ROWS_DESCRIPTION"] = "選擇每列顯示的內容。"
+L["QUEST_LOG_WINDOW_MAP_HEADER"] = "視窗與地圖"
+L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] =
+	"調整視窗和地圖大小以符合你的螢幕，並選擇它們的行為方式。"
 L["ZONE_ORDER"] = "區域順序"
 L["ZONE_ORDER_DESCRIPTION"] = "變更任務清單中區域的順序。"
 L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "平均等級，由高到低（預設）"
@@ -69,13 +73,14 @@ L["SHOW_QUEST_LEVELS"] = "顯示任務等級"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
 	"在清單中每個任務名稱前顯示其等級和類型，例如 %s 表示40級地城任務。"
 L["MARK_UNTRACKED"] = "標記未追蹤的任務"
+-- TRANSLATORS: each %s is an icon that follows the word it pictures
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"已追蹤的任務不再顯示勾號 %s，改為在未追蹤的任務前顯示眼睛 %s。如果你幾乎追蹤所有任務，會很方便。"
 L["CLOSE_IN_COMBAT"] = "戰鬥開始時關閉"
 L["CLOSE_IN_COMBAT_DESCRIPTION"] = "戰鬥開始時關閉任務日誌，避免遮住戰鬥畫面。"
 L["SHOW_OBJECTIVE_AREAS"] = "顯示目標範圍"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
-	"在任務日誌旁的地圖上，以陰影標出每個目標的怪物和物件所在的範圍，每個範圍只顯示一個圖示，而不是每個重生點各顯示一個。需要 Questie。"
+	"在任務日誌旁的地圖上，以陰影標出每個目標的怪物和物件所在的範圍，每個範圍只顯示一個圖示，而不是每個重生點各顯示一個。"
 L["NEEDS_QUESTIE_HINT"] = "啟用 Questie 後才能使用此功能。"
 L["WINDOW_SCALE"] = "任務日誌縮放"
 L["WINDOW_SCALE_DESCRIPTION"] = "放大或縮小任務日誌。旁邊的地圖會隨之一起縮放。"
@@ -85,8 +90,18 @@ L["RESET_WINDOW_BUTTON"] = "重設視窗"
 L["RESET_WINDOW_SCALE_DESCRIPTION"] = "將任務日誌的高度和縮放以及地圖縮放恢復為預設值。"
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
 	"將任務日誌的高度和縮放以及地圖縮放恢復為預設值，並將視窗移回初始位置。"
-L["RESET_WINDOW_SCALE_CONFIRM"] = "要重設任務日誌的高度和縮放嗎？"
-L["RESET_WINDOW_MOVE_CONFIRM"] = "要重設任務日誌的高度、縮放及其在螢幕上的位置嗎？"
+L["RESET_WINDOW_SCALE_CONFIRM"] = "要重設任務日誌的高度和縮放以及地圖縮放嗎？"
+L["RESET_WINDOW_MOVE_CONFIRM"] =
+	"要重設任務日誌的高度和縮放、地圖縮放以及視窗在螢幕上的位置嗎？"
+L["HANDY_CLICKS_HEADER"] = "實用點擊"
+L["HANDY_CLICK_ZONE"] = "右鍵點擊區域名稱"
+L["HANDY_CLICK_ZONE_DESCRIPTION"] = "分享該區域的任務，或放棄其中的灰色任務。"
+L["HANDY_CLICK_TRACK"] = "Shift+點擊任務"
+L["HANDY_CLICK_TRACK_DESCRIPTION"] = "追蹤或取消追蹤該任務。"
+L["HANDY_CLICK_MENU"] = "右鍵點擊任務"
+L["HANDY_CLICK_MENU_DESCRIPTION"] = "追蹤、分享或放棄該任務。"
+L["HANDY_CLICK_ID"] = "點擊任務ID"
+L["HANDY_CLICK_ID_DESCRIPTION"] = "取得其 Wowhead 連結。"
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -105,9 +120,11 @@ L["GIVER_LEVELS_DESCRIPTION"] = "在任務NPC的任務清單中加上任務日�
 L["QUEST_SHARING_HEADER"] = "任務分享"
 L["QUEST_SHARING_INTRO"] =
 	"在任務日誌中右鍵點擊區域名稱，即可把該區域中你能分享的所有任務逐一分享給隊伍。這些選項設定分享的節奏，以及有人錯過任務時該怎麼辦。"
+L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
+	"右鍵點擊區域名稱需要啟用寬版任務日誌。地城任務分享無論開關都能使用。"
 L["SHARE_INTERVAL"] = "分享間隔秒數"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"分享一個任務後到下一個任務之間的等待時間，適用於分享任務和地城任務分享。時間越長，隊友就有越多時間接受每個任務。"
+	"分享一個任務後到下一個任務之間的等待時間，適用於分享區域或地城的任務時。時間越長，隊友就有越多時間接受每個任務。"
 L["SHARE_WHISPERS"] = "分享失敗時密語"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"當隊友正忙、距離太遠或任務日誌已滿時，密語告訴對方你嘗試分享的任務，並請對方提醒你。如果對方不符合任務條件、已經接了該任務或已經完成，則不傳送任何訊息。"
@@ -187,7 +204,7 @@ L["RESIZE_TOOLTIP"] = "拖曳以調整任務日誌大小。"
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "右鍵點擊可分享任務或放棄灰色任務"
+L["ZONE_MENU_ACTIONS_HINT"] = "右鍵點擊可分享任務或放棄灰色任務。"
 L["SHARE_ZONE_QUESTS"] = "分享 %d 個任務"
 L["SHARE_ZONE_QUEST"] = "分享 1 個任務"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] = "把本區域中遊戲允許分享的任務分享給隊伍，每 %d 秒一個。"

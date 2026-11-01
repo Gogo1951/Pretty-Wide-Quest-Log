@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Remplace le journal de quêtes de Blizzard par le journal large, avec la carte à côté. Prend effet après un rechargement."
 L["ENABLE_QUALITY_OF_LIFE"] = "Activer les améliorations de confort"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Épure la fenêtre de donneur de quêtes et aide votre groupe à prendre vos quêtes : rythme de partage, chuchotements quand un partage rate quelqu'un, et annonce et partage des quêtes de donjon. Partager les quêtes d'une zone fonctionne dans tous les cas."
+	"Épure la fenêtre de donneur de quêtes et aide votre groupe à prendre vos quêtes : rythme de partage, chuchotements quand un partage rate quelqu'un, et annonce et partage des quêtes de donjon. Partager d'un clic droit sur un nom de zone fonctionne dans tous les cas."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activer le journal de quêtes large prend effet après un rechargement, proposé à la fermeture de l'interface des options."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après un rechargement. Recharger maintenant ?"
@@ -45,9 +45,13 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Ouvre l'interface des options de cet add-on.
 
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Remplace le journal de quêtes de Blizzard par un journal large : vos quêtes classées par zone, avec à côté les détails de la quête sélectionnée et sa carte."
-L["QUEST_LOG_LAYOUT_HEADER"] = "Disposition du journal de quêtes"
-L["QUEST_LOG_LAYOUT_DESCRIPTION"] =
-	"Triez vos quêtes selon votre façon de jouer, choisissez ce qu'affiche chaque ligne et adaptez la taille de la fenêtre et de la carte à votre écran."
+L["QUEST_LOG_SORTING_HEADER"] = "Tri"
+L["QUEST_LOG_SORTING_DESCRIPTION"] = "Choisissez l'ordre de vos zones et des quêtes en dessous."
+L["QUEST_LOG_ROWS_HEADER"] = "Lignes de quêtes"
+L["QUEST_LOG_ROWS_DESCRIPTION"] = "Choisissez ce qu'affiche chaque ligne."
+L["QUEST_LOG_WINDOW_MAP_HEADER"] = "Fenêtre et carte"
+L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] =
+	"Adaptez la taille de la fenêtre et de la carte à votre écran, et choisissez leur comportement."
 L["ZONE_ORDER"] = "Ordre des zones"
 L["ZONE_ORDER_DESCRIPTION"] = "Change l'ordre des zones dans la liste des quêtes."
 L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"] = "Niveau moyen, le plus haut d'abord (par défaut)"
@@ -70,6 +74,7 @@ L["SHOW_QUEST_LEVELS"] = "Afficher le niveau des quêtes"
 L["SHOW_QUEST_LEVELS_DESCRIPTION"] =
 	"Place le niveau et le type de chaque quête devant son nom dans la liste, comme %s pour une quête de donjon de niveau 40."
 L["MARK_UNTRACKED"] = "Marquer les quêtes non suivies"
+-- TRANSLATORS: each %s is an icon that follows the word it pictures
 L["MARK_UNTRACKED_DESCRIPTION"] =
 	"Les quêtes suivies perdent leur coche %s, et les quêtes non suivies ont un œil %s à la place. Pratique si vous suivez presque tout."
 L["CLOSE_IN_COMBAT"] = "Fermer en début de combat"
@@ -77,7 +82,7 @@ L["CLOSE_IN_COMBAT_DESCRIPTION"] =
 	"Ferme le journal de quêtes quand un combat commence, pour qu'il ne cache jamais l'action."
 L["SHOW_OBJECTIVE_AREAS"] = "Afficher les zones d'objectifs"
 L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
-	"Colore sur la carte à côté du journal de quêtes les endroits où se trouvent les monstres et les objets de chaque objectif, avec une seule icône par zone au lieu d'une sur chaque point d'apparition. Nécessite Questie."
+	"Colore sur la carte à côté du journal de quêtes les endroits où se trouvent les monstres et les objets de chaque objectif, avec une seule icône par zone au lieu d'une sur chaque point d'apparition."
 L["NEEDS_QUESTIE_HINT"] = "Activez Questie pour utiliser cette option."
 L["WINDOW_SCALE"] = "Échelle du journal de quêtes"
 L["WINDOW_SCALE_DESCRIPTION"] =
@@ -90,9 +95,19 @@ L["RESET_WINDOW_SCALE_DESCRIPTION"] =
 	"Remet la hauteur et l'échelle du journal de quêtes, ainsi que l'échelle de la carte, à leurs valeurs par défaut."
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
 	"Remet la hauteur et l'échelle du journal de quêtes, ainsi que l'échelle de la carte, à leurs valeurs par défaut, et ramène la fenêtre à son emplacement de départ."
-L["RESET_WINDOW_SCALE_CONFIRM"] = "Réinitialiser la hauteur et l'échelle du journal de quêtes ?"
+L["RESET_WINDOW_SCALE_CONFIRM"] =
+	"Réinitialiser la hauteur et l'échelle du journal de quêtes, ainsi que l'échelle de la carte ?"
 L["RESET_WINDOW_MOVE_CONFIRM"] =
-	"Réinitialiser la hauteur et l'échelle du journal de quêtes, ainsi que son emplacement à l'écran ?"
+	"Réinitialiser la hauteur et l'échelle du journal de quêtes, l'échelle de la carte et l'emplacement de la fenêtre à l'écran ?"
+L["HANDY_CLICKS_HEADER"] = "Clics pratiques"
+L["HANDY_CLICK_ZONE"] = "Clic droit sur un nom de zone"
+L["HANDY_CLICK_ZONE_DESCRIPTION"] = "Partagez ses quêtes ou abandonnez les grises."
+L["HANDY_CLICK_TRACK"] = "Maj-clic sur une quête"
+L["HANDY_CLICK_TRACK_DESCRIPTION"] = "Suivez-la ou arrêtez de la suivre."
+L["HANDY_CLICK_MENU"] = "Clic droit sur une quête"
+L["HANDY_CLICK_MENU_DESCRIPTION"] = "Suivez-la, partagez-la ou abandonnez-la."
+L["HANDY_CLICK_ID"] = "Clic sur un ID de quête"
+L["HANDY_CLICK_ID_DESCRIPTION"] = "Obtenez son lien Wowhead."
 
 --------------------------------------------------------------------------------
 -- Options: Quality of Life Panel
@@ -112,9 +127,11 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 L["QUEST_SHARING_HEADER"] = "Partage de quêtes"
 L["QUEST_SHARING_INTRO"] =
 	"Faites un clic droit sur le nom d'une zone dans le journal de quêtes pour proposer à votre groupe, l'une après l'autre, toutes ses quêtes que vous pouvez partager. Ces options règlent le rythme et ce qui se passe quand quelqu'un en rate une."
+L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
+	"Le clic droit sur un nom de zone nécessite Activer le journal de quêtes large. Le partage des quêtes de donjon fonctionne dans tous les cas."
 L["SHARE_INTERVAL"] = "Secondes entre les partages"
 L["SHARE_INTERVAL_DESCRIPTION"] =
-	"Le temps d'attente entre une quête partagée et la suivante, pour Partager les quêtes et pour le partage des quêtes de donjon. Plus il est long, plus votre groupe a le temps d'accepter chacune."
+	"Le temps d'attente entre une quête partagée et la suivante, quand vous partagez les quêtes d'une zone ou d'un donjon. Plus il est long, plus votre groupe a le temps d'accepter chacune."
 L["SHARE_WHISPERS"] = "Chuchoter quand un partage échoue"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Quand un membre du groupe est occupé, trop loin ou a un journal de quêtes plein, lui chuchote la quête que vous avez essayé de partager et lui demande de vous la rappeler. Rien n'est envoyé s'il ne remplit pas les conditions de la quête, l'a déjà ou l'a déjà terminée."
@@ -194,7 +211,7 @@ L["RESIZE_TOOLTIP"] = "Faites glisser pour redimensionner le journal de quêtes.
 -- Zone Menu
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "Clic droit pour partager les quêtes ou abandonner les grises"
+L["ZONE_MENU_ACTIONS_HINT"] = "Clic droit pour partager les quêtes ou abandonner les grises."
 L["SHARE_ZONE_QUESTS"] = "Partager %d quêtes"
 L["SHARE_ZONE_QUEST"] = "Partager 1 quête"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =

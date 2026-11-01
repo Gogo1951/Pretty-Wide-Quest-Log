@@ -34,6 +34,12 @@
 - **Instead:** Tips & Tricks has a Quest Chains section with a screenshot of a quest's chain in the details pane.
 - **Why:** A chain's checked-off, highlighted steps are quicker to understand in a picture than in words.
 
+### README's Related Add-ons are hand-picked
+
+- **Departs from:** README rules, Related Add-ons, each color's entries chosen by highest downloads.
+- **Instead:** Pairs With holds Questie, TomTom, Spoken, VoiceOver and whichever of Guidelime and RestedXP Guide has more downloads, and there is no Overlaps color.
+- **Why:** These are the add-ons the maintainer wants players to install beside this one, and add-ons that only overlap with it aren't worth calling out.
+
 ### Classic quest log reshaped in place
 
 - **Departs from:** COMPATIBILITY, never calling `SetUIPanelAttribute` and writing nothing to a Blizzard panel; FILE STRUCTURE, named frames carrying the add-on's prefix.

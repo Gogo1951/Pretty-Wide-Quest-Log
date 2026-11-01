@@ -29,6 +29,7 @@ ns.AddWideQuestLogPart(function()
 
 	-- The Ready to Turn In line sits centered between these two (Turn-In-Line.lua)
 	ns.abandonButton, ns.shareButton = QuestLogFrameAbandonButton, QuestFramePushQuestButton
+	ns.ExplainShareButton(QuestFramePushQuestButton)
 
 	QuestLogTitleText:ClearAllPoints()
 	QuestLogTitleText:SetPoint("TOP", QuestLogFrame, "TOP", 0, -17)
