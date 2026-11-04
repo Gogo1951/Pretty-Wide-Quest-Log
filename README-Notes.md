@@ -10,11 +10,17 @@
 - **Instead:** The map reveal tables get a kind of their own, which checks each map art ID against the art the client's own maps are drawn on and flags one no map uses as `NO MAP`; the Data Review prunes a `NO MAP` row only when the client's `UiMapXMapArt` table on wago.tools has no map for that art either.
 - **Why:** No client API looks up a map art ID, and a map reports only the art of the character's current phase, so the game alone can't tell a phased zone's other art from art the client lacks.
 
-### Track All buttons use our own strings
+### Validate Data prints a single setting
+
+- **Departs from:** Build Reference → DIAGNOSTIC TOOLS → Validate Data, a kind for each table of IDs in a data file.
+- **Instead:** A data file holding one setting rather than a table gets a kind of its own, which prints the setting's value, or `TABLE MISSING` where this client's folder never set it.
+- **Why:** A setting has no rows or IDs for the game to look up, yet every data file still needs its Validate Data row.
+
+### Track All buttons and Show Quest Levels use our own strings
 
 - **Departs from:** GAME NAMES, a Blizzard UI label comes from the client.
-- **Instead:** The Track All and Untrack All buttons use the add-on's own strings on every client, though WoW Forever has Blizzard labels for them.
-- **Why:** The buttons read the same on every client.
+- **Instead:** The Track All and Untrack All buttons and the Show Quest Levels option use the add-on's own strings on every client, though WoW Forever has Blizzard labels for them.
+- **Why:** The labels read the same on every client.
 
 ### Quest log title leads with Quest Log
 

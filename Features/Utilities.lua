@@ -288,8 +288,9 @@ else
 		if not GetQuestTagInfo then
 			return nil, false
 		end
+		-- No elite flag here: the tag ID decides the letter (ns.QUEST_TAG_SUFFIXES), never the tag's name
 		local tagID, tagName = GetQuestTagInfo(questID)
-		return tagID, ELITE ~= nil and tagName == ELITE, tagName
+		return tagID, false, tagName
 	end
 end
 

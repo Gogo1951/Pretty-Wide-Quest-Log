@@ -2,10 +2,13 @@ local _, ns = ...
 local L = ns.L
 
 --[[
-	Every client: on entering a dungeon or raid with a group, tells the group which of your quests still
-	need doing there and shares the ones the game lets you share. Each dungeon gets this once per group,
-	however many times it's entered or reset; leaving the group starts over. Which dungeon, and which
-	quests are its, is Dungeon-Quest-Lookup.lua's
+	Every client: on entering a dungeon with a party, tells the party which of your quests still need
+	doing there and shares the ones the game lets you share. The announcement goes out once per dungeon
+	per group, however many times it's entered or reset. The shares go to each party member once per
+	dungeon: everyone on arrival, and anyone who joins later. Both wait until every online party member
+	is in range, or ns.DUNGEON_SHARE_MAX_WAIT seconds; WoW Forever hides party range from add-ons, so
+	there they go out on arrival. Nothing runs in a raid group, and leaving the group starts over. Which
+	dungeon, and which quests are its, is Dungeon-Quest-Lookup.lua's
 ]]
 
 --------------------------------------------------------------------------------
@@ -63,7 +66,7 @@ local function DungeonAnnouncementArguments(dungeonQuests)
 	return messages
 end
 
--- The announcement as the messages it sends, for the Sharing Context report
+-- The announcement as the messages it sends, for the Options example and the diagnostics reports
 function ns.BuildDungeonAnnouncement(dungeonQuests)
 	local messages = {}
 	for _, arguments in ipairs(DungeonAnnouncementArguments(dungeonQuests)) do
@@ -92,13 +95,10 @@ end
 
 --[[
 	Shares every quest for the dungeon the game lets you share, ready to turn in or not, at the zone
-	menu's pace. A failed share gets the usual whisper (Share-Reminders.lua). Skipped while the zone menu
-	is still sharing
+	menu's pace. A failed share gets the usual whisper (Share-Reminders.lua). The caller waits out a run
+	still going
 ]]
 local function Share(quests, dungeon)
-	if ns.sharingQuests then
-		return
-	end
 	local questIDs = {}
 	for _, quest in ipairs(quests) do
 		if quest.pushable then
@@ -116,7 +116,66 @@ local function Share(quests, dungeon)
 end
 
 --------------------------------------------------------------------------------
--- Entering a Dungeon
+-- The Party
+--------------------------------------------------------------------------------
+
+-- Whether no answer here is a secret value, which WoW Forever can hand back in combat and nothing may test
+local function Readable(...)
+	if not issecretvalue then
+		return true
+	end
+	for index = 1, select("#", ...) do
+		if issecretvalue((select(index, ...))) then
+			return false
+		end
+	end
+	return true
+end
+
+-- Whether a party member is within range of a share; always on WoW Forever, which hides party range from add-ons
+local function IsInRange(unit)
+	if ns.FLAVOR == "Camelot" then
+		return true
+	end
+	local inRange, checked = UnitInRange(unit)
+	return inRange and checked ~= false and true or false
+end
+
+--[[
+	The other party members who are online and known, by GUID, each with its unit and whether it's in
+	range. A slot the game hasn't filled in yet, as happens around a loading screen, is left out, so it
+	never reads as someone leaving and coming back
+]]
+local function PartyMembers()
+	local members = {}
+	for index = 1, GetNumSubgroupMembers() do
+		local unit = "party" .. index
+		local guid, connected = UnitGUID(unit), UnitIsConnected(unit)
+		if guid and Readable(guid, connected) and connected then
+			members[guid] = { unit = unit, inRange = IsInRange(unit) }
+		end
+	end
+	return members
+end
+
+--------------------------------------------------------------------------------
+-- What This Group Has Had
+--------------------------------------------------------------------------------
+
+-- By dungeon key: whether it was announced, and the party members (by GUID) its quests were shared with
+local dungeons = {}
+
+local function DungeonState(key)
+	local state = dungeons[key]
+	if not state then
+		state = { sharedWith = {} }
+		dungeons[key] = state
+	end
+	return state
+end
+
+--------------------------------------------------------------------------------
+-- In a Dungeon
 --------------------------------------------------------------------------------
 
 -- Whether either dungeon feature is on
@@ -125,138 +184,163 @@ local function IsEnabled()
 	return profile.enableQualityOfLife and (profile.dungeonAnnounce or profile.dungeonShare)
 end
 
--- Dungeons this group has already had, by zone key
-local doneZones = {}
+-- The dungeon the player is in with a party, never a raid group, while either feature is on
+local function PartyDungeon()
+	if not (IsEnabled() and IsInGroup() and not IsInRaid()) then
+		return nil
+	end
+	return ns.CurrentDungeon()
+end
 
--- Whether this group has already had the dungeon the player is in
-function ns.IsDungeonDone(dungeon)
-	return doneZones[dungeon.key] == true
+local ticker
+-- The dungeon being waited in for the party to gather, and since when
+local waitKey, waitStart
+--[[
+	After a login or reload, until the next loading screen: the party in the dungeon counts as already
+	served, as it's seen over ns.DUNGEON_LOGIN_GRACE seconds from when the first member shows up, since
+	the roster can fill in late after a login
+]]
+local adoptPending, adoptUntil
+
+local function StopWatching()
+	if ticker then
+		ticker:Cancel()
+		ticker = nil
+	end
+	waitKey, waitStart = nil, nil
 end
 
 --[[
-	Runs ns.DUNGEON_QUESTS_DELAY after arriving, so the group has had a moment to load in too, and only
-	if the player is still in the same dungeon, still grouped, and this group hasn't had it yet
+	Every ns.DUNGEON_CHECK_INTERVAL seconds in a dungeon with a party. Once every online party member is
+	in range (on WoW Forever, at once), or ns.DUNGEON_SHARE_MAX_WAIT seconds after the wait began, the
+	dungeon is announced if this group hasn't had it, and its quests are shared if anyone in range hasn't
+	had them. Anyone out of range then is shared with once they come in range. A run still going is
+	waited out. The checks stop once nothing is left to do; Watch starts them again on a loading screen
+	or a change to the group
 ]]
-local function Run(key)
-	local dungeon = ns.CurrentDungeon()
-	if not (dungeon and dungeon.key == key and IsInGroup() and IsEnabled()) or ns.IsDungeonDone(dungeon) then
+local function Check()
+	local dungeon = PartyDungeon()
+	if not dungeon then
+		StopWatching()
 		return
 	end
-	doneZones[dungeon.key] = true
-	local quests = ns.DungeonQuests(dungeon)
+	local state = DungeonState(dungeon.key)
+	local members = PartyMembers()
+
+	-- A login or reload inside a dungeon isn't arriving there: the group most likely had it already
+	if adoptPending then
+		if next(members) then
+			adoptUntil = adoptUntil or GetTime() + ns.DUNGEON_LOGIN_GRACE
+		end
+		if not adoptUntil or GetTime() < adoptUntil then
+			state.announced = true
+			for guid in pairs(members) do
+				state.sharedWith[guid] = true
+			end
+			return
+		end
+		adoptPending, adoptUntil = false, nil
+	end
+
 	local profile = ns.db.profile
-	if profile.dungeonAnnounce then
+	local announce = profile.dungeonAnnounce and not state.announced
+	local everyoneInRange, waitingFor, newInRange = true, false, {}
+	for guid, member in pairs(members) do
+		everyoneInRange = everyoneInRange and member.inRange
+		if profile.dungeonShare and not state.sharedWith[guid] then
+			waitingFor = true
+			if member.inRange then
+				newInRange[#newInRange + 1] = guid
+			end
+		end
+	end
+	if not (announce or waitingFor) then
+		StopWatching()
+		return
+	end
+	if waitKey ~= dungeon.key or not waitStart then
+		waitKey, waitStart = dungeon.key, GetTime()
+	end
+	if not everyoneInRange and GetTime() - waitStart < ns.DUNGEON_SHARE_MAX_WAIT then
+		return
+	end
+	local share = #newInRange > 0
+	if not (announce or share) then
+		-- Only those out of range still need the shares: a fresh wait for them
+		waitKey, waitStart = nil, nil
+		return
+	elseif share and not announce and ns.sharingQuests then
+		return
+	end
+
+	local quests = ns.DungeonQuests(dungeon)
+	if announce then
+		state.announced = true
 		Announce(quests)
 	end
-	if profile.dungeonShare then
+	if share then
+		if ns.sharingQuests then
+			return
+		end
+		for _, guid in ipairs(newInRange) do
+			state.sharedWith[guid] = true
+		end
 		Share(quests, dungeon)
 	end
+	waitKey, waitStart = nil, nil
 end
 
-local function Schedule()
-	local dungeon = ns.CurrentDungeon()
-	if dungeon and IsInGroup() and IsEnabled() and not ns.IsDungeonDone(dungeon) then
-		C_Timer.After(ns.DUNGEON_QUESTS_DELAY, function()
-			Run(dungeon.key)
-		end)
+local function Watch()
+	if not ticker and PartyDungeon() then
+		ticker = C_Timer.NewTicker(ns.DUNGEON_CHECK_INTERVAL, Check)
 	end
 end
 
--- A login or reload inside a dungeon isn't arriving there; the group has most likely had it already
 function ns:OnPlayerEnteringWorld(isInitialLogin, isReloadingUi)
-	if not (isInitialLogin or isReloadingUi) then
-		Schedule()
-	end
+	adoptPending, adoptUntil = isInitialLogin or isReloadingUi, nil
+	Watch()
 end
 
 -- A group formed inside the dungeon
 function ns:OnGroupJoined()
-	Schedule()
-end
-
---------------------------------------------------------------------------------
--- Group Changes
---------------------------------------------------------------------------------
-
--- The group's other members, by GUID, as last seen
-local members = {}
-
-local function CurrentMembers()
-	local current = {}
-	local prefix, count = "party", GetNumSubgroupMembers()
-	if IsInRaid() then
-		prefix, count = "raid", GetNumGroupMembers()
-	end
-	for index = 1, count do
-		local unit = prefix .. index
-		local guid = UnitGUID(unit)
-		if guid and not UnitIsUnit(unit, "player") then
-			current[guid] = true
-		end
-	end
-	return current
-end
-
--- Whether anyone joined or left since the roster was last seen
-local function RosterChanged()
-	local current = CurrentMembers()
-	local changed = false
-	for guid in pairs(current) do
-		changed = changed or not members[guid]
-	end
-	for guid in pairs(members) do
-		changed = changed or not current[guid]
-	end
-	members = current
-	return changed
-end
-
---[[
-	A share run for the dungeon again, once the roster has settled: only for a dungeon this group has
-	already had, so the first run on arrival is never doubled, and after any run still going
-]]
-local reshareGeneration = 0
-
-local function Reshare(generation, key)
-	if generation ~= reshareGeneration then
-		return
-	end
-	local dungeon = ns.CurrentDungeon()
-	local profile = ns.db.profile
-	if
-		not (dungeon and dungeon.key == key and IsInGroup() and ns.IsDungeonDone(dungeon))
-		or not (profile.enableQualityOfLife and profile.dungeonShare)
-	then
-		return
-	end
-	if ns.sharingQuests then
-		C_Timer.After(ns.DUNGEON_QUESTS_DELAY, function()
-			Reshare(generation, key)
-		end)
-		return
-	end
-	Share(ns.DungeonQuests(dungeon), dungeon)
+	Watch()
 end
 
 -- The owner of this file's second handler for an event another file handles too (Core.lua)
 ns.dungeonQuests = {}
 
--- Someone joined or left: the dungeon's quests are shared again ns.DUNGEON_QUESTS_DELAY after the last change
+-- Someone joined, or a raid group became a party; whether anyone new needs the shares is Check's
 function ns.dungeonQuests:OnGroupRosterUpdate()
-	if not RosterChanged() then
-		return
-	end
-	local dungeon = ns.CurrentDungeon()
-	if dungeon and IsInGroup() and ns.IsDungeonDone(dungeon) then
-		reshareGeneration = reshareGeneration + 1
-		local generation = reshareGeneration
-		C_Timer.After(ns.DUNGEON_QUESTS_DELAY, function()
-			Reshare(generation, dungeon.key)
-		end)
-	end
+	Watch()
 end
 
 function ns:OnGroupLeft()
-	doneZones = {}
-	members = {}
+	dungeons = {}
+	StopWatching()
+end
+
+--------------------------------------------------------------------------------
+-- Sharing Context
+--------------------------------------------------------------------------------
+
+--[[
+	For the Sharing Context report: whether this group's dungeon was announced, each party member's
+	unit, range and whether it has had the shares, and how long the party has been waited for
+]]
+function ns.DungeonShareStatus(dungeon)
+	local state = dungeons[dungeon.key] or { sharedWith = {} }
+	local members = {}
+	for guid, member in pairs(PartyMembers()) do
+		member.shared = state.sharedWith[guid] == true
+		members[#members + 1] = member
+	end
+	table.sort(members, function(a, b)
+		return a.unit < b.unit
+	end)
+	return {
+		announced = state.announced == true,
+		members = members,
+		waited = waitKey == dungeon.key and waitStart and GetTime() - waitStart or nil,
+		watching = ticker ~= nil,
+	}
 end

@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Un registro de misiones ancho, redimensionable y de doble panel, con niveles de misión, etiquetas de calabozo y élite, recompensas, cadenas de misiones y un mapa para cada misión. Comparte misiones con tu grupo y anuncia automáticamente las misiones de calabozo. Funciona con Questie, VoiceOver y ElvUI."
+	"Un registro de misiones ancho, redimensionable y de doble panel, con niveles de misión, etiquetas de calabozo y élite, recompensas, cadenas de misiones y un mapa para cada misión. Comparte misiones con tu grupo y anuncia automáticamente las misiones de calabozo. Funciona con Questie, Spoken, VoiceOver y ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activar mensaje de bienvenida"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] =
 	"Muestra el mensaje de bienvenida de Pretty Wide Quest Log al iniciar sesión."
@@ -32,7 +32,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Cambia el registro de misiones de Blizzard por el ancho, con el mapa al lado. Se aplica después de recargar."
 L["ENABLE_QUALITY_OF_LIFE"] = "Activar mejoras de comodidad"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Ordena la ventana de misiones del PNJ y ayuda a tu grupo a obtener tus misiones: ritmo al compartir, susurros cuando un envío no le llega a alguien, y anuncio y envío de misiones de calabozo. Compartir con clic derecho en el nombre de una zona funciona en ambos casos."
+	"Ordena la ventana de misiones del PNJ y ayuda a tu grupo a obtener tus misiones: ritmo al compartir, susurros cuando un envío no le llega a alguien, y anuncio y envío de misiones de calabozo. Compartir las misiones de una zona con clic derecho en su nombre también funciona con esto desactivado."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activar registro de misiones ancho se aplica después de recargar, algo que se te ofrecerá al cerrar la interfaz de opciones."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia de registro de misiones después de recargar. ¿Recargar ahora?"
@@ -128,7 +128,7 @@ L["QUEST_SHARING_HEADER"] = "Compartir misiones"
 L["QUEST_SHARING_INTRO"] =
 	"Haz clic derecho en el nombre de una zona del registro de misiones para ofrecerle a tu grupo, una tras otra, todas sus misiones que puedas compartir. Estas opciones fijan el ritmo y lo que pasa cuando a alguien se le pasa una."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"El clic derecho en el nombre de una zona requiere Activar registro de misiones ancho. El envío de misiones de calabozo funciona en ambos casos."
+	"El clic derecho en el nombre de una zona requiere Activar registro de misiones ancho. El envío de misiones de calabozo funciona sin esta opción."
 L["SHARE_INTERVAL"] = "Segundos entre envíos"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Cuánto esperar entre una misión compartida y la siguiente, cuando compartes las misiones de una zona o de un calabozo. Entre más largo, más tiempo tiene tu grupo para aceptar cada una."
@@ -139,13 +139,13 @@ L["SAMPLE_EXAMPLE"] = "Ejemplo: %s"
 L["SAMPLE_QUEST_LOADING"] = "Cargando ID de misión: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Misiones de calabozo"
 L["DUNGEON_QUESTS_INTRO"] =
-	"Al entrar a un calabozo o banda con tu grupo, se anuncian y comparten tus misiones de ahí, una vez por grupo en cada calabozo. Con Questie también cuentan las misiones cuyos objetivos están adentro, incluidas las de clase."
+	"Al entrar a un calabozo con tu grupo, tus misiones de ahí se anuncian y se comparten en cuanto todos estén a tu alcance (de inmediato en WoW Forever), y nunca dos veces al mismo grupo. Con Questie también cuentan las misiones cuyos objetivos están adentro, incluidas las de clase. En un grupo de banda no se hace nada."
 L["DUNGEON_ANNOUNCE"] = "Anuncios automáticos de misiones de calabozo"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Le dice a tu grupo qué misiones te quedan por hacer en el calabozo al que acabas de entrar, para que todos sepan qué buscar. Se omiten las misiones listas para entregar."
 L["DUNGEON_SHARE"] = "Envío automático de misiones de calabozo"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Comparte cada misión del calabozo que el juego te deja compartir, al ritmo fijado en Compartir misiones. Con Susurrar cuando falle un envío activado, quien se pierda un envío recibe un susurro para que pueda volver a pedirla. Vuelve a compartir cada vez que alguien se une al grupo o lo deja."
+	"Comparte cada misión del calabozo que el juego te deja compartir, al ritmo fijado en Compartir misiones, en cuanto todos estén a tu alcance (o después de un minuto; de inmediato en WoW Forever). Cada miembro del grupo las recibe una vez por calabozo, así que quien se une después también las recibe, y salir y volver a entrar no comparte nada. Con Susurrar cuando falle un envío activado, quien se pierda un envío recibe un susurro para que pueda volver a pedirla."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -177,6 +177,7 @@ L["OPTIONS_VERSION"] = "Versión %s"
 -- Quest Log Window
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: each QUEST_SUFFIX_* is one letter shown after a quest's level, as in [40D]
 L["QUEST_SUFFIX_DUNGEON"] = "C"
 L["QUEST_SUFFIX_RAID"] = "B"
 L["QUEST_SUFFIX_PVP"] = "J"
@@ -230,6 +231,7 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "Abandonaste 1 misión gris."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
 L["WHISPER_SHARE_FAILED"] =
 	"Intenté compartir %s contigo, pero no funcionó. Si quieres la misión, avísame cuando puedas y te la vuelvo a compartir"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Lo mismo con %s"

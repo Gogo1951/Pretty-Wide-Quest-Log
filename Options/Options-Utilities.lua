@@ -1,4 +1,5 @@
 local _, ns = ...
+local L = ns.L
 local GetColor = ns.GetColor
 
 --------------------------------------------------------------------------------
@@ -92,4 +93,59 @@ function ns.OptionsSubRow(order, hidden, controls)
 		args[key] = control
 	end
 	return { type = "group", name = "", inline = true, order = order, hidden = hidden, args = args }
+end
+
+--------------------------------------------------------------------------------
+-- Reload Prompt
+--------------------------------------------------------------------------------
+
+StaticPopupDialogs.PRETTYWIDEQUESTLOG_RELOAD = {
+	text = L["RELOAD_PROMPT"],
+	button1 = RELOADUI,
+	button2 = CANCEL,
+	OnAccept = function()
+		ReloadUI()
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,
+}
+
+-- The topmost frame under UIParent holding the panel: the Options window, once the panel is shown in it
+local function OptionsWindow(panel)
+	local window = panel
+	while window:GetParent() and window:GetParent() ~= UIParent do
+		window = window:GetParent()
+	end
+	return window
+end
+
+--[[
+	The Quest Log switch applies only as the saved settings load (Core.lua), so when the Options window
+	closes with the profile asking for the other quest log, offer the reload that switches it. Comparing
+	against this session's state covers a profile switch too, and stays quiet after a switch flipped back.
+
+	The game's Options window may not exist yet when this file loads, so it is hooked the first time one
+	of the add-on's panels shows inside it. Watching the window rather than the panels means the prompt
+	still comes when the player has moved on to another category before closing.
+]]
+function ns.WatchOptionsForReload(panels)
+	local hookedWindow
+	local function PromptIfClosed()
+		if ns.IsQuestLogReloadPending() then
+			StaticPopup_Show("PRETTYWIDEQUESTLOG_RELOAD")
+		end
+	end
+	for _, panel in ipairs(panels) do
+		panel:HookScript("OnShow", function()
+			local window = OptionsWindow(panel)
+			if window ~= hookedWindow then
+				hookedWindow = window
+				window:HookScript("OnHide", function()
+					C_Timer.After(0, PromptIfClosed)
+				end)
+			end
+		end)
+	end
 end

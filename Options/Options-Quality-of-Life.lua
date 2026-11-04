@@ -55,8 +55,8 @@ end
 	hasn't filled that table in
 ]]
 local SAMPLE_FORMS = {
-	PARTY = { chatType = "PARTY", hex = "AAAAFF", prefix = CHAT_PARTY_GET or "[Party] %s: " },
-	WHISPER = { chatType = "WHISPER", hex = "FF80FF", prefix = CHAT_WHISPER_GET or "%s whispers: " },
+	PARTY = { chatType = "PARTY", hex = "AAAAFF", prefix = CHAT_PARTY_GET },
+	WHISPER = { chatType = "WHISPER", hex = "FF80FF", prefix = CHAT_WHISPER_GET },
 }
 
 local function ChatColor(form)

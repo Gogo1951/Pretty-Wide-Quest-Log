@@ -1,6 +1,6 @@
 # Pretty Wide Quest Log (PWQL)
 
-A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, VoiceOver, and ElvUI.
+A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, Spoken, VoiceOver, and ElvUI.
 
 **TL;DR:** The quest log Blizzard should have shipped. Everything about a quest on one screen, and your whole group on the same quests without typing a word.
 
@@ -40,7 +40,7 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 
 🗂️ **Organized and Easy to Scan** // Sort zones and quests by level or name, with roomier lines, cleaner headings, and checkmarks on finished objectives, all true to Blizzard's look.
 
-📣 **Your Whole Group, On the Same Page** // Walk into a dungeon and your group instantly knows which of your quests are inside and gets every one you can share, with a friendly whisper for anyone who misses one.
+📣 **Your Whole Party, On the Same Page** // Walk into a dungeon and your party learns which of your quests are inside and gets every one you can share, with a friendly whisper for anyone who misses one.
 
 📜 **A Tidier Quest Giver** // The quest giver window gets the quest log's clean layout, level tags on every quest it offers, and a quest ID that links to Wowhead.
 
@@ -108,6 +108,6 @@ Never lose your place in a long chain again. With Questie installed, the selecte
 
 * DarrenKosick's [BetterQuestLog](https://www.curseforge.com/wow/addons/betterquestlog)
 * Kerzo's [Kerzo Classic Quest Log](https://www.curseforge.com/wow/addons/kerzo-classic-quest-log)
-* Drathnis's [QuestLogPlus](https://www.curseforge.com/wow/addons/questlog-plus)
-* bitekenny's [StBu MasterQuestLog](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
-* bitekenny's [StBu QuestLogLayout](https://www.curseforge.com/wow/addons/sb-questloglayout)
+* bitekenny's [StBu Master Questlog | Forever](https://www.curseforge.com/wow/addons/stbu-master-questlog)
+* bitekenny's [StBu MasterQuestLog | The Burning Crusade](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
+* bitekenny's [StBu QuestLogLayout | Classic](https://www.curseforge.com/wow/addons/sb-questloglayout)

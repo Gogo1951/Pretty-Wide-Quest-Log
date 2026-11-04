@@ -1,10 +1,24 @@
 local ADDON_NAME, ns = ...
 local L = ns.L
 local LAYOUT = ns.LAYOUT
+local GetColor = ns.GetColor
 
 local ART_PATH_PREFIX = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/PWQL_"
 local TOP_SPLIT = 0.5
 local STRIP_SOURCE = 8 -- Pixels of the middle piece the widening strip is cut from
+
+-- The quest log window's title: the print line's colors (ns.BuildPrintLine), the other way round ("Quest Log // PWQL")
+function ns.BuildWindowTitle()
+	return GetColor("TEXT")
+		.. QUEST_LOG
+		.. "|r "
+		.. GetColor("SEPARATOR")
+		.. "//"
+		.. "|r "
+		.. GetColor("INFO")
+		.. L["ADDON_SHORT_NAME"]
+		.. "|r"
+end
 
 --[[
 	Draws the window art on a frame and returns a function that lays it out for a given window height, and

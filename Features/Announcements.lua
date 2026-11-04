@@ -19,19 +19,6 @@ function ns.BuildPrintLine(message)
 		.. "|r"
 end
 
--- The quest log window's title: the print line's colors, the other way round ("Quest Log // PWQL")
-function ns.BuildWindowTitle()
-	return GetColor("TEXT")
-		.. QUEST_LOG
-		.. "|r "
-		.. GetColor("SEPARATOR")
-		.. "//"
-		.. "|r "
-		.. GetColor("INFO")
-		.. L["ADDON_SHORT_NAME"]
-		.. "|r"
-end
-
 function ns:PrintMessage(message)
 	print(ns.BuildPrintLine(message))
 end

@@ -15,7 +15,7 @@ end
 
 --[[
 	The dungeon the player is in, or nil outside one: its name, a key that's the same for every instance
-	of it (Questie's zone ID, or the name without Questie), the zone IDs its quest data uses (Questie
+	of it (the game's instance ID, so it never depends on Questie), the zone IDs its quest data uses (Questie
 	files some dungeons' quests under a second ID) and the names its quest log header can carry
 ]]
 local function CurrentDungeon()
@@ -48,7 +48,7 @@ local function CurrentDungeon()
 			end
 		end
 	end
-	dungeon.key = areaID or name
+	dungeon.key = instanceID
 	return dungeon
 end
 

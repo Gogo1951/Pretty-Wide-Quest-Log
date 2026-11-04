@@ -84,9 +84,9 @@ ns.AddWideQuestLogPart(function()
 		return true
 	end
 
-	local function GetQuestSuffix(questID, questTag)
+	local function GetQuestSuffix(questID)
 		local tagID = questID and GetQuestTagInfo and GetQuestTagInfo(questID)
-		return ns.QuestSuffix(tagID, ELITE ~= nil and questTag == ELITE)
+		return ns.QuestSuffix(tagID)
 	end
 
 	--------------------------------------------------------------------------------
@@ -176,7 +176,7 @@ ns.AddWideQuestLogPart(function()
 		for i = 1, math.min(QUESTS_DISPLAYED, entryCount - offset) do
 			local row, index = _G["QuestLogTitle" .. i], ns.ClassicEntryAt(order, offset + i)
 			local text, check = row.Text, _G["QuestLogTitle" .. i .. "Check"]
-			local title, level, questTag, isHeader, _, _, _, questID = GetQuestLogTitle(index)
+			local title, level, _, isHeader, _, _, _, questID = GetQuestLogTitle(index)
 
 			if isHeader then
 				row:RegisterForClicks("LeftButtonUp") -- Right-clicks open the zone menu instead
@@ -185,7 +185,7 @@ ns.AddWideQuestLogPart(function()
 				check:Hide()
 			else
 				row:RegisterForClicks("LeftButtonUp", "RightButtonUp") -- Blizzard's own, for quests
-				local label = ns.QuestListTitle(level, title, GetQuestSuffix(questID, questTag))
+				local label = ns.QuestListTitle(level, title, GetQuestSuffix(questID))
 				row:SetText(ns.VoiceOverTitlePrefix(text) .. label)
 				text:SetPoint("LEFT", row, "LEFT", LAYOUT.QUEST_TEXT_X, 0)
 				check:ClearAllPoints()

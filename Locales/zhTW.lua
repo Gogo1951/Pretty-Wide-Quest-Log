@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"寬版雙欄任務日誌，可調整大小，顯示任務等級、地城與精英標籤、獎勵、任務鏈，並為每個任務顯示地圖。與隊伍分享任務，自動通報地城任務。相容 Questie、VoiceOver 和 ElvUI。"
+	"寬版雙欄任務日誌，可調整大小，顯示任務等級、地城與精英標籤、獎勵、任務鏈，並為每個任務顯示地圖。與隊伍分享任務，自動通報地城任務。相容 Questie、Spoken、VoiceOver 和 ElvUI。"
 L["ENABLE_WELCOME_MESSAGE"] = "啟用歡迎訊息"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登入時顯示 Pretty Wide Quest Log 的歡迎訊息。"
 L["OPTIONS_FEATURES_HEADER"] = "功能"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"將暴雪任務日誌換成寬版任務日誌，地圖就在旁邊。重新載入介面後生效。"
 L["ENABLE_QUALITY_OF_LIFE"] = "啟用便利功能"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"整理任務NPC視窗，並幫助隊友接到你的任務：分享節奏、分享未送達時的密語，以及地城任務的通報和分享。右鍵點擊區域名稱進行分享，無論開關都能使用。"
+	"整理任務NPC視窗，並幫助隊友接到你的任務：分享節奏、分享未送達時的密語，以及地城任務的通報和分享。即使關閉此項，右鍵點擊區域名稱分享其任務仍然可用。"
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"啟用寬版任務日誌需要重新載入介面才會生效，關閉設定介面時會提示你重新載入。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新載入介面才能切換任務日誌。現在重新載入嗎？"
@@ -121,7 +121,7 @@ L["QUEST_SHARING_HEADER"] = "任務分享"
 L["QUEST_SHARING_INTRO"] =
 	"在任務日誌中右鍵點擊區域名稱，即可把該區域中你能分享的所有任務逐一分享給隊伍。這些選項設定分享的節奏，以及有人錯過任務時該怎麼辦。"
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"右鍵點擊區域名稱需要啟用寬版任務日誌。地城任務分享無論開關都能使用。"
+	"右鍵點擊區域名稱需要啟用寬版任務日誌。地城任務分享無需此項即可使用。"
 L["SHARE_INTERVAL"] = "分享間隔秒數"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"分享一個任務後到下一個任務之間的等待時間，適用於分享區域或地城的任務時。時間越長，隊友就有越多時間接受每個任務。"
@@ -132,13 +132,13 @@ L["SAMPLE_EXAMPLE"] = "範例：%s"
 L["SAMPLE_QUEST_LOADING"] = "正在載入任務ID：%d"
 L["DUNGEON_QUESTS_HEADER"] = "地城任務"
 L["DUNGEON_QUESTS_INTRO"] =
-	"當你和隊伍進入地城或團隊副本時，會通報並分享你在其中的任務，每支隊伍在每個地城只進行一次。裝有 Questie 時，目標位於其中的任務也算在內，包括職業任務。"
+	"當你和隊伍進入地城時，會在所有人都進入範圍後（在 WoW Forever 上立即）通報並分享你在其中的任務，且不會對同一支隊伍進行兩次。裝有 Questie 時，目標位於其中的任務也算在內，包括職業任務。在團隊中不會進行。"
 L["DUNGEON_ANNOUNCE"] = "地城任務自動通報"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"告訴隊友你在剛進入的地城裡還有哪些任務要做，讓大家知道要留意什麼。可以回報的任務不會列出。"
 L["DUNGEON_SHARE"] = "地城任務自動分享"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"依任務分享中設定的節奏，分享該地城裡所有遊戲允許分享的任務。開啟分享失敗時密語後，錯過分享的隊友會收到密語，可以再找你要。有人加入或離開隊伍時會再次分享。"
+	"依任務分享中設定的節奏，在所有人都進入範圍後（或一分鐘後；在 WoW Forever 上立即）分享該地城裡所有遊戲允許分享的任務。每位隊友在每個地城只會收到一次，所以之後加入的人也會收到，而離開再進入不會再次分享。開啟分享失敗時密語後，錯過分享的隊友會收到密語，可以再找你要。"
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -170,6 +170,7 @@ L["OPTIONS_VERSION"] = "版本 %s"
 -- Quest Log Window
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: each QUEST_SUFFIX_* is one letter shown after a quest's level, as in [40D]
 L["QUEST_SUFFIX_DUNGEON"] = "副"
 L["QUEST_SUFFIX_RAID"] = "團"
 L["QUEST_SUFFIX_PVP"] = "戰"
@@ -222,6 +223,7 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "已放棄 1 個灰色任務。"
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
 L["WHISPER_SHARE_FAILED"] =
 	"我剛才想把 %s 分享給你，但沒成功。如果需要，等你準備好時叫我一聲，我再分享一次"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 也一樣"

@@ -1,5 +1,5 @@
 ## Title: Pretty Wide Quest Log
-## Notes: A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, VoiceOver, and ElvUI.
+## Notes: A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, Spoken, VoiceOver, and ElvUI.
 ## Author: Gogo1951
 
 ## IconTexture: Interface/AddOns/Pretty-Wide-Quest-Log/Includes/Images/Pretty-Wide-Quest-Log.tga
@@ -57,6 +57,7 @@ Data/Data.lua
 Data/Mists/Map-Reveal-Mists.lua
 Data/Mists/Quest-Tags-Mists.lua
 Data/Mists/Sample-Quests-Mists.lua
+Data/Mists/Wowhead-Mists.lua
 Data/Default-Settings.lua
 
 # Pretty Wide Quest Log
