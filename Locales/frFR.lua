@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Un journal de quêtes large, redimensionnable et à double volet, avec le niveau des quêtes, des repères donjon et élite, les récompenses, les suites de quêtes et une carte pour chaque quête. Partagez des quêtes avec votre groupe et annoncez automatiquement les quêtes de donjon. Compatible avec Questie, VoiceOver et ElvUI."
+	"Un journal de quêtes large, redimensionnable et à double volet, avec le niveau des quêtes, des repères donjon et élite, les récompenses, les suites de quêtes et une carte pour chaque quête. Partagez des quêtes avec votre groupe et annoncez automatiquement les quêtes de donjon. Compatible avec Questie, Spoken, VoiceOver et ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message de bienvenue de Pretty Wide Quest Log à la connexion."
 L["OPTIONS_FEATURES_HEADER"] = "Fonctionnalités"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Remplace le journal de quêtes de Blizzard par le journal large, avec la carte à côté. Prend effet après un rechargement."
 L["ENABLE_QUALITY_OF_LIFE"] = "Activer les améliorations de confort"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Épure la fenêtre de donneur de quêtes et aide votre groupe à prendre vos quêtes : rythme de partage, chuchotements quand un partage rate quelqu'un, et annonce et partage des quêtes de donjon. Partager d'un clic droit sur un nom de zone fonctionne dans tous les cas."
+	"Épure la fenêtre de donneur de quêtes et aide votre groupe à prendre vos quêtes : rythme de partage, chuchotements quand un partage rate quelqu'un, et annonce et partage des quêtes de donjon. Partager les quêtes d'une zone d'un clic droit sur son nom fonctionne aussi quand cette option est désactivée."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activer le journal de quêtes large prend effet après un rechargement, proposé à la fermeture de l'interface des options."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après un rechargement. Recharger maintenant ?"
@@ -128,7 +128,7 @@ L["QUEST_SHARING_HEADER"] = "Partage de quêtes"
 L["QUEST_SHARING_INTRO"] =
 	"Faites un clic droit sur le nom d'une zone dans le journal de quêtes pour proposer à votre groupe, l'une après l'autre, toutes ses quêtes que vous pouvez partager. Ces options règlent le rythme et ce qui se passe quand quelqu'un en rate une."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"Le clic droit sur un nom de zone nécessite Activer le journal de quêtes large. Le partage des quêtes de donjon fonctionne dans tous les cas."
+	"Le clic droit sur un nom de zone nécessite Activer le journal de quêtes large. Le partage des quêtes de donjon fonctionne sans."
 L["SHARE_INTERVAL"] = "Secondes entre les partages"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Le temps d'attente entre une quête partagée et la suivante, quand vous partagez les quêtes d'une zone ou d'un donjon. Plus il est long, plus votre groupe a le temps d'accepter chacune."
@@ -139,13 +139,13 @@ L["SAMPLE_EXAMPLE"] = "Exemple : %s"
 L["SAMPLE_QUEST_LOADING"] = "Chargement de l'ID de quête : %d"
 L["DUNGEON_QUESTS_HEADER"] = "Quêtes de donjon"
 L["DUNGEON_QUESTS_INTRO"] =
-	"Quand vous entrez dans un donjon ou un raid avec votre groupe, vos quêtes pour celui-ci sont annoncées et partagées, une fois par groupe pour chaque donjon. Avec Questie, les quêtes dont les objectifs s'y trouvent comptent aussi, quêtes de classe comprises."
+	"Quand vous entrez dans un donjon avec votre groupe, vos quêtes pour celui-ci sont annoncées et partagées dès que tout le monde est à portée (immédiatement sur WoW Forever), et jamais deux fois au même groupe. Avec Questie, les quêtes dont les objectifs s'y trouvent comptent aussi, quêtes de classe comprises. Rien ne se passe dans un groupe de raid."
 L["DUNGEON_ANNOUNCE"] = "Annonces automatiques des quêtes de donjon"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Indique à votre groupe quelles quêtes il vous reste à faire dans le donjon où vous venez d'entrer, pour que tout le monde sache quoi surveiller. Les quêtes prêtes à être rendues sont omises."
 L["DUNGEON_SHARE"] = "Partage automatique des quêtes de donjon"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Partage chaque quête du donjon que le jeu vous laisse partager, au rythme réglé dans Partage de quêtes. Avec Chuchoter quand un partage échoue activé, quiconque rate un partage reçoit un chuchotement pour pouvoir la redemander. Partage à nouveau chaque fois que quelqu'un rejoint ou quitte le groupe."
+	"Partage chaque quête du donjon que le jeu vous laisse partager, au rythme réglé dans Partage de quêtes, dès que tout le monde est à portée (ou au bout d'une minute ; immédiatement sur WoW Forever). Chaque membre du groupe les reçoit une fois par donjon, donc quelqu'un qui rejoint plus tard les reçoit aussi, et sortir puis revenir ne partage rien. Avec Chuchoter quand un partage échoue activé, quiconque rate un partage reçoit un chuchotement pour pouvoir la redemander."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -177,6 +177,7 @@ L["OPTIONS_VERSION"] = "Version %s"
 -- Quest Log Window
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: each QUEST_SUFFIX_* is one letter shown after a quest's level, as in [40D]
 L["QUEST_SUFFIX_DUNGEON"] = "D"
 L["QUEST_SUFFIX_RAID"] = "R"
 L["QUEST_SUFFIX_PVP"] = "J"
@@ -230,6 +231,7 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "1 quête grise abandonnée."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
 L["WHISPER_SHARE_FAILED"] =
 	"J'ai essayé de partager %s avec toi, mais ça n'a pas marché. Si la quête t'intéresse, fais-moi signe quand tu peux et je te la repartage"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Pareil pour %s"

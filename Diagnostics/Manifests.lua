@@ -92,8 +92,9 @@ local SHARED_FUNCTIONS = {
 	"C_ChatInfo.InChatMessagingLockdown",
 	"GetTime",
 	"UnitGUID",
-	"UnitIsUnit",
-	"GetNumGroupMembers",
+	"UnitInRange",
+	"UnitIsConnected",
+	"C_Timer.NewTicker",
 	"GetNumSubgroupMembers",
 	"IsInGroup",
 	"IsInRaid",
@@ -389,9 +390,12 @@ local MISTS_MAP_FUNCTIONS = {
 ns.DIAGNOSTIC_API_CHECKS = {}
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", SHARED_FUNCTIONS))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", SHARED_TABLES))
-Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_LOG" }))
+-- A quest chain marks an elite step by matching Questie's tag name against ELITE (Quest-Chain.lua)
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_LOG", "ELITE" }))
 -- Group chat goes to the instance group only where this exists; without it, raid or party (Announcements.lua)
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "LE_PARTY_CATEGORY_INSTANCE" }))
+-- The party read leaves out a member whose answers are secret only where this exists; without it, all are readable (Dungeon-Quests.lua)
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", { "issecretvalue" }))
 -- The map's frame, built in Features/Quest-Map.xml, which only a client with the map lists (Quest-Map.lua)
 if ns.hasQuestMap then
 	Append(
@@ -403,6 +407,8 @@ if ns.hasQuestMap then
 			"BackdropTemplateMixin",
 		})
 	)
+	-- The map always shows the whole zone: the mouse wheel never zooms it (Quest-Map.lua)
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "MAP_CANVAS_MOUSE_WHEEL_ZOOM_BEHAVIOR_NONE" }))
 end
 if OWN_WINDOW then
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", OWN_WINDOW_FUNCTIONS))
@@ -460,8 +466,8 @@ if IS_WIDENED_BLIZZARD_LOG then
 			"QUEST_WATCH_NO_EXPIRE",
 		})
 	)
-	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "ELITE", "QUEST_WATCH_TOO_MANY" }))
-	-- Only TBC has daily quests; Classic-Quest-List.lua skips the daily tag where this is nil
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_WATCH_TOO_MANY" }))
+	-- Only TBC has daily quests; the quest list leaves out the daily tag where this is nil (Classic-Quest-Sort.lua)
 	if ns.FLAVOR == "TBC" then
 		Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "LE_QUEST_FREQUENCY_DAILY" }))
 		-- The daily reset line under a daily quest's title (Classic-Quest-Details.lua)
@@ -480,6 +486,7 @@ end
 	tags are keyed by QuestInfo ID, which nothing on the client lists, so they print their row count
 	("other"). The sample dungeon is a single area ID beside the sample quests rather than a table of its
 	own, so its source reaches it through the quest table's file and names the constant in a DATA_ column.
+	The Wowhead address is a single setting, not a table, so it prints the address itself ("value").
 ]]
 local function KeyId(id)
 	return id
@@ -528,6 +535,10 @@ ns.DIAGNOSTIC_DATA_SOURCES = {
 			},
 		},
 	},
+	{
+		label = "Wowhead",
+		sources = { { table = "WOWHEAD_QUEST_URL", kind = "value" } },
+	},
 }
 
 --------------------------------------------------------------------------------
@@ -538,8 +549,8 @@ ns.DIAGNOSTIC_DATA_SOURCES = {
 	Every Blizzard UI label the add-on shows or matches, for the Localization
 	tab's Game Names report, read exactly as the features read it: the global
 	itself, so each one's id is its own constant name. ELITE is matched as well
-	as shown on Classic Era and TBC, where it is how the list tells an elite
-	quest from its tag. The Quality of Life panel's Example lines also name the
+	as shown: a quest chain tells an elite step by Questie's tag name against
+	it, on every client. The Quality of Life panel's Example lines also name the
 	flavor's sample quests, dungeon and zone by ID (Sample-Quests data), read through
 	the same calls the panel makes.
 ]]
@@ -1279,7 +1290,28 @@ local function DungeonQuestLines(lines)
 		"Questie zone IDs: %s",
 		#areaIDs > 0 and table.concat(areaIDs, ", ") or "none, so only the quest log header decides"
 	)
-	lines[#lines + 1] = string.format("Already done for this group: %s", YesNo(ns.IsDungeonDone(dungeon)))
+	-- Nothing runs in a raid group; each party member gets the shares once per dungeon, once in range (Dungeon-Quests.lua)
+	lines[#lines + 1] = string.format("In a raid group, where nothing runs: %s", YesNo(IsInRaid()))
+	local status = ns.DungeonShareStatus(dungeon)
+	lines[#lines + 1] = string.format("Watching for the party to gather: %s", YesNo(status.watching))
+	lines[#lines + 1] = string.format("Announced for this group: %s", YesNo(status.announced))
+	lines[#lines + 1] = string.format(
+		"Waiting for everyone in range: %s",
+		status.waited and string.format("%d of %d seconds", math.floor(status.waited), ns.DUNGEON_SHARE_MAX_WAIT)
+			or "no"
+	)
+	lines[#lines + 1] = string.format("Online party members: %d", #status.members)
+	if ns.FLAVOR == "Camelot" then
+		lines[#lines + 1] = "  WoW Forever hides party range from add-ons, so everyone counts as in range."
+	end
+	for _, member in ipairs(status.members) do
+		lines[#lines + 1] = string.format(
+			"  %s: in range %s, shared this dungeon's quests %s",
+			member.unit,
+			YesNo(member.inRange),
+			YesNo(member.shared)
+		)
+	end
 
 	local quests = DungeonQuests(dungeon)
 	lines[#lines + 1] = string.format("Quests for this dungeon: %d", #quests)

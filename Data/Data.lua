@@ -30,15 +30,6 @@ ns.LINKS = {
 	WAGO = "https://addons.wago.io/addons/pretty-wide-quest-log",
 }
 
--- A quest's Wowhead page, in the part of the site for this client; WoW Forever's quests are Classic Era's
-local WOWHEAD_QUEST_URLS = {
-	Vanilla = "https://www.wowhead.com/classic/quest=",
-	TBC = "https://www.wowhead.com/tbc/quest=",
-	Camelot = "https://www.wowhead.com/classic/quest=",
-	Mists = "https://www.wowhead.com/mop-classic/quest=",
-}
-ns.WOWHEAD_QUEST_URL = WOWHEAD_QUEST_URLS[ns.FLAVOR]
-
 -- The chain link before a quest ID that opens its Wowhead page: white, so it takes the quest ID's color
 ns.WOWHEAD_LINK_ICON = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/PWQL_Link"
 
@@ -279,7 +270,11 @@ ns.SHARE_INTERVAL_MIN = 3
 ns.SHARE_INTERVAL_MAX = 10
 
 --[[
-	Seconds after entering a dungeon before its quests are announced and shared (Dungeon-Quests.lua), so
-	the rest of the group has had a moment to arrive too
+	In a dungeon with a party (Dungeon-Quests.lua): how often to look whether the party has gathered, and
+	the longest the announcement and the shares wait for everyone to be in range before going out to
+	whoever is. After a login or reload inside one, the party seen this long from when its first member
+	shows up counts as already served
 ]]
-ns.DUNGEON_QUESTS_DELAY = 8
+ns.DUNGEON_CHECK_INTERVAL = 2
+ns.DUNGEON_SHARE_MAX_WAIT = 60
+ns.DUNGEON_LOGIN_GRACE = 10

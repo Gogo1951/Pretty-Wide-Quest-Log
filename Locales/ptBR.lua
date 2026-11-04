@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Um registro de missões largo, redimensionável e com dois painéis, com níveis das missões, marcadores de masmorra e elite, recompensas, cadeias de missões e um mapa para cada missão. Compartilhe missões com seu grupo e anuncie automaticamente as missões de masmorra. Funciona com Questie, VoiceOver e ElvUI."
+	"Um registro de missões largo, redimensionável e com dois painéis, com níveis das missões, marcadores de masmorra e elite, recompensas, cadeias de missões e um mapa para cada missão. Compartilhe missões com seu grupo e anuncie automaticamente as missões de masmorra. Funciona com Questie, Spoken, VoiceOver e ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Ativar mensagem de boas-vindas"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra a mensagem de boas-vindas do Pretty Wide Quest Log ao entrar no jogo."
 L["OPTIONS_FEATURES_HEADER"] = "Recursos"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Troca o registro de missões da Blizzard pelo largo, com o mapa ao lado. Entra em vigor após recarregar."
 L["ENABLE_QUALITY_OF_LIFE"] = "Ativar melhorias de conveniência"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Organiza a janela de missões do PNJ e ajuda seu grupo a pegar suas missões: ritmo de compartilhamento, sussurros quando um compartilhamento não chega a alguém, e anúncio e compartilhamento de missões de masmorra. Compartilhar com o botão direito no nome de uma zona funciona de qualquer jeito."
+	"Organiza a janela de missões do PNJ e ajuda seu grupo a pegar suas missões: ritmo de compartilhamento, sussurros quando um compartilhamento não chega a alguém, e anúncio e compartilhamento de missões de masmorra. Compartilhar as missões de uma zona com o botão direito no nome dela também funciona com isto desativado."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Ativar registro de missões largo entra em vigor após recarregar, o que será oferecido quando você fechar a interface de opções."
 L["RELOAD_PROMPT"] = "O Pretty Wide Quest Log troca de registro de missões após recarregar. Recarregar agora?"
@@ -127,7 +127,7 @@ L["QUEST_SHARING_HEADER"] = "Compartilhamento de missões"
 L["QUEST_SHARING_INTRO"] =
 	"Clique com o botão direito no nome de uma zona no registro de missões para oferecer ao seu grupo, uma após a outra, todas as missões dela que você pode compartilhar. Estas opções definem o ritmo e o que acontece quando alguém perde uma."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"O clique direito no nome de uma zona requer Ativar registro de missões largo. O compartilhamento de missões de masmorra funciona de qualquer jeito."
+	"O clique direito no nome de uma zona requer Ativar registro de missões largo. O compartilhamento de missões de masmorra funciona sem ele."
 L["SHARE_INTERVAL"] = "Segundos entre compartilhamentos"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Quanto tempo esperar entre uma missão compartilhada e a próxima, ao compartilhar as missões de uma zona ou de uma masmorra. Quanto maior, mais tempo o seu grupo tem para aceitar cada uma."
@@ -138,13 +138,13 @@ L["SAMPLE_EXAMPLE"] = "Exemplo: %s"
 L["SAMPLE_QUEST_LOADING"] = "Carregando ID da missão: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Missões de masmorra"
 L["DUNGEON_QUESTS_INTRO"] =
-	"Quando você entra em uma masmorra ou raide com o seu grupo, suas missões de lá são anunciadas e compartilhadas, uma vez por grupo para cada masmorra. Com o Questie, as missões com objetivos lá dentro também contam, incluindo as de classe."
+	"Quando você entra em uma masmorra com o seu grupo, suas missões de lá são anunciadas e compartilhadas assim que todos estiverem ao alcance (na hora no WoW Forever), e nunca duas vezes para o mesmo grupo. Com o Questie, as missões com objetivos lá dentro também contam, incluindo as de classe. Nada acontece em um grupo de raide."
 L["DUNGEON_ANNOUNCE"] = "Anúncio automático de missões de masmorra"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Diz ao seu grupo quais das suas missões ainda faltam fazer na masmorra em que você acabou de entrar, para todo mundo saber o que procurar. Missões prontas para entregar ficam de fora."
 L["DUNGEON_SHARE"] = "Compartilhamento automático de missões de masmorra"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Compartilha cada missão da masmorra que o jogo deixa você compartilhar, no ritmo definido em Compartilhamento de missões. Com Sussurrar quando um compartilhamento falhar ativado, quem perder um compartilhamento recebe um sussurro e pode pedir de novo. Compartilha de novo sempre que alguém entra ou sai do grupo."
+	"Compartilha cada missão da masmorra que o jogo deixa você compartilhar, no ritmo definido em Compartilhamento de missões, assim que todos estiverem ao alcance (ou depois de um minuto; na hora no WoW Forever). Cada membro do grupo recebe as missões uma vez por masmorra, então quem entra depois também recebe, e sair e voltar não compartilha nada. Com Sussurrar quando um compartilhamento falhar ativado, quem perder um compartilhamento recebe um sussurro e pode pedir de novo."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -176,6 +176,7 @@ L["OPTIONS_VERSION"] = "Versão %s"
 -- Quest Log Window
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: each QUEST_SUFFIX_* is one letter shown after a quest's level, as in [40D]
 L["QUEST_SUFFIX_DUNGEON"] = "M"
 L["QUEST_SUFFIX_RAID"] = "R"
 L["QUEST_SUFFIX_PVP"] = "J"
@@ -229,6 +230,7 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "1 missão cinza abandonada."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
 L["WHISPER_SHARE_FAILED"] =
 	"Tentei compartilhar %s com você, mas não deu certo. Se quiser a missão, me chama quando puder que eu compartilho de novo"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "O mesmo vale para %s"

@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, VoiceOver, and ElvUI."
+	"A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, Spoken, VoiceOver, and ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Enable Welcome Message"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log welcome message when you log in."
 L["OPTIONS_FEATURES_HEADER"] = "Features"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Swaps Blizzard's quest log for the wide one, with the map beside it. Takes effect after a reload."
 L["ENABLE_QUALITY_OF_LIFE"] = "Enable Quality of Life"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Tidies the quest giver window and helps your group get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. Right-clicking a zone name to share works either way."
+	"Tidies the quest giver window and helps your party get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. Right-clicking a zone name to share its quests works with this off too."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Enable Wide Quest Log takes effect after a reload, offered when you close the Options Interface."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
@@ -121,7 +121,7 @@ L["QUEST_SHARING_HEADER"] = "Quest Sharing"
 L["QUEST_SHARING_INTRO"] =
 	"Right-click a zone name in the quest log to offer your party all of its quests you can share, one after another. These settings set the pace and what happens when someone misses one."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"Right-clicking a zone name needs Enable Wide Quest Log. Dungeon quest sharing works either way."
+	"Right-clicking a zone name needs Enable Wide Quest Log. Dungeon quest sharing works without it."
 L["SHARE_INTERVAL"] = "Seconds Between Shares"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"How long to wait between one shared quest and the next, when you share a zone's quests or a dungeon's. Longer gives your party more time to accept each one."
@@ -132,13 +132,13 @@ L["SAMPLE_EXAMPLE"] = "Example: %s"
 L["SAMPLE_QUEST_LOADING"] = "Loading Quest ID: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Dungeon Quests"
 L["DUNGEON_QUESTS_INTRO"] =
-	"When you enter a dungeon or raid with your group, your quests for it are announced and shared, once per group for each dungeon. With Questie, quests whose objectives are inside count too, class quests included."
+	"When you enter a dungeon with your party, your quests for it are announced and shared once everyone is in range (right away on WoW Forever), and never twice to the same party. With Questie, quests whose objectives are inside count too, class quests included. Nothing happens in a raid group."
 L["DUNGEON_ANNOUNCE"] = "Automatic Dungeon Quest Announcements"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
-	"Tells your group which of your quests still need doing in the dungeon you just entered, so everyone knows what to look out for. Quests ready to turn in are left out."
+	"Tells your party which of your quests still need doing in the dungeon you just entered, so everyone knows what to look out for. Quests ready to turn in are left out."
 L["DUNGEON_SHARE"] = "Automatic Dungeon Quest Sharing"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Shares every quest for the dungeon that the game lets you share, at the pace set under Quest Sharing. With Whisper When a Share Fails on, anyone a share misses is whispered so they can ask again. Shares again whenever someone joins or leaves the group."
+	"Shares every quest for the dungeon that the game lets you share, at the pace set under Quest Sharing, once everyone is in range (or after a minute; right away on WoW Forever). Each party member gets them once per dungeon, so someone who joins later gets them too, and zoning out and back in shares nothing. With Whisper When a Share Fails on, anyone a share misses is whispered so they can ask again."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -170,6 +170,7 @@ L["OPTIONS_VERSION"] = "Version %s"
 -- Quest Log Window
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: each QUEST_SUFFIX_* is one letter shown after a quest's level, as in [40D]
 L["QUEST_SUFFIX_DUNGEON"] = "D"
 L["QUEST_SUFFIX_RAID"] = "R"
 L["QUEST_SUFFIX_PVP"] = "P"
@@ -223,6 +224,7 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "Abandoned 1 gray quest."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
 L["WHISPER_SHARE_FAILED"] =
 	"I tried to share %s with you, but it didn't go through. If you'd like the quest, just give me a shout when you're ready and I'll share it again"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Same goes for %s"

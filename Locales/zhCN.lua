@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"宽版双栏任务日志，可调整大小，显示任务等级、地下城与精英标签、奖励、任务链，并为每个任务显示地图。与队伍分享任务，自动通报地下城任务。兼容 Questie、VoiceOver 和 ElvUI。"
+	"宽版双栏任务日志，可调整大小，显示任务等级、地下城与精英标签、奖励、任务链，并为每个任务显示地图。与队伍分享任务，自动通报地下城任务。兼容 Questie、Spoken、VoiceOver 和 ElvUI。"
 L["ENABLE_WELCOME_MESSAGE"] = "启用欢迎消息"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登录时显示 Pretty Wide Quest Log 的欢迎消息。"
 L["OPTIONS_FEATURES_HEADER"] = "功能"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"将暴雪任务日志换成宽版任务日志，地图就在旁边。重新加载界面后生效。"
 L["ENABLE_QUALITY_OF_LIFE"] = "启用便利功能"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"整理任务NPC窗口，并帮助队友接到你的任务：分享节奏、分享未送达时的密语，以及地下城任务的通报和分享。右键点击区域名称进行分享，无论开关都可使用。"
+	"整理任务NPC窗口，并帮助队友接到你的任务：分享节奏、分享未送达时的密语，以及地下城任务的通报和分享。即使关闭此项，右键点击区域名称分享其任务仍然可用。"
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"启用宽版任务日志需要重新加载界面才能生效，关闭设置界面时会提示你重新加载。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新加载界面才能切换任务日志。现在重新加载吗？"
@@ -121,7 +121,7 @@ L["QUEST_SHARING_HEADER"] = "任务分享"
 L["QUEST_SHARING_INTRO"] =
 	"在任务日志中右键点击区域名称，即可把该区域中你能分享的所有任务逐一分享给队伍。这些选项设置分享的节奏，以及有人错过任务时该怎么办。"
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"右键点击区域名称需要启用宽版任务日志。地下城任务分享无论开关都可使用。"
+	"右键点击区域名称需要启用宽版任务日志。地下城任务分享无需此项即可使用。"
 L["SHARE_INTERVAL"] = "分享间隔秒数"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"分享一个任务后到下一个任务之间的等待时间，适用于分享区域或地下城的任务时。时间越长，队友就有越多时间接受每个任务。"
@@ -132,13 +132,13 @@ L["SAMPLE_EXAMPLE"] = "示例：%s"
 L["SAMPLE_QUEST_LOADING"] = "正在加载任务ID：%d"
 L["DUNGEON_QUESTS_HEADER"] = "地下城任务"
 L["DUNGEON_QUESTS_INTRO"] =
-	"当你和队伍进入地下城或团队副本时，会通报并分享你在其中的任务，每支队伍在每个地下城只进行一次。装有 Questie 时，目标位于其中的任务也算在内，包括职业任务。"
+	"当你和队伍进入地下城时，会在所有人都进入范围后（在 WoW Forever 上立即）通报并分享你在其中的任务，且不会对同一支队伍进行两次。装有 Questie 时，目标位于其中的任务也算在内，包括职业任务。在团队中不会进行。"
 L["DUNGEON_ANNOUNCE"] = "地下城任务自动通报"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"告诉队友你在刚进入的地下城里还有哪些任务要做，让大家知道要留意什么。可以交付的任务不会列出。"
 L["DUNGEON_SHARE"] = "地下城任务自动分享"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"按任务分享中设定的节奏，分享该地下城里所有游戏允许分享的任务。开启分享失败时密语后，错过分享的队友会收到密语，可以再找你要。有人加入或离开队伍时会再次分享。"
+	"按任务分享中设定的节奏，在所有人都进入范围后（或一分钟后；在 WoW Forever 上立即）分享该地下城里所有游戏允许分享的任务。每位队友在每个地下城只收到一次，所以之后加入的人也会收到，而离开再进入不会再次分享。开启分享失败时密语后，错过分享的队友会收到密语，可以再找你要。"
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -170,6 +170,7 @@ L["OPTIONS_VERSION"] = "版本 %s"
 -- Quest Log Window
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: each QUEST_SUFFIX_* is one letter shown after a quest's level, as in [40D]
 L["QUEST_SUFFIX_DUNGEON"] = "副"
 L["QUEST_SUFFIX_RAID"] = "团"
 L["QUEST_SUFFIX_PVP"] = "战"
@@ -222,6 +223,7 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "已放弃 1 个灰色任务。"
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
 L["WHISPER_SHARE_FAILED"] =
 	"我刚才想把 %s 分享给你，但没成功。如果需要，等你准备好时喊我一声，我再分享一次"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 也一样"

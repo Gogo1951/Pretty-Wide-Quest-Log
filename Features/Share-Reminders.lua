@@ -26,6 +26,7 @@ local function NamePattern(formatString)
 	return "^" .. pattern .. "$"
 end
 
+-- The pattern each result this client has matches its chat line with
 local resultPatterns = {}
 for _, result in ipairs(FIXABLE_RESULTS) do
 	local formatString = _G[result]
@@ -42,7 +43,8 @@ end
 	Results name the player but not the quest, so each share is noted as it goes out through
 	QuestLogPushQuest, which every way of sharing calls: the log entry it's given (WoW Forever's share
 	menus pass one without selecting the quest), or the selected quest when it's given none. A result is
-	matched to the last share only within ns.GetShareInterval() of it, the gap the zone menu leaves between shares
+	matched to the last share only within ns.GetShareInterval() of it, the gap the zone menu leaves
+	between shares
 ]]
 local lastShare = {}
 local whispered = {}

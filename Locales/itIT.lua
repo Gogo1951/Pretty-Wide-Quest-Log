@@ -23,7 +23,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Un registro delle missioni largo, ridimensionabile e a doppio pannello, con livelli delle missioni, etichette per spedizioni ed élite, ricompense, catene di missioni e una mappa per ogni missione. Condividi le missioni con il tuo gruppo e annuncia in automatico le missioni delle spedizioni. Funziona con Questie, VoiceOver ed ElvUI."
+	"Un registro delle missioni largo, ridimensionabile e a doppio pannello, con livelli delle missioni, etichette per spedizioni ed élite, ricompense, catene di missioni e una mappa per ogni missione. Condividi le missioni con il tuo gruppo e annuncia in automatico le missioni delle spedizioni. Funziona con Questie, Spoken, VoiceOver ed ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Attiva messaggio di benvenuto"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra il messaggio di benvenuto di Pretty Wide Quest Log quando accedi."
 L["OPTIONS_FEATURES_HEADER"] = "Funzioni"
@@ -32,7 +32,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Sostituisce il registro delle missioni di Blizzard con quello largo, con la mappa accanto. Ha effetto dopo un ricaricamento."
 L["ENABLE_QUALITY_OF_LIFE"] = "Attiva funzioni di comodità"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Riordina la finestra del datore di missioni e aiuta il tuo gruppo a prendere le tue missioni: ritmo di condivisione, sussurri quando una condivisione non raggiunge qualcuno, e annuncio e condivisione delle missioni delle spedizioni. Il clic destro sul nome di una zona per condividere funziona in ogni caso."
+	"Riordina la finestra del datore di missioni e aiuta il tuo gruppo a prendere le tue missioni: ritmo di condivisione, sussurri quando una condivisione non raggiunge qualcuno, e annuncio e condivisione delle missioni delle spedizioni. Il clic destro sul nome di una zona per condividerne le missioni funziona anche con questa opzione disattivata."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Attiva registro delle missioni largo ha effetto dopo un ricaricamento, che ti verrà proposto alla chiusura dell'interfaccia delle opzioni."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia registro delle missioni dopo un ricaricamento. Ricaricare ora?"
@@ -129,7 +129,7 @@ L["QUEST_SHARING_HEADER"] = "Condivisione delle missioni"
 L["QUEST_SHARING_INTRO"] =
 	"Fai clic destro sul nome di una zona nel registro delle missioni per offrire al tuo gruppo, una dopo l'altra, tutte le sue missioni che puoi condividere. Queste opzioni regolano il ritmo e cosa succede quando qualcuno ne perde una."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"Il clic destro sul nome di una zona richiede Attiva registro delle missioni largo. La condivisione delle missioni delle spedizioni funziona in ogni caso."
+	"Il clic destro sul nome di una zona richiede Attiva registro delle missioni largo. La condivisione delle missioni delle spedizioni funziona anche senza."
 L["SHARE_INTERVAL"] = "Secondi tra le condivisioni"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Quanto attendere tra una missione condivisa e la successiva, quando condividi le missioni di una zona o di una spedizione. Più è lungo, più tempo ha il tuo gruppo per accettare ciascuna."
@@ -140,13 +140,13 @@ L["SAMPLE_EXAMPLE"] = "Esempio: %s"
 L["SAMPLE_QUEST_LOADING"] = "Caricamento ID missione: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Missioni delle spedizioni"
 L["DUNGEON_QUESTS_INTRO"] =
-	"Quando entri in una spedizione o in un'incursione con il tuo gruppo, le tue missioni per quel luogo vengono annunciate e condivise, una volta per gruppo per ogni spedizione. Con Questie contano anche le missioni con obiettivi al suo interno, comprese quelle di classe."
+	"Quando entri in una spedizione con il tuo gruppo, le tue missioni per quel luogo vengono annunciate e condivise appena tutti sono a portata (subito su WoW Forever), e mai due volte allo stesso gruppo. Con Questie contano anche le missioni con obiettivi al suo interno, comprese quelle di classe. In un gruppo da incursione non succede nulla."
 L["DUNGEON_ANNOUNCE"] = "Annuncio automatico delle missioni delle spedizioni"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Dice al tuo gruppo quali delle tue missioni restano da fare nella spedizione in cui sei appena entrato, così tutti sanno cosa tenere d'occhio. Le missioni pronte da consegnare vengono escluse."
 L["DUNGEON_SHARE"] = "Condivisione automatica delle missioni delle spedizioni"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Condivide ogni missione della spedizione che il gioco ti permette di condividere, al ritmo impostato in Condivisione delle missioni. Con Sussurra quando una condivisione non riesce attivo, chi si perde una condivisione riceve un sussurro, così può richiederla. Condivide di nuovo ogni volta che qualcuno entra o esce dal gruppo."
+	"Condivide ogni missione della spedizione che il gioco ti permette di condividere, al ritmo impostato in Condivisione delle missioni, appena tutti sono a portata (o dopo un minuto; subito su WoW Forever). Ogni membro del gruppo le riceve una volta per spedizione, quindi le riceve anche chi entra dopo, e uscire e rientrare non condivide nulla. Con Sussurra quando una condivisione non riesce attivo, chi si perde una condivisione riceve un sussurro, così può richiederla."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -178,6 +178,7 @@ L["OPTIONS_VERSION"] = "Versione %s"
 -- Quest Log Window
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: each QUEST_SUFFIX_* is one letter shown after a quest's level, as in [40D]
 L["QUEST_SUFFIX_DUNGEON"] = "S"
 L["QUEST_SUFFIX_RAID"] = "I"
 L["QUEST_SUFFIX_PVP"] = "P"
@@ -232,6 +233,7 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "1 missione grigia abbandonata."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
 L["WHISPER_SHARE_FAILED"] =
 	"Ho provato a condividere %s con te, ma non è andata. Se ti interessa la missione, fammi un fischio quando puoi e te la ricondivido"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Lo stesso vale per %s"

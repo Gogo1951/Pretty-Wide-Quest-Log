@@ -325,6 +325,13 @@ local OTHER_COLUMNS = {
 	"ROWS",
 }
 
+-- A "value" source is a single setting rather than a table, so it prints the value itself.
+local VALUE_COLUMNS = {
+	"STATUS",
+	"SOURCE",
+	"VALUE",
+}
+
 -- STATUS, SOURCE and the id come first, so the name or title is the fourth cell.
 local NAME_CELL = 4
 
@@ -744,11 +751,11 @@ end
     Every id the entry's sources reach, grouped by kind and each in id order,
     with its DATA_* values already read; each kind's DATA_* headers in
     first-seen order, so a file with several sources still gets one header row
-    per block; every source whose table this client's folder never built; and
-    each "other" table's row count.
+    per block; every source whose table or value this client's folder never
+    set; each "other" table's row count; and each "value" source's value.
 ]]
 local function CollectIds(entry)
-	local ids, missing, others = {}, {}, {}
+	local ids, missing, others, values = {}, {}, {}, {}
 	local headers, seenHeaders = {}, {}
 
 	for _, source in ipairs(entry.sources) do
@@ -764,7 +771,13 @@ local function CollectIds(entry)
 		end
 
 		local rows = ns[source.table]
-		if type(rows) ~= "table" then
+		if source.kind == "value" then
+			if rows == nil then
+				missing[#missing + 1] = source
+			else
+				values[#values + 1] = { STATUS_OK, source.table, CellText(rows) }
+			end
+		elseif type(rows) ~= "table" then
 			missing[#missing + 1] = source
 		elseif source.kind == "other" then
 			others[#others + 1] = { STATUS_OK, source.table, tostring(CountRows(rows)) }
@@ -790,7 +803,7 @@ local function CollectIds(entry)
 		end
 		return a.id < b.id
 	end)
-	return ids, headers, missing, others
+	return ids, headers, missing, others, values
 end
 
 --[[
@@ -955,6 +968,7 @@ local function ReleaseRun(run)
 	run.pending = {}
 	run.missing = {}
 	run.others = {}
+	run.values = {}
 end
 
 --[[
@@ -1006,8 +1020,8 @@ end
 --[[
     One kind's TSV block: its header row, a TABLE MISSING row for each of its
     tables this client never built, then one row per id in id order, or for
-    "other" one row count per table. A kind with nothing to show prints no
-    block.
+    "other" one row count per table, or for "value" one value per source. A
+    kind with nothing to show prints no block.
 ]]
 local function AppendKindBlock(lines, run, kind, header)
 	local rows = {}
@@ -1020,6 +1034,10 @@ local function AppendKindBlock(lines, run, kind, header)
 	end
 	if kind == "other" then
 		for _, cells in ipairs(run.others) do
+			rows[#rows + 1] = cells
+		end
+	elseif kind == "value" then
+		for _, cells in ipairs(run.values) do
 			rows[#rows + 1] = cells
 		end
 	end
@@ -1049,6 +1067,9 @@ local function CountStatuses(run)
 	for _, cells in ipairs(run.others) do
 		counts[cells[1]] = (counts[cells[1]] or 0) + 1
 	end
+	for _, cells in ipairs(run.values) do
+		counts[cells[1]] = (counts[cells[1]] or 0) + 1
+	end
 	if #run.missing > 0 then
 		counts[STATUS_TABLE_MISSING] = #run.missing
 	end
@@ -1068,6 +1089,7 @@ local function FinishValidation(_, run)
 	AppendKindBlock(lines, run, "area", JoinColumns(AREA_COLUMNS, headers.area or {}))
 	AppendKindBlock(lines, run, "mapArt", JoinColumns(MAP_ART_COLUMNS, headers.mapArt or {}))
 	AppendKindBlock(lines, run, "other", OTHER_COLUMNS)
+	AppendKindBlock(lines, run, "value", VALUE_COLUMNS)
 	local counts = CountStatuses(run)
 	local onFinish = run.onFinish
 	run.finished = true
@@ -1169,7 +1191,7 @@ function ns:StartDataValidation(fileIndex, onFinish)
 	validations[fileIndex] = run
 
 	run.generation = run.generation + 1
-	run.ids, run.headers, run.missing, run.others = CollectIds(entry)
+	run.ids, run.headers, run.missing, run.others, run.values = CollectIds(entry)
 	mapArtIndex = nil -- The character may have changed phase since the last run
 	run.rows = {}
 	run.pending = {}

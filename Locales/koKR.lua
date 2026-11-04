@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"퀘스트 레벨, 던전 및 정예 태그, 보상, 연계 퀘스트, 퀘스트별 지도를 보여 주는 넓고 크기 조절이 가능한 2단 퀘스트 목록입니다. 파티에 퀘스트를 공유하고 던전 퀘스트를 자동으로 알립니다. Questie, VoiceOver, ElvUI와 함께 작동합니다."
+	"퀘스트 레벨, 던전 및 정예 태그, 보상, 연계 퀘스트, 퀘스트별 지도를 보여 주는 넓고 크기 조절이 가능한 2단 퀘스트 목록입니다. 파티에 퀘스트를 공유하고 던전 퀘스트를 자동으로 알립니다. Questie, Spoken, VoiceOver, ElvUI와 함께 작동합니다."
 L["ENABLE_WELCOME_MESSAGE"] = "환영 메시지 사용"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log 환영 메시지를 표시합니다."
 L["OPTIONS_FEATURES_HEADER"] = "기능"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"블리자드 퀘스트 목록을 지도가 옆에 붙은 넓은 퀘스트 목록으로 바꿉니다. UI를 다시 불러온 후에 적용됩니다."
 L["ENABLE_QUALITY_OF_LIFE"] = "편의 기능 사용"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"퀘스트 NPC 창을 정리하고 파티원이 내 퀘스트를 받도록 돕습니다. 공유 속도 조절, 공유를 놓친 파티원에게 귓속말, 던전 퀘스트 알림과 공유가 포함됩니다. 지역 이름을 오른쪽 클릭해 공유하는 기능은 이 설정과 관계없이 작동합니다."
+	"퀘스트 NPC 창을 정리하고 파티원이 내 퀘스트를 받도록 돕습니다. 공유 속도 조절, 공유를 놓친 파티원에게 귓속말, 던전 퀘스트 알림과 공유가 포함됩니다. 지역 이름을 오른쪽 클릭해 그 지역의 퀘스트를 공유하는 기능은 이 설정을 꺼도 작동합니다."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"넓은 퀘스트 목록 사용은 UI를 다시 불러온 후에 적용되며, 설정 창을 닫을 때 다시 불러오기를 안내합니다."
 L["RELOAD_PROMPT"] =
@@ -130,7 +130,7 @@ L["QUEST_SHARING_HEADER"] = "퀘스트 공유"
 L["QUEST_SHARING_INTRO"] =
 	"퀘스트 목록에서 지역 이름을 오른쪽 클릭하면 그 지역에서 공유할 수 있는 퀘스트를 모두 하나씩 차례로 파티에 제안합니다. 이 설정에서 그 속도와 누군가 퀘스트를 놓쳤을 때 어떻게 할지 정합니다."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"지역 이름을 오른쪽 클릭하려면 넓은 퀘스트 목록 사용이 필요합니다. 던전 퀘스트 공유는 이 설정과 관계없이 작동합니다."
+	"지역 이름을 오른쪽 클릭하려면 넓은 퀘스트 목록 사용이 필요합니다. 던전 퀘스트 공유는 이 설정 없이도 작동합니다."
 L["SHARE_INTERVAL"] = "공유 간격(초)"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"공유한 퀘스트 하나와 다음 퀘스트 사이에 기다리는 시간으로, 지역이나 던전의 퀘스트를 공유할 때 적용됩니다. 길수록 파티원이 각 퀘스트를 수락할 시간이 늘어납니다."
@@ -141,13 +141,13 @@ L["SAMPLE_EXAMPLE"] = "예시: %s"
 L["SAMPLE_QUEST_LOADING"] = "퀘스트 ID 불러오는 중: %d"
 L["DUNGEON_QUESTS_HEADER"] = "던전 퀘스트"
 L["DUNGEON_QUESTS_INTRO"] =
-	"파티와 함께 던전이나 공격대에 들어가면 그곳의 내 퀘스트를 알리고 공유하며, 던전마다 파티당 한 번 작동합니다. Questie가 있으면 목표가 안에 있는 퀘스트도 포함되며, 직업 퀘스트도 들어갑니다."
+	"파티와 함께 던전에 들어가면 모두가 거리 안에 들어왔을 때(WoW Forever에서는 바로) 그곳의 내 퀘스트를 알리고 공유하며, 같은 파티에 두 번 하지는 않습니다. Questie가 있으면 목표가 안에 있는 퀘스트도 포함되며, 직업 퀘스트도 들어갑니다. 공격대에서는 작동하지 않습니다."
 L["DUNGEON_ANNOUNCE"] = "던전 퀘스트 자동 알림"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"방금 들어간 던전에서 아직 해야 할 퀘스트를 파티에 알려, 모두가 무엇을 챙겨야 할지 알 수 있게 합니다. 완료 보고만 남은 퀘스트는 빠집니다."
 L["DUNGEON_SHARE"] = "던전 퀘스트 자동 공유"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"게임이 공유를 허용하는 그 던전의 퀘스트를 모두 퀘스트 공유에서 정한 속도로 공유합니다. 공유 실패 시 귓속말이 켜져 있으면 공유를 놓친 파티원에게 귓속말을 보내 다시 요청할 수 있게 합니다. 누군가 파티에 들어오거나 나가면 다시 공유합니다."
+	"게임이 공유를 허용하는 그 던전의 퀘스트를 모두 퀘스트 공유에서 정한 속도로, 모두가 거리 안에 들어오면(또는 1분 뒤, WoW Forever에서는 바로) 공유합니다. 파티원마다 던전당 한 번 받으므로 나중에 들어온 사람도 받으며, 나갔다 다시 들어와도 다시 공유하지 않습니다. 공유 실패 시 귓속말이 켜져 있으면 공유를 놓친 파티원에게 귓속말을 보내 다시 요청할 수 있게 합니다."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -180,6 +180,7 @@ L["OPTIONS_VERSION"] = "버전 %s"
 -- Quest Log Window
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: each QUEST_SUFFIX_* is one letter shown after a quest's level, as in [40D]
 L["QUEST_SUFFIX_DUNGEON"] = "던"
 L["QUEST_SUFFIX_RAID"] = "공"
 L["QUEST_SUFFIX_PVP"] = "전"
@@ -234,6 +235,7 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "회색 퀘스트 1개를 포기했습니다."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
 L["WHISPER_SHARE_FAILED"] =
 	"%s 퀘스트를 공유하려고 했는데 전달되지 않았어요. 필요하면 준비됐을 때 말해 주세요. 다시 공유해 드릴게요"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 퀘스트도 마찬가지예요"

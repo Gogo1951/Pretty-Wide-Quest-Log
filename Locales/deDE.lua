@@ -22,7 +22,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Ein breites, skalierbares Questlog mit zwei Spalten, Queststufen, Dungeon- und Elite-Kürzeln, Belohnungen, Questreihen und einer Questkarte für jede Quest. Teile Quests mit deiner Gruppe und sag Dungeonquests automatisch an. Funktioniert mit Questie, VoiceOver und ElvUI."
+	"Ein breites, skalierbares Questlog mit zwei Spalten, Queststufen, Dungeon- und Elite-Kürzeln, Belohnungen, Questreihen und einer Questkarte für jede Quest. Teile Quests mit deiner Gruppe und sag Dungeonquests automatisch an. Funktioniert mit Questie, Spoken, VoiceOver und ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Willkommensnachricht aktivieren"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Zeigt beim Einloggen die Willkommensnachricht von Pretty Wide Quest Log."
 L["OPTIONS_FEATURES_HEADER"] = "Funktionen"
@@ -31,7 +31,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Ersetzt Blizzards Questlog durch das breite, mit der Karte daneben. Wird nach einem Neuladen wirksam."
 L["ENABLE_QUALITY_OF_LIFE"] = "Komfortfunktionen aktivieren"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Räumt das Questgeberfenster auf und hilft deiner Gruppe, deine Quests zu bekommen: Tempo beim Teilen, Flüsternachrichten, wenn ein Teilen jemanden verfehlt, sowie Ansage und Teilen von Dungeonquests. Das Teilen per Rechtsklick auf einen Zonennamen funktioniert in jedem Fall."
+	"Räumt das Questgeberfenster auf und hilft deiner Gruppe, deine Quests zu bekommen: Tempo beim Teilen, Flüsternachrichten, wenn ein Teilen jemanden verfehlt, sowie Ansage und Teilen von Dungeonquests. Das Teilen der Quests einer Zone per Rechtsklick auf ihren Namen funktioniert auch, wenn dies ausgeschaltet ist."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Breites Questlog aktivieren wird nach einem Neuladen wirksam, das dir beim Schließen des Optionsmenüs angeboten wird."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log wechselt das Questlog erst nach einem Neuladen. Jetzt neu laden?"
@@ -125,7 +125,7 @@ L["QUEST_SHARING_HEADER"] = "Quests teilen"
 L["QUEST_SHARING_INTRO"] =
 	"Rechtsklicke im Questlog auf einen Zonennamen, um deiner Gruppe nacheinander alle Quests dieser Zone anzubieten, die du teilen kannst. Diese Einstellungen bestimmen das Tempo und was passiert, wenn jemand eine verpasst."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"Der Rechtsklick auf einen Zonennamen benötigt Breites Questlog aktivieren. Das Teilen von Dungeonquests funktioniert in jedem Fall."
+	"Der Rechtsklick auf einen Zonennamen benötigt Breites Questlog aktivieren. Das Teilen von Dungeonquests funktioniert auch ohne."
 L["SHARE_INTERVAL"] = "Sekunden zwischen dem Teilen"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Wie lange zwischen einer geteilten Quest und der nächsten gewartet wird, wenn du die Quests einer Zone oder eines Dungeons teilst. Je länger, desto mehr Zeit hat deine Gruppe, jede einzelne anzunehmen."
@@ -136,13 +136,13 @@ L["SAMPLE_EXAMPLE"] = "Beispiel: %s"
 L["SAMPLE_QUEST_LOADING"] = "Lade Quest-ID: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Dungeonquests"
 L["DUNGEON_QUESTS_INTRO"] =
-	"Wenn du mit deiner Gruppe einen Dungeon oder Schlachtzug betrittst, werden deine Quests dafür angesagt und geteilt, einmal pro Gruppe für jeden Dungeon. Mit Questie zählen auch Quests, deren Ziele darin liegen, Klassenquests eingeschlossen."
+	"Wenn du mit deiner Gruppe einen Dungeon betrittst, werden deine Quests dafür angesagt und geteilt, sobald alle in Reichweite sind (auf WoW Forever sofort), und nie zweimal an dieselbe Gruppe. Mit Questie zählen auch Quests, deren Ziele darin liegen, Klassenquests eingeschlossen. In einer Schlachtzugsgruppe passiert nichts."
 L["DUNGEON_ANNOUNCE"] = "Automatische Ansage von Dungeonquests"
 L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
-	"Sagt deiner Gruppe, welche deiner Quests im eben betretenen Dungeon noch offen sind, damit alle wissen, worauf sie achten müssen. Quests, die bereit zur Abgabe sind, werden ausgelassen."
+	"Sagt deiner Gruppe, welche deiner Quests im eben betretenen Dungeon noch zu erledigen sind, damit alle wissen, worauf sie achten müssen. Quests, die bereit zur Abgabe sind, werden ausgelassen."
 L["DUNGEON_SHARE"] = "Automatisches Teilen von Dungeonquests"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Teilt jede Quest für den Dungeon, die das Spiel teilen lässt, im unter Quests teilen eingestellten Tempo. Ist Bei fehlgeschlagenem Teilen anflüstern aktiviert, wird jeder angeflüstert, der eine geteilte Quest verpasst, damit er noch einmal fragen kann. Teilt erneut, sobald jemand der Gruppe beitritt oder sie verlässt."
+	"Teilt jede Quest für den Dungeon, die das Spiel teilen lässt, im unter Quests teilen eingestellten Tempo, sobald alle in Reichweite sind (oder nach einer Minute; auf WoW Forever sofort). Jedes Gruppenmitglied erhält sie einmal pro Dungeon, also auch, wer später beitritt, und Raus- und wieder Reinzonen teilt nichts. Ist Bei fehlgeschlagenem Teilen anflüstern aktiviert, wird jeder angeflüstert, den ein Teilen verfehlt, damit er noch einmal fragen kann."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -174,6 +174,7 @@ L["OPTIONS_VERSION"] = "Version %s"
 -- Quest Log Window
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: each QUEST_SUFFIX_* is one letter shown after a quest's level, as in [40D]
 L["QUEST_SUFFIX_DUNGEON"] = "D"
 L["QUEST_SUFFIX_RAID"] = "S"
 L["QUEST_SUFFIX_PVP"] = "P"
@@ -227,6 +228,7 @@ L["CHAT_ABANDONED_GRAY_ONE"] = "1 graue Quest abgebrochen."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
 L["WHISPER_SHARE_FAILED"] =
 	"Ich wollte %s mit dir teilen, aber es hat nicht geklappt. Wenn du die Quest möchtest, sag einfach Bescheid, sobald du bereit bist, dann teile ich sie noch mal"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Das gilt auch für %s"
