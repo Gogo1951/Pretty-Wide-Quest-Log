@@ -51,6 +51,8 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 
 ### Routes & the Quest Arrow
 
+<img width="400" src="https://github.com/user-attachments/assets/469c4f94-6db2-467d-b4bb-98e2d41be536" />
+
 Open your zone map to see all your quests organized into a clean route, starting with the nearest. Each objective and turn-in gets a marker. The Quest Arrow points you to the next waypoint and shows what's left to do there. In a party, it also includes quests from party members who are running Questie.
 
 🧠 This feature requires Questie. 
