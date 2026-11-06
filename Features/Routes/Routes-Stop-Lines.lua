@@ -137,12 +137,11 @@ end
 	Calls back with each line describing the stop's quests: isTitle, text, then r, g, b. Under each quest,
 	only what's to do at the stop: its objectives there not yet done. Where it's only turned in there, the
 	quest is one line, "Turn in [2] Wayward Weapons". At most maxQuests quests, then a count of the rest.
-	A corpse is just that
+	A corpse is one line too, "Run back to your corpse"
 ]]
 function routes.ForEachStopLine(stop, maxQuests, callback)
 	if stop.corpse then
 		callback(true, L["ROUTES_CORPSE"], ns.GetColorRGB("TEXT"))
-		callback(false, L["ROUTES_CORPSE_HINT"], ns.GetColorRGB("HELP"))
 		return
 	end
 	local quests = routes.QuestsAt(stop, PositionAt(stop))
@@ -288,12 +287,11 @@ end
 --[[
 	Adds a stop's quests to the tooltip, a blank line between them: each quest's title, then its objectives
 	at the stop, done or not, in the quest log's order. Where nothing's left but the turn-in, the quest is
-	one line, "Turn in [2] Wayward Weapons". A corpse is just that
+	one line, "Turn in [2] Wayward Weapons". A corpse is one line too, "Run back to your corpse"
 ]]
 function routes.AddStopTooltip(tooltip, stop)
 	if stop.corpse then
 		tooltip:AddLine(L["ROUTES_CORPSE"], ns.GetColorRGB("TEXT"))
-		tooltip:AddLine(L["ROUTES_CORPSE_HINT"], ns.GetColorRGB("HELP"))
 		return
 	end
 	for _, entry in ipairs(routes.QuestsAt(stop, PositionAt(stop))) do

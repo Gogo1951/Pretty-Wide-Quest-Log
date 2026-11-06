@@ -117,6 +117,9 @@ ns.AddWideQuestLogPart(function()
 		return nil
 	end
 
+	-- Set while the canvas is showing but hasn't drawn yet, for want of a map (the canvas's OnShow below)
+	local drawPending = false
+
 	-- Returns whether the map moved, which redraws every layer
 	function questMap.ShowMap(mapID)
 		mapID = DrawableMap(mapID)
@@ -124,13 +127,18 @@ ns.AddWideQuestLogPart(function()
 			return false
 		end
 		canvas:SetMapID(mapID)
+		if drawPending then
+			drawPending = false
+			MapCanvasMixin.OnShow(canvas)
+		end
 		return true
 	end
 
 	--[[
 		A map is needed before the canvas first draws, as the Battlefield Map does it: drawing with none breaks
-		Blizzard's map code. When the quest's map and the player's have no art to climb to, as in some dungeons,
-		the world map's own fallback stands in
+		Blizzard's map code, whose layers ask for zoom levels it only builds for a map. When the quest's map and
+		the player's have no art to climb to, as in some dungeons, the world map's own fallback stands in. If
+		even that finds none, the drawing waits for the first map to arrive (questMap.ShowMap)
 	]]
 	canvas:SetScript("OnShow", function(self)
 		questMap.FollowQuest()
@@ -139,7 +147,14 @@ ns.AddWideQuestLogPart(function()
 				questMap.ShowMap(C_Map.GetFallbackWorldMapID())
 			end
 		end
-		MapCanvasMixin.OnShow(self)
+		if self:GetMapID() then
+			MapCanvasMixin.OnShow(self)
+		else
+			drawPending = true
+		end
+	end)
+	canvas:HookScript("OnHide", function()
+		drawPending = false
 	end)
 
 	--------------------------------------------------------------------------------

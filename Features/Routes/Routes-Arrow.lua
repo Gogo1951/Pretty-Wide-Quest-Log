@@ -6,7 +6,8 @@ local _, ns = ...
 	name, and indented under it what's to do there, its objectives with their counts or "Turn in quest"
 	(routes.ForEachStopLine).
 
-	The arrow is yellow on the way and green within 50 yards; no red, which reads as an error. It points
+	The arrow is green while it points within ON_COURSE degrees of straight ahead, yellow out to
+	OFF_COURSE either side, and red beyond, behind the player: which way to turn, at a glance. It points
 	to the next stop, all the way to one that's one place (an NPC, an object, the corpse), and becomes a
 	blue eye that breathes within 10 yards of it, "You're there". In the area of any objective on the
 	route (within routes.AREA_REACH of its spawns), it's the eye, "Objective Area", listing every
@@ -31,8 +32,14 @@ local WIDTH = 512 -- Widest the quest list gets before its lines are cut short
 local TURN_INTERVAL = 0.03 -- Seconds between turns of the arrow
 local TEXT_INTERVAL = 0.25 -- Seconds between rewrites of the distance
 local LIST_INTERVAL = 1 -- Seconds between rewrites of the quests, whose counts change only as the player works
--- Yards to the stop, or past the edge of its area: green within CLOSE, yellow beyond
-local CLOSE = 50
+--[[
+	Degrees either side of straight ahead: green within ON_COURSE (a fifth of the circle, 72 degrees in
+	all), yellow out to OFF_COURSE (a fifth more each side), red beyond, the two fifths behind. Each line
+	blends from one color to the next over BLEND degrees centered on it
+]]
+local ON_COURSE = 36
+local OFF_COURSE = 108
+local BLEND = 20
 local SPOT_REACH = 10 -- Yards from one place (a chest, an NPC) that count as there: the eye instead of the arrow
 local BREATH_PERIOD = 2.5 -- Seconds for the eye to grow and shrink again
 local BREATH_GROWTH = 0.3 -- How much bigger the eye gets at the top of a breath
@@ -221,12 +228,27 @@ end)
 -- Pointing
 --------------------------------------------------------------------------------
 
--- Yellow on the way, green close: a flip at the line, easy to read at a glance
-local function Shade(yards)
-	if yards <= CLOSE then
-		return ns.GetColorRGB("ARROW_CLOSE")
+-- From one color to the next across BLEND degrees centered on the line between them: a share of 0 to 1
+local function Across(degrees, line)
+	return math.min(1, math.max(0, (degrees - line) / BLEND + 0.5))
+end
+
+local function Mix(fromKey, toKey, share)
+	local r1, g1, b1 = ns.GetColorRGB(fromKey)
+	local r2, g2, b2 = ns.GetColorRGB(toKey)
+	return r1 + (r2 - r1) * share, g1 + (g2 - g1) * share, b1 + (b2 - b1) * share
+end
+
+--[[
+	By how far the arrow turns from straight ahead (radians, either way): solid colors through the middle
+	of each band, easy to read at a glance, and a short blend at the lines so it doesn't snap
+]]
+local function Shade(turn)
+	local degrees = math.abs(math.deg((turn + math.pi) % (2 * math.pi) - math.pi))
+	if degrees < (ON_COURSE + OFF_COURSE) / 2 then
+		return Mix("ARROW_ON_COURSE", "ARROW_TURN", Across(degrees, ON_COURSE))
 	end
-	return ns.GetColorRGB("ARROW_FAR")
+	return Mix("ARROW_TURN", "ARROW_WRONG_WAY", Across(degrees, OFF_COURSE))
 end
 
 local sinceTurn, sinceText, sinceList = 0, 0, 0
@@ -395,10 +417,9 @@ local function Point(self, elapsed)
 	end
 
 	-- Pointing, at an area from outside it, or to a place; a corpse is reached from within its radius
-	local edge = isArea and target.radius or 0
 	local arrived = view.corpse and yards <= view.radius
 	arrow:SetRotation(angle - facing)
-	arrow:SetVertexColor(Shade(yards - edge))
+	arrow:SetVertexColor(Shade(angle - facing))
 	if rewrite then
 		local yardsText = routes.Settings().showDistance and string.format(L["ROUTES_YARDS"], yards) or ""
 		distance:SetText(arrived and L["ROUTES_ARRIVED"] or yardsText)
