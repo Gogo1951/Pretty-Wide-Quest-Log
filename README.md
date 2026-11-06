@@ -51,17 +51,13 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 
 ### Routes & the Quest Arrow
 
-Both need Questie. Open your zone map and every quest in your log is laid out as one route, nearest first, with a marker on each objective and turn-in. The Quest Arrow points to the next waypoint and lists what's left to do there. In a party, it picks up your party members' quests too, when they run Questie.
+Open your zone map to see all your quests organized into a clean route, starting with the nearest. Each objective and turn-in gets a marker. The Quest Arrow points you to the next waypoint and shows what's left to do there. In a party, it also includes quests from party members who are running Questie.
 
-Routes aren't perfect, but for most quest lists they'll beat guessing an order in your head (=
+🧠 This feature requires Questie. 
 
-| Click | What It Does |
-| --- | --- |
-| **Drag** the Quest Arrow | Move it. |
-| **Right-Click** the Quest Arrow | Reroute around the current objective. |
-| **Middle-Click** the Quest Arrow | Reset all routes. |
+Fun fact, Questie once had a Routes feature planned for TBC Classic, but it never made it out of development. Much of this add-on's user experience grew out of that work.
 
-To give the route room, the zone map opens full size: Routes turns off the game's `miniWorldMap` setting and says so in chat when it does. To keep the map small, turn off Open the Zone Map Full Size under Routes on Zone Map.
+https://github.com/user-attachments/assets/daa30f62-12b3-4d3e-96d2-18a126094b6a
 
 ### Quest Chains
 
