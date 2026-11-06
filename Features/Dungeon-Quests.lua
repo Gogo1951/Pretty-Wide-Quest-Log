@@ -36,7 +36,7 @@ local function DungeonAnnouncementArguments(dungeonQuests)
 	local quests = QuestsToDo(dungeonQuests)
 	local count = #quests
 	local function Arguments(isFirst, parts)
-		local list = table.concat(parts, L["DUNGEON_QUESTS_SEPARATOR"])
+		local list = table.concat(parts, L["LIST_SEPARATOR"])
 		if not isFirst then
 			return { "DUNGEON_QUESTS_ANNOUNCE_CONTINUED", list }
 		elseif count == 1 then
@@ -94,9 +94,9 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-	Shares every quest for the dungeon the game lets you share, ready to turn in or not, at the zone
-	menu's pace. A failed share gets the usual whisper (Share-Reminders.lua). The caller waits out a run
-	still going
+	Shares every quest for the dungeon the game lets you share, ready to turn in or not, one every
+	ns.GetShareInterval() seconds, as Share Quests does. A failed share gets the usual whisper
+	(Share-Reminders.lua). The caller waits out a run still going
 ]]
 local function Share(quests, dungeon)
 	local questIDs = {}
@@ -107,30 +107,14 @@ local function Share(quests, dungeon)
 	end
 	if #questIDs == 0 then
 		return
-	elseif #questIDs == 1 then
-		ns:PrintMessage(L["CHAT_SHARING_ZONE_ONE"]:format(dungeon.name))
-	else
-		ns:PrintMessage(L["CHAT_SHARING_ZONE"]:format(#questIDs, dungeon.name, ns.GetShareInterval()))
 	end
+	ns:PrintMessage(ns.BuildSharePrint(#questIDs, dungeon.name))
 	ns.ShareQuests(questIDs)
 end
 
 --------------------------------------------------------------------------------
 -- The Party
 --------------------------------------------------------------------------------
-
--- Whether no answer here is a secret value, which WoW Forever can hand back in combat and nothing may test
-local function Readable(...)
-	if not issecretvalue then
-		return true
-	end
-	for index = 1, select("#", ...) do
-		if issecretvalue((select(index, ...))) then
-			return false
-		end
-	end
-	return true
-end
 
 -- Whether a party member is within range of a share; always on WoW Forever, which hides party range from add-ons
 local function IsInRange(unit)
@@ -151,7 +135,7 @@ local function PartyMembers()
 	for index = 1, GetNumSubgroupMembers() do
 		local unit = "party" .. index
 		local guid, connected = UnitGUID(unit), UnitIsConnected(unit)
-		if guid and Readable(guid, connected) and connected then
+		if guid and ns.IsReadable(guid, connected) and connected then
 			members[guid] = { unit = unit, inRange = IsInRange(unit) }
 		end
 	end

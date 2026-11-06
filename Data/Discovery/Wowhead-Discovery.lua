@@ -11,7 +11,7 @@ ns.WOWHEAD_QUEST_URL = "https://www.wowhead.com/classic/quest="
 How We Got the Data
 
 Last Validated
-	Never.
+	2026-11-06, Season of Discovery 1.15.9.70576
 
 Notes
 	- The page the quest log's Wowhead link opens, with the quest ID added on the end

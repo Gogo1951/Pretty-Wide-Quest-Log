@@ -30,7 +30,9 @@ ns.AddWideQuestLogPart(function()
 	function questMap.FollowQuest()
 		local title, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(GetQuestLogSelection())
 		questID = (title and not isHeader) and questID or nil
-		questMap.FollowQuestieQuest(questID, questMap.QuestGiverMapID(questID) or MapUtil.GetDisplayableMapForPlayer())
+		questMap.FollowQuestieQuest(questID, function()
+			return questMap.QuestGiverMapID(questID) or MapUtil.GetDisplayableMapForPlayer()
+		end)
 	end
 
 	hooksecurefunc("QuestLog_UpdateQuestDetails", questMap.RequestRefresh)

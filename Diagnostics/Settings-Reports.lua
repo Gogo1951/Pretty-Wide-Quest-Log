@@ -108,7 +108,8 @@ end
 --[[
     Dumps the single AceDB-managed table (profiles, profileKeys, global)
     so a player can paste their exact configuration: every setting in each
-    profile, and the window's saved size and position.
+    profile, the window's saved size and position, and the Quest Arrow's
+    saved spot.
 ]]
 function ns:BuildSavedVariablesReport()
 	local lines = { GetClientHeader(), "", ns.SAVED_VARIABLES_NAME .. " = {" }

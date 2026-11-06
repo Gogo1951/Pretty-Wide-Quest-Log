@@ -8,7 +8,7 @@ ns.questLogIsOwnWindow, ns.hasWideQuestLog = true, true
 
 local LAYOUT = ns.LAYOUT
 local BASE_WIDTH, BASE_HEIGHT, PANE_TOP, ROW_HEIGHT =
-	LAYOUT.BASE_WIDTH, LAYOUT.BASE_HEIGHT, LAYOUT.PANE_TOP, LAYOUT.ROW_HEIGHT
+	LAYOUT.BASE_WIDTH, LAYOUT.BASE_HEIGHT, LAYOUT.PANE_TOP, LAYOUT.QUEST_ROW_HEIGHT
 local DEFAULT_POINT = { "TOPLEFT", "UIParent", "TOPLEFT", 0, -104 }
 
 --[[
@@ -348,6 +348,7 @@ end
 ns.ToggleQuestLogWindow = Toggle -- The quest log key's button (Quest-Log-Key.lua)
 
 function ns.ResetWindow()
+	-- Height and point have no default, so clearing restores them; AceDB fills plain defaults only at load
 	ns.db.global.height, ns.db.global.point = nil, nil
 	ns.db.global.scale = ns.DATABASE_DEFAULTS.global.scale
 	ns.db.global.mapScale = ns.DATABASE_DEFAULTS.global.mapScale

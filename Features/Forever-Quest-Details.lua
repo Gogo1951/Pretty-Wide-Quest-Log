@@ -46,9 +46,7 @@ detailScroll:SetScrollChild(detailChild)
 
 --[[
 	The quest giver window and Blizzard's own quest detail panes use the same QuestInfo elements as this
-	one. Taking them while one of those is open would blank it (mid turn-in, say), so wait until it closes
-]]
---[[
+	one. Taking them while one of those is open would blank it (mid turn-in, say), so wait until it closes.
 	Blizzard's own quest log on Mists (QuestLogFrame, and QuestLogDetailFrame when its details pop out on
 	their own) and WoW Forever's quest detail popup are the others
 ]]
@@ -95,7 +93,6 @@ end
 ]]
 local LOG_TEMPLATE = CopyTable(QUEST_TEMPLATE_LOG)
 LOG_TEMPLATE.contentWidth = LAYOUT.CONTENT_WIDTH
-ns.SetTextSpacing(QuestInfoDescriptionText)
 do
 	local elements = LOG_TEMPLATE.elements
 	for index = 1, #elements, 3 do
@@ -237,46 +234,7 @@ function ns.DisplayQuestDetails(resetScroll)
 
 	ns.AlignRewardNumbers(LAYOUT.CONTENT_WIDTH) -- See LayOutSharedPieces
 
-	--[[
-		The same space under the Rewards heading as under Description. Blizzard hangs the first reward line
-		just under the heading and sizes the rewards block to fit, so move that line and grow the block to match
-	]]
-	local rewards = QuestInfoFrame.rewardsFrame
-	local first = rewards and rewards:IsShown() and rewards.activeRewardElements and rewards.activeRewardElements[1]
-	if first and first:GetNumPoints() > 0 then
-		local point, relativeTo, relativePoint, x = first:GetPoint(1)
-		if relativeTo == rewards.Header then
-			first:SetPoint(point, relativeTo, relativePoint, x, -LAYOUT.HEADING_SPACE_BELOW)
-			rewards:SetHeight(rewards:GetHeight() + LAYOUT.EXTRA_HEADING_GAP)
-		end
-	end
-
-	-- Reward buttons clear of the text above and below them, again growing the rewards block to match
-	if rewards and rewards:IsShown() then
-		local moved = 0
-		for _, button in ipairs(rewards.RewardButtons or {}) do
-			moved = moved + ns.SpaceAroundRewardButtons(button)
-		end
-		for _, element in ipairs(rewards.activeRewardElements or {}) do
-			moved = moved + ns.SpaceAroundRewardButtons(element)
-		end
-		moved = moved + ns.SpaceAroundRewardButtons(rewards.ItemReceiveText)
-		rewards:SetHeight(rewards:GetHeight() + moved)
-	end
-
-	--[[
-		A blank line between the money and experience lines, again growing the rewards block to match.
-		Without money, "You will also receive:" is the experience line's own label, so it stays right under it
-	]]
-	local experienceFrame = rewards and rewards:IsShown() and rewards.XPFrame
-	local hasMoney = rewards and rewards.MoneyFrame and rewards.MoneyFrame:IsShown()
-	if hasMoney and experienceFrame and experienceFrame:IsShown() and experienceFrame:GetNumPoints() > 0 then
-		local point, relativeTo, relativePoint, x, y = experienceFrame:GetPoint(1)
-		if relativeTo == rewards.ItemReceiveText then
-			experienceFrame:SetPoint(point, relativeTo, relativePoint, x, y - LAYOUT.QUEST_LINE)
-			rewards:SetHeight(rewards:GetHeight() + LAYOUT.QUEST_LINE)
-		end
-	end
+	ns.SpaceRewardsBlock(QuestInfoFrame.rewardsFrame) -- The rewards on the shared spacing scale
 
 	detailScroll:UpdateScrollChildRect()
 	if resetScroll then

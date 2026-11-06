@@ -608,7 +608,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 		["256:256:555:27"] = "8097081",
 		["256:256:593:340"] = "8097079",
 	},
-	[1997] = { -- Hyjal (2482)
+	[1997] = { -- Mount Hyjal (2482)
 		["218:247:138:213"] = "7950793",
 		["254:214:380:285"] = "7950794",
 		["258:338:0:197"] = "7950781, 7950782, 7950783, 7950784",
@@ -666,7 +666,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 How We Got the Data
 
 Last Validated
-	Never.
+	2026-11-06, WoW Forever 1.60.1.70790
 
 Notes
 	- Every area of a zone's map that starts hidden until the character explores it, so the quest map can show the
@@ -678,7 +678,11 @@ Notes
 	- Each value lists the client's own texture files for that area, left to right then top to bottom, one per
 	  tile of the map art's tile size. No art ships with the add-on; these are the game's files.
 	- Copied whole from Leatrix Maps 1.60.20 (WoW Forever), Leatrix_Maps_Reveal.lua, by script. The zone
-	  name and uiMapID opening each row are Leatrix's.
+	  name and uiMapID opening each row are Leatrix's, except Mount Hyjal's name, which is the client's.
+	- Checked against this client's own map overlay tables (wago.tools, below), which match every row. Left
+	  out: 39 older map arts the tables still carry that no map on this client is drawn on, Alterac Valley's
+	  three areas, since every row here is a zone's map and this client doesn't count Alterac Valley's as one,
+	  and the tables' placeholder areas, with no size or no textures.
 
 SQL (CMaNGOS)
 	TODO: Add SQL Query
@@ -687,5 +691,11 @@ Wowhead
 	None.
 
 wago.tools
+	https://wago.tools/db2/WorldMapOverlay?build=1.60.1.70790
+	https://wago.tools/db2/WorldMapOverlayTile?build=1.60.1.70790
+	https://wago.tools/db2/UiMapXMapArt?build=1.60.1.70790
+	https://wago.tools/db2/UiMap?build=1.60.1.70790
+
+QuestieDB
 	None.
 ]]

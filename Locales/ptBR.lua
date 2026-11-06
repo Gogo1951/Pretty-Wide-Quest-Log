@@ -9,6 +9,8 @@ end
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT_NAME"] = "PWQL"
+-- TRANSLATORS: joins the items of a list, such as quest links or the letters after a quest's level
+L["LIST_SEPARATOR"] = ", "
 L["CHAT_LOADED"] =
 	"Versão %s. As configurações (incluindo a opção de desativar esta mensagem) ficam em Opções > AddOns > Pretty Wide Quest Log. Está gostando deste add-on? Conte para um amigo, favorite-o no CurseForge ou dê uma Star no GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "Por precaução, a interface de opções não pode ser aberta durante o combate."
@@ -22,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Um registro de missões largo, redimensionável e com dois painéis, com níveis das missões, marcadores de masmorra e elite, recompensas, cadeias de missões e um mapa para cada missão. Compartilhe missões com seu grupo e anuncie automaticamente as missões de masmorra. Funciona com Questie, Spoken, VoiceOver e ElvUI."
+	"Registro de missões largo com rota de missões e seta de missões. Você escolhe as missões, nós ajudamos com uma rota limpa para concluí-las rápido. Níveis das missões, marcadores, recompensas, cadeias de missões, um mapa de missões e compartilhamento de missões com o grupo. Funciona com Questie, Spoken, VoiceOver e ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Ativar mensagem de boas-vindas"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra a mensagem de boas-vindas do Pretty Wide Quest Log ao entrar no jogo."
 L["OPTIONS_FEATURES_HEADER"] = "Recursos"
@@ -31,7 +33,13 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Troca o registro de missões da Blizzard pelo largo, com o mapa ao lado. Entra em vigor após recarregar."
 L["ENABLE_QUALITY_OF_LIFE"] = "Ativar melhorias de conveniência"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Organiza a janela de missões do PNJ e ajuda seu grupo a pegar suas missões: ritmo de compartilhamento, sussurros quando um compartilhamento não chega a alguém, e anúncio e compartilhamento de missões de masmorra. Compartilhar as missões de uma zona com o botão direito no nome dela também funciona com isto desativado."
+	"Organiza a janela de missões do PNJ e ajuda seu grupo a pegar suas missões: ritmo de compartilhamento, sussurros quando um compartilhamento não chega a alguém, e anúncio e compartilhamento de missões de masmorra. O botão Compartilhar missões de uma zona no registro de missões também funciona com isto desativado."
+L["ENABLE_ROUTES_MAP"] = "Ativar rotas no mapa da zona"
+L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
+	"Desenha no mapa da zona uma rota pelos seus objetivos de missão e entregas, começando pelo mais próximo, com pontos em marcha entre os marcadores."
+L["ENABLE_QUEST_ARROW"] = "Ativar Seta de missões"
+L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
+	"Mostra uma seta na tela, a Seta de missões, apontando para o próximo ponto de passagem da rota, com as missões e objetivos a fazer lá. Por padrão, ela fica oculta em grupos de raide e instâncias."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Ativar registro de missões largo entra em vigor após recarregar, o que será oferecido quando você fechar a interface de opções."
 L["RELOAD_PROMPT"] = "O Pretty Wide Quest Log troca de registro de missões após recarregar. Recarregar agora?"
@@ -43,6 +51,7 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Abre a interface de opções deste add-on."
 -- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
+L["TAB_WIDE_QUEST_LOG"] = "Registro de missões largo"
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Substitui o registro de missões da Blizzard por um largo: suas missões listadas por zona, com os detalhes da missão selecionada e o mapa dela ao lado."
 L["QUEST_LOG_SORTING_HEADER"] = "Ordenação"
@@ -99,8 +108,6 @@ L["RESET_WINDOW_SCALE_CONFIRM"] = "Redefinir a altura e a escala do registro de 
 L["RESET_WINDOW_MOVE_CONFIRM"] =
 	"Redefinir a altura e a escala do registro de missões, a escala do mapa e o lugar da janela na tela?"
 L["HANDY_CLICKS_HEADER"] = "Cliques úteis"
-L["HANDY_CLICK_ZONE"] = "Clique direito no nome de uma zona"
-L["HANDY_CLICK_ZONE_DESCRIPTION"] = "Compartilhe as missões dela ou abandone as cinzas."
 L["HANDY_CLICK_TRACK"] = "Shift-clique em uma missão"
 L["HANDY_CLICK_TRACK_DESCRIPTION"] = "Acompanhe a missão ou deixe de acompanhá-la."
 L["HANDY_CLICK_MENU"] = "Clique direito em uma missão"
@@ -125,9 +132,9 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 	"Adiciona as marcações de nível do registro de missões, como %s, à lista de missões de um PNJ."
 L["QUEST_SHARING_HEADER"] = "Compartilhamento de missões"
 L["QUEST_SHARING_INTRO"] =
-	"Clique com o botão direito no nome de uma zona no registro de missões para oferecer ao seu grupo, uma após a outra, todas as missões dela que você pode compartilhar. Estas opções definem o ritmo e o que acontece quando alguém perde uma."
+	"Passe o mouse sobre o nome de uma zona no registro de missões e clique em Compartilhar missões para oferecer ao seu grupo, uma após a outra, todas as missões dela que você pode compartilhar. Estas opções definem o ritmo e o que acontece quando alguém perde uma."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"O clique direito no nome de uma zona requer Ativar registro de missões largo. O compartilhamento de missões de masmorra funciona sem ele."
+	"O botão Compartilhar missões no nome de uma zona requer Ativar registro de missões largo. O compartilhamento de missões de masmorra funciona sem ele."
 L["SHARE_INTERVAL"] = "Segundos entre compartilhamentos"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Quanto tempo esperar entre uma missão compartilhada e a próxima, ao compartilhar as missões de uma zona ou de uma masmorra. Quanto maior, mais tempo o seu grupo tem para aceitar cada uma."
@@ -145,6 +152,81 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 L["DUNGEON_SHARE"] = "Compartilhamento automático de missões de masmorra"
 L["DUNGEON_SHARE_DESCRIPTION"] =
 	"Compartilha cada missão da masmorra que o jogo deixa você compartilhar, no ritmo definido em Compartilhamento de missões, assim que todos estiverem ao alcance (ou depois de um minuto; na hora no WoW Forever). Cada membro do grupo recebe as missões uma vez por masmorra, então quem entra depois também recebe, e sair e voltar não compartilha nada. Com Sussurrar quando um compartilhamento falhar ativado, quem perder um compartilhamento recebe um sussurro e pode pedir de novo."
+
+--------------------------------------------------------------------------------
+-- Options: Routes on Zone Map Panel
+--------------------------------------------------------------------------------
+
+L["TAB_ROUTES_MAP"] = "Rotas no mapa da zona"
+L["TAB_ROUTES_MAP_DESCRIPTION"] =
+	"Uma rota pelos seus objetivos de missão e entregas no mapa da zona, na ordem em que fazê-los, a partir de onde você está."
+L["ROUTES_MAP_HEADER"] = "Mapa da zona"
+L["FULL_SIZE_MAP"] = "Abrir o mapa da zona em tamanho máximo"
+L["FULL_SIZE_MAP_DESCRIPTION"] =
+	"Abre o mapa da zona maximizado, como faz o próprio botão de maximizar dele, para a rota ter espaço. Se você diminuir o mapa, ele abre em tamanho máximo de novo na próxima vez."
+L["HIDE_QUESTIE_ICONS"] = "Ocultar os ícones do Questie na rota"
+L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
+	"Oculta os ícones de mapa do Questie para o que está na rota, para que os marcadores fiquem no lugar deles. Passe o mouse sobre um marcador para ver os ícones dele."
+L["ROUTES_MARKERS_HEADER"] = "Marcadores"
+L["MARKER_SIZE"] = "Tamanho dos marcadores"
+L["MARKER_SIZE_DESCRIPTION"] = "O tamanho dos marcadores da rota no mapa da zona."
+L["MARKER_SIZE_SMALL"] = "Pequeno"
+L["MARKER_SIZE_MEDIUM"] = "Médio"
+L["MARKER_SIZE_LARGE"] = "Grande"
+L["MARKER_SIZE_HUGE"] = "Enorme"
+L["ROUTES_LINE_HEADER"] = "Linha da rota"
+L["SHOW_ROUTE_LINE"] = "Mostrar a linha da rota"
+L["SHOW_ROUTE_LINE_DESCRIPTION"] =
+	"Desenha pontos em marcha de você até cada marcador, um de cada vez. Desativado, mostra só os marcadores."
+L["LINE_SPEED"] = "Velocidade da linha"
+L["LINE_SPEED_DESCRIPTION"] = "A rapidez com que os pontos avançam até o próximo marcador."
+L["LINE_SPEED_STILL"] = "Parada"
+L["LINE_SPEED_SLOW"] = "Lenta"
+L["LINE_SPEED_NORMAL"] = "Normal"
+L["LINE_SPEED_FAST"] = "Rápida"
+L["LINE_OPACITY"] = "Opacidade da linha"
+L["LINE_OPACITY_DESCRIPTION"] =
+	"O quanto os pontos são sólidos; quanto mais baixa, mais o mapa aparece através deles."
+L["ROUTES_PARTY_HEADER"] = "Grupo"
+L["PARTY_QUESTS"] = "Incluir missões dos membros do grupo"
+L["PARTY_QUESTS_DESCRIPTION"] =
+	"Em grupo, a rota e a Seta de missões também incluem missões que os membros do seu grupo têm e você não, mostradas como as suas. É preciso ter o Questie dos dois lados para compartilhá-las. As missões de masmorra deles ficam de fora, como as suas."
+
+--------------------------------------------------------------------------------
+-- Options: Quest Arrow Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ARROW"] = "Seta de missões"
+L["TAB_QUEST_ARROW_DESCRIPTION"] =
+	"Uma seta na tela apontando para o próximo ponto de passagem da rota, com as missões e objetivos a fazer lá. Clique nela com o botão direito para desviar do objetivo atual; com o botão do meio para redefinir todas as rotas."
+L["QUEST_ARROW_HEADER"] = "Seta"
+L["ARROW_SIZE"] = "Tamanho da seta"
+L["ARROW_SIZE_DESCRIPTION"] = "O tamanho da Seta de missões, com o texto embaixo dela."
+L["ARROW_CYCLE"] = "Ciclo de olho e seta (segundos)"
+L["ARROW_CYCLE_DESCRIPTION"] =
+	"Em uma área de objetivo, a Seta de missões se alterna: o olho, listando os objetivos ao seu redor, e depois a seta, apontando para o próximo ponto de passagem. Cada um fica com metade deste tempo."
+L["LOCK_ARROW"] = "Travar a Seta de missões"
+L["LOCK_ARROW_DESCRIPTION"] = "Mantém a Seta de missões onde está, então arrastá-la não faz nada."
+L["RESET_ARROW"] = "Posição da seta"
+L["RESET_ARROW_BUTTON"] = "Redefinir"
+L["RESET_ARROW_DESCRIPTION"] = "Coloca a Seta de missões de volta onde ela começa, no alto, no meio da tela."
+L["QUEST_ARROW_TEXT_HEADER"] = "Embaixo da seta"
+L["SHOW_DISTANCE"] = "Mostrar distância"
+-- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_ARRIVED, as the Quest Arrow shows them
+L["SHOW_DISTANCE_DESCRIPTION"] =
+	'Mostra a quantos metros fica o próximo ponto de passagem. "%s" e "%s" aparecem de qualquer forma.'
+L["SHOW_ARROW_QUESTS"] = "Mostrar missões e objetivos"
+L["SHOW_ARROW_QUESTS_DESCRIPTION"] =
+	"Lista as missões do próximo ponto de passagem, cada uma com o que falta fazer lá."
+L["QUESTS_LISTED"] = "Máximo de missões listadas"
+-- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
+L["QUESTS_LISTED_DESCRIPTION"] =
+	'O máximo de missões que a Seta de missões lista embaixo dela para um ponto de passagem. As demais são contadas em uma linha própria, como "%s".'
+L["QUEST_ARROW_HIDING_HEADER"] = "Ocultar"
+L["HIDE_IN_RAIDS"] = "Ocultar em grupos de raide"
+L["HIDE_IN_RAIDS_DESCRIPTION"] = "Oculta a Seta de missões enquanto você está em um grupo de raide."
+L["HIDE_IN_INSTANCES"] = "Ocultar em instâncias"
+L["HIDE_IN_INSTANCES_DESCRIPTION"] = "Oculta a Seta de missões em masmorras, raides e campos de batalha."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -189,9 +271,10 @@ L["QUEST_TYPE_GROUP"] = "grupo"
 L["QUEST_TYPE_ELITE"] = "elite"
 L["QUEST_TYPE_PVP"] = "JxJ"
 L["QUEST_LEVEL_LEGEND"] = "Letras após o nível: %s."
+-- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s %s"
-L["QUEST_LEVEL_LEGEND_SEPARATOR"] = ", "
 L["QUEST_ID"] = "ID da missão %d"
+-- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "Sequência de missões (%d de %d)"
 L["DAILY_RESET"] = "As missões diárias são renovadas em %s."
 L["WOWHEAD_LINK_TOOLTIP"] = "Clique para obter um link do Wowhead."
@@ -208,36 +291,60 @@ L["TURN_IN_TOOLTIP"] = "Pronta para entregar"
 L["RESIZE_TOOLTIP"] = "Arraste para redimensionar o registro de missões."
 
 --------------------------------------------------------------------------------
--- Zone Menu
+-- Zone Sharing
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "Clique direito para compartilhar missões ou abandonar as cinzas."
-L["SHARE_ZONE_QUESTS"] = "Compartilhar %d missões"
-L["SHARE_ZONE_QUEST"] = "Compartilhar 1 missão"
+L["SHARE_QUESTS"] = "Compartilhar missões"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"Oferece ao seu grupo as missões desta zona que o jogo deixa você compartilhar, uma a cada %d segundos."
-L["SHARE_ZONE_QUEST_TOOLTIP"] = "Oferece ao seu grupo a única missão desta zona que o jogo deixa você compartilhar."
 L["CHAT_SHARING_ZONE_ONE"] = "Compartilhando 1 missão de %s."
+-- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "Compartilhando %d missões de %s, uma a cada %d segundos."
-L["ABANDON_GRAY_QUESTS"] = "Abandonar missões cinzas"
-L["ABANDON_GRAY_NONE"] = "Esta zona não tem missões cinzas para abandonar."
-L["ABANDON_GRAY_CONFIRM"] = "Abandonar estas %d missões cinzas?"
-L["ABANDON_GRAY_CONFIRM_ONE"] = "Abandonar esta missão cinza?"
-L["CHAT_ABANDONED_GRAY"] = "%d missões cinzas abandonadas."
-L["CHAT_ABANDONED_GRAY_ONE"] = "1 missão cinza abandonada."
+L["CHAT_SHARING_ZONE_NONE"] = "Nenhuma das suas missões de %s pode ser compartilhada."
+
+--------------------------------------------------------------------------------
+-- Routes on Zone Map and the Quest Arrow
+--------------------------------------------------------------------------------
+
+L["ROUTES_ARRIVED"] = "Você chegou"
+L["ROUTES_OBJECTIVE_AREA"] = "Área do objetivo"
+-- TRANSLATORS: %d is a distance in yards
+L["ROUTES_YARDS"] = "%d m"
+-- TRANSLATORS: %d is how many more quests the Quest Arrow has at this waypoint than it lists
+L["ROUTES_MORE_TASKS"] = "+%d a mais aqui"
+L["ROUTES_TURN_IN"] = "Entregar missão"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
+L["ROUTES_TURN_IN_QUEST"] = "Entregar %s"
+L["ROUTES_CORPSE"] = "Seu corpo"
+L["ROUTES_CORPSE_HINT"] = "Volte até ele para ressuscitar"
+-- TRANSLATORS: Heads the list of NPCs, mobs and objects found at a route waypoint
+L["ROUTES_LOOK_FOR"] = "Procure"
+-- TRANSLATORS: %s is the party members a waypoint's objective is for, such as "Alice, Bob"
+L["ROUTES_FOR_MEMBERS"] = "Para %s"
+L["ROUTES_CLICK_DRAG"] = "Arrastar"
+L["ROUTES_CLICK_RIGHT"] = "Clique direito"
+L["ROUTES_CLICK_MIDDLE"] = "Clique do meio"
+L["ROUTES_DRAG_MOVE"] = "Mover a Seta de missões"
+L["ROUTES_RIGHT_CLICK_REROUTE"] = "Desviar do objetivo atual"
+L["ROUTES_MIDDLE_CLICK_RESET"] = "Redefinir todas as rotas"
+-- TRANSLATORS: %s is a quest link or a list of them
+L["ROUTES_SKIPPED"] = "Rota desviada para evitar %s."
+L["CHAT_FULL_SIZE_MAP_SET"] =
+	"O mapa da zona vai abrir em tamanho máximo de novo. Para mantê-lo pequeno, desative Abrir o mapa da zona em tamanho máximo em Rotas no mapa da zona."
+L["ROUTES_RESET"] = "Todas as rotas redefinidas: os objetivos desviados voltaram para a rota."
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
--- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
+-- TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
+-- each %s is a quest link or a list of them, and each %d is how many quests
 L["WHISPER_SHARE_FAILED"] =
 	"Tentei compartilhar %s com você, mas não deu certo. Se quiser a missão, me chama quando puder que eu compartilho de novo"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "O mesmo vale para %s"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "Tenho %d missões para fazer aqui: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "Tenho 1 missão para fazer aqui: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Mais missões para fazer aqui: %s"
-L["DUNGEON_QUESTS_SEPARATOR"] = ", "
 
 --------------------------------------------------------------------------------
 -- Questie Tracking

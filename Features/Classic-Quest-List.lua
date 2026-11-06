@@ -14,43 +14,40 @@ ns.AddWideQuestLogPart(function()
 	QuestLogNoQuestsText:ClearAllPoints()
 	QuestLogNoQuestsText:SetPoint("TOP", QuestLogListScrollFrame, 0, -90)
 
-	-- Quest rows overlap by a pixel, so the pitch of the list is one less than a title's height
-	local rowHeight = (QuestLogTitle1 and QuestLogTitle1:GetHeight() or 0)
-	if rowHeight < 8 then
-		rowHeight = 16 -- QUESTLOG_QUEST_HEIGHT
+	local frameHeight = (QuestLogTitle1 and QuestLogTitle1:GetHeight() or 0)
+	if frameHeight < 8 then
+		frameHeight = 16 -- QUESTLOG_QUEST_HEIGHT
 	end
-	rowHeight = rowHeight - 1
 
 	--[[
-		A zone name says on hover that a right-click opens the zone menu (Zone-Menu.lua), and opens it. Zone
-		names take left clicks only (StyleQuestRows), so a right-click never reaches Blizzard's collapse. The
-		row's ID points at its entry (RedrawRow)
+		Each row sits in a slot of its own, padded as the WoW Forever list's rows are: a quest's
+		LAYOUT.QUEST_ROW_HEIGHT and a zone header's LAYOUT.HEADER_ROW_HEIGHT, with the row's frame centered
+		in it. A quest's slot is the list's row step, which the window's height snaps to and counts rows by
+	]]
+	local questPitch = frameHeight + LAYOUT.QUEST_ROW_HEIGHT - LAYOUT.ROW_HEIGHT
+	local headerPitch = frameHeight + LAYOUT.HEADER_ROW_HEIGHT - LAYOUT.ROW_HEIGHT
+
+	--[[
+		A zone name shows its Share Quests button on hover (Zone-Share.lua). The row's ID points at its
+		entry (RedrawRow)
 	]]
 	local function ZoneTitleAt(row)
 		local title, _, _, isHeader = GetQuestLogTitle(row:GetID() + FauxScrollFrame_GetOffset(QuestLogListScrollFrame))
 		return isHeader and title or nil
 	end
 
-	local function OnRowMouseUp(row, button)
-		local zoneTitle = button == "RightButton" and ZoneTitleAt(row)
-		if zoneTitle then
-			ns.HideZoneMenuHint(row)
-			ns.OpenZoneMenu(row, zoneTitle)
-		end
-	end
-
 	local function OnRowEnter(row)
-		if ZoneTitleAt(row) then
-			ns.ShowZoneMenuHint(row)
+		local zoneTitle = ZoneTitleAt(row)
+		if zoneTitle then
+			ns.ShowZoneShareButton(row, zoneTitle)
 		end
 	end
 
 	local function OnRowLeave(row)
-		ns.HideZoneMenuHint(row)
+		ns.HideZoneShareButton(row)
 	end
 
 	local function HookRow(row)
-		row:HookScript("OnMouseUp", OnRowMouseUp)
 		row:HookScript("OnEnter", OnRowEnter)
 		row:HookScript("OnLeave", OnRowLeave)
 	end
@@ -74,7 +71,7 @@ ns.AddWideQuestLogPart(function()
 			button:SetID(i)
 			HookRow(button)
 			button:Hide()
-			button:SetPoint("TOPLEFT", QuestLogTitle1, "TOPLEFT", 0, -(i - 1) * rowHeight)
+			button:SetPoint("TOPLEFT", QuestLogTitle1, "TOPLEFT", 0, -(i - 1) * questPitch)
 		end
 		createdRows = math.max(createdRows, count)
 		for i = count + 1, createdRows do
@@ -85,12 +82,11 @@ ns.AddWideQuestLogPart(function()
 	end
 
 	local function GetQuestSuffix(questID)
-		local tagID = questID and GetQuestTagInfo and GetQuestTagInfo(questID)
-		return ns.QuestSuffix(tagID)
+		return questID and ns.QuestSuffix((ns.GetQuestTagByID(questID)))
 	end
 
 	--------------------------------------------------------------------------------
-	-- Zone Gaps
+	-- Row Spacing
 	--------------------------------------------------------------------------------
 
 	local function ZoneGap()
@@ -98,27 +94,56 @@ ns.AddWideQuestLogPart(function()
 	end
 
 	--[[
-		Each gap counts as an extra row of scrolling, so the last quests can still be scrolled into view.
-		Extending the range can scroll the list, which runs QuestLog_Update() again
+		Where each row's frame goes, from the top of the first row's, with the list scrolled to offset: each
+		row in its padded slot, and with zoneGap on, a gap above every zone but the one in the first row
+	]]
+	local function RowTops(order, offset)
+		local gap = ZoneGap()
+		local entryCount = GetNumQuestLogEntries()
+		local tops, slotTop, firstInset = {}, 0, 0
+		for i = 1, QUESTS_DISPLAYED do
+			local position = offset + i
+			local isHeader = position <= entryCount and select(4, GetQuestLogTitle(ns.ClassicEntryAt(order, position)))
+			if isHeader and i > 1 then
+				slotTop = slotTop + gap
+			end
+			local pitch = isHeader and headerPitch or questPitch
+			local inset = (pitch - frameHeight) / 2
+			if i == 1 then
+				firstInset = inset
+			end
+			tops[i] = slotTop + inset - firstInset
+			slotTop = slotTop + pitch
+		end
+		return tops
+	end
+
+	--[[
+		The padding and gaps push rows past the bottom, so the scroll range is extended until the last
+		entry can be scrolled fully into view. Extending the range can scroll the list, which runs
+		QuestLog_Update() again
 	]]
 	local extendingScroll
 	local function ExtendScrollRange(order)
-		local gap = ZoneGap()
-		if extendingScroll or gap == 0 then
+		if extendingScroll then
 			return
 		end
 		local entryCount = GetNumQuestLogEntries()
-		local gaps = 0
-		for position = 2, entryCount do
-			if select(4, GetQuestLogTitle(ns.ClassicEntryAt(order, position))) then
-				gaps = gaps + 1
+		local paneHeight = QuestLogListScrollFrame:GetHeight()
+		local offset = math.max(0, entryCount - QUESTS_DISPLAYED)
+		while offset < entryCount - 1 do
+			local last = entryCount - offset
+			if last <= QUESTS_DISPLAYED and RowTops(order, offset)[last] + frameHeight <= paneHeight then
+				break
 			end
+			offset = offset + 1
 		end
-		if gaps > 0 then
+		local total = offset + QUESTS_DISPLAYED
+		if total > entryCount and total > QUESTS_DISPLAYED then
 			extendingScroll = true
 			FauxScrollFrame_Update(
 				QuestLogListScrollFrame,
-				entryCount + math.ceil(gaps * gap / rowHeight),
+				total,
 				QUESTS_DISPLAYED,
 				QUESTLOG_QUEST_HEIGHT,
 				nil,
@@ -133,30 +158,19 @@ ns.AddWideQuestLogPart(function()
 	end
 
 	--[[
-		With zoneGap on, a gap above every zone but the first, made by moving Blizzard's own rows rather than
-		replacing them. Rows pushed past the bottom are hidden. With the gap off, rows an earlier pass moved
-		still go back to the plain pitch
+		The padding and gaps (RowTops), made by moving Blizzard's own rows rather than replacing them. Rows
+		pushed past the bottom are hidden
 	]]
 	local function PositionRows(order)
-		local gap = ZoneGap()
-		local entryCount = GetNumQuestLogEntries()
 		local offset = FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
 		local paneHeight = QuestLogListScrollFrame:GetHeight()
-		local top = 0
+		local tops = RowTops(order, offset)
 		for i = 2, QUESTS_DISPLAYED do
 			local row = _G["QuestLogTitle" .. i]
-			local position = offset + i
-			top = top + rowHeight
-			if
-				gap > 0
-				and position <= entryCount
-				and select(4, GetQuestLogTitle(ns.ClassicEntryAt(order, position)))
-			then
-				top = top + gap
-			end
+			local top = tops[i]
 			row:ClearAllPoints()
 			row:SetPoint("TOPLEFT", QuestLogTitle1, "TOPLEFT", 0, -top)
-			if top + rowHeight > paneHeight then
+			if top + frameHeight > paneHeight then
 				row:Hide()
 				if select(2, QuestLogHighlightFrame:GetPoint(1)) == row then
 					QuestLogHighlightFrame:Hide()
@@ -173,20 +187,20 @@ ns.AddWideQuestLogPart(function()
 	local function StyleQuestRows(order)
 		local entryCount = GetNumQuestLogEntries()
 		local offset = FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
+		local voiceOverOn = ns.GetVoiceOver() ~= nil
 		for i = 1, math.min(QUESTS_DISPLAYED, entryCount - offset) do
 			local row, index = _G["QuestLogTitle" .. i], ns.ClassicEntryAt(order, offset + i)
 			local text, check = row.Text, _G["QuestLogTitle" .. i .. "Check"]
 			local title, level, _, isHeader, _, _, _, questID = GetQuestLogTitle(index)
 
+			ns.UpdateZoneShareButton(row, isHeader and title)
 			if isHeader then
-				row:RegisterForClicks("LeftButtonUp") -- Right-clicks open the zone menu instead
 				row:SetText(ns.ZoneHeaderText(title or ""))
 				text:SetPoint("LEFT", row, "LEFT", LAYOUT.HEADER_TEXT_X, 0)
 				check:Hide()
 			else
-				row:RegisterForClicks("LeftButtonUp", "RightButtonUp") -- Blizzard's own, for quests
 				local label = ns.QuestListTitle(level, title, GetQuestSuffix(questID))
-				row:SetText(ns.VoiceOverTitlePrefix(text) .. label)
+				row:SetText(ns.VoiceOverTitlePrefix(text, voiceOverOn) .. label)
 				text:SetPoint("LEFT", row, "LEFT", LAYOUT.QUEST_TEXT_X, 0)
 				check:ClearAllPoints()
 				check:SetPoint("LEFT", row, "LEFT", LAYOUT.CHECK_X, 0)
@@ -198,8 +212,9 @@ ns.AddWideQuestLogPart(function()
 					whole, then shorten it to clear the tag ("(Complete)", "(Elite)", ...) if it has to
 				]]
 				local tag = _G["QuestLogTitle" .. i .. "Tag"]
-				local tagWidth = (tag and tag:IsShown() and (tag:GetText() or "") ~= "") and (tag:GetStringWidth() + 6)
-					or 2
+				local tagWidth = (tag and tag:IsShown() and (tag:GetText() or "") ~= "")
+						and (tag:GetStringWidth() + LAYOUT.SPACE.NEAR)
+					or LAYOUT.SPACE.TIGHT
 				local room = row:GetWidth() - LAYOUT.QUEST_TEXT_X - tagWidth
 				text:SetWidth(0)
 				if text:GetStringWidth() > room then
@@ -329,7 +344,7 @@ ns.AddWideQuestLogPart(function()
 	--------------------------------------------------------------------------------
 
 	function ns.GetQuestRowHeight()
-		return rowHeight
+		return questPitch
 	end
 
 	ns.SetQuestRowCount = SetQuestRowCount

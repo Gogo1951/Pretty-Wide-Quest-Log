@@ -14,7 +14,7 @@ ns.SAMPLE_ZONE_AREA_ID = 40 -- Westfall
 How We Got the Data
 
 Last Validated
-	2026-10-28, TBC Anniversary 2.5.6.70577
+	2026-11-06, TBC Anniversary 2.5.6.70577
 
 Notes
 	- Three quests from The Deadmines, a dungeon every current client has, that the Quality of Life panel's
@@ -39,5 +39,5 @@ wago.tools
 	https://wago.tools/db2/AreaTable?build=2.5.6.70577
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/TBC/tbcQuestDB.lua
 ]]

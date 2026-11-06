@@ -42,12 +42,18 @@
 
 ### README's Related Add-ons are hand-picked
 
-- **Departs from:** README rules, Related Add-ons, each color's entries chosen by highest downloads.
-- **Instead:** Pairs With holds Questie, TomTom, Spoken, VoiceOver and whichever of Guidelime and RestedXP Guide has more downloads, and there is no Overlaps color.
-- **Why:** These are the add-ons the maintainer wants players to install beside this one, and add-ons that only overlap with it aren't worth calling out.
+- **Departs from:** README rules, Related Add-ons, each color's entries chosen by highest downloads among add-ons updated within the last 12 months.
+- **Instead:** Pairs With holds Questie, TomTom, Spoken, VoiceOver and whichever of Guidelime and RestedXP Guide has more downloads, Alternatives always holds whichever Questie arrow add-on has the most downloads however long ago it was updated, and there is no Overlaps color.
+- **Why:** These are the add-ons the maintainer wants players to install beside this one or weigh it against, the Quest Arrow stands in for a Questie arrow add-on, and add-ons that only overlap with it aren't worth calling out.
 
 ### Classic quest log reshaped in place
 
 - **Departs from:** COMPATIBILITY, never calling `SetUIPanelAttribute` and writing nothing to a Blizzard panel; FILE STRUCTURE, named frames carrying the add-on's prefix.
 - **Instead:** On Classic Era and TBC the wide quest log widens Blizzard's own quest log window: it gives the panel manager the window's new size through `SetUIPanelAttribute`, raises `QUESTS_DISPLAYED` and adds list rows named like Blizzard's for a taller window, and docks the map inside it.
 - **Why:** Those clients' quest log is Blizzard's unprotected window, which the game and other add-ons keep using, so reshaping it in place reaches nothing protected and keeps them working.
+
+### Quest giver windows restyled in place
+
+- **Departs from:** COMPATIBILITY, writing nothing to a Blizzard panel.
+- **Instead:** Quest Giver Window Cleanup restyles Blizzard's quest giver and gossip windows on every client, and parents its own pieces, such as the quest ID and its Wowhead button, onto their pages.
+- **Why:** Those windows are unprotected, and pieces that live on a scrolling page must be its children to scroll and clip with it.

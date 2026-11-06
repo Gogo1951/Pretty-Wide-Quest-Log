@@ -26,11 +26,14 @@ end
 -- Map layers
 --------------------------------------------------------------------------------
 
+local providers = {}
+
 -- Each is added only if this client has it
 local function AddProvider(mixin)
 	if mixin then
 		local provider = CreateFromMixins(mixin)
 		canvas:AddDataProvider(provider)
+		providers[#providers + 1] = provider
 		return provider
 	end
 end
@@ -119,6 +122,30 @@ if questProvider then
 		if self.UpdatePing then
 			self:UpdatePing()
 		end
+	end
+end
+
+--[[
+	The canvas calls SetPassThroughButtons on every pin these layers acquire, which WoW blocks in combat
+	when add-on code runs it, so their redraws wait out combat on this map's copies and run once it ends.
+	Wrapped last, over the overrides above
+]]
+local heldProviders = {}
+for _, provider in ipairs(providers) do
+	local refresh = provider.RefreshAllData
+	provider.RefreshAllData = function(self, ...)
+		if InCombatLockdown() then
+			heldProviders[self] = true
+			return
+		end
+		return refresh(self, ...)
+	end
+end
+
+function questMap:OnPlayerRegenEnabled()
+	for provider in pairs(heldProviders) do
+		heldProviders[provider] = nil
+		provider:RefreshAllData()
 	end
 end
 

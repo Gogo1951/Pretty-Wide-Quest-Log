@@ -2,7 +2,7 @@ local _, ns = ...
 local L = ns.L
 
 local LAYOUT = ns.LAYOUT
-local ROW_HEIGHT, PANE_TOP = LAYOUT.ROW_HEIGHT, LAYOUT.PANE_TOP
+local PANE_TOP = LAYOUT.PANE_TOP
 local frame = ns.questLogFrame
 local state = ns.questLog
 
@@ -118,10 +118,7 @@ local function Row_OnClick(self, button)
 		return
 	end
 
-	if data.isHeader and button == "RightButton" then
-		ns.HideZoneMenuHint(self)
-		ns.OpenZoneMenu(self, data.title)
-	elseif data.isHeader then
+	if data.isHeader then
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		ToggleHeader(data.questLogIndex)
 	elseif ChatFrameUtil and ChatFrameUtil.TryInsertQuestLinkForQuestID(data.questID) then
@@ -136,17 +133,64 @@ local function Row_OnClick(self, button)
 	end
 end
 
--- A zone name says on hover that a right-click opens the zone menu (Zone-Menu.lua)
+--[[
+	While in a group, a quest's row lists the party members who have it, in class colors, as Blizzard's
+	own quest log rows do on Classic Era and TBC. Only the player's party (their raid subgroup in a raid),
+	and nothing for a member whose answer the game keeps secret. With any answer secret, "none" would be a
+	guess, so it isn't shown
+]]
+local function ShowPartyOnQuest(row, questID)
+	if not (IsInGroup() and PARTY_QUEST_STATUS_ON) then
+		return
+	end
+	local names, anySecret = {}, false
+	for index = 1, GetNumSubgroupMembers() do
+		local unit = "party" .. index
+		local onQuest = ns.IsUnitOnQuest(unit, questID)
+		local name = GetUnitName(unit, true)
+		local _, class = UnitClass(unit)
+		if not ns.IsReadable(onQuest, name, class) then
+			anySecret = true
+		elseif onQuest and name then
+			local color = class and RAID_CLASS_COLORS[class]
+			names[#names + 1] = color and color:WrapTextInColorCode(name) or name
+		end
+	end
+	if #names == 0 and (anySecret or not PARTY_QUEST_STATUS_NONE) then
+		return
+	end
+	GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
+	if #names > 0 then
+		GameTooltip:AddLine(PARTY_QUEST_STATUS_ON)
+		for _, name in ipairs(names) do
+			GameTooltip:AddLine(name)
+		end
+	else
+		GameTooltip:AddLine(PARTY_QUEST_STATUS_NONE, 1, 1, 1)
+	end
+	GameTooltip:Show()
+end
+
+--[[
+	A zone name shows its Share Quests button on hover (Zone-Share.lua); a quest lists the party
+	members who have it
+]]
 local function Row_OnEnter(self)
 	ColorRow(self, true)
-	if self.data and self.data.isHeader then
-		ns.ShowZoneMenuHint(self)
+	local data = self.data
+	if data and data.isHeader then
+		ns.ShowZoneShareButton(self, data.title)
+	elseif data and data.questID then
+		ShowPartyOnQuest(self, data.questID)
 	end
 end
 
 local function Row_OnLeave(self)
 	ColorRow(self, false)
-	ns.HideZoneMenuHint(self)
+	ns.HideZoneShareButton(self)
+	if GameTooltip:IsOwned(self) then
+		GameTooltip:Hide()
+	end
 end
 
 local function SetupRow(row)
@@ -154,7 +198,7 @@ local function SetupRow(row)
 
 	row.Icon = row:CreateTexture(nil, "ARTWORK")
 	row.Icon:SetSize(16, 16)
-	row.Icon:SetPoint("LEFT", 3, 0)
+	row.Icon:SetPoint("LEFT", LAYOUT.CHECK_X, 0) -- The +/- in the tracking mark's column
 
 	row.Text = row:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	row.Text:SetJustifyH("LEFT")
@@ -192,6 +236,7 @@ local function InitRow(row, data)
 		SetupRow(row)
 	end
 	row.data = data
+	ns.UpdateZoneShareButton(row, data.isHeader and data.title)
 
 	row.Text:SetWidth(0)
 	row.Tag:SetText(nil)
@@ -241,7 +286,10 @@ end
 
 local listView = CreateScrollBoxListLinearView()
 listView:SetElementExtentCalculator(function(_, data)
-	return data.isSpacer and LAYOUT.HEADER_GAP or ROW_HEIGHT
+	if data.isSpacer then
+		return LAYOUT.HEADER_GAP
+	end
+	return data.isHeader and LAYOUT.HEADER_ROW_HEIGHT or LAYOUT.QUEST_ROW_HEIGHT
 end)
 listView:SetElementInitializer("Button", InitRow)
 ScrollUtil.InitScrollBoxListWithScrollBar(listBox, listBar, listView)
@@ -296,99 +344,8 @@ local function UpdateListButtons(quests, allCollapsed)
 end
 
 --------------------------------------------------------------------------------
--- Sorting
+-- Showing the entries
 --------------------------------------------------------------------------------
-
--- Zone ranks frozen while the window stays open (ns.SortZones)
-local zoneOrder
-
---[[
-	Whether a quest entry is complete or failed: the entry's own field where it carries one, as Mists'
-	does, else asked by quest ID, which on Mists would walk the whole log for every quest
-]]
-local function EntryIsComplete(entry)
-	if entry.isComplete ~= nil then
-		return entry.isComplete
-	end
-	return ns.IsQuestComplete(entry.questID)
-end
-
-local function EntryIsFailed(entry)
-	if entry.isFailed ~= nil then
-		return entry.isFailed
-	end
-	return ns.IsQuestFailed(entry.questID)
-end
-
---[[
-	Same visibility rules as the map's quest list: no hidden quests, world quests or bonus objectives,
-	and zones only when something under them would show. Quests outside any zone come first, then the
-	zones in the zoneSort order, each after a blank spacer (zoneGap) but the first. Within each, quests
-	go in the questSort order. Returns the list entries, every quest that would show with its zone
-	open (in list order), and whether every zone is collapsed
-]]
-local function BuildEntries()
-	local entries, zones = {}, {}
-	local header
-
-	ns.ShowEveryQuestLogEntry()
-	for index = 1, ns.GetNumQuestLogEntries() do
-		local entry = ns.GetQuestLogEntry(index)
-		if entry and entry.isHeader then
-			header = entry
-			header.quests = {}
-			header.sortKey = ns.NameSortKey(header.title)
-			header.sortIndex = header.questLogIndex
-			zones[#zones + 1] = header
-		elseif entry and not entry.isHidden and not entry.isTask and (not entry.isBounty or EntryIsComplete(entry)) then
-			entry.sortLevel = entry.difficultyLevel or entry.level or 0
-			entry.sortIndex = entry.questLogIndex
-			entry.sortKey = ns.NameSortKey(entry.title)
-			entry.isComplete = EntryIsComplete(entry)
-			entry.isFailed = EntryIsFailed(entry)
-			entry.zone = header and header.title
-			if header then
-				header.quests[#header.quests + 1] = entry
-			else
-				entries[#entries + 1] = entry
-			end
-		end
-	end
-
-	local questSort, completedFirst = ns.db.profile.questSort, ns.db.profile.completedFirst
-	ns.SortQuests(entries, questSort, completedFirst) -- Quests outside any zone
-	for _, zone in ipairs(zones) do
-		zone.averageLevel = ns.AverageLevel(zone.quests)
-		ns.SortQuests(zone.quests, questSort, completedFirst)
-	end
-	zoneOrder = ns.SortZones(zones, ns.db.profile.zoneSort, ns.db.profile.currentZoneFirst, zoneOrder)
-
-	local quests = {}
-	for _, quest in ipairs(entries) do
-		quests[#quests + 1] = quest
-	end
-	local anyHeader, anyExpanded = false, false
-	for _, zone in ipairs(zones) do
-		for _, quest in ipairs(zone.quests) do
-			quests[#quests + 1] = quest
-		end
-		if #zone.quests > 0 then
-			if #entries > 0 and ns.db.profile.zoneGap then
-				entries[#entries + 1] = { isSpacer = true }
-			end
-			entries[#entries + 1] = zone
-			anyHeader = true
-			if not zone.isCollapsed then
-				anyExpanded = true
-				for _, quest in ipairs(zone.quests) do
-					entries[#entries + 1] = quest
-				end
-			end
-		end
-	end
-
-	return entries, quests, anyHeader and not anyExpanded
-end
 
 --[[
 	Picks a quest to show when nothing (or a quest no longer in the log) is selected: the first one
@@ -431,10 +388,6 @@ local function UpdateList(entries)
 	end
 end
 
-function ns.ResetZoneOrder()
-	zoneOrder = nil
-end
-
 --------------------------------------------------------------------------------
 -- Refreshing
 --------------------------------------------------------------------------------
@@ -447,7 +400,7 @@ local turnInLine = ns.CreateTurnInLine(frame)
 
 -- Rebuilds the list and settles the selection; returns how many quests the log holds
 function ns.UpdateQuestList()
-	local entries, quests, allCollapsed = BuildEntries()
+	local entries, quests, allCollapsed = ns.BuildQuestListEntries() -- Forever-Quest-List-Entries.lua
 	ValidateSelection(entries, quests)
 
 	local ready = {}

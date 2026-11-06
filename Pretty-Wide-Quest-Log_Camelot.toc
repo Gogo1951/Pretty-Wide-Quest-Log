@@ -1,5 +1,5 @@
 ## Title: Pretty Wide Quest Log
-## Notes: A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, Spoken, VoiceOver, and ElvUI.
+## Notes: Wide quest log with a quest route and quest arrow. You pick the quests, we help with a clean route to get them done fast. Quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI.
 ## Author: Gogo1951
 
 ## IconTexture: Interface/AddOns/Pretty-Wide-Quest-Log/Includes/Images/Pretty-Wide-Quest-Log.tga
@@ -63,24 +63,30 @@ Data/Default-Settings.lua
 # Pretty Wide Quest Log
 Features/Core.lua
 Features/Utilities.lua
+Features/Quest-Log-API.lua
+Features/Quest-Sort.lua
 Features/Announcements.lua
 Features/Quest-Display.lua
+Features/Quest-Rewards.lua
 Features/Tracking-Mark.lua
 Features/Wowhead-Link.lua
 Features/Quest-Chain.lua
 Features/Quest-Giver.lua
+Features/Gossip.lua
+Features/Quest-Giver-Pages.lua
 Features/Window.lua
 Features/Turn-In-Line.lua
 Features/Forever-Tracking.lua
 Features/Forever-Quest-Log.lua
 Features/Quest-Log-Key.lua
 Features/Forever-Quest-Log-Key.lua
+Features/Forever-Quest-List-Entries.lua
 Features/Forever-Quest-List.lua
 Features/Forever-Quest-Details.lua
 Features/Forever-Quest-Giver.lua
 Features/Forever-VoiceOver.lua
 Features/Forever-Zone-Actions.lua
-Features/Zone-Menu.lua
+Features/Zone-Share.lua
 Features/Share-Reminders.lua
 Features/Dungeon-Quest-Lookup.lua
 Features/Dungeon-Quests.lua
@@ -92,6 +98,7 @@ Features/Questie-Map-Areas.lua
 Features/Questie-Map-Area-Layer.lua
 Features/Forever-Quest-Map.lua
 Features/Quest-Map-Reveal.lua
+Features/Routes/Routes.xml
 
 # Diagnostics
 Diagnostics/Diagnostics-Core.lua
@@ -108,6 +115,8 @@ Options/Options-Utilities.lua
 Options/Options-General.lua
 Options/Options-Quest-Log.lua
 Options/Options-Quality-of-Life.lua
+Options/Options-Routes-Map.lua
+Options/Options-Quest-Arrow.lua
 Options/Options-Profiles.lua
 Options/Options-Feedback-Support.lua
 Diagnostics/Options-Diagnostics.lua

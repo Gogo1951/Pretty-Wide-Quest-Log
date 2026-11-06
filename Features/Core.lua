@@ -23,8 +23,9 @@ ns.Version = GetVersion()
 
 --[[
 	Every event the add-on can handle, in registration order, with its handler, named for the event, and
-	where two features handle the same event, the key of the ns table that holds the second one's (its
-	owner; without one, the handler is on ns). An event listed twice runs both handlers, in this order.
+	where several features handle the same event, each after the first names the key of the ns table that
+	holds its handler (its owner; without one, the handler is on ns). An event listed more than once runs
+	every handler, in this order.
 	Feature files define the handlers; an event is registered only once a loaded file defines one of its
 	handlers, so a client never registers an event only another client's files use. ns.EVENT_NAMES lists
 	what was actually registered.
@@ -51,6 +52,18 @@ local EVENTS = {
 	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "dungeonQuests" },
 	{ "GROUP_JOINED", "OnGroupJoined", "shareReminders" },
 	{ "GROUP_LEFT", "OnGroupLeft", "shareReminders" },
+	{ "PLAYER_LOGIN", "OnPlayerLogin", "routes" },
+	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld", "routes" },
+	{ "ZONE_CHANGED_NEW_AREA", "OnZoneChangedNewArea", "routes" },
+	{ "QUEST_LOG_UPDATE", "OnQuestLogUpdate", "routes" },
+	{ "PLAYER_DEAD", "OnPlayerDead", "routes" },
+	{ "PLAYER_ALIVE", "OnPlayerAlive", "routes" },
+	{ "PLAYER_UNGHOST", "OnPlayerUnghost", "routes" },
+	{ "ADDON_LOADED", "OnAddonLoaded", "routesMap" },
+	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "routesArrow" },
+	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld", "routesArrow" },
+	{ "ZONE_CHANGED_NEW_AREA", "OnZoneChangedNewArea", "routesArrow" },
+	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questMap" },
 }
 
 local EVENT_HANDLERS = {}
@@ -143,6 +156,9 @@ function ns:ApplyProfile()
 		if ns.hasQuestMap then
 			ns.questMap.RequestRefresh()
 		end
+	end
+	if ns.routes then
+		ns.routes.ApplySettings()
 	end
 	for _, registryName in pairs(ns.OPTIONS_REGISTRY) do
 		AceConfigRegistry:NotifyChange(registryName)

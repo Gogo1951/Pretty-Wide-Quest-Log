@@ -10,8 +10,8 @@ local _, ns = ...
 ]]
 
 ns.AddWideQuestLogPart(function()
-	local MAP_GAP = 3 -- Between the window's backdrop and the map's
-	local MAP_INSET = 2 -- Edge of the map's backdrop to the map inside it
+	local MAP_GAP = ns.LAYOUT.SPACE.LINE -- Between the window's backdrop and the map's
+	local MAP_INSET = ns.LAYOUT.SPACE.TIGHT -- Edge of the map's backdrop to the map inside it
 
 	local function GetSkins()
 		local E = ElvUI and ElvUI[1]
@@ -39,6 +39,7 @@ ns.AddWideQuestLogPart(function()
 		for _, button in ipairs(ns.listButtons) do
 			skins:HandleButton(button, true)
 		end
+		skins:HandleButton(ns.zoneShareButton, true)
 
 		local questMap = ns.questMap
 		questMap.holder:SetBackdrop(nil)
