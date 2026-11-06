@@ -57,7 +57,7 @@ Open your zone map to see all your quests organized into a clean route, starting
 
 Fun fact, Questie once had a Routes feature planned for TBC Classic, but it never made it out of development. Much of this add-on's user experience grew out of that work.
 
-https://github.com/user-attachments/assets/daa30f62-12b3-4d3e-96d2-18a126094b6a
+<img width="400" height="230" alt="Questie Routes" src="https://github.com/user-attachments/assets/1453ba73-15ec-4aaa-b546-a351246cc8d0" />
 
 ### Quest Chains
 
