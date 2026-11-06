@@ -330,8 +330,6 @@ L["ROUTES_RIGHT_CLICK_REROUTE"] = "Contourner l'objectif actuel"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "Réinitialiser tous les itinéraires"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Itinéraire modifié pour contourner %s."
-L["CHAT_FULL_SIZE_MAP_SET"] =
-	"La carte de zone s'ouvrira de nouveau en grand. Pour la garder petite, désactivez Ouvrir la carte de zone en grand dans Itinéraires sur la carte de zone."
 L["ROUTES_RESET"] =
 	"Tous les itinéraires sont réinitialisés : les objectifs contournés sont de retour sur l'itinéraire."
 

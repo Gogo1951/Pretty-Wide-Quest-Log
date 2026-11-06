@@ -333,8 +333,6 @@ L["ROUTES_RIGHT_CLICK_REROUTE"] = "현재 목표 우회"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "모든 경로 초기화"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "경로 우회: %s."
-L["CHAT_FULL_SIZE_MAP_SET"] =
-	"지역 지도가 다시 최대 크기로 열립니다. 작게 유지하려면 지역 지도 경로에서 지역 지도를 최대 크기로 열기를 끄세요."
 L["ROUTES_RESET"] = "모든 경로 초기화: 우회한 목표가 다시 경로에 포함되었습니다."
 
 --------------------------------------------------------------------------------

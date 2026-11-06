@@ -317,8 +317,6 @@ L["ROUTES_RIGHT_CLICK_REROUTE"] = "Reroute Current Objective"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "Reset All Routes"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Rerouted around %s."
-L["CHAT_FULL_SIZE_MAP_SET"] =
-	"The zone map will open full size again. To keep it small, turn off Open the Zone Map Full Size under Routes on Zone Map."
 L["ROUTES_RESET"] = "All routes reset: rerouted objectives are back on the route."
 
 --------------------------------------------------------------------------------
