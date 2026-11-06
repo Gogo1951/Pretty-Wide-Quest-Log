@@ -380,13 +380,13 @@ local function Point(self, elapsed)
 	end
 	arrow:Show()
 
-	local target, angle, yards, isArea = view, nil, nil, false
+	local target, angle, yards = view, nil, nil
 	if not label then
 		if not view.corpse then
 			target = NearestPlace(view, x, y) or view
 		end
 		angle, yards = HBD:GetWorldVector(instance, x, y, target.x, target.y)
-		isArea = target ~= view and routes.IsAreaPoint(target)
+		local isArea = target ~= view and routes.IsAreaPoint(target)
 		-- At one place: the eye too, there's nowhere left to point
 		if not (isArea or view.corpse) and yards <= SPOT_REACH then
 			label = L["ROUTES_ARRIVED"]
