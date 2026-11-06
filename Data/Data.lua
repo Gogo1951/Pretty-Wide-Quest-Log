@@ -19,6 +19,12 @@ ns.PREDECESSOR_ADDON_NAME = "WideQuestLogPlus"
 ns.QUESTIE_ADDON_NAME = "Questie"
 ns.QUESTIE_NOTICE_DELAY = 20
 
+--[[
+	Add-ons that set the zone map's size themselves. Leatrix Maps keeps the map windowed and scales it up,
+	so a full-size map under it overflows the screen; Open the Zone Map Full Size stands aside for them
+]]
+ns.MAP_SIZE_ADDONS = { "Leatrix_Maps", "Mapster" }
+
 --------------------------------------------------------------------------------
 -- Links
 --------------------------------------------------------------------------------

@@ -2012,9 +2012,10 @@ local function ZoneMapLines(lines)
 	end
 	--[[
 		Full Size Map turns the map's own miniWorldMap setting off (0), never in combat, as the map closes
-		and as settings change (Routes-Map.lua)
+		and as settings change (Routes-Map.lua), unless an add-on that sizes the map itself is loaded
 	]]
 	lines[#lines + 1] = string.format("miniWorldMap CVar: %s", tostring(GetCVar("miniWorldMap")))
+	lines[#lines + 1] = string.format("Map sized by: %s", ns.routes.MapSizedElsewhere() or "none")
 	RouteSetting(lines, "Full size map", "fullSizeMap")
 	RouteSetting(lines, "Hide Questie's icons for the route", "hideQuestieIcons")
 	RouteSetting(lines, "Marker size", "markerScale")

@@ -329,8 +329,6 @@ L["ROUTES_RIGHT_CLICK_REROUTE"] = "Desviar do objetivo atual"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "Redefinir todas as rotas"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Rota desviada para evitar %s."
-L["CHAT_FULL_SIZE_MAP_SET"] =
-	"O mapa da zona vai abrir em tamanho máximo de novo. Para mantê-lo pequeno, desative Abrir o mapa da zona em tamanho máximo em Rotas no mapa da zona."
 L["ROUTES_RESET"] = "Todas as rotas redefinidas: os objetivos desviados voltaram para a rota."
 
 --------------------------------------------------------------------------------

@@ -321,8 +321,6 @@ L["ROUTES_RIGHT_CLICK_REROUTE"] = "绕过当前目标"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "重置所有路线"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "路线已绕过 %s。"
-L["CHAT_FULL_SIZE_MAP_SET"] =
-	"区域地图将再次以最大尺寸打开。如果想让它保持较小，请在区域地图路线中关闭以最大尺寸打开区域地图。"
 L["ROUTES_RESET"] = "所有路线已重置：绕过的目标已回到路线上。"
 
 --------------------------------------------------------------------------------

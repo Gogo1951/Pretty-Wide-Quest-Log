@@ -327,8 +327,6 @@ L["ROUTES_RIGHT_CLICK_REROUTE"] = "Aktuelles Ziel umgehen"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "Alle Routen zurücksetzen"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Die Route führt jetzt um %s herum."
-L["CHAT_FULL_SIZE_MAP_SET"] =
-	"Die Zonenkarte öffnet sich wieder in voller Größe. Um sie klein zu halten, schalte Zonenkarte in voller Größe öffnen unter Routen auf der Zonenkarte aus."
 L["ROUTES_RESET"] = "Alle Routen zurückgesetzt: umgangene Ziele sind wieder auf der Route."
 
 --------------------------------------------------------------------------------

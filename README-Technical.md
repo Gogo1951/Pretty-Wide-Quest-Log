@@ -747,7 +747,8 @@ Questie's icons:
 
 Full-size map:
 
-- With `fullSizeMap` on (and the route on the map), `KeepFullSize` sets the map's own `miniWorldMap` CVar to `"0"`, which every client's world map reads as it opens to maximize itself. It prints `CHAT_FULL_SIZE_MAP_SET` when it does.
+- With `fullSizeMap` on (and the route on the map), `KeepFullSize` sets the map's own `miniWorldMap` CVar to `"0"`, which every client's world map reads as it opens to maximize itself. It prints nothing.
+- It stands aside entirely while an add-on that sizes the map itself is loaded (`ns.MAP_SIZE_ADDONS`: Leatrix Maps, Mapster), and the option is hidden then. Leatrix Maps keeps the map windowed and scales it up, so a maximized map under it overflows the screen.
 - It runs at login, on the world map's `OnHide`, and on every listener call.
 - It never calls the map's `Maximize`, which would run Blizzard's panel layout (`SetUIPanelAttribute`, `MaximizeUIPanel`) as add-on code.
 

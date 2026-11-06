@@ -332,8 +332,6 @@ L["ROUTES_RIGHT_CLICK_REROUTE"] = "Aggira l'obiettivo attuale"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "Ripristina tutti i percorsi"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Percorso modificato per aggirare %s."
-L["CHAT_FULL_SIZE_MAP_SET"] =
-	"La mappa della zona si aprirà di nuovo ingrandita. Per tenerla piccola, disattiva Apri la mappa della zona ingrandita in Percorsi sulla mappa della zona."
 L["ROUTES_RESET"] = "Tutti i percorsi ripristinati: gli obiettivi aggirati sono di nuovo sul percorso."
 
 --------------------------------------------------------------------------------

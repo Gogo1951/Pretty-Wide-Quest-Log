@@ -15,6 +15,11 @@ local function MapHidden()
 	return not Settings().showMap
 end
 
+-- Another add-on sizing the map (Leatrix Maps, Mapster) leaves Open the Zone Map Full Size nothing to do
+local function FullSizeHidden()
+	return MapHidden() or ns.routes.MapSizedElsewhere() ~= nil
+end
+
 -- A full-width switch for a setting, hidden with its feature
 local function Toggle(key, nameKey, order, hidden)
 	return ns.OptionsRoutesToggle(key, nameKey, nameKey .. "_DESCRIPTION", order, nil, hidden)
@@ -72,8 +77,8 @@ function ns.BuildRoutesMapOptions()
 			spaceMap0 = ns.OptionsSpacer(10, MapHidden),
 			headerMap = ns.OptionsHeader(L["ROUTES_MAP_HEADER"], 11, MapHidden),
 			spaceMap1 = ns.OptionsSpacer(12, MapHidden),
-			fullSizeMap = Toggle("fullSizeMap", "FULL_SIZE_MAP", 13, MapHidden),
-			spaceQuestieIcons = ns.OptionsSpacer(13.5, MapHidden),
+			fullSizeMap = Toggle("fullSizeMap", "FULL_SIZE_MAP", 13, FullSizeHidden),
+			spaceQuestieIcons = ns.OptionsSpacer(13.5, FullSizeHidden),
 			hideQuestieIcons = Toggle("hideQuestieIcons", "HIDE_QUESTIE_ICONS", 14, MapHidden),
 
 			spaceMarkers0 = ns.OptionsSpacer(20, MapHidden),
