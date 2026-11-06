@@ -53,8 +53,9 @@ ns.PALETTE = {
 	OFF = "CC3333", -- Red: Off
 	SEPARATOR = "AAAAAA", -- Gray: Separators, Dividers
 	MUTED = "808080", -- Dark Gray: Meta-data, Version Numbers
-	ARROW_FAR = "FFFF00", -- Yellow: The Quest Arrow on the Way
-	ARROW_CLOSE = "00FF00", -- Green: The Quest Arrow Close to Its Stop
+	ARROW_ON_COURSE = "00FF00", -- Green: The Quest Arrow Pointing Ahead
+	ARROW_TURN = "FFFF00", -- Yellow: The Quest Arrow Pointing to the Side
+	ARROW_WRONG_WAY = "FF3333", -- Red: The Quest Arrow Pointing Behind
 	ROUTE_LINE = "333333", -- Dark Gray: The Route's Line, Plain on the Yellow Maps
 }
 

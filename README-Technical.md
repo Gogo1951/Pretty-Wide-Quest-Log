@@ -775,7 +775,7 @@ In an objective area it takes turns, each half of `cycleSeconds`:
 How it points:
 
 - Toward a waypoint, it aims at the nearest place still to do there, or at the nearest edge of an area, using `HBD:GetWorldVector` minus `GetPlayerFacing()`.
-- It is yellow (`ARROW_FAR`) beyond `CLOSE` (50 yards, measured to an area's edge) and green (`ARROW_CLOSE`) within it. There is no red, which reads as an error.
+- Its color says which way to turn, by how far it points from straight ahead: green (`ARROW_ON_COURSE`) within `ON_COURSE` (36 degrees either side, a fifth of the circle), yellow (`ARROW_TURN`) out to `OFF_COURSE` (108 degrees), and red (`ARROW_WRONG_WAY`) beyond, behind the player. Each line blends from one color to the next over `BLEND` (20 degrees, 10 either side of it), so the middle of each band stays solid and the color doesn't snap.
 - Within `SPOT_REACH` (10 yards) of a single place, the eye says "You're there".
 - At the corpse it keeps pointing and says "You're there" within the corpse's 30 yards.
 - Without a position on that continent, or a facing, the arrow texture hides but the list stays.

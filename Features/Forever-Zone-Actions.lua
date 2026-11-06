@@ -87,12 +87,20 @@ end
 
 --[[
 	Shares each quest, ns.GetShareInterval() apart as it was when the run began; the game reports each
-	result in chat. ns.sharingQuests is set until the last one goes, so a second run can't start alongside
+	result in chat. ns.sharingQuests is set until the last one goes, so a second run can't start alongside.
+	WoW Forever blocks QuestLogPushQuest in combat, so a share due then waits, checking every interval,
+	until combat ends; the run picks up where it stopped
 ]]
 function ns.ShareQuests(questIDs)
 	ns.sharingQuests = true
 	local interval = ns.GetShareInterval()
 	local function Share(position)
+		if InCombatLockdown() then
+			C_Timer.After(interval, function()
+				Share(position)
+			end)
+			return
+		end
 		local questID = questIDs[position]
 		if questID and C_QuestLog.GetLogIndexForQuestID(questID) and C_QuestLog.IsPushableQuest(questID) then
 			C_QuestLog.SetSelectedQuest(questID)
