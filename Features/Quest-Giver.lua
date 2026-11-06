@@ -1,8 +1,9 @@
 local _, ns = ...
 
 --[[
-	Every client: the quest giver window's own pages, styled like the quest details, with the quest ID under
-	the progress page, and the quest log's level tags in a quest giver's list of quests
+	Every client: the quest giver window's own pages, styled like the quest details, and the quest log's
+	level tags in a quest giver's list of quests. The gossip window's spacing is in Gossip.lua, and the
+	greeting and progress pages, with the quest ID under the progress page, in Quest-Giver-Pages.lua
 ]]
 
 --[[
@@ -32,6 +33,7 @@ end
 	title and the rest section headings, and everything else is quest text
 ]]
 local QUEST_GIVER_PAGES = {
+	"QuestGreetingScrollChildFrame", -- The greeting, and its Current Quests and Available Quests headings
 	"QuestDetailScrollChildFrame",
 	"QuestProgressScrollChildFrame",
 	"QuestRewardScrollChildFrame",
@@ -57,6 +59,162 @@ local function StyleQuestGiverPages(on)
 	end
 end
 
+--------------------------------------------------------------------------------
+-- Skins on the quest giver window
+--------------------------------------------------------------------------------
+
+--[[
+	Skins (ElvUI) keep the parchment but draw the window around it see-through, so whatever sits behind
+	the window, Questie's tracker or a nameplate, shows through above and below the page. With the cleanup
+	on the skin's backdrop is opaque in its own color, and with it off it goes back to the skin's. ElvUI
+	puts the backdrop on the window itself on WoW Forever and Mists, and on a frame of its own on Classic
+	Era and TBC. A window no skin has touched has neither, and is left alone
+]]
+local skinAlpha -- The skin's own backdrop alpha, from before this add-on changed it
+
+local function UpdateWindowBackdrop()
+	local frame = QuestFrame and (QuestFrame.backdrop or (QuestFrame.template and QuestFrame))
+	if not (frame and frame.GetBackdropColor and frame.SetBackdropColor) then
+		return
+	end
+	local r, g, b, a = frame:GetBackdropColor()
+	if not r then
+		return
+	end
+	if skinAlpha == nil then
+		skinAlpha = a or 1
+	end
+	if ns.IsQuestGiverCleanupOn() then
+		frame.customBackdropAlpha = 1 -- ElvUI keeps it through its color updates
+		frame:SetBackdropColor(r, g, b, 1)
+	elseif frame.customBackdropAlpha == 1 then
+		frame.customBackdropAlpha = nil
+		frame:SetBackdropColor(r, g, b, skinAlpha)
+	end
+end
+
+if QuestFrame then
+	-- Skins style the window after this file loads, so it's checked each time the window opens
+	QuestFrame:HookScript("OnShow", UpdateWindowBackdrop)
+end
+
+--[[
+	Reward names, wherever QuestInfo shows rewards: the quest giver window, and on WoW Forever and Mists
+	the quest details too. Blizzard draws them white on a dark name plate, and skins (ElvUI)
+	that hide the plate leave them white, with a shadow, on the bare parchment. With the plate hidden they
+	take the description's color, without the shadow, as the rest of the parchment's text does. The
+	buttons are shared, so every display restyles every button it shows. Skins restyle them in hooks that
+	may run after this one, so it runs again a frame later. On a quest giver page with the cleanup off
+	they go back to the color and shadow they had
+]]
+local namesBefore = {} -- Each name's color and shadow from before this add-on changed them
+
+local function StyleRewardNames(on)
+	local rewards = QuestInfoRewardsFrame
+	local r, g, b = QuestInfoDescriptionText:GetTextColor()
+	for _, button in ipairs(rewards and rewards.RewardButtons or {}) do
+		local name = button.Name
+		local plateHidden = button.NameFrame and ((not button.NameFrame:IsShown()) or button.NameFrame:GetAlpha() == 0)
+		if name and on and plateHidden then
+			if not namesBefore[name] then
+				namesBefore[name] = { color = { name:GetTextColor() }, shadow = { name:GetShadowColor() } }
+			end
+			name:SetTextColor(r, g, b)
+			name:SetShadowColor(0, 0, 0, 0)
+		elseif name and namesBefore[name] then
+			name:SetTextColor(unpack(namesBefore[name].color))
+			name:SetShadowColor(unpack(namesBefore[name].shadow))
+			namesBefore[name] = nil
+		end
+	end
+end
+
+--[[
+	The detail and reward pages on the spacing scale (LAYOUT.SPACE). Blizzard lays each page out from its
+	template, every piece hung under the one before; this keeps those anchors and changes only the space
+	above each piece, by what it is: the first PAGE_TOP down the page, a heading or the rewards a
+	section under what's above them, text a step under the title or heading that introduces it, and the
+	smaller pieces (group size, special objectives) a step under the text. Blizzard lays the page out
+	afresh each time, so with the cleanup off it's simply left alone
+]]
+local PIECE_KINDS = {
+	{ "QuestInfo_ShowTitle", "QuestInfoTitleHeader", "title" },
+	{ "QuestInfo_ShowDescriptionText", "QuestInfoDescriptionText", "text" },
+	{ "QuestInfo_ShowObjectivesText", "QuestInfoObjectivesText", "text" },
+	{ "QuestInfo_ShowRewardText", "QuestInfoRewardText", "text" },
+	{ "QuestInfo_ShowDescriptionHeader", "QuestInfoDescriptionHeader", "heading" },
+	{ "QuestInfo_ShowObjectivesHeader", "QuestInfoObjectivesHeader", "heading" },
+	{ "QuestInfo_ShowRewards", "QuestInfoRewardsFrame", "rewards" },
+	{ "QuestInfo_ShowSpecialObjectives", "QuestInfoSpecialObjectivesFrame", "detail" },
+	{ "QuestInfo_ShowGroupSize", "QuestInfoGroupSize", "detail" },
+	{ "QuestInfo_ShowTimer", "QuestInfoTimerFrame", "detail" },
+	{ "QuestInfo_ShowObjectives", "QuestInfoObjectivesFrame", "detail" },
+	{ "QuestInfo_ShowSpacer", "QuestInfoSpacerFrame", "spacer" },
+}
+
+local function SpaceQuestGiverPage(template, parentFrame)
+	local LAYOUT = ns.LAYOUT
+	--[[
+		WoW Forever and Mists (where Forever-Quest-Giver.lua loads) set the Rewards heading higher in its
+		block than the other headings, so its space is that much more to match, as in their quest details
+	]]
+	local rewardsRise = ns.LayOutQuestGiverPage and LAYOUT.REWARDS_HEADING_RISE or 0
+	local kinds, pieces = {}, {}
+	for _, entry in ipairs(PIECE_KINDS) do
+		local show, piece = _G[entry[1]], _G[entry[2]]
+		if show and piece then
+			kinds[show], pieces[show] = entry[3], piece
+		end
+	end
+	local headings = { [QuestInfoDescriptionHeader or false] = true, [QuestInfoObjectivesHeader or false] = true }
+
+	local elements = template and template.elements or {}
+	for index = 1, #elements, 3 do
+		local kind, piece = kinds[elements[index]], pieces[elements[index]]
+		if piece and piece:IsShown() and piece:GetParent() == parentFrame and piece:GetNumPoints() > 0 then
+			local point, relativeTo, relativePoint, x = piece:GetPoint(1)
+			local space
+			if relativeTo == parentFrame then
+				space = LAYOUT.PAGE_TOP
+			elseif kind == "heading" then
+				space = LAYOUT.HEADING_SPACE_ABOVE
+			elseif kind == "rewards" then
+				space = LAYOUT.HEADING_SPACE_ABOVE + rewardsRise
+			elseif relativeTo == QuestInfoTitleHeader then
+				space = LAYOUT.TITLE_SPACE_BELOW
+			elseif headings[relativeTo] then
+				space = LAYOUT.HEADING_SPACE_BELOW
+			elseif kind == "detail" then
+				space = LAYOUT.SPACE.NEAR
+			elseif kind == "spacer" then
+				space = 0
+			end
+			if space and point == "TOPLEFT" then
+				piece:SetPoint(point, relativeTo, relativePoint, x, -space)
+			end
+		end
+	end
+	if QuestInfoRewardsFrame and QuestInfoRewardsFrame:GetParent() == parentFrame then
+		ns.SpaceRewardsBlock(QuestInfoRewardsFrame)
+	end
+end
+
+if QuestInfo_Display then
+	local namesStyled -- Whether the last display's reward names are styled, for the pass a frame later
+	local function StyleRewardNamesLater()
+		StyleRewardNames(namesStyled)
+	end
+	hooksecurefunc("QuestInfo_Display", function(template, parentFrame)
+		local onQuestGiverPage = ns.IsQuestGiverPage(parentFrame)
+		if onQuestGiverPage and ns.IsQuestGiverCleanupOn() then
+			SpaceQuestGiverPage(template, parentFrame)
+		end
+		namesStyled = (not onQuestGiverPage) or ns.IsQuestGiverCleanupOn()
+		StyleRewardNames(namesStyled)
+		C_Timer.After(0, StyleRewardNamesLater)
+	end)
+end
+
 --[[
 	The window's own pages and the shared QuestInfo text, styled with the cleanup on and put
 	back to Blizzard's with it off. Done as the saved settings load, before Blizzard first lays any of
@@ -67,6 +225,7 @@ end
 function ns.ApplyQuestGiverCleanup()
 	local on = ns.IsQuestGiverCleanupOn()
 	StyleQuestGiverPages(on)
+	UpdateWindowBackdrop()
 	if on then
 		ns.StyleQuestInfo()
 	else
@@ -103,6 +262,7 @@ local function TagQuestLine(button, level, questID)
 	button.levelTaggedText = button:GetText()
 	return true
 end
+ns.TagQuestLine = TagQuestLine -- The greeting page's quest lines too (Quest-Giver-Pages.lua)
 
 -- The gossip window, on every client: each quest line is set up from its gossip quest info
 local function TagGossipQuest(button, questInfo)
@@ -114,158 +274,4 @@ for _, mixin in ipairs({ GossipSharedAvailableQuestButtonMixin, GossipSharedActi
 	if mixin and mixin.Setup then
 		hooksecurefunc(mixin, "Setup", TagGossipQuest)
 	end
-end
-
---[[
-	The quest giver window's greeting page, for a quest giver with quests and nothing else to say. Its
-	quest lines are named buttons on Classic Era and TBC, and pooled ones on WoW Forever. Each button's ID
-	indexes the active or available quests, as isActive says
-]]
-local function GreetingQuestButtons()
-	local pool = QuestFrameGreetingPanel.titleButtonPool
-	if pool then
-		local buttons = {}
-		for button in pool:EnumerateActive() do
-			buttons[#buttons + 1] = button
-		end
-		return buttons
-	end
-	local buttons, index = {}, 1
-	while _G["QuestTitleButton" .. index] do
-		buttons[#buttons + 1] = _G["QuestTitleButton" .. index]
-		index = index + 1
-	end
-	return buttons
-end
-
-local function TagGreetingQuests()
-	if not (GetActiveLevel and GetAvailableLevel) then
-		return
-	end
-	for _, button in ipairs(GreetingQuestButtons()) do
-		if button:IsShown() then
-			local index = button:GetID()
-			local level, questID
-			if button.isActive == 1 then
-				level, questID = GetActiveLevel(index), GetActiveQuestID and GetActiveQuestID(index)
-			else
-				level = GetAvailableLevel(index)
-				questID = GetAvailableQuestInfo and select(5, GetAvailableQuestInfo(index))
-			end
-			if TagQuestLine(button, level, questID) then
-				button:SetHeight(math.max(button:GetTextHeight() + 2, button.Icon and button.Icon:GetHeight() or 0))
-			end
-		end
-	end
-end
-
-if QuestFrameGreetingPanel then
-	-- Blizzard runs the page's setup from its OnShow script, and calls it directly when the page is already open
-	QuestFrameGreetingPanel:HookScript("OnShow", TagGreetingQuests)
-	if QuestFrameGreetingPanel_OnShow then
-		hooksecurefunc("QuestFrameGreetingPanel_OnShow", TagGreetingQuests)
-	end
-end
-
---------------------------------------------------------------------------------
--- The quest giver's progress page
---------------------------------------------------------------------------------
-
---[[
-	The page that asks for a quest's required items is drawn with its own pieces on every client, not
-	QuestInfo. It gets the quest details' space around its "Required items:" heading, and the quest ID
-	right-aligned under the last thing on it
-]]
-local progressPage = QuestProgressScrollChildFrame
-if progressPage and QuestFrameProgressItems_Update then
-	local LAYOUT = ns.LAYOUT
-	local heading = QuestProgressRequiredItemsText
-	local money = QuestProgressRequiredMoneyText
-
-	local questID = progressPage:CreateFontString(nil, "ARTWORK")
-	questID:SetJustifyH("RIGHT")
-	ns.LinkQuestIDToWowhead(progressPage, questID, GetQuestID)
-
-	local blizzardY = {} -- Each region's offset before it was first moved, to put back with the cleanup off
-
-	-- Moves region up or down from what it hangs from, returning that
-	local function MoveTo(region, y)
-		local point, relativeTo, relativePoint, x, currentY = region:GetPoint(1)
-		if blizzardY[region] == nil then
-			blizzardY[region] = currentY
-		end
-		region:SetPoint(point, relativeTo, relativePoint, x, y)
-		return relativeTo
-	end
-
-	local function PutBack(region)
-		if region and blizzardY[region] ~= nil and region:GetNumPoints() > 0 then
-			local point, relativeTo, relativePoint, x = region:GetPoint(1)
-			region:SetPoint(point, relativeTo, relativePoint, x, blizzardY[region])
-		end
-	end
-
-	--[[
-		The last thing on the page: the left button of the last row of required items (the second of
-		each row sits beside the first), else the gold, the heading or the text
-	]]
-	local function LastShown()
-		local count = 0
-		while _G["QuestProgressItem" .. (count + 1)] and _G["QuestProgressItem" .. (count + 1)]:IsShown() do
-			count = count + 1
-		end
-		if count > 0 then
-			return _G["QuestProgressItem" .. (count % 2 == 0 and count - 1 or count)]
-		end
-		for _, region in ipairs({ money, heading }) do
-			if region and region:IsShown() then
-				return region
-			end
-		end
-		return QuestProgressText
-	end
-
-	hooksecurefunc("QuestFrameProgressItems_Update", function()
-		if not ns.IsQuestGiverCleanupOn() then
-			for _, region in ipairs({ heading, money, QuestProgressItem1 }) do
-				PutBack(region)
-			end
-			questID:Hide()
-			return
-		end
-		-- The quest log files set this spacing, and on Classic Era and TBC they don't run with the Quest Log switch off
-		if not LAYOUT.QUEST_ID_GAP then
-			ns.SetTextSpacing(QuestProgressText)
-		end
-		if heading:IsShown() and heading:GetNumPoints() > 0 then
-			MoveTo(heading, -LAYOUT.HEADING_SPACE_ABOVE)
-			for _, region in ipairs({ money, QuestProgressItem1 }) do
-				if region and region:IsShown() and region:GetNumPoints() > 0 then
-					local _, relativeTo = region:GetPoint(1)
-					if relativeTo == heading then
-						MoveTo(region, -LAYOUT.HEADING_SPACE_BELOW)
-					end
-				end
-			end
-		end
-
-		local id = GetQuestID and GetQuestID()
-		if (not id) or (id == 0) then
-			questID:Hide()
-			return
-		end
-		ns.StyleQuestID(questID, id, QuestProgressText)
-		questID:ClearAllPoints()
-		questID:SetPoint(
-			"TOPRIGHT",
-			LastShown(),
-			"BOTTOMLEFT",
-			QuestProgressText:GetWidth() - ns.TwoSpacesWide(QuestProgressText),
-			-LAYOUT.QUEST_ID_GAP
-		)
-		questID:Show()
-		if QuestProgressScrollFrame and QuestProgressScrollFrame.UpdateScrollChildRect then
-			QuestProgressScrollFrame:UpdateScrollChildRect() -- So the quest ID scrolls into view
-		end
-	end)
 end

@@ -27,9 +27,9 @@ ns.AddWideQuestLogPart(function()
 		return voiceOverPadding
 	end
 
-	-- What goes in front of a quest title in the list: the padding while VoiceOver's buttons are on, nothing otherwise
-	function ns.VoiceOverTitlePrefix(text)
-		if not ns.GetVoiceOver() then
+	-- What goes in front of a quest title in the list: the padding while VoiceOver's buttons are on (isOn), nothing otherwise
+	function ns.VoiceOverTitlePrefix(text, isOn)
+		if not isOn then
 			return ""
 		end
 		return VoiceOverPadding(text)

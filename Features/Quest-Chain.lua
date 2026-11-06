@@ -6,7 +6,7 @@ local LAYOUT = ns.LAYOUT
 
 -- Behind this quest's line, so it reads as the one you're on: the text's own color, faint, so it shows on any skin
 local CURRENT_PART_BAND_ALPHA = 0.12
-local CURRENT_PART_BAND_MARGIN = 3 -- Above and below the row, so the band leaves room around the badge
+local CURRENT_PART_BAND_MARGIN = LAYOUT.SPACE.LINE -- Above and below the row, so the band leaves room around the badge
 local TURNED_IN_ALPHA = 0.6 -- A turned-in part's name, so the parts still ahead stand out
 local ROW_GAP = LAYOUT.HEADER_GAP -- Between parts: the quest list's space above a zone
 
@@ -15,10 +15,10 @@ local ROW_GAP = LAYOUT.HEADER_GAP -- Between parts: the quest list's space above
 	dark backgrounds, so on its own box the level reads on the parchment and on any skin alike
 ]]
 local BADGE_SHADE = 0.3 -- Of the quest log color, for the box
-local BADGE_PAD_X = 6 -- Clear of the round ends
+local BADGE_PAD_X = LAYOUT.SPACE.NEAR -- Clear of the round ends
 local WHITE_TEXTURE = "Interface\\Buttons\\WHITE8X8"
 local CIRCLE_MASK = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
-local BADGE_PAD_Y = 1
+local BADGE_PAD_Y = LAYOUT.SPACE.TIGHT
 
 --------------------------------------------------------------------------------
 -- Questie
@@ -353,7 +353,7 @@ function ns.UpdateQuestChainSection(section, questID, headingSource, textSource)
 		local turnedIn = index ~= position and C_QuestLog.IsQuestFlaggedCompleted(partID)
 		local tag, title, level = PartLabel(partID)
 		CopyFont(row.Check, textSource)
-		row.Check:SetText(turnedIn and ns.CHECK_ICON or ns.NO_CHECK_ICON)
+		row.Check:SetText(ns.CheckIcon(row.Check, turnedIn))
 		local checkWidth = row.Check:GetStringWidth()
 		local lineHeight = row.Check:GetStringHeight()
 

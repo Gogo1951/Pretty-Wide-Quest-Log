@@ -24,6 +24,19 @@ function ns:PrintMessage(message)
 end
 
 --[[
+	What sharing an area's quests prints: none can be shared, one, or how many at the pace
+	ns.GetShareInterval() sets. Share Quests, the dungeon share and their Options Examples all print it
+]]
+function ns.BuildSharePrint(count, areaName)
+	if count == 0 then
+		return L["CHAT_SHARING_ZONE_NONE"]:format(areaName)
+	elseif count == 1 then
+		return L["CHAT_SHARING_ZONE_ONE"]:format(areaName)
+	end
+	return L["CHAT_SHARING_ZONE"]:format(count, areaName, ns.GetShareInterval())
+end
+
+--[[
 	A message for other players, not yet sent: the add-on's marker, the body from L[formatKey], then its
 	short name. WoW Forever blocks raid-marker tokens in chat, so the marker is left off there. Bodies can
 	carry quest links, so pipes are kept: stripping them would break the links

@@ -81,6 +81,13 @@ ns.DIAGNOSTIC_REPORTS = {
 			return ns:BuildMapContextReport()
 		end,
 	},
+	routes = {
+		title = D.ROUTES_CONTEXT_TITLE,
+		description = D.ROUTES_CONTEXT_DESCRIPTION,
+		build = function()
+			return ns:BuildRoutesContextReport()
+		end,
+	},
 	saved = {
 		title = D.SAVED_TITLE,
 		description = D.SAVED_DESCRIPTION,
@@ -154,7 +161,7 @@ ns.DIAGNOSTIC_SECTIONS = {
 	{
 		key = "settings",
 		label = D.SECTION_SETTINGS,
-		reports = { "questLog", "tracking", "sharing", "map", "saved", "display", "addons" },
+		reports = { "questLog", "tracking", "sharing", "map", "routes", "saved", "display", "addons" },
 	},
 	{ key = "code", label = D.SECTION_CODE, reports = { "events", "api", "libs" } },
 	{ key = "data", label = D.SECTION_DATA, reports = {} },

@@ -159,7 +159,7 @@ end
 	of its own has the add-on's quest menu; on Classic Era and TBC a right-click on a quest stays Blizzard's
 ]]
 local function AddHandyClicks(args, order)
-	local keys = { "HANDY_CLICK_ZONE", "HANDY_CLICK_TRACK" }
+	local keys = { "HANDY_CLICK_TRACK" }
 	if ns.questLogIsOwnWindow then
 		keys[#keys + 1] = "HANDY_CLICK_MENU"
 	end
@@ -184,7 +184,7 @@ end
 function ns.BuildQuestLogOptions()
 	local options = {
 		type = "group",
-		name = QUEST_LOG,
+		name = L["TAB_WIDE_QUEST_LOG"],
 		args = {
 			descIntro = ns.OptionsDesc(L["TAB_QUEST_LOG_DESCRIPTION"], 1),
 			spaceIntro = ns.OptionsSpacer(2),
@@ -202,7 +202,13 @@ function ns.BuildQuestLogOptions()
 			descSorting = ns.OptionsDesc(L["QUEST_LOG_SORTING_DESCRIPTION"], 8, Hidden),
 			spaceSorting2 = ns.OptionsSpacer(9, Hidden),
 
-			zoneSortLabel = ns.OptionsRowLabel(L["ZONE_ORDER"], 10, SORT_LABEL_WIDTH, Hidden),
+			zoneSortLabel = ns.OptionsRowLabel(
+				L["ZONE_ORDER"],
+				10,
+				SORT_LABEL_WIDTH,
+				Hidden,
+				L["ZONE_ORDER_DESCRIPTION"]
+			),
 			zoneSort = SortSelect("zoneSort", "ZONE_ORDER_DESCRIPTION", {
 				LEVEL_HIGHEST_FIRST = L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"],
 				LEVEL_LOWEST_FIRST = L["SORT_AVERAGE_LEVEL_LOWEST"],
@@ -210,7 +216,13 @@ function ns.BuildQuestLogOptions()
 			}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 11),
 			currentZoneFirstRow = SortSubOption("currentZoneFirst", "CURRENT_ZONE_FIRST", 12),
 			spaceQuestSort = ns.OptionsSpacer(13, Hidden),
-			questSortLabel = ns.OptionsRowLabel(L["QUEST_ORDER"], 14, SORT_LABEL_WIDTH, Hidden),
+			questSortLabel = ns.OptionsRowLabel(
+				L["QUEST_ORDER"],
+				14,
+				SORT_LABEL_WIDTH,
+				Hidden,
+				L["QUEST_ORDER_DESCRIPTION"]
+			),
 			questSort = SortSelect("questSort", "QUEST_ORDER_DESCRIPTION", {
 				LEVEL_HIGHEST_FIRST = L["SORT_LEVEL_HIGHEST_DEFAULT"],
 				LEVEL_LOWEST_FIRST = L["SORT_LEVEL_LOWEST"],
@@ -248,7 +260,7 @@ function ns.BuildQuestLogOptions()
 			showObjectiveAreas = ObjectiveAreasToggle(37),
 
 			spaceWindowScale = ns.OptionsSpacer(38, Hidden),
-			windowScaleLabel = ns.OptionsRowLabel(L["WINDOW_SCALE"], 39, nil, Hidden),
+			windowScaleLabel = ns.OptionsRowLabel(L["WINDOW_SCALE"], 39, nil, Hidden, L["WINDOW_SCALE_DESCRIPTION"]),
 			windowScale = {
 				type = "range",
 				name = "",
@@ -270,7 +282,7 @@ function ns.BuildQuestLogOptions()
 				end,
 			},
 			spaceMapScale = ns.OptionsSpacer(41, MapHidden),
-			mapScaleLabel = ns.OptionsRowLabel(L["MAP_SCALE"], 42, nil, MapHidden),
+			mapScaleLabel = ns.OptionsRowLabel(L["MAP_SCALE"], 42, nil, MapHidden, L["MAP_SCALE_DESCRIPTION"]),
 			mapScale = {
 				type = "range",
 				name = "",

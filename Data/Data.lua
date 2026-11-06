@@ -47,6 +47,9 @@ ns.PALETTE = {
 	OFF = "CC3333", -- Red: Off
 	SEPARATOR = "AAAAAA", -- Gray: Separators, Dividers
 	MUTED = "808080", -- Dark Gray: Meta-data, Version Numbers
+	ARROW_FAR = "FFFF00", -- Yellow: The Quest Arrow on the Way
+	ARROW_CLOSE = "00FF00", -- Green: The Quest Arrow Close to Its Stop
+	ROUTE_LINE = "333333", -- Dark Gray: The Route's Line, Plain on the Yellow Maps
 }
 
 ns.CLASS_COLORS = {
@@ -54,6 +57,7 @@ ns.CLASS_COLORS = {
 	DRUID = "FF7C0A",
 	HUNTER = "AAD372",
 	MAGE = "3FC7EB",
+	MONK = "00FF98",
 	PALADIN = "F48CBA",
 	PRIEST = "FFFFFF",
 	ROGUE = "FFF468",
@@ -70,6 +74,8 @@ ns.OPTIONS_REGISTRY = {
 	General = ADDON_NAME,
 	QuestLog = ADDON_NAME .. "_QuestLog",
 	QualityOfLife = ADDON_NAME .. "_QualityOfLife",
+	RoutesMap = ADDON_NAME .. "_RoutesMap",
+	QuestArrow = ADDON_NAME .. "_QuestArrow",
 	Profiles = ADDON_NAME .. "_Profiles",
 	FeedbackSupport = ADDON_NAME .. "_FeedbackSupport",
 	Diagnostics = ADDON_NAME .. "_Diagnostics",
@@ -95,11 +101,24 @@ ns.LAYOUT = LAYOUT
 -- Window geometry shared by every client's quest log; x/y values are offsets from the window's top-left corner.
 
 --[[
+	Every gap, margin and padding the add-on sets is a step on one scale, each step twice the last, so
+	the space between two things says how closely they belong together:
+	  2   pieces of one thing: a list row's padding, reward buttons side by side
+	  4   lines of one paragraph, an icon and its label
+	  8   a heading or title and the text it introduces, text and the buttons it introduces
+	  16  margins inside the parchment, a blank line's worth between groups
+	  32  one section and the next (Description, Rewards, the quest chain, the quest ID)
+	Positions that line up with Blizzard's art, and Blizzard's own sizes, stay as they are
+]]
+local SPACE = { TIGHT = 2, LINE = 4, NEAR = 8, GROUP = 16, SECTION = 32 }
+LAYOUT.SPACE = SPACE
+
+--[[
 	Quest details are as wide as two columns of reward buttons (147px each, 1px apart), which can't
 	shrink, with TEXT_MARGIN of parchment on the left, right and top
 ]]
 LAYOUT.REWARD_COLUMNS_WIDTH = 147 + 1 + 147
-LAYOUT.TEXT_MARGIN = 17
+LAYOUT.TEXT_MARGIN = SPACE.GROUP
 
 -- The classic art's parchment spans x 348-658; the window is widened by however much more it needs
 local ART_PARCHMENT_LEFT, ART_PARCHMENT_RIGHT = 348, 658
@@ -109,7 +128,16 @@ LAYOUT.BASE_WIDTH = 724 + LAYOUT.EXTRA_WIDTH
 LAYOUT.BASE_HEIGHT = 513
 LAYOUT.PANE_TOP = 75 -- Top of the quest list and the quest details
 LAYOUT.PANE_INSET = 151 -- Vertical space the panes never occupy
-LAYOUT.ROW_HEIGHT = 16
+LAYOUT.ROW_HEIGHT = 16 -- A quest list row's own frame: one line of text
+
+--[[
+	The quest list's rows are spaced out past that: a quest row gets ROW_PADDING above and below, and a
+	zone header room for its Share Quests button (Zone-Share.lua) with ROW_PADDING above and below it
+]]
+LAYOUT.ROW_PADDING = SPACE.TIGHT
+LAYOUT.ZONE_SHARE_BUTTON_HEIGHT = 16
+LAYOUT.QUEST_ROW_HEIGHT = LAYOUT.ROW_HEIGHT + 2 * LAYOUT.ROW_PADDING
+LAYOUT.HEADER_ROW_HEIGHT = LAYOUT.ZONE_SHARE_BUTTON_HEIGHT + 2 * LAYOUT.ROW_PADDING
 
 -- The quest list on the left, and the quest details 41px to its right
 LAYOUT.LIST_LEFT = 19
@@ -122,33 +150,27 @@ LAYOUT.PARCHMENT_TOP = 74
 
 --[[
 	Where the quest text goes: TEXT_MARGIN inside the parchment, and level with the first quest row of
-	the list (one row below the top, under the first zone header)
+	the list (under the first zone header, inside its padding)
 ]]
 LAYOUT.CONTENT_LEFT = LAYOUT.PARCHMENT_LEFT + LAYOUT.TEXT_MARGIN
 LAYOUT.CONTENT_WIDTH = LAYOUT.REWARD_COLUMNS_WIDTH
-LAYOUT.CONTENT_TOP = LAYOUT.PANE_TOP + LAYOUT.ROW_HEIGHT
+LAYOUT.CONTENT_TOP = LAYOUT.PANE_TOP + LAYOUT.HEADER_ROW_HEIGHT + LAYOUT.ROW_PADDING
 
 --[[
-	Quest text, headings included, is set with lines LINE_HEIGHT times its font size apart. Blizzard
-	leaves none between lines on Classic Era, which reads tight, and a little on WoW Forever; this makes
-	both the same
+	Quest text, headings included, is set with LINE_SPACING between its lines. Blizzard leaves none on
+	Classic Era, which reads tight, and a little on WoW Forever; this makes both the same
 ]]
-LAYOUT.LINE_HEIGHT = 1.2
+LAYOUT.LINE_SPACING = SPACE.LINE
 
 --[[
 	A heading sits close to the text it introduces and well clear of the text above, so it reads as the
-	start of its section. Below a heading is about half the heading's own size: a little more under the
-	quest's title than under the smaller Description and Rewards headings. Above Description and Rewards
-	is HEADING_LINES_ABOVE lines of quest text, well clear of the blank line between two paragraphs.
-	ns.SetTextSpacing works out QUEST_LINE (a line of quest text, in pixels), HEADING_SPACE_ABOVE and
-	QUEST_ID_GAP once the quest text's font is known, as it differs between clients and languages
+	start of its section: a step of the scale under it, and the section step above it, well clear of
+	the blank line between two paragraphs
 ]]
-LAYOUT.TITLE_SPACE_BELOW = 8
-LAYOUT.DAILY_RESET_SPACE_BELOW = 8 -- Under TBC's daily reset line, which sits between the title and the objectives
-LAYOUT.HEADING_SPACE_BELOW = 6
-LAYOUT.HEADING_LINES_ABOVE = 1.4
-local BLIZZARD_HEADING_GAP = 5 -- What Blizzard leaves under a heading
-LAYOUT.EXTRA_HEADING_GAP = LAYOUT.HEADING_SPACE_BELOW - BLIZZARD_HEADING_GAP
+LAYOUT.TITLE_SPACE_BELOW = SPACE.NEAR
+LAYOUT.DAILY_RESET_SPACE_BELOW = SPACE.NEAR -- Under TBC's daily reset line, which sits between the title and the objectives
+LAYOUT.HEADING_SPACE_BELOW = SPACE.NEAR
+LAYOUT.HEADING_SPACE_ABOVE = SPACE.SECTION
 
 --[[
 	Blizzard sets the quest's title and the Description and Rewards headings all in the same font. The
@@ -165,7 +187,25 @@ LAYOUT.REWARDS_HEADING_RISE = 3
 	these rewards:"), and the next line ("You will also receive:") this far under them, clear of them
 	like the rest of the text; Blizzard leaves them nearly touching
 ]]
-LAYOUT.REWARD_BUTTONS_SPACE = 10
+LAYOUT.REWARD_BUTTONS_SPACE = SPACE.NEAR
+
+--[[
+	Between one line of the rewards and the next section of them ("You will also receive:" under the
+	gold, the experience under that); Blizzard leaves 5. With gold and experience both shown, a blank
+	line's worth between the two, so each reads as its own reward
+]]
+LAYOUT.REWARD_LINE_SPACE = SPACE.NEAR
+LAYOUT.MONEY_EXPERIENCE_SPACE = SPACE.GROUP
+
+--[[
+	The quest giver window's pages: the first line (the quest's title, the greeting) PAGE_TOP below the
+	top of the page. Their left edge stays Blizzard's, as the page is only as wide as two columns of
+	reward buttons
+]]
+LAYOUT.PAGE_TOP = SPACE.GROUP
+
+-- Between the quest lines in a quest giver's list of quests, each its own choice; Blizzard leaves 2
+LAYOUT.QUEST_LINE_SPACE = SPACE.NEAR
 
 --[[
 	Blizzard's money frames keep their last coin this far inside their right edge, so a money frame
@@ -174,23 +214,23 @@ LAYOUT.REWARD_BUTTONS_SPACE = 10
 LAYOUT.MONEY_RIGHT_PADDING = 13
 
 --[[
-	The quest ID sits under everything else in the quest details, QUEST_ID_LINES lines of quest text
-	down (ns.SetTextSpacing sets QUEST_ID_GAP), right-aligned two spaces in from the edge of the text
-	column like the other numbers, in the description's font a little smaller
+	The quest ID sits under everything else in the quest details, a section's space down, right-aligned
+	two spaces in from the edge of the text column like the other numbers, in the description's font a
+	little smaller
 ]]
-LAYOUT.QUEST_ID_LINES = 2
+LAYOUT.QUEST_ID_GAP = SPACE.SECTION
 LAYOUT.QUEST_ID_FONT_SHRINK = 2
 
 --[[
 	Quest list rows: zone headers have their +/- at the left and their name after it; quest titles have
 	a slot for the tracking mark in the same column as the +/-, there whether the quest is marked or not,
-	and start just after it. The untracked eye fills its square edge to edge, unlike Blizzard's check, so
-	a gap keeps it off the title
+	and start just after it, level with the zone names. The untracked eye fills its square edge to edge,
+	unlike Blizzard's check, so a gap keeps it off the title
 ]]
-LAYOUT.HEADER_TEXT_X = 20
-LAYOUT.CHECK_X = 3
-LAYOUT.CHECK_GAP = 4
+LAYOUT.CHECK_X = SPACE.LINE
+LAYOUT.CHECK_GAP = SPACE.LINE
 LAYOUT.QUEST_TEXT_X = LAYOUT.CHECK_X + 16 + LAYOUT.CHECK_GAP
+LAYOUT.HEADER_TEXT_X = LAYOUT.QUEST_TEXT_X
 
 --[[
 	The tracking mark in that slot: a teal check in front of each tracked quest, or with markUntracked
@@ -211,9 +251,9 @@ ns.CURRENT_ZONE_MARK = "|TInterface/RaidFrame/ReadyCheck-Ready:0|t"
 
 --[[
 	Space above every zone header in the quest list except the first: half a row, so zones read as
-	separate groups (about three times the space between two rows' text) without a full blank line
+	separate groups (twice the space between two rows' text) without a full blank line
 ]]
-LAYOUT.HEADER_GAP = LAYOUT.ROW_HEIGHT / 2
+LAYOUT.HEADER_GAP = SPACE.NEAR
 
 --[[
 	Buttons along the bottom: the outer ones' offsets from the window's corners, and the size of the
@@ -225,6 +265,9 @@ LAYOUT.BUTTON_RIGHT = 43
 LAYOUT.BUTTON_WIDTH = 123
 LAYOUT.BUTTON_HEIGHT = 21
 
+-- Room either side of the Share Quests button's label (its height is with the row heights above)
+LAYOUT.ZONE_SHARE_BUTTON_PADDING = SPACE.GROUP
+
 --[[
 	Expand All and Track All above the quest list, left to right from the quest log's own "All" spot.
 	Each is at least as wide as a bottom button, and wider where a label needs it, with a gap between each
@@ -232,8 +275,8 @@ LAYOUT.BUTTON_HEIGHT = 21
 ]]
 LAYOUT.LIST_BUTTONS_X = 74
 LAYOUT.LIST_BUTTONS_Y = -53
-LAYOUT.LIST_BUTTONS_GAP = 8
-LAYOUT.LABEL_PADDING = 32
+LAYOUT.LIST_BUTTONS_GAP = SPACE.NEAR
+LAYOUT.LABEL_PADDING = SPACE.SECTION
 
 -- Center of the scroll bar slot to the right of the parchment
 LAYOUT.DETAIL_SCROLL_SLOT_X = 673 + LAYOUT.EXTRA_WIDTH
@@ -244,10 +287,10 @@ LAYOUT.DETAIL_SCROLL_SLOT_X = 673 + LAYOUT.EXTRA_WIDTH
 ]]
 LAYOUT.ART_INSET_RIGHT = LAYOUT.BASE_WIDTH - (515 + LAYOUT.EXTRA_WIDTH + 176)
 LAYOUT.ART_INSET_BOTTOM = 256 - 211 + 1
-LAYOUT.GRIP_INSET = 4
+LAYOUT.GRIP_INSET = SPACE.LINE
 
 -- A window dragged taller still leaves this much of the screen below it
-LAYOUT.MINIMUM_BOTTOM_CLAMP = 20
+LAYOUT.MINIMUM_BOTTOM_CLAMP = SPACE.GROUP
 
 --------------------------------------------------------------------------------
 -- Messages
@@ -263,7 +306,7 @@ ns.TARGET_MARKER = "{rt3}"
 ns.CHAT_MESSAGE_MAX_LENGTH = 255
 
 --[[
-	The zone menu shares one quest at a time, ns.GetShareInterval() seconds apart, within these bounds (the
+	Share Quests shares one quest at a time, ns.GetShareInterval() seconds apart, within these bounds (the
 	Quality of Life panel's slider). Any sooner than the shortest and the game calls a party member busy
 ]]
 ns.SHARE_INTERVAL_MIN = 3

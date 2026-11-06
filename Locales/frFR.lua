@@ -9,6 +9,8 @@ end
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT_NAME"] = "PWQL"
+-- TRANSLATORS: joins the items of a list, such as quest links or the letters after a quest's level
+L["LIST_SEPARATOR"] = ", "
 L["CHAT_LOADED"] =
 	"Version %s. Les paramètres (y compris l'option pour désactiver ce message) se trouvent dans Options > AddOns > Pretty Wide Quest Log. Cet add-on vous plaît ? Parlez-en à un ami, ajoutez-le à vos favoris sur CurseForge ou mettez-lui une Star sur GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "Par mesure de sécurité, l'interface des options ne peut pas être ouverte en combat."
@@ -22,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Un journal de quêtes large, redimensionnable et à double volet, avec le niveau des quêtes, des repères donjon et élite, les récompenses, les suites de quêtes et une carte pour chaque quête. Partagez des quêtes avec votre groupe et annoncez automatiquement les quêtes de donjon. Compatible avec Questie, Spoken, VoiceOver et ElvUI."
+	"Journal de quêtes large avec un itinéraire de quêtes et une flèche de quête. Vous choisissez les quêtes, nous vous aidons avec un itinéraire clair pour les terminer vite. Niveau des quêtes, repères, récompenses, suites de quêtes, carte de quête et partage de quêtes avec le groupe. Compatible avec Questie, Spoken, VoiceOver et ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message de bienvenue de Pretty Wide Quest Log à la connexion."
 L["OPTIONS_FEATURES_HEADER"] = "Fonctionnalités"
@@ -31,7 +33,13 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Remplace le journal de quêtes de Blizzard par le journal large, avec la carte à côté. Prend effet après un rechargement."
 L["ENABLE_QUALITY_OF_LIFE"] = "Activer les améliorations de confort"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Épure la fenêtre de donneur de quêtes et aide votre groupe à prendre vos quêtes : rythme de partage, chuchotements quand un partage rate quelqu'un, et annonce et partage des quêtes de donjon. Partager les quêtes d'une zone d'un clic droit sur son nom fonctionne aussi quand cette option est désactivée."
+	"Épure la fenêtre de donneur de quêtes et aide votre groupe à prendre vos quêtes : rythme de partage, chuchotements quand un partage rate quelqu'un, et annonce et partage des quêtes de donjon. Le bouton Partager les quêtes d'une zone dans le journal de quêtes fonctionne aussi quand cette option est désactivée."
+L["ENABLE_ROUTES_MAP"] = "Activer les itinéraires sur la carte de zone"
+L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
+	"Trace sur la carte de zone un itinéraire passant par vos objectifs de quête et vos remises de quête, du plus proche au plus lointain, sous forme de points qui défilent entre les marqueurs."
+L["ENABLE_QUEST_ARROW"] = "Activer la Flèche de quête"
+L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
+	"Affiche à l'écran une flèche, la Flèche de quête, qui pointe vers le prochain point de passage de l'itinéraire, avec les quêtes et objectifs à y accomplir. Par défaut, elle se masque en groupe de raid et en instance."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activer le journal de quêtes large prend effet après un rechargement, proposé à la fermeture de l'interface des options."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après un rechargement. Recharger maintenant ?"
@@ -43,6 +51,7 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Ouvre l'interface des options de cet add-on.
 -- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
+L["TAB_WIDE_QUEST_LOG"] = "Journal de quêtes large"
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Remplace le journal de quêtes de Blizzard par un journal large : vos quêtes classées par zone, avec à côté les détails de la quête sélectionnée et sa carte."
 L["QUEST_LOG_SORTING_HEADER"] = "Tri"
@@ -100,8 +109,6 @@ L["RESET_WINDOW_SCALE_CONFIRM"] =
 L["RESET_WINDOW_MOVE_CONFIRM"] =
 	"Réinitialiser la hauteur et l'échelle du journal de quêtes, l'échelle de la carte et l'emplacement de la fenêtre à l'écran ?"
 L["HANDY_CLICKS_HEADER"] = "Clics pratiques"
-L["HANDY_CLICK_ZONE"] = "Clic droit sur un nom de zone"
-L["HANDY_CLICK_ZONE_DESCRIPTION"] = "Partagez ses quêtes ou abandonnez les grises."
 L["HANDY_CLICK_TRACK"] = "Maj-clic sur une quête"
 L["HANDY_CLICK_TRACK_DESCRIPTION"] = "Suivez-la ou arrêtez de la suivre."
 L["HANDY_CLICK_MENU"] = "Clic droit sur une quête"
@@ -126,9 +133,9 @@ L["GIVER_LEVELS_DESCRIPTION"] =
 	"Ajoute les repères de niveau du journal de quêtes, comme %s, à la liste de quêtes d'un donneur de quêtes."
 L["QUEST_SHARING_HEADER"] = "Partage de quêtes"
 L["QUEST_SHARING_INTRO"] =
-	"Faites un clic droit sur le nom d'une zone dans le journal de quêtes pour proposer à votre groupe, l'une après l'autre, toutes ses quêtes que vous pouvez partager. Ces options règlent le rythme et ce qui se passe quand quelqu'un en rate une."
+	"Survolez le nom d'une zone dans le journal de quêtes et cliquez sur Partager les quêtes pour proposer à votre groupe, l'une après l'autre, toutes ses quêtes que vous pouvez partager. Ces options règlent le rythme et ce qui se passe quand quelqu'un en rate une."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"Le clic droit sur un nom de zone nécessite Activer le journal de quêtes large. Le partage des quêtes de donjon fonctionne sans."
+	"Le bouton Partager les quêtes sur un nom de zone nécessite Activer le journal de quêtes large. Le partage des quêtes de donjon fonctionne sans."
 L["SHARE_INTERVAL"] = "Secondes entre les partages"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Le temps d'attente entre une quête partagée et la suivante, quand vous partagez les quêtes d'une zone ou d'un donjon. Plus il est long, plus votre groupe a le temps d'accepter chacune."
@@ -146,6 +153,81 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 L["DUNGEON_SHARE"] = "Partage automatique des quêtes de donjon"
 L["DUNGEON_SHARE_DESCRIPTION"] =
 	"Partage chaque quête du donjon que le jeu vous laisse partager, au rythme réglé dans Partage de quêtes, dès que tout le monde est à portée (ou au bout d'une minute ; immédiatement sur WoW Forever). Chaque membre du groupe les reçoit une fois par donjon, donc quelqu'un qui rejoint plus tard les reçoit aussi, et sortir puis revenir ne partage rien. Avec Chuchoter quand un partage échoue activé, quiconque rate un partage reçoit un chuchotement pour pouvoir la redemander."
+
+--------------------------------------------------------------------------------
+-- Options: Routes on Zone Map Panel
+--------------------------------------------------------------------------------
+
+L["TAB_ROUTES_MAP"] = "Itinéraires sur la carte de zone"
+L["TAB_ROUTES_MAP_DESCRIPTION"] =
+	"Un itinéraire passant par vos objectifs de quête et vos remises de quête sur la carte de zone, dans l'ordre où les faire, depuis l'endroit où vous êtes."
+L["ROUTES_MAP_HEADER"] = "Carte de zone"
+L["FULL_SIZE_MAP"] = "Ouvrir la carte de zone en grand"
+L["FULL_SIZE_MAP_DESCRIPTION"] =
+	"Ouvre la carte de zone agrandie, comme le fait son propre bouton d'agrandissement, pour laisser de la place à l'itinéraire. Si vous réduisez la carte, elle s'ouvre de nouveau en grand la fois suivante."
+L["HIDE_QUESTIE_ICONS"] = "Masquer les icônes de Questie sur l'itinéraire"
+L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
+	"Masque les icônes de carte de Questie pour ce qui se trouve sur l'itinéraire, afin que les marqueurs les remplacent. Survolez un marqueur pour voir ses icônes."
+L["ROUTES_MARKERS_HEADER"] = "Marqueurs"
+L["MARKER_SIZE"] = "Taille des marqueurs"
+L["MARKER_SIZE_DESCRIPTION"] = "La taille des marqueurs de l'itinéraire sur la carte de zone."
+L["MARKER_SIZE_SMALL"] = "Petite"
+L["MARKER_SIZE_MEDIUM"] = "Moyenne"
+L["MARKER_SIZE_LARGE"] = "Grande"
+L["MARKER_SIZE_HUGE"] = "Énorme"
+L["ROUTES_LINE_HEADER"] = "Ligne d'itinéraire"
+L["SHOW_ROUTE_LINE"] = "Afficher la ligne d'itinéraire"
+L["SHOW_ROUTE_LINE_DESCRIPTION"] =
+	"Trace des points qui défilent de vous jusqu'à chaque marqueur, tour à tour. Désactivée, seuls les marqueurs s'affichent."
+L["LINE_SPEED"] = "Vitesse de la ligne"
+L["LINE_SPEED_DESCRIPTION"] = "La vitesse à laquelle les points défilent vers le prochain marqueur."
+L["LINE_SPEED_STILL"] = "Immobile"
+L["LINE_SPEED_SLOW"] = "Lente"
+L["LINE_SPEED_NORMAL"] = "Normale"
+L["LINE_SPEED_FAST"] = "Rapide"
+L["LINE_OPACITY"] = "Opacité de la ligne"
+L["LINE_OPACITY_DESCRIPTION"] = "L'opacité des points ; plus elle est basse, plus la carte transparaît."
+L["ROUTES_PARTY_HEADER"] = "Groupe"
+L["PARTY_QUESTS"] = "Inclure les quêtes des membres du groupe"
+L["PARTY_QUESTS_DESCRIPTION"] =
+	"En groupe, l'itinéraire et la Flèche de quête prennent aussi en compte les quêtes que les membres de votre groupe ont et pas vous, affichées comme les vôtres. Questie doit être installé des deux côtés pour les partager. Leurs quêtes de donjon sont exclues, comme les vôtres."
+
+--------------------------------------------------------------------------------
+-- Options: Quest Arrow Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ARROW"] = "Flèche de quête"
+L["TAB_QUEST_ARROW_DESCRIPTION"] =
+	"Une flèche à l'écran qui pointe vers le prochain point de passage de l'itinéraire, avec les quêtes et objectifs à y accomplir. Faites un clic droit dessus pour contourner l'objectif actuel ; un clic milieu pour réinitialiser tous les itinéraires."
+L["QUEST_ARROW_HEADER"] = "Flèche"
+L["ARROW_SIZE"] = "Taille de la flèche"
+L["ARROW_SIZE_DESCRIPTION"] = "La taille de la Flèche de quête, avec le texte en dessous."
+L["ARROW_CYCLE"] = "Cycle œil et flèche (secondes)"
+L["ARROW_CYCLE_DESCRIPTION"] =
+	"Dans une zone d'objectif, la Flèche de quête alterne : l'œil, qui liste les objectifs autour de vous, puis la flèche, qui pointe vers le prochain point de passage. Chacun dure la moitié de ce temps."
+L["LOCK_ARROW"] = "Verrouiller la Flèche de quête"
+L["LOCK_ARROW_DESCRIPTION"] = "Garde la Flèche de quête à sa place, pour que la faire glisser n'ait aucun effet."
+L["RESET_ARROW"] = "Position de la flèche"
+L["RESET_ARROW_BUTTON"] = "Réinitialiser"
+L["RESET_ARROW_DESCRIPTION"] = "Remet la Flèche de quête à sa place de départ, en haut au centre de l'écran."
+L["QUEST_ARROW_TEXT_HEADER"] = "Sous la flèche"
+L["SHOW_DISTANCE"] = "Afficher la distance"
+-- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_ARRIVED, as the Quest Arrow shows them
+L["SHOW_DISTANCE_DESCRIPTION"] =
+	'Indique à combien de mètres se trouve le prochain point de passage. "%s" et "%s" s\'affichent dans tous les cas.'
+L["SHOW_ARROW_QUESTS"] = "Afficher les quêtes et objectifs"
+L["SHOW_ARROW_QUESTS_DESCRIPTION"] =
+	"Liste les quêtes du prochain point de passage, chacune avec ce qu'il reste à y faire."
+L["QUESTS_LISTED"] = "Nombre maximal de quêtes listées"
+-- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
+L["QUESTS_LISTED_DESCRIPTION"] =
+	'Le nombre maximal de quêtes que la Flèche de quête liste sous elle pour un point de passage. Les suivantes sont comptées sur une ligne à part, comme "%s".'
+L["QUEST_ARROW_HIDING_HEADER"] = "Masquage"
+L["HIDE_IN_RAIDS"] = "Masquer en groupe de raid"
+L["HIDE_IN_RAIDS_DESCRIPTION"] = "Masque la Flèche de quête quand vous êtes dans un groupe de raid."
+L["HIDE_IN_INSTANCES"] = "Masquer en instance"
+L["HIDE_IN_INSTANCES_DESCRIPTION"] =
+	"Masque la Flèche de quête dans les donjons, les raids et les champs de bataille."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -190,9 +272,10 @@ L["QUEST_TYPE_GROUP"] = "groupe"
 L["QUEST_TYPE_ELITE"] = "élite"
 L["QUEST_TYPE_PVP"] = "JcJ"
 L["QUEST_LEVEL_LEGEND"] = "Lettres après le niveau : %s."
+-- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s %s"
-L["QUEST_LEVEL_LEGEND_SEPARATOR"] = ", "
 L["QUEST_ID"] = "ID de quête %d"
+-- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "Suite de quêtes (%d sur %d)"
 L["DAILY_RESET"] = "Les quêtes journalières se réinitialisent dans %s."
 L["WOWHEAD_LINK_TOOLTIP"] = "Cliquez pour obtenir un lien Wowhead."
@@ -209,36 +292,61 @@ L["TURN_IN_TOOLTIP"] = "Prête à être rendue"
 L["RESIZE_TOOLTIP"] = "Faites glisser pour redimensionner le journal de quêtes."
 
 --------------------------------------------------------------------------------
--- Zone Menu
+-- Zone Sharing
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "Clic droit pour partager les quêtes ou abandonner les grises."
-L["SHARE_ZONE_QUESTS"] = "Partager %d quêtes"
-L["SHARE_ZONE_QUEST"] = "Partager 1 quête"
+L["SHARE_QUESTS"] = "Partager les quêtes"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"Propose à votre groupe les quêtes de cette zone que le jeu vous laisse partager, une toutes les %d secondes."
-L["SHARE_ZONE_QUEST_TOOLTIP"] = "Propose à votre groupe la seule quête de cette zone que le jeu vous laisse partager."
 L["CHAT_SHARING_ZONE_ONE"] = "Partage de 1 quête de %s."
+-- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "Partage de %d quêtes de %s, une toutes les %d secondes."
-L["ABANDON_GRAY_QUESTS"] = "Abandonner les quêtes grises"
-L["ABANDON_GRAY_NONE"] = "Cette zone n'a aucune quête grise à abandonner."
-L["ABANDON_GRAY_CONFIRM"] = "Abandonner ces %d quêtes grises ?"
-L["ABANDON_GRAY_CONFIRM_ONE"] = "Abandonner cette quête grise ?"
-L["CHAT_ABANDONED_GRAY"] = "%d quêtes grises abandonnées."
-L["CHAT_ABANDONED_GRAY_ONE"] = "1 quête grise abandonnée."
+L["CHAT_SHARING_ZONE_NONE"] = "Aucune de vos quêtes de %s ne peut être partagée."
+
+--------------------------------------------------------------------------------
+-- Routes on Zone Map and the Quest Arrow
+--------------------------------------------------------------------------------
+
+L["ROUTES_ARRIVED"] = "Vous y êtes"
+L["ROUTES_OBJECTIVE_AREA"] = "Zone d'objectif"
+-- TRANSLATORS: %d is a distance in yards
+L["ROUTES_YARDS"] = "%d m"
+-- TRANSLATORS: %d is how many more quests the Quest Arrow has at this waypoint than it lists
+L["ROUTES_MORE_TASKS"] = "+%d de plus ici"
+L["ROUTES_TURN_IN"] = "Rendre la quête"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
+L["ROUTES_TURN_IN_QUEST"] = "Rendre %s"
+L["ROUTES_CORPSE"] = "Votre cadavre"
+L["ROUTES_CORPSE_HINT"] = "Retournez-y pour ressusciter"
+-- TRANSLATORS: Heads the list of NPCs, mobs and objects found at a route waypoint
+L["ROUTES_LOOK_FOR"] = "Cherchez"
+-- TRANSLATORS: %s is the party members a waypoint's objective is for, such as "Alice, Bob"
+L["ROUTES_FOR_MEMBERS"] = "Pour %s"
+L["ROUTES_CLICK_DRAG"] = "Glisser"
+L["ROUTES_CLICK_RIGHT"] = "Clic droit"
+L["ROUTES_CLICK_MIDDLE"] = "Clic milieu"
+L["ROUTES_DRAG_MOVE"] = "Déplacer la Flèche de quête"
+L["ROUTES_RIGHT_CLICK_REROUTE"] = "Contourner l'objectif actuel"
+L["ROUTES_MIDDLE_CLICK_RESET"] = "Réinitialiser tous les itinéraires"
+-- TRANSLATORS: %s is a quest link or a list of them
+L["ROUTES_SKIPPED"] = "Itinéraire modifié pour contourner %s."
+L["CHAT_FULL_SIZE_MAP_SET"] =
+	"La carte de zone s'ouvrira de nouveau en grand. Pour la garder petite, désactivez Ouvrir la carte de zone en grand dans Itinéraires sur la carte de zone."
+L["ROUTES_RESET"] =
+	"Tous les itinéraires sont réinitialisés : les objectifs contournés sont de retour sur l'itinéraire."
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
--- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
+-- TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
+-- each %s is a quest link or a list of them, and each %d is how many quests
 L["WHISPER_SHARE_FAILED"] =
 	"J'ai essayé de partager %s avec toi, mais ça n'a pas marché. Si la quête t'intéresse, fais-moi signe quand tu peux et je te la repartage"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Pareil pour %s"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "J'ai %d quêtes à faire ici : %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "J'ai 1 quête à faire ici : %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Autres quêtes à faire ici : %s"
-L["DUNGEON_QUESTS_SEPARATOR"] = ", "
 
 --------------------------------------------------------------------------------
 -- Questie Tracking

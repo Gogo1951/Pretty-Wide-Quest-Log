@@ -18,7 +18,7 @@ ns.SAMPLE_ZONE_AREA_ID = 40 -- Westfall
 How We Got the Data
 
 Last Validated
-	2026-10-28, Season of Discovery 1.15.9.70576
+	2026-11-06, Season of Discovery 1.15.9.70576
 
 Notes
 	- Three quests from The Deadmines, a dungeon every current client has, that the Quality of Life panel's
@@ -43,5 +43,5 @@ wago.tools
 	https://wago.tools/db2/AreaTable?build=1.15.9.70576
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/Classic/classicQuestDB.lua
 ]]

@@ -7,7 +7,7 @@ local function Hidden()
 	return not ns.db.profile.enableQualityOfLife
 end
 
--- A zone's right-click menu is part of the wide quest log, so a line under the sharing intro says so while it's off
+-- A zone's Share Quests button is part of the wide quest log, so a line under the sharing intro says so while it's off
 local function ZoneShareNeedsLog()
 	if not Hidden() and not ns.db.profile.enableWideQuestLog then
 		return L["ZONE_SHARE_NEEDS_WIDE_LOG"]
@@ -32,15 +32,23 @@ local function Toggle(key, nameKey, order)
 	}
 end
 
--- A sub-option of the quest giver window cleanup, indented with a silver caption; its row hides it, not itself
+-- The quest giver window cleanup's switch, at a caption's width with its one setting beside it
+local function GiverCleanupToggle()
+	local toggle = Toggle("giverCleanup", "GIVER_CLEANUP", 15)
+	toggle.width = ns.OPTIONS_LABEL_WIDTH
+	return toggle
+end
+
+-- The quest giver window cleanup's one setting, beside its switch and hidden while it's off
 local function GiverLevelsToggle()
-	local toggle = Toggle("giverLevels", "SHOW_QUEST_LEVELS", 2)
-	toggle.name = ns.OptionsSubLabel(toggle.name)
+	local toggle = Toggle("giverLevels", "SHOW_QUEST_LEVELS", 16)
 	toggle.desc = L["GIVER_LEVELS_DESCRIPTION"]:format(ns.LevelTag(40, L["QUEST_SUFFIX_DUNGEON"]))
 		.. " "
 		.. ns.QuestLevelLegend()
-	toggle.width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH
-	toggle.hidden = nil
+	toggle.width = ns.OPTIONS_CONTROL_WIDTH
+	toggle.hidden = function()
+		return Hidden() or not ns.db.profile.giverCleanup
+	end
 	return toggle
 end
 
@@ -140,7 +148,7 @@ end
 -- What sharing an area's quests prints, at the pace the slider sets
 local function AreaSharePrintExample(areaID)
 	local area = C_Map.GetAreaInfo(areaID) or tostring(areaID)
-	return RenderSample("PRINT", L["CHAT_SHARING_ZONE"]:format(#ns.SAMPLE_QUEST_IDS, area, ns.GetShareInterval()))
+	return RenderSample("PRINT", ns.BuildSharePrint(#ns.SAMPLE_QUEST_IDS, area))
 end
 
 -- Sharing the dungeon's quests, under Automatic Dungeon Quest Sharing
@@ -148,7 +156,7 @@ local function SharePrintExample()
 	return AreaSharePrintExample(ns.SAMPLE_DUNGEON_AREA_ID)
 end
 
--- Sharing a zone's quests from the zone menu, under the slider, so it reads as pacing those shares too
+-- Sharing a zone's quests with Share Quests, under the slider, so it reads as pacing those shares too
 local function ZoneSharePrintExample()
 	return AreaSharePrintExample(ns.SAMPLE_ZONE_AREA_ID or ns.SAMPLE_DUNGEON_AREA_ID)
 end
@@ -195,10 +203,8 @@ function ns.BuildQualityOfLifeOptions()
 			spaceQuestGivers1 = ns.OptionsSpacer(12, Hidden),
 			descQuestGivers = ns.OptionsDesc(L["QUEST_GIVERS_DESCRIPTION"], 13, Hidden),
 			spaceQuestGivers2 = ns.OptionsSpacer(14, Hidden),
-			giverCleanup = Toggle("giverCleanup", "GIVER_CLEANUP", 15),
-			giverLevelsRow = ns.OptionsSubRow(16, function()
-				return Hidden() or not ns.db.profile.giverCleanup
-			end, { giverLevels = GiverLevelsToggle() }),
+			giverCleanup = GiverCleanupToggle(),
+			giverLevels = GiverLevelsToggle(),
 
 			spaceQuestSharing0 = ns.OptionsSpacer(20, Hidden),
 			headerQuestSharing = ns.OptionsHeader(L["QUEST_SHARING_HEADER"], 21, Hidden),
@@ -206,7 +212,13 @@ function ns.BuildQualityOfLifeOptions()
 			descQuestSharing = ns.OptionsDesc(L["QUEST_SHARING_INTRO"], 23, Hidden),
 			zoneShareNeedsLog = ns.OptionsStatusLine(ZoneShareNeedsLog, 23.5),
 			spaceQuestSharing2 = ns.OptionsSpacer(24, Hidden),
-			shareIntervalLabel = ns.OptionsRowLabel(L["SHARE_INTERVAL"], 25, nil, Hidden),
+			shareIntervalLabel = ns.OptionsRowLabel(
+				L["SHARE_INTERVAL"],
+				25,
+				nil,
+				Hidden,
+				L["SHARE_INTERVAL_DESCRIPTION"]
+			),
 			shareInterval = {
 				type = "range",
 				name = "",

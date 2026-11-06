@@ -138,9 +138,11 @@ ns.DiagnosticsStrings = {
 	TRACKING_CONTEXT_TITLE = "Tracking Context",
 	TRACKING_CONTEXT_DESCRIPTION = "Shows the tracking marks setting, how full the watch list is, and whether Questie's tracker is in charge of tracking.",
 	SHARING_CONTEXT_TITLE = "Sharing Context",
-	SHARING_CONTEXT_DESCRIPTION = "Shows what the zone menu can share or abandon right now, every switch and setting that decides whether a failed share sends a whisper, and, inside a dungeon, which quests count for it and the announcement as it would go out.",
+	SHARING_CONTEXT_DESCRIPTION = "Shows what Share Quests can share right now, every switch and setting that decides whether a failed share sends a whisper, and, inside a dungeon, which quests count for it and the announcement as it would go out.",
 	MAP_CONTEXT_TITLE = "Quest Map Context",
 	MAP_CONTEXT_DESCRIPTION = "Shows whether the map beside the quest log is open, the zone it shows, whether its unexplored areas can be filled in, and whether Questie has icons for the selected quest.",
+	ROUTES_CONTEXT_TITLE = "Routes Context",
+	ROUTES_CONTEXT_DESCRIPTION = "Shows the Routes switches, what a route needs from Questie and from where you stand, the route as last planned, and where the Quest Arrow and the zone map's route stand.",
 	VALIDATE_TITLE = "Validate Data: %s",
 	VALIDATE_DESCRIPTION = "Checks every id in this data file against this client and exports the results as tab-separated text.",
 	VALIDATE_PROGRESS = "%s / %s IDs",
@@ -151,7 +153,7 @@ ns.DiagnosticsStrings = {
 	SAVED_TITLE = "Saved Variables",
 	SAVED_DESCRIPTION = "Prints "
 		.. TITLE
-		.. "'s saved settings and the quest log window's saved size and position as readable text.",
+		.. "'s saved settings, the quest log window's saved size and position, and the Quest Arrow's saved spot as readable text.",
 	LIBS_TITLE = "Library Versions",
 	LIBS_DESCRIPTION = "Lists the version of every library " .. TITLE .. " loaded.",
 	LOCALE_TITLE = "Locale Context",

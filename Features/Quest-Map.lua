@@ -3,6 +3,14 @@ local _, ns = ...
 -- The map comes with the wide quest log on every client whose TOC loads this file
 ns.hasQuestMap = true
 
+--[[
+	The mixin of the quest map's own pin templates (Questie-Map.xml, which loads after this file). The map
+	canvas calls SetPassThroughButtons on every pin it acquires, which WoW blocks in combat, so these pins
+	skip it, as HereBeDragons-Pins does for Questie's
+]]
+PrettyWideQuestLogPinMixin = CreateFromMixins(MapCanvasPinMixin)
+function PrettyWideQuestLogPinMixin.SetPassThroughButtons() end
+
 ns.AddWideQuestLogPart(function()
 	local L = ns.L
 	local LAYOUT = ns.LAYOUT
@@ -95,16 +103,42 @@ ns.AddWideQuestLogPart(function()
 		return layers and #layers > 0 or false
 	end
 
-	function questMap.ShowMap(mapID)
-		if not questMap.CanShowMap(mapID) then
-			return
+	-- The map itself when it has art, otherwise the nearest map above it that does (a dungeon's zone, a zone's continent)
+	local function DrawableMap(mapID)
+		local seen = {}
+		while mapID and mapID > 0 and not seen[mapID] do
+			if questMap.CanShowMap(mapID) then
+				return mapID
+			end
+			seen[mapID] = true
+			local info = C_Map.GetMapInfo(mapID)
+			mapID = info and info.parentMapID
 		end
-		canvas:SetMapID(mapID)
+		return nil
 	end
 
-	-- A map is needed before the canvas first draws, as the Battlefield Map does it
+	-- Returns whether the map moved, which redraws every layer
+	function questMap.ShowMap(mapID)
+		mapID = DrawableMap(mapID)
+		if not mapID or canvas:GetMapID() == mapID then
+			return false
+		end
+		canvas:SetMapID(mapID)
+		return true
+	end
+
+	--[[
+		A map is needed before the canvas first draws, as the Battlefield Map does it: drawing with none breaks
+		Blizzard's map code. When the quest's map and the player's have no art to climb to, as in some dungeons,
+		the world map's own fallback stands in
+	]]
 	canvas:SetScript("OnShow", function(self)
 		questMap.FollowQuest()
+		if not self:GetMapID() then
+			if not questMap.ShowMap(MapUtil.GetDisplayableMapForPlayer()) and C_Map.GetFallbackWorldMapID then
+				questMap.ShowMap(C_Map.GetFallbackWorldMapID())
+			end
+		end
 		MapCanvasMixin.OnShow(self)
 	end)
 

@@ -15,7 +15,7 @@ ns.AddWideQuestLogPart(function()
 
 	local CLUSTER_RADIUS = 180 -- Yards from an area's center its spawns lie within, as Questie's own areas
 	local EDGE_PADDING = 35 -- Yards an area reaches past its outermost spawns
-	local SPOT_GAP = 3 -- On screen, between an icon's edge and the least area drawn around it
+	local SPOT_GAP = ns.LAYOUT.SPACE.LINE -- On screen, between an icon's edge and the least area drawn around it
 	local FALLBACK_MIN_RADIUS = 80 -- Yards, for the least area where the map's size on screen isn't known
 	local PADDING_POINTS = 24 -- Around each spawn, which round off the area's corners
 	local TOUCH_GAP = 15 -- Yards between two areas' edges within which they count as touching, and merge

@@ -2,6 +2,7 @@ local _, ns = ...
 local L = ns.L
 
 -- How both quest logs draw a quest: its title in the list, its text's styling, objective lines and quest ID.
+-- Its rewards are drawn in Quest-Rewards.lua.
 
 --------------------------------------------------------------------------------
 -- Quest Text
@@ -42,7 +43,7 @@ do
 				L["QUEST_LEVEL_LEGEND_ENTRY"]:format(L["QUEST_SUFFIX_" .. kind], L["QUEST_TYPE_" .. kind])
 		end
 	end
-	questLevelLegend = L["QUEST_LEVEL_LEGEND"]:format(table.concat(entries, L["QUEST_LEVEL_LEGEND_SEPARATOR"]))
+	questLevelLegend = L["QUEST_LEVEL_LEGEND"]:format(table.concat(entries, L["LIST_SEPARATOR"]))
 end
 
 function ns.QuestLevelLegend()
@@ -105,14 +106,51 @@ function ns.StyleQuestID(text, questID, source)
 end
 
 --[[
+	An empty piece PAGE_TOP tall under region (the quest ID at the end of a quest giver page), showing
+	whenever region does. A scroll frame scrolls as far as the last thing on its page, so this leaves the
+	page's own margin under region when scrolled to the bottom, rather than region against the edge.
+	Returns it, for a region that moves to another parent
+]]
+function ns.CreateRoomBelow(parent, region)
+	local room = parent:CreateTexture(nil, "BACKGROUND")
+	room:SetColorTexture(0, 0, 0, 0)
+	room:SetSize(1, ns.LAYOUT.PAGE_TOP)
+	room:SetPoint("TOPRIGHT", region, "BOTTOMRIGHT")
+	room:SetShown(region:IsShown())
+	hooksecurefunc(region, "Show", function()
+		room:Show()
+	end)
+	hooksecurefunc(region, "Hide", function()
+		room:Hide()
+	end)
+	return room
+end
+
+--[[
 	Objective lines in the quest details: a green check for a finished objective (or
 	a blank the same size, so the names line up), the objective's name, and its count ("8 / 8")
 	right-aligned in a column of its own, two spaces in from the right edge of the text column
 ]]
-local CHECK = "|TInterface\\RaidFrame\\ReadyCheck-Ready:0|t"
-local NO_CHECK = "|TInterface\\Common\\spacer:0|t"
-ns.CHECK_ICON, ns.NO_CHECK_ICON = CHECK, NO_CHECK -- The quest chain's turned-in parts use them too (Quest-Chain.lua)
-local COUNT_GAP = 8 -- Between a name and its count
+local CHECK_TEXTURE = "Interface\\RaidFrame\\ReadyCheck-Ready"
+local NO_CHECK_TEXTURE = "Interface\\Common\\spacer"
+
+--[[
+	The check (or the blank in its place) for a line in region's font, sized to the font in so many
+	pixels, and CHECK_DROP of its size lower than the game would put it, which is high beside the
+	text, so its foot sits on the line the letters sit on. Left to size itself (":0"), it came out small
+	and riding high beside the text in ElvUI's quest font. The quest chain's turned-in parts use it too
+	(Quest-Chain.lua)
+]]
+local CHECK_DROP = 0.25
+
+function ns.CheckIcon(region, checked)
+	local _, size = region:GetFont()
+	size = size or 12
+	local pixels = math.floor(size + 0.5)
+	local drop = math.floor(size * CHECK_DROP + 0.5)
+	return format("|T%s:%d:%d:0:%d|t", checked and CHECK_TEXTURE or NO_CHECK_TEXTURE, pixels, pixels, -drop)
+end
+local COUNT_GAP = ns.LAYOUT.SPACE.NEAR -- Between a name and its count
 
 --[[
 	Body text wraps short of the column's edge, so a number flush against it (an objective's count, gold,
@@ -169,26 +207,6 @@ function ns.ClearObjectiveCounts()
 	for _, count in pairs(objectiveCounts) do
 		count:Hide()
 	end
-end
-
--- Space between lines that sets text in font size at LAYOUT.LINE_HEIGHT
-local function LineSpacing(size)
-	return size * (ns.LAYOUT.LINE_HEIGHT - 1)
-end
-
---[[
-	Works out LAYOUT.QUEST_LINE, LAYOUT.HEADING_SPACE_ABOVE and LAYOUT.QUEST_ID_GAP in pixels from
-	questText (the quest description), whose font differs between clients and languages
-]]
-function ns.SetTextSpacing(questText)
-	local _, size = questText:GetFont()
-	local LAYOUT = ns.LAYOUT
-	local function Lines(count)
-		return math.floor(count * size * LAYOUT.LINE_HEIGHT + 0.5)
-	end
-	LAYOUT.QUEST_LINE = Lines(1)
-	LAYOUT.HEADING_SPACE_ABOVE = Lines(LAYOUT.HEADING_LINES_ABOVE)
-	LAYOUT.QUEST_ID_GAP = Lines(LAYOUT.QUEST_ID_LINES)
 end
 
 --[[
@@ -253,29 +271,14 @@ function ns.RestoreBlizzardStyle(region)
 end
 
 --[[
-	Sets a FontString of quest text at LAYOUT.LINE_HEIGHT, and with sectionHeading true gives it the
-	section heading font first
+	Sets a FontString of quest text LAYOUT.LINE_SPACING between lines, and with sectionHeading true gives
+	it the section heading font first
 ]]
 function ns.StyleQuestText(region, sectionHeading)
 	if sectionHeading and region:GetFontObject() ~= sectionHeadingFont then
 		SetFontObjectKeepingColor(region, sectionHeadingFont)
 	end
-	local _, size = region:GetFont()
-	region:SetSpacing(LineSpacing(size))
-end
-
---[[
-	Sets a number Blizzard draws in its own white outlined font (the experience reward) in source's font
-	and color (the description's), like the other numbers on the parchment
-]]
-local function StyleQuestNumber(region, source)
-	local fontObject = source:GetFontObject()
-	if fontObject then
-		region:SetFontObject(fontObject)
-	else
-		region:SetFont(source:GetFont())
-	end
-	region:SetTextColor(source:GetTextColor())
+	region:SetSpacing(ns.LAYOUT.LINE_SPACING)
 end
 
 --[[
@@ -329,54 +332,6 @@ function ns.RestoreQuestInfoStyle()
 	EachQuestInfoPiece(ns.RestoreBlizzardStyle)
 end
 
---[[
-	The experience reward, each time QuestInfo shows one (the quest details, the quest giver window and the
-	map's details), in the description's font and color, its thousands grouped like the turn-in line's.
-	On a quest giver page with the quest giver window cleanup off it stays Blizzard's
-]]
-local experienceFrame = QuestInfoRewardsFrame and QuestInfoRewardsFrame.XPFrame
-local experienceValue = experienceFrame and experienceFrame.ValueText
-if experienceValue and QuestInfo_Display then
-	ns.RememberBlizzardStyle(experienceValue)
-	local blizzardRed, blizzardGreen, blizzardBlue, blizzardAlpha = experienceValue:GetTextColor()
-	hooksecurefunc("QuestInfo_Display", function(_, parentFrame)
-		if ns.IsQuestGiverPage(parentFrame) and not ns.IsQuestGiverCleanupOn() then
-			ns.RestoreBlizzardStyle(experienceValue)
-			experienceValue:SetTextColor(blizzardRed, blizzardGreen, blizzardBlue, blizzardAlpha)
-			return
-		end
-		StyleQuestNumber(experienceValue, QuestInfoDescriptionText)
-		local experience = tonumber((experienceValue:GetText() or ""):gsub("%D", ""), 10)
-		if experience then
-			experienceValue:SetText(ns.FormatNumber(experience))
-		end
-	end)
-end
-
---[[
-	Spaces the reward buttons LAYOUT.REWARD_BUTTONS_SPACE from the text around them: a button that hangs
-	under a line of text (the first of its section) that far below it, and anything that hangs under a
-	button (the next section's line) that far below that. Returns how much further down region went,
-	for a block that has to grow to match
-]]
-function ns.SpaceAroundRewardButtons(region)
-	if (not region) or (not region:IsShown()) or (region:GetNumPoints() < 1) then
-		return 0
-	end
-	local point, relativeTo, relativePoint, x, y = region:GetPoint(1)
-	local relativeType = relativeTo and relativeTo.GetObjectType and relativeTo:GetObjectType()
-	local isButton = region:GetObjectType() == "Button"
-	if isButton and relativeType ~= "FontString" then
-		return 0 -- Buttons further down a section only sit beside or below the one before
-	end
-	if (not isButton) and relativeType ~= "Button" then
-		return 0
-	end
-	local spacedY = -ns.LAYOUT.REWARD_BUTTONS_SPACE
-	region:SetPoint(point, relativeTo, relativePoint, x, spacedY)
-	return y - spacedY
-end
-
 -- Gives a FontString the same font and line spacing as another, keeping its own color
 local function MatchFont(region, source)
 	local red, green, blue, alpha = region:GetTextColor()
@@ -399,7 +354,7 @@ end
 function ns.StyleObjective(line, text, finished, width, fontSource)
 	local name, countText = SplitObjective(text or "")
 	MatchFont(line, fontSource)
-	line:SetText((finished and CHECK or NO_CHECK) .. " " .. name)
+	line:SetText(ns.CheckIcon(line, finished) .. " " .. name)
 
 	local count = objectiveCounts[line]
 	if not count then

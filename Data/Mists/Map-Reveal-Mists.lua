@@ -1529,7 +1529,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 How We Got the Data
 
 Last Validated
-	Never.
+	2026-11-06, MoP Classic 5.5.4.70631
 
 Notes
 	- Every area of a zone's map that starts hidden until the character explores it, so the quest map can show the
@@ -1548,6 +1548,9 @@ Notes
 	- The zone name and uiMapID opening each row are the lowest uiMapID drawn on that art, grouped by
 	  continent. A zone with phases (Gilneas, The Lost Isles, Mount Hyjal, Uldum, Twilight Highlands,
 	  Krasarang Wilds, Vale of Eternal Blossoms) has a row per phase's art.
+	- Validate Data flags ten of those phase arts NO MAP (203, 216, 220, 225, 226, 252, 289, 499, 1972 and
+	  1973), since a map reports only the art of the character's own phase. UiMapXMapArt draws a map on
+	  every one, so they stay.
 
 SQL (CMaNGOS)
 	TODO: Add SQL Query

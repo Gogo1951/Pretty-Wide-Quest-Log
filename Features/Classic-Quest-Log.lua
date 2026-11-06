@@ -181,7 +181,7 @@ ns.AddWideQuestLogPart(function()
 	local function AnchorGrip()
 		if QuestLogFrame.backdrop then
 			grip:ClearAllPoints()
-			grip:SetPoint("BOTTOMRIGHT", QuestLogFrame.backdrop, "BOTTOMRIGHT", -2, 2)
+			grip:SetPoint("BOTTOMRIGHT", QuestLogFrame.backdrop, "BOTTOMRIGHT", -LAYOUT.SPACE.TIGHT, LAYOUT.SPACE.TIGHT)
 		end
 	end
 
@@ -223,6 +223,7 @@ ns.AddWideQuestLogPart(function()
 	--------------------------------------------------------------------------------
 
 	function ns.ResetWindow()
+		-- Height has no default, so clearing restores it; AceDB fills plain defaults only at load
 		ns.db.global.height = nil
 		ns.db.global.scale = ns.DATABASE_DEFAULTS.global.scale
 		ns.db.global.mapScale = ns.DATABASE_DEFAULTS.global.mapScale

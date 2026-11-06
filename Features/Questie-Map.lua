@@ -344,14 +344,18 @@ ns.AddWideQuestLogPart(function()
 
 	local zones, shownMapID, chosenMapID = {}, nil, nil
 
+	local zoneChanged -- Whether ShowZone moved the map, which already redrew Questie's icons with every layer
+
 	local function ShowZone(mapID)
 		shownMapID = mapID
-		questMap.ShowMap(mapID)
+		if questMap.ShowMap(mapID) then
+			zoneChanged = true
+		end
 	end
 
 	-- A quest with icons in more than one zone gets a dropdown on the map to pick between them
 	local zoneDropdown = CreateFrame("DropdownButton", nil, questMap.holder, "WowStyle2DropdownTemplate")
-	zoneDropdown:SetPoint("TOPLEFT", canvas, "TOPLEFT", 8, -8)
+	zoneDropdown:SetPoint("TOPLEFT", canvas, "TOPLEFT", ns.LAYOUT.SPACE.NEAR, -ns.LAYOUT.SPACE.NEAR)
 	zoneDropdown:SetWidth(ZONE_DROPDOWN_WIDTH)
 	zoneDropdown:SetFrameLevel(canvas:GetFrameLevel() + 10)
 	zoneDropdown:Hide()
@@ -372,8 +376,8 @@ ns.AddWideQuestLogPart(function()
 	--[[
 		Puts the map on a quest from Questie's icons: the zone picked from the dropdown while the quest stays
 		selected, otherwise the player's zone when the quest has icons there, otherwise the zone holding most
-		of them, otherwise fallbackMapID. questMap.questieQuestID is the quest while Questie has icons for it.
-		Returns whether it has any
+		of them, otherwise fallbackMapID: a map ID, or a function returning one, asked only then.
+		questMap.questieQuestID is the quest while Questie has icons for it. Returns whether it has any
 	]]
 	function questMap.FollowQuestieQuest(questID, fallbackMapID)
 		if questID ~= shownQuestID then
@@ -383,7 +387,10 @@ ns.AddWideQuestLogPart(function()
 		zones = QuestZones(questID)
 
 		local playerMapID = MapUtil.GetDisplayableMapForPlayer()
-		local mapID = zones[1] or fallbackMapID
+		local mapID = zones[1]
+		if not mapID then
+			mapID = type(fallbackMapID) == "function" and fallbackMapID() or fallbackMapID
+		end
 		if chosenMapID and tContains(zones, chosenMapID) then
 			mapID = chosenMapID
 		elseif tContains(zones, playerMapID) then
@@ -412,8 +419,11 @@ ns.AddWideQuestLogPart(function()
 		C_Timer.After(REFRESH_DELAY, function()
 			refreshPending = nil
 			if canvas:IsVisible() then
+				zoneChanged = false
 				questMap.FollowQuest()
-				questieProvider:RefreshAllData()
+				if not zoneChanged then
+					questieProvider:RefreshAllData()
+				end
 			end
 		end)
 	end

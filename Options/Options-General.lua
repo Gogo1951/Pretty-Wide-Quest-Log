@@ -63,7 +63,21 @@ function ns.BuildGeneralOptions()
 			FEATURE_WIDTH,
 			ns.ApplyQuestGiverCleanup
 		),
-		questLogReloadPending = ns.OptionsStatusLine(QuestLogReloadPending, 15),
+		enableRoutesMap = ns.OptionsRoutesToggle(
+			"showMap",
+			"ENABLE_ROUTES_MAP",
+			"FEATURE_ROUTES_MAP_DESCRIPTION",
+			15,
+			FEATURE_WIDTH
+		),
+		enableQuestArrow = ns.OptionsRoutesToggle(
+			"showArrow",
+			"ENABLE_QUEST_ARROW",
+			"FEATURE_QUEST_ARROW_DESCRIPTION",
+			16,
+			FEATURE_WIDTH
+		),
+		questLogReloadPending = ns.OptionsStatusLine(QuestLogReloadPending, 17),
 	}
 
 	AddCommands(args, 100)

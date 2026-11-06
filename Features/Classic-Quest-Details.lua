@@ -35,13 +35,12 @@ ns.AddWideQuestLogPart(function()
 		LAYOUT.CONTENT_LEFT - LAYOUT.DETAIL_LEFT,
 		-(LAYOUT.CONTENT_TOP - LAYOUT.PANE_TOP)
 	)
-	ns.SetTextSpacing(QuestLogQuestDescription)
 	QuestLogObjectivesText:SetPoint("TOPLEFT", QuestLogQuestTitle, "BOTTOMLEFT", 0, -LAYOUT.TITLE_SPACE_BELOW)
 	QuestLogQuestDescription:SetPoint("TOPLEFT", QuestLogDescriptionTitle, "BOTTOMLEFT", 0, -LAYOUT.HEADING_SPACE_BELOW)
 	QuestLogRewardTitleText:SetPoint("TOPLEFT", QuestLogQuestDescription, "BOTTOMLEFT", 0, -LAYOUT.HEADING_SPACE_ABOVE)
 
 	--[[
-		Quest text at LAYOUT.LINE_HEIGHT, and section headings smaller than the title; the quest log has
+		Quest text LAYOUT.LINE_SPACING between lines, and section headings smaller than the title; the quest log has
 		these to itself, so once is enough (objective lines follow the description, in ns.StyleObjective)
 	]]
 	for _, name in ipairs({

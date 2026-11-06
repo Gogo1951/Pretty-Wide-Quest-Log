@@ -5,7 +5,7 @@ local _, ns = ...
 local LAYOUT = ns.LAYOUT
 
 -- The button sits where the title would start, and the title moves over to clear it
-local TITLE_INSET = 22
+local TITLE_INSET = 20 + LAYOUT.SPACE.LINE -- VoiceOver's 20px button, and a step of the spacing scale clear of it
 
 --[[
 	VoiceOver, or its fork Spoken Quests, puts its play buttons on Blizzard's quest list (the map's on WoW

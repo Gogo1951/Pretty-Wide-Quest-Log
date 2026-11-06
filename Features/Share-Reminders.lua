@@ -43,7 +43,7 @@ end
 	Results name the player but not the quest, so each share is noted as it goes out through
 	QuestLogPushQuest, which every way of sharing calls: the log entry it's given (WoW Forever's share
 	menus pass one without selecting the quest), or the selected quest when it's given none. A result is
-	matched to the last share only within ns.GetShareInterval() of it, the gap the zone menu leaves
+	matched to the last share only within ns.GetShareInterval() of it, the gap Share Quests leaves
 	between shares
 ]]
 local lastShare = {}

@@ -9,6 +9,8 @@ end
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT_NAME"] = "PWQL"
+-- TRANSLATORS: joins the items of a list, such as quest links or the letters after a quest's level
+L["LIST_SEPARATOR"] = ", "
 L["CHAT_LOADED"] =
 	"Version %s. Settings (including the option to disable this message) are under Options > AddOns > Pretty Wide Quest Log. Enjoying this add-on? Tell a friend, Favorite it on CurseForge, or Star it on GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "As a safety precaution, the Options Interface cannot be opened during combat."
@@ -22,7 +24,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, Spoken, VoiceOver, and ElvUI."
+	"Wide quest log with a quest route and quest arrow. You pick the quests, we help with a clean route to get them done fast. Quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Enable Welcome Message"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log welcome message when you log in."
 L["OPTIONS_FEATURES_HEADER"] = "Features"
@@ -31,7 +33,13 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Swaps Blizzard's quest log for the wide one, with the map beside it. Takes effect after a reload."
 L["ENABLE_QUALITY_OF_LIFE"] = "Enable Quality of Life"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Tidies the quest giver window and helps your party get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. Right-clicking a zone name to share its quests works with this off too."
+	"Tidies the quest giver window and helps your party get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. A zone's Share Quests button in the quest log works with this off too."
+L["ENABLE_ROUTES_MAP"] = "Enable Routes on Zone Map"
+L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
+	"Draws a route through your quest objectives and turn-ins on the zone map, nearest first, as marching dots between markers."
+L["ENABLE_QUEST_ARROW"] = "Enable Quest Arrow"
+L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
+	"Shows an arrow on screen, the Quest Arrow, pointing to the next waypoint on the route, with the quests and objectives to do there. By default it hides in raid groups and instances."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Enable Wide Quest Log takes effect after a reload, offered when you close the Options Interface."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
@@ -43,6 +51,7 @@ L["OPTIONS_COMMAND_DESCRIPTION"] = "Opens the Options Interface for this add-on.
 -- Options: Quest Log Panel
 --------------------------------------------------------------------------------
 
+L["TAB_WIDE_QUEST_LOG"] = "Wide Quest Log"
 L["TAB_QUEST_LOG_DESCRIPTION"] =
 	"Replaces Blizzard's quest log with a wide one: your quests listed by zone, with the selected quest's details and its map beside them."
 L["QUEST_LOG_SORTING_HEADER"] = "Sorting"
@@ -94,8 +103,6 @@ L["RESET_WINDOW_SCALE_CONFIRM"] = "Reset the quest log's height and scale, and t
 L["RESET_WINDOW_MOVE_CONFIRM"] =
 	"Reset the quest log's height and scale, the map's scale, and the window's spot on screen?"
 L["HANDY_CLICKS_HEADER"] = "Handy Clicks"
-L["HANDY_CLICK_ZONE"] = "Right-Click a Zone Name"
-L["HANDY_CLICK_ZONE_DESCRIPTION"] = "Share its quests or abandon its gray ones."
 L["HANDY_CLICK_TRACK"] = "Shift-Click a Quest"
 L["HANDY_CLICK_TRACK_DESCRIPTION"] = "Track or untrack it."
 L["HANDY_CLICK_MENU"] = "Right-Click a Quest"
@@ -119,9 +126,9 @@ L["GIVER_CLEANUP_DESCRIPTION"] =
 L["GIVER_LEVELS_DESCRIPTION"] = "Adds the quest log's level tags, like %s, to a quest giver's list of quests."
 L["QUEST_SHARING_HEADER"] = "Quest Sharing"
 L["QUEST_SHARING_INTRO"] =
-	"Right-click a zone name in the quest log to offer your party all of its quests you can share, one after another. These settings set the pace and what happens when someone misses one."
+	"Hover a zone name in the quest log and click Share Quests to offer your party all of its quests you can share, one after another. These settings control the pace and what happens when someone misses one."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"Right-clicking a zone name needs Enable Wide Quest Log. Dungeon quest sharing works without it."
+	"Share Quests on a zone name needs Enable Wide Quest Log. Dungeon quest sharing works without it."
 L["SHARE_INTERVAL"] = "Seconds Between Shares"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"How long to wait between one shared quest and the next, when you share a zone's quests or a dungeon's. Longer gives your party more time to accept each one."
@@ -139,6 +146,77 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 L["DUNGEON_SHARE"] = "Automatic Dungeon Quest Sharing"
 L["DUNGEON_SHARE_DESCRIPTION"] =
 	"Shares every quest for the dungeon that the game lets you share, at the pace set under Quest Sharing, once everyone is in range (or after a minute; right away on WoW Forever). Each party member gets them once per dungeon, so someone who joins later gets them too, and zoning out and back in shares nothing. With Whisper When a Share Fails on, anyone a share misses is whispered so they can ask again."
+
+--------------------------------------------------------------------------------
+-- Options: Routes on Zone Map Panel
+--------------------------------------------------------------------------------
+
+L["TAB_ROUTES_MAP"] = "Routes on Zone Map"
+L["TAB_ROUTES_MAP_DESCRIPTION"] =
+	"A route through your quest objectives and turn-ins on the zone map, in the order to do them, from where you stand."
+L["ROUTES_MAP_HEADER"] = "Zone Map"
+L["FULL_SIZE_MAP"] = "Open the Zone Map Full Size"
+L["FULL_SIZE_MAP_DESCRIPTION"] =
+	"Opens the zone map maximized, as its own maximize button does, so the route has room. If you shrink the map, it opens full size again next time."
+L["HIDE_QUESTIE_ICONS"] = "Hide Questie's Icons on the Route"
+L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
+	"Hides Questie's map icons for what's on the route, so the markers stand in for them. Hover a marker to see its icons."
+L["ROUTES_MARKERS_HEADER"] = "Markers"
+L["MARKER_SIZE"] = "Marker Size"
+L["MARKER_SIZE_DESCRIPTION"] = "How big the route's markers are on the zone map."
+L["MARKER_SIZE_SMALL"] = "Small"
+L["MARKER_SIZE_MEDIUM"] = "Medium"
+L["MARKER_SIZE_LARGE"] = "Large"
+L["MARKER_SIZE_HUGE"] = "Huge"
+L["ROUTES_LINE_HEADER"] = "Route Line"
+L["SHOW_ROUTE_LINE"] = "Show the Route Line"
+L["SHOW_ROUTE_LINE_DESCRIPTION"] = "Draws marching dots from you to each marker in turn. Off shows just the markers."
+L["LINE_SPEED"] = "Line Speed"
+L["LINE_SPEED_DESCRIPTION"] = "How fast the dots march toward the next marker."
+L["LINE_SPEED_STILL"] = "Still"
+L["LINE_SPEED_SLOW"] = "Slow"
+L["LINE_SPEED_NORMAL"] = "Normal"
+L["LINE_SPEED_FAST"] = "Fast"
+L["LINE_OPACITY"] = "Line Opacity"
+L["LINE_OPACITY_DESCRIPTION"] = "How solid the dots are; lower lets more of the map show through."
+L["ROUTES_PARTY_HEADER"] = "Party"
+L["PARTY_QUESTS"] = "Include Party Members' Quests"
+L["PARTY_QUESTS_DESCRIPTION"] =
+	"In a party, the route and the Quest Arrow also take in quests your party members have and you don't, shown just like your own. It needs Questie on both ends to share them. Their dungeon quests are left out, as yours are."
+
+--------------------------------------------------------------------------------
+-- Options: Quest Arrow Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ARROW"] = "Quest Arrow"
+L["TAB_QUEST_ARROW_DESCRIPTION"] =
+	"An arrow on screen pointing to the next waypoint on the route, with the quests and objectives to do there. Right-click it to reroute around the current objective; middle-click it to reset all routes."
+L["QUEST_ARROW_HEADER"] = "Arrow"
+L["ARROW_SIZE"] = "Arrow Size"
+L["ARROW_SIZE_DESCRIPTION"] = "How big the Quest Arrow is, with the text under it."
+L["ARROW_CYCLE"] = "Eye and Arrow Cycle (Seconds)"
+L["ARROW_CYCLE_DESCRIPTION"] =
+	"In an objective area, the Quest Arrow takes turns: the eye, listing the objectives around you, then the arrow, pointing on to the next waypoint. Each gets half of this time."
+L["LOCK_ARROW"] = "Lock the Quest Arrow"
+L["LOCK_ARROW_DESCRIPTION"] = "Keeps the Quest Arrow where it is, so dragging it does nothing."
+L["RESET_ARROW"] = "Arrow Position"
+L["RESET_ARROW_BUTTON"] = "Reset"
+L["RESET_ARROW_DESCRIPTION"] = "Puts the Quest Arrow back where it starts, near the top middle of the screen."
+L["QUEST_ARROW_TEXT_HEADER"] = "Under the Arrow"
+L["SHOW_DISTANCE"] = "Show Distance"
+-- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_ARRIVED, as the Quest Arrow shows them
+L["SHOW_DISTANCE_DESCRIPTION"] = 'Shows how many yards away the next waypoint is. "%s" and "%s" show either way.'
+L["SHOW_ARROW_QUESTS"] = "Show Quests and Objectives"
+L["SHOW_ARROW_QUESTS_DESCRIPTION"] = "Lists the quests at the next waypoint, each with what's left to do there."
+L["QUESTS_LISTED"] = "Maximum Quests Listed"
+-- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
+L["QUESTS_LISTED_DESCRIPTION"] =
+	'The most quests the Quest Arrow lists under itself for one waypoint. Any more are counted on a line of their own, such as "%s".'
+L["QUEST_ARROW_HIDING_HEADER"] = "Hiding"
+L["HIDE_IN_RAIDS"] = "Hide in Raid Groups"
+L["HIDE_IN_RAIDS_DESCRIPTION"] = "Hides the Quest Arrow while you're in a raid group."
+L["HIDE_IN_INSTANCES"] = "Hide in Instances"
+L["HIDE_IN_INSTANCES_DESCRIPTION"] = "Hides the Quest Arrow in dungeons, raids, and battlegrounds."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -183,9 +261,10 @@ L["QUEST_TYPE_GROUP"] = "group"
 L["QUEST_TYPE_ELITE"] = "elite"
 L["QUEST_TYPE_PVP"] = "PvP"
 L["QUEST_LEVEL_LEGEND"] = "Letters after the level: %s."
+-- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s %s"
-L["QUEST_LEVEL_LEGEND_SEPARATOR"] = ", "
 L["QUEST_ID"] = "Quest ID %d"
+-- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "Quest Chain (%d of %d)"
 L["DAILY_RESET"] = "Daily quests reset in %s."
 L["WOWHEAD_LINK_TOOLTIP"] = "Click for a Wowhead link."
@@ -202,36 +281,58 @@ L["TURN_IN_TOOLTIP"] = "Ready to Turn In"
 L["RESIZE_TOOLTIP"] = "Drag to resize the quest log."
 
 --------------------------------------------------------------------------------
--- Zone Menu
+-- Zone Sharing
 --------------------------------------------------------------------------------
 
-L["ZONE_MENU_ACTIONS_HINT"] = "Right-click to share quests or abandon gray ones."
-L["SHARE_ZONE_QUESTS"] = "Share %d Quests"
-L["SHARE_ZONE_QUEST"] = "Share 1 Quest"
+L["SHARE_QUESTS"] = "Share Quests"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"Offers your party the quests in this zone the game lets you share, one every %d seconds."
-L["SHARE_ZONE_QUEST_TOOLTIP"] = "Offers your party the one quest in this zone the game lets you share."
 L["CHAT_SHARING_ZONE_ONE"] = "Sharing 1 quest from %s."
+-- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "Sharing %d quests from %s, one every %d seconds."
-L["ABANDON_GRAY_QUESTS"] = "Abandon Gray Quests"
-L["ABANDON_GRAY_NONE"] = "This zone has no gray quests to abandon."
-L["ABANDON_GRAY_CONFIRM"] = "Abandon these %d gray quests?"
-L["ABANDON_GRAY_CONFIRM_ONE"] = "Abandon this gray quest?"
-L["CHAT_ABANDONED_GRAY"] = "Abandoned %d gray quests."
-L["CHAT_ABANDONED_GRAY_ONE"] = "Abandoned 1 gray quest."
+L["CHAT_SHARING_ZONE_NONE"] = "None of your quests from %s can be shared."
+
+--------------------------------------------------------------------------------
+-- Routes on Zone Map and the Quest Arrow
+--------------------------------------------------------------------------------
+
+L["ROUTES_ARRIVED"] = "You're there"
+L["ROUTES_OBJECTIVE_AREA"] = "Objective Area"
+-- TRANSLATORS: %d is a distance in yards
+L["ROUTES_YARDS"] = "%d yds"
+-- TRANSLATORS: %d is how many more quests the Quest Arrow has at this waypoint than it lists
+L["ROUTES_MORE_TASKS"] = "+%d more here"
+L["ROUTES_TURN_IN"] = "Turn in quest"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
+L["ROUTES_TURN_IN_QUEST"] = "Turn in %s"
+L["ROUTES_CORPSE"] = "Your corpse"
+L["ROUTES_CORPSE_HINT"] = "Run back to it to resurrect"
+-- TRANSLATORS: Heads the list of NPCs, mobs and objects found at a route waypoint
+L["ROUTES_LOOK_FOR"] = "Look For"
+L["ROUTES_CLICK_DRAG"] = "Drag"
+L["ROUTES_CLICK_RIGHT"] = "Right-Click"
+L["ROUTES_CLICK_MIDDLE"] = "Middle-Click"
+L["ROUTES_DRAG_MOVE"] = "Move Quest Arrow"
+L["ROUTES_RIGHT_CLICK_REROUTE"] = "Reroute Current Objective"
+L["ROUTES_MIDDLE_CLICK_RESET"] = "Reset All Routes"
+-- TRANSLATORS: %s is a quest link or a list of them
+L["ROUTES_SKIPPED"] = "Rerouted around %s."
+L["CHAT_FULL_SIZE_MAP_SET"] =
+	"The zone map will open full size again. To keep it small, turn off Open the Zone Map Full Size under Routes on Zone Map."
+L["ROUTES_RESET"] = "All routes reset: rerouted objectives are back on the route."
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
--- TRANSLATORS: sent to other players in chat, 255 bytes at most, with no closing period; %s is a quest link or a list of them
+-- TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
+-- each %s is a quest link or a list of them, and each %d is how many quests
 L["WHISPER_SHARE_FAILED"] =
 	"I tried to share %s with you, but it didn't go through. If you'd like the quest, just give me a shout when you're ready and I'll share it again"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Same goes for %s"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "I have %d quests to do here: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "I have 1 quest to do here: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "More quests to do here: %s"
-L["DUNGEON_QUESTS_SEPARATOR"] = ", "
 
 --------------------------------------------------------------------------------
 -- Questie Tracking

@@ -21,11 +21,23 @@ function ns.RegisterOptionsPanels()
 	ns.optionsFrames = { main = mainPanel, categoryID = mainCategoryID }
 
 	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.QuestLog, ns.BuildQuestLogOptions)
-	local questLogPanel = AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QuestLog, QUEST_LOG, L["ADDON_TITLE"])
+	local questLogPanel =
+		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QuestLog, L["TAB_WIDE_QUEST_LOG"], L["ADDON_TITLE"])
 
 	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.QualityOfLife, ns.BuildQualityOfLifeOptions)
 	local qualityOfLifePanel =
 		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QualityOfLife, L["TAB_QUALITY_OF_LIFE"], L["ADDON_TITLE"])
+
+	-- Routes on Zone Map and Quest Arrow, in the Features section's order, where Routes is loaded
+	local routesMapPanel, questArrowPanel
+	if ns.routes then
+		AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.RoutesMap, ns.BuildRoutesMapOptions)
+		routesMapPanel =
+			AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.RoutesMap, L["TAB_ROUTES_MAP"], L["ADDON_TITLE"])
+		AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.QuestArrow, ns.BuildQuestArrowOptions)
+		questArrowPanel =
+			AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QuestArrow, L["TAB_QUEST_ARROW"], L["ADDON_TITLE"])
+	end
 
 	local profilesOptions = ns.BuildProfilesOptions()
 	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.Profiles, profilesOptions)
@@ -40,15 +52,23 @@ function ns.RegisterOptionsPanels()
 	local diagnosticsPanel =
 		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.Diagnostics, ns.DiagnosticsStrings.TAB, L["ADDON_TITLE"])
 
-	-- The Quest Log switch's reload prompt (Options-General.lua)
-	ns.WatchOptionsForReload({
+	-- The Quest Log switch's reload prompt (Options-General.lua), over the panels this client registered
+	local watched = {}
+	for _, panel in ipairs({
 		mainPanel,
 		questLogPanel,
 		qualityOfLifePanel,
+		routesMapPanel or false,
+		questArrowPanel or false,
 		profilesPanel,
 		feedbackSupportPanel,
 		diagnosticsPanel,
-	})
+	}) do
+		if panel then
+			watched[#watched + 1] = panel
+		end
+	end
+	ns.WatchOptionsForReload(watched)
 end
 
 --------------------------------------------------------------------------------

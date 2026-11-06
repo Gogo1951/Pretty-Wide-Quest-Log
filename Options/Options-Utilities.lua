@@ -18,10 +18,17 @@ function ns.OptionsSpacer(order, hidden)
 	return { type = "description", name = " ", order = order, hidden = hidden }
 end
 
-function ns.OptionsRowLabel(text, order, width, hidden)
+--[[
+	A row's caption on the left of its control. Given desc, the caption shows the same tooltip as its
+	control, titled with the caption: AceConfig wires every row to its tooltip, and InteractiveLabel is the
+	label that takes the mouse
+]]
+function ns.OptionsRowLabel(text, order, width, hidden, desc)
 	return {
 		type = "description",
 		name = text,
+		desc = desc,
+		dialogControl = desc and "InteractiveLabel" or nil,
 		fontSize = "medium",
 		width = width or ns.OPTIONS_LABEL_WIDTH,
 		order = order,
@@ -50,6 +57,49 @@ function ns.OptionsFeatureToggle(key, nameKey, descKey, order, width, onSet)
 			end
 		end,
 	}
+end
+
+--[[
+	A Routes setting's switch. Routes is one line to leave out of the TOC (Features/Routes), so the switch
+	hides without it. hidden, if given, hides it too
+]]
+function ns.OptionsRoutesToggle(key, nameKey, descKey, order, width, hidden)
+	return {
+		type = "toggle",
+		name = ns.L[nameKey],
+		desc = ns.L[descKey],
+		width = width or "full",
+		order = order,
+		hidden = function()
+			return ns.routes == nil or (hidden ~= nil and hidden())
+		end,
+		get = function()
+			return ns.routes.Settings()[key]
+		end,
+		set = function(_, value)
+			ns.routes.SetSetting(key, value)
+		end,
+	}
+end
+
+--[[
+	A control on the right of a row for a Routes setting (key; nil for a button), its caption on its own row
+	label to the left, as the other panels lay out sliders and choices. hidden hides it
+]]
+function ns.OptionsRoutesControl(key, control, order, hidden)
+	control.name = control.name or ""
+	control.width = ns.OPTIONS_CONTROL_WIDTH
+	control.order = order
+	control.hidden = hidden
+	if key then
+		control.get = function()
+			return ns.routes.Settings()[key]
+		end
+		control.set = function(_, value)
+			ns.routes.SetSetting(key, value)
+		end
+	end
+	return control
 end
 
 --[[

@@ -16,6 +16,8 @@ local questGiverID = QuestDetailScrollChildFrame:CreateFontString(nil, "ARTWORK"
 questGiverID:SetJustifyH("RIGHT")
 -- Its Wowhead button follows it from page to page
 local questGiverIDButton = ns.LinkQuestIDToWowhead(QuestDetailScrollChildFrame, questGiverID, GetQuestID)
+-- Room under it, so scrolled to the bottom it sits clear of the page's edge
+local questGiverIDRoom = ns.CreateRoomBelow(QuestDetailScrollChildFrame, questGiverID)
 
 local function IsOn(region, page)
 	local parent = region:GetParent()
@@ -53,6 +55,7 @@ local function ShowQuestGiverID(parentFrame, width)
 		return
 	end
 	questGiverID:SetParent(parentFrame)
+	questGiverIDRoom:SetParent(parentFrame)
 	if questGiverIDButton then
 		questGiverIDButton:SetParent(parentFrame)
 	end

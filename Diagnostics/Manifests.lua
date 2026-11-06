@@ -153,7 +153,70 @@ local SHARED_TABLES = {
 	"ChatTypeInfo",
 }
 
--- The quest log index calls the zone menu (Classic-Zone-Actions.lua) and these reports read the log with
+--[[
+	The quest giver and gossip pages Quest Giver Window Cleanup restyles (Quest-Giver-Pages.lua, Gossip.lua,
+	Quest-Rewards.lua). Each of Gossip.lua's and Quest-Rewards.lua's is skipped where the client lacks it,
+	leaving that piece as Blizzard drew it
+]]
+local GIVER_PAGE_TABLES = {
+	"GreetingText",
+	"QuestGreetingFrameHorizontalBreak",
+	"CurrentQuestsText",
+	"AvailableQuestsText",
+	"QuestProgressTitleText",
+	"GossipFrame",
+	"GossipFrame.GreetingPanel.ScrollBox",
+	"GossipGreetingTextMixin",
+	"GossipOptionButtonMixin",
+}
+
+local GIVER_PAGE_FUNCTIONS = {
+	"GossipGreetingTextMixin.Setup",
+	"GossipOptionButtonMixin.Setup",
+	"QuestProgressScrollFrame.UpdateScrollChildRect",
+	"MoneyFrame_Update",
+}
+
+-- The rewards heading spaced under the quest text: the rewards block's own, or Blizzard's global one
+local REWARDS_HEADING_ROUTE = {
+	"QuestInfoRewardsFrame.Header or QuestInfoRewardsHeader",
+	function()
+		return type(Resolve("QuestInfoRewardsFrame.Header")) == "table" or type(QuestInfoRewardsHeader) == "table"
+	end,
+}
+
+--[[
+	Routes (Features/Routes): the player's zone, position, facing and corpse, the map's full-size setting,
+	planning a few milliseconds a frame, and the world map the route draws on. The corpse, the deepest map
+	at it and short party names each go without where the client lacks them
+]]
+local ROUTES_FUNCTIONS = {
+	"C_Map.GetBestMapForUnit",
+	"GetPlayerFacing",
+	"UnitIsGhost",
+	"GetCVarBool",
+	"SetCVar",
+	"debugprofilestop",
+	"C_Timer.NewTimer",
+	"WorldMapFrame.AddDataProvider",
+	"C_DeathInfo.GetCorpseMapPosition",
+	"C_Map.GetMapInfoAtPosition",
+	"Ambiguate",
+}
+
+-- The fonts a tooltip's click hints are set in (Routes-Core.lua)
+local ROUTES_TABLES = {
+	"GameTooltipText",
+	"GameTooltipHeaderText",
+}
+
+-- How a map from Questie's database is matched to the player's zone (Routes-Questie.lua)
+local ROUTES_NUMBERS = {
+	"Enum.UIMapType.Micro",
+	"Enum.UIMapType.Continent",
+}
+
+-- The quest log index calls Share Quests (Classic-Zone-Actions.lua) and these reports read the log with
 local LOG_INDEX_FUNCTIONS = {
 	"QuestLog_Update",
 	"GetNumQuestLogEntries",
@@ -223,6 +286,9 @@ local CLASSIC_TABLES = {
 
 -- The window of its own on WoW Forever and Mists (Forever-Quest-Log.lua and the files after it)
 local OWN_WINDOW_FUNCTIONS = {
+	-- Who in the party has a quest, on a quest row's tooltip (Forever-Quest-List.lua)
+	"GetUnitName",
+	"UnitClass",
 	"C_QuestLog.GetMaxNumQuestsCanAccept",
 	"GetNumQuestLeaderBoards",
 	"GetQuestLogLeaderBoard",
@@ -252,6 +318,7 @@ local OWN_WINDOW_FUNCTIONS = {
 }
 
 local OWN_WINDOW_TABLES = {
+	"RAID_CLASS_COLORS",
 	"QUEST_TEMPLATE_LOG",
 	"QuestMapFrame",
 	"QuestMapFrame.DetailsFrame",
@@ -273,7 +340,7 @@ local OWN_WINDOW_TABLES = {
 	"UISpecialFrames",
 }
 
--- WoW Forever's quest log calls by quest ID (Utilities.lua, Forever-Tracking.lua, Forever-Zone-Actions.lua)
+-- WoW Forever's quest log calls by quest ID (Quest-Log-API.lua, Forever-Tracking.lua, Forever-Zone-Actions.lua)
 local QUEST_ID_FUNCTIONS = {
 	"C_QuestLog.GetInfo",
 	"C_QuestLog.GetNumQuestLogEntries",
@@ -295,6 +362,7 @@ local QUEST_ID_FUNCTIONS = {
 	"C_QuestLog.SetAbandonQuest",
 	"C_QuestLog.AbandonQuest",
 	"C_QuestLog.IsPushableQuest",
+	"C_QuestLog.IsUnitOnQuest",
 	"C_QuestLog.IsQuestDisabledForSession",
 	"C_PlayerInfo.GetContentDifficultyQuestForPlayer",
 	"GetDifficultyColor",
@@ -312,8 +380,9 @@ local QUEST_ID_TABLES = {
 	"Enum.RelativeContentDifficulty",
 }
 
--- The window on Mists, over the quest log index calls above (Utilities.lua, Mists-Tracking.lua, Mists-Quest-Portrait.lua)
+-- The window on Mists, over the quest log index calls above (Quest-Log-API.lua, Mists-Tracking.lua, Mists-Quest-Portrait.lua)
 local INDEX_WINDOW_FUNCTIONS = {
+	"IsUnitOnQuest",
 	"AddQuestWatch",
 	"RemoveQuestWatch",
 	"WatchFrame_Update",
@@ -338,7 +407,7 @@ end
 
 --[[
 	The quest title and tag by quest ID, on every client but WoW Forever, take whichever call the client
-	has (Utilities.lua), so each row passes where one of them is there
+	has (Quest-Log-API.lua), so each row passes where one of them is there
 ]]
 local QUEST_LOOKUP_ROUTES = {
 	{
@@ -396,6 +465,16 @@ Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_LOG", "ELITE" }))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "LE_PARTY_CATEGORY_INSTANCE" }))
 -- The party read leaves out a member whose answers are secret only where this exists; without it, all are readable (Dungeon-Quests.lua)
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", { "issecretvalue" }))
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", GIVER_PAGE_TABLES))
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", GIVER_PAGE_FUNCTIONS))
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "GOSSIP_BUTTON_TYPE_DIVIDER" }))
+Append(ns.DIAGNOSTIC_API_CHECKS, { REWARDS_HEADING_ROUTE })
+-- Routes is one TOC line (Routes.xml), so a release can leave it out
+if ns.routes then
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", ROUTES_FUNCTIONS))
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", ROUTES_TABLES))
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", ROUTES_NUMBERS))
+end
 -- The map's frame, built in Features/Quest-Map.xml, which only a client with the map lists (Quest-Map.lua)
 if ns.hasQuestMap then
 	Append(
@@ -424,7 +503,7 @@ if QUEST_ID_API then
 else
 	Append(ns.DIAGNOSTIC_API_CHECKS, QUEST_LOOKUP_ROUTES)
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", LOG_INDEX_FUNCTIONS))
-	-- The zone menu redraws Blizzard's quest log only while it's open
+	-- Share Quests redraws Blizzard's quest log only while it's open
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", { "QuestLogFrame" }))
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "MAX_WATCHABLE_QUESTS" }))
 	if OWN_WINDOW then
@@ -601,6 +680,9 @@ local OWN_WINDOW_LABELS = {
 	"EXIT",
 	"PARENS_TEMPLATE",
 	"QUEST_TITLE_FORMAT_FAILED",
+	-- A quest row's tooltip while in a group (Forever-Quest-List.lua)
+	"PARTY_QUEST_STATUS_ON",
+	"PARTY_QUEST_STATUS_NONE",
 }
 
 -- A full watch list's message on WoW Forever (Forever-Tracking.lua)
@@ -1024,7 +1106,7 @@ function ns:BuildQuestLogContextReport()
 	lines[#lines + 1] = ""
 	Setting(lines, "Zone order", "zoneSort")
 	Setting(lines, "Current zone first", "currentZoneFirst")
-	-- Your Zone First and the zone mark match this name against the zone headers (Utilities.lua)
+	-- Your Zone First and the zone mark match this name against the zone headers (Quest-Sort.lua)
 	lines[#lines + 1] = string.format("Player's zone: %s", tostring(GetRealZoneText()))
 	lines[#lines + 1] = string.format("Zone header matching it: %s", YesNo(CurrentZoneHeaderListed()))
 	Setting(lines, "Space above zone names", "zoneGap")
@@ -1358,28 +1440,22 @@ local function QuestZone(questID)
 end
 
 --[[
-	What the zone menu offers for a zone (Zone-Menu.lua): Share is left out with nothing to share, and
-	Abandon Gray Quests grayed out with nothing gray. On Classic Era and TBC the menu selects each quest to
-	ask whether it can be shared, so only the zone's gray quests are counted here, with the list's own test
+	What a zone's Share Quests button would share (Zone-Share.lua). On Classic Era and TBC it selects
+	each quest to ask whether it can be shared, so only the zone's quests are counted here
 ]]
-local function ZoneMenuLines(lines, zoneTitle)
+local function ZoneShareLines(lines, zoneTitle)
 	lines[#lines + 1] = string.format("  Its zone: %s", tostring(zoneTitle))
 	if not zoneTitle then
 		return
 	end
 	if QUEST_ID_API then
 		local shareable, total = ns.ShareableZoneQuests(zoneTitle)
-		lines[#lines + 1] = string.format(
-			"  Zone menu: %d of %d quests can be shared, %d gray",
-			#shareable,
-			total,
-			#ns.GrayQuests(zoneTitle)
-		)
+		lines[#lines + 1] = string.format("  Share Quests: %d of %d quests can be shared", #shareable, total)
 		return
 	end
-	local inZone, total, gray = false, 0, 0
+	local inZone, total = false, 0
 	for entry = 1, GetNumQuestLogEntries() do
-		local title, level, _, isHeader, _, _, _, entryID = GetQuestLogTitle(entry)
+		local title, _, _, isHeader, _, _, _, entryID = GetQuestLogTitle(entry)
 		if isHeader then
 			if inZone then
 				break
@@ -1387,28 +1463,21 @@ local function ZoneMenuLines(lines, zoneTitle)
 			inZone = title == zoneTitle
 		elseif inZone and entryID then
 			total = total + 1
-			if GetQuestDifficultyColor(level) == QuestDifficultyColors.trivial then
-				gray = gray + 1
-			end
 		end
 	end
-	lines[#lines + 1] = string.format(
-		"  Zone menu: %d quests, %d gray; which can be shared is only checked as the menu opens",
-		total,
-		gray
-	)
+	lines[#lines + 1] =
+		string.format("  Share Quests: %d quests; which can be shared is only checked as the button is clicked", total)
 end
 
 --[[
-	The state behind "Share is grayed out or missing in the zone menu",
-	"Abandon Gray Quests is grayed out", "no whisper went out when a share
-	failed" and dungeon quest reports. Reads only: nothing is shared or sent,
+	The state behind "Share Quests is grayed out or shares nothing", "no
+	whisper went out when a share failed" and dungeon quest reports. Reads only: nothing is shared or sent,
 	and the quest log's selection and zones are left as they are.
 ]]
 function ns:BuildSharingContextReport()
 	local lines = { GetClientHeader(), "" }
 
-	-- The zone menu's Share is grayed out while solo and while a run of shares is still going (Zone-Menu.lua)
+	-- Share Quests is grayed out while solo and while a run of shares is still going (Zone-Share.lua)
 	lines[#lines + 1] = string.format("In a group: %s", YesNo(IsInGroup()))
 	lines[#lines + 1] = string.format("Share run in progress: %s", YesNo(ns.sharingQuests))
 	lines[#lines + 1] = string.format("Seconds between shares in use: %s", tostring(ns.db and ns.GetShareInterval()))
@@ -1426,7 +1495,7 @@ function ns:BuildSharingContextReport()
 			"  The game lets you share it: %s",
 			pushable == nil and "not checked (Blizzard's selected quest is another)" or YesNo(pushable)
 		)
-		ZoneMenuLines(lines, QuestZone(questID))
+		ZoneShareLines(lines, QuestZone(questID))
 	end
 
 	-- A whisper goes out only with both switches on, for a result within the share interval of the share
@@ -1762,6 +1831,9 @@ function ns:BuildMapContextReport()
 		local blizzardID = questID ~= (questMap and questMap.questieQuestID) and questID or nil
 		lines[#lines + 1] =
 			string.format("Blizzard's objective area and quest marker drawn for: %s", tostring(blizzardID or "(none)"))
+		-- Those layers, the dungeon entrances and the flight points hold their redraws until combat ends
+		lines[#lines + 1] =
+			string.format("In combat, so Blizzard's layers wait to redraw: %s", YesNo(InCombatLockdown()))
 		local mapID = canvas and canvas:GetMapID()
 		if blizzardID and mapID and C_QuestLog.GetNextWaypointForMap then
 			local x, y = C_QuestLog.GetNextWaypointForMap(blizzardID, mapID)
@@ -1775,6 +1847,302 @@ function ns:BuildMapContextReport()
 	Setting(lines, "Show objective areas", "showObjectiveAreas")
 	lines[#lines + 1] = string.format("Objective areas shaded: %s", tostring(questMap and questMap.areaCount))
 	ObjectiveAreaLines(lines, pins, questID, canvas and canvas:GetMapID())
+
+	return table.concat(lines, "\n")
+end
+
+--------------------------------------------------------------------------------
+-- Routes Context
+--------------------------------------------------------------------------------
+
+-- The route's two pin templates in Routes.xml, which Routes-Map.lua draws on the world map
+local ROUTE_LINE_TEMPLATE = "PrettyWideQuestLogRouteLinePinTemplate"
+local ROUTE_STOP_TEMPLATE = "PrettyWideQuestLogRouteStopPinTemplate"
+
+-- The QuestieDB lookups a plan makes: turn-in NPCs and objects, and escort and instance quests (Routes-Nodes.lua, Routes-Questie.lua)
+local ROUTE_QUESTIE_QUERIES = { "QueryNPCSingle", "QueryObjectSingle", "QueryQuestSingle", "GetQuestTagInfo" }
+
+local function RouteSetting(lines, label, key)
+	lines[#lines + 1] = string.format("%s: %s", label, tostring(ns.routes.Settings()[key]))
+end
+
+local function WorldPosition(x, y, instance)
+	if not (x and y) then
+		return "(the client won't say)"
+	end
+	return string.format("%.0f, %.0f yards on continent %s", x, y, tostring(instance))
+end
+
+local function PinCount(map, template)
+	local count = 0
+	for _ in map:EnumeratePinsByTemplate(template) do
+		count = count + 1
+	end
+	return count
+end
+
+--[[
+	Questie's quest log as a plan reads it: each quest's state, and the objectives still to do, split by
+	whether Questie has placed their spawns yet. An objective without spawns has no place on the route
+]]
+local function RouteQuestLines(lines)
+	local toDo, done, failed, withSpawns, withoutSpawns = 0, 0, 0, 0, 0
+	for _, quest in pairs(ns.routes.QuestLog()) do
+		if type(quest) == "table" then
+			local state = ns.routes.QuestState(quest)
+			if state == 1 then
+				done = done + 1
+			elseif state == -1 then
+				failed = failed + 1
+			else
+				toDo = toDo + 1
+				ns.routes.ForEachObjective(quest, function(_, objective)
+					if type(objective) == "table" and not objective.Completed then
+						if ns.routes.HasSpawns(objective) then
+							withSpawns = withSpawns + 1
+						else
+							withoutSpawns = withoutSpawns + 1
+						end
+					end
+				end)
+			end
+		end
+	end
+	lines[#lines + 1] =
+		string.format("Quests in Questie's quest log: %d to do, %d done (turn-ins), %d failed", toDo, done, failed)
+	lines[#lines + 1] = string.format(
+		"Objectives still to do: %d with spawns placed, %d without (left off the route)",
+		withSpawns,
+		withoutSpawns
+	)
+end
+
+-- Each task of a stop, or of what the arrow shows, as the arrow and the map's markers list them
+local function TaskLines(lines, tasks)
+	for _, task in ipairs(tasks) do
+		lines[#lines + 1] = string.format(
+			"  %s %s: %s%s",
+			tostring(task.questID or ""),
+			tostring(task.questName or ""),
+			ns.routes.TaskText(task),
+			task.party and " (a party member's quest)" or ""
+		)
+	end
+end
+
+local function RouteStopLines(lines, label, stop)
+	if not stop then
+		lines[#lines + 1] = string.format("%s: (none)", label)
+		return
+	end
+	lines[#lines + 1] = string.format(
+		"%s: %d tasks, %s, %.0f yards across",
+		label,
+		#stop.tasks,
+		stop.corpse and "your corpse" or (stop.area and "an area" or "one place"),
+		(stop.radius or 0) * 2
+	)
+	TaskLines(lines, stop.tasks)
+end
+
+local function ArrowLines(lines)
+	local routes = ns.routes
+	local arrow = _G.PrettyWideQuestLogRouteArrow
+	-- The arrow shows with a first stop on the route, out of a raid group and an instance as the settings hide it there (Routes-Arrow.lua)
+	lines[#lines + 1] = string.format("Quest Arrow: %s", Shown(arrow))
+	RouteSetting(lines, "Hide in raid groups", "hideInRaids")
+	RouteSetting(lines, "Hide in instances", "hideInInstances")
+	local _, instanceType = IsInInstance()
+	lines[#lines + 1] =
+		string.format("In a raid group / instance type: %s / %s", YesNo(IsInRaid()), tostring(instanceType))
+	-- Without the player's position on this continent or their facing the arrow hides, leaving the text (Routes-Arrow.lua)
+	lines[#lines + 1] = string.format("Your facing: %s", tostring(GetPlayerFacing()))
+	-- Around an objective, the eye lists every objective there, by turns with the arrow to the next destination
+	local target = routes.arrowTarget
+	if type(target) == "table" and type(target.tasks) == "table" then
+		lines[#lines + 1] = string.format(
+			"Arrow showing: %s, %d tasks",
+			target.x and "the next destination" or "the objective areas you're in",
+			#target.tasks
+		)
+		TaskLines(lines, target.tasks)
+	else
+		lines[#lines + 1] = "Arrow showing: (nothing)"
+	end
+	if arrow then
+		local point, _, relativePoint, x, y = arrow:GetPoint(1)
+		lines[#lines + 1] = string.format(
+			"Quest Arrow anchor: %s to %s, %s, %s, scale %s",
+			tostring(point),
+			tostring(relativePoint),
+			tostring(x),
+			tostring(y),
+			tostring(arrow:GetScale())
+		)
+	end
+	local saved = routes.ArrowPoint()
+	lines[#lines + 1] = string.format(
+		"Quest Arrow saved spot: %s",
+		type(saved) == "table"
+				and table.concat(
+					{ tostring(saved[1]), tostring(saved[3]), tostring(saved[4]), tostring(saved[5]) },
+					", "
+				)
+			or "(none, so near the top middle of the screen)"
+	)
+	RouteSetting(lines, "Arrow size", "arrowScale")
+	RouteSetting(lines, "Lock the arrow", "lockArrow")
+	RouteSetting(lines, "Show distance", "showDistance")
+	RouteSetting(lines, "Seconds an objective area's eye and arrow take by turns", "cycleSeconds")
+	RouteSetting(lines, "Show quests under the arrow", "showQuests")
+	RouteSetting(lines, "Quests listed at most", "questsListed")
+end
+
+local function ZoneMapLines(lines)
+	lines[#lines + 1] = string.format("World map: %s", Shown(WorldMapFrame))
+	local canMeasure = WorldMapFrame and type(WorldMapFrame.EnumeratePinsByTemplate) == "function"
+	if canMeasure then
+		lines[#lines + 1] = MapLine("World map showing", WorldMapFrame:GetMapID())
+		-- The route is drawn on whatever map the world map shows; a stop off that map gets no marker
+		lines[#lines + 1] = string.format(
+			"Route drawn on it: %d line, %d stop markers",
+			PinCount(WorldMapFrame, ROUTE_LINE_TEMPLATE),
+			PinCount(WorldMapFrame, ROUTE_STOP_TEMPLATE)
+		)
+	end
+	--[[
+		Full Size Map turns the map's own miniWorldMap setting off (0), never in combat, as the map closes
+		and as settings change (Routes-Map.lua)
+	]]
+	lines[#lines + 1] = string.format("miniWorldMap CVar: %s", tostring(GetCVar("miniWorldMap")))
+	RouteSetting(lines, "Full size map", "fullSizeMap")
+	RouteSetting(lines, "Hide Questie's icons for the route", "hideQuestieIcons")
+	RouteSetting(lines, "Marker size", "markerScale")
+	RouteSetting(lines, "Show the line", "showLine")
+	RouteSetting(lines, "Line speed", "lineSpeed")
+	RouteSetting(lines, "Line opacity", "lineOpacity")
+	-- Questie's icons the route stands in for are hidden again each time Questie redraws, through these
+	local pins = LibStub("HereBeDragonsQuestie-Pins-2.0", true)
+	local provider = pins and pins.worldmapProvider
+	lines[#lines + 1] = string.format(
+		"Questie's world map provider RefreshAllData / HandlePin: %s",
+		type(provider) == "table"
+				and string.format(
+					"%s / %s",
+					YesNo(type(provider.RefreshAllData) == "function"),
+					YesNo(type(provider.HandlePin) == "function")
+				)
+			or "not found"
+	)
+end
+
+local function PartyLines(lines)
+	-- A party member's quests come from their Questie, in a party but not a raid group (Routes-Party.lua)
+	RouteSetting(lines, "Party members' quests", "partyQuests")
+	lines[#lines + 1] = string.format("In a party, not a raid group: %s", YesNo(IsInGroup() and not IsInRaid()))
+	local comms = ns.ImportQuestieModule("QuestieComms")
+	local logs = comms and comms.remoteQuestLogs
+	if type(logs) ~= "table" then
+		lines[#lines + 1] = "Questie's party quest logs: not found"
+		return
+	end
+	local own, others = ns.routes.QuestLog(), 0
+	for questID in pairs(logs) do
+		if type(questID) == "number" and not own[questID] then
+			others = others + 1
+		end
+	end
+	lines[#lines + 1] =
+		string.format("Quests the party's Questie has shared: %d, %d of them not in your log", CountKeys(logs), others)
+end
+
+--[[
+	The state behind "there's no route", "the Quest Arrow is missing or won't point" and "the route isn't
+	on the map" reports: the switches, what a plan needs from Questie and the client, the route as
+	planned, the arrow and the world map. Reads only: nothing is planned, skipped or moved
+]]
+function ns:BuildRoutesContextReport()
+	local lines = { GetClientHeader(), "" }
+	local routes = ns.routes
+	if not routes then
+		lines[#lines + 1] = "Routes: not loaded (its TOC line, Features/Routes/Routes.xml, is missing)"
+		return table.concat(lines, "\n")
+	end
+
+	-- Nothing plans or draws unless the whole route is on, with the map's route or the Quest Arrow (Routes-Core.lua)
+	lines[#lines + 1] = string.format("Saved settings loaded: %s", YesNo(ns.db))
+	RouteSetting(lines, "Routes switch", "enabled")
+	RouteSetting(lines, "Route on the zone map", "showMap")
+	RouteSetting(lines, "Quest Arrow switch", "showArrow")
+	lines[#lines + 1] = string.format("Route wanted: %s", YesNo(routes.IsWanted()))
+	-- Old account-wide settings move onto the profile at login (Routes-Core.lua's migration)
+	if ns.db and ns.db.global.routes ~= nil then
+		lines[#lines + 1] = "  Old account-wide Routes settings are still waiting to move to the profile."
+	end
+
+	-- A plan reads Questie's quest log, database and map library once Questie has started (Routes-Questie.lua)
+	lines[#lines + 1] = ""
+	lines[#lines + 1] = string.format("Questie: %s", Loaded(ns.QUESTIE_ADDON_NAME))
+	lines[#lines + 1] =
+		string.format("Questie started: %s", tostring(type(Questie) == "table" and Questie.started or nil))
+	lines[#lines + 1] = string.format(
+		"HereBeDragonsQuestie-2.0: %s",
+		LibStub("HereBeDragonsQuestie-2.0", true) and "found" or "not found"
+	)
+	lines[#lines + 1] =
+		string.format("QuestiePlayer module: %s", ns.ImportQuestieModule("QuestiePlayer") and "found" or "not found")
+	lines[#lines + 1] = string.format("Questie ready for a route: %s", YesNo(routes.IsQuestieReady()))
+	lines[#lines + 1] = string.format("Questie lookups a plan uses: %s", QuestieQueries(ROUTE_QUESTIE_QUERIES))
+	-- An objective's spawns go on the route only through ZoneDB's lookup, and only those in your phase (Routes-Blobs.lua)
+	local zoneDB = ns.ImportQuestieModule("ZoneDB")
+	local phasing = ns.ImportQuestieModule("Phasing")
+	lines[#lines + 1] = string.format(
+		"Questie ZoneDB GetUiMapIdByAreaId: %s",
+		(zoneDB and type(zoneDB.GetUiMapIdByAreaId) == "function") and "found"
+			or "not found, so no objective has a place"
+	)
+	lines[#lines + 1] = string.format(
+		"Questie Phasing IsSpawnVisible: %s",
+		(phasing and type(phasing.IsSpawnVisible) == "function") and "found" or "not found, so every spawn counts"
+	)
+	RouteQuestLines(lines)
+
+	-- A plan sets out from the player, or a ghost's corpse, and waits out combat (Routes-Nodes.lua, Routes-Core.lua)
+	lines[#lines + 1] = ""
+	lines[#lines + 1] = string.format("Your position: %s", WorldPosition(routes.PlayerPosition()))
+	lines[#lines + 1] = MapLine("Your zone, the one the route covers", routes.PlayerZone())
+	local ghost = UnitIsGhost("player")
+	lines[#lines + 1] = string.format("A ghost: %s", YesNo(ghost))
+	if ghost then
+		local x, y, instance = routes.CorpsePosition()
+		lines[#lines + 1] = string.format(
+			"  Corpse: %s",
+			x and WorldPosition(x, y, instance) or "(the client won't say, so the route sets out from you)"
+		)
+	end
+	lines[#lines + 1] = string.format("In combat, where planning waits: %s", YesNo(InCombatLockdown()))
+
+	-- The route as last planned
+	lines[#lines + 1] = ""
+	lines[#lines + 1] = string.format("Stops on the route: %d", #routes.stops)
+	local start = routes.start
+	lines[#lines + 1] = string.format(
+		"Planned from: %s",
+		start and (WorldPosition(start.x, start.y, start.instance) .. (start.corpse and ", your corpse" or ""))
+			or "(not planned since the last zone change)"
+	)
+	lines[#lines + 1] = string.format(
+		"Stops skipped until Reset All Routes: %d",
+		type(routes.skipped) == "table" and CountKeys(routes.skipped) or 0
+	)
+	RouteStopLines(lines, "First stop", routes.stops[1])
+
+	lines[#lines + 1] = ""
+	ArrowLines(lines)
+	lines[#lines + 1] = ""
+	ZoneMapLines(lines)
+	lines[#lines + 1] = ""
+	PartyLines(lines)
 
 	return table.concat(lines, "\n")
 end

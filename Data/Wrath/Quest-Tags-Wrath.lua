@@ -17,7 +17,7 @@ Last Validated
 
 Notes
 	- The quest tags that put a letter after a quest's level, D for a dungeon, R for a raid, P for PvP, G for a
-	  group quest and E for an elite one, in the quest list, the quest chain, the zone menu and a quest giver's
+	  group quest and E for an elite one, in the quest list, the quest chain and a quest giver's
 	  list of quests (ns.QuestSuffix in Features/Quest-Display.lua). A quest with no tag here but flagged elite
 	  gets E there too.
 	- Keyed by the client's QuestInfo ID, the tag ID GetQuestTagInfo returns. ID 1 is Elite on Classic Era data

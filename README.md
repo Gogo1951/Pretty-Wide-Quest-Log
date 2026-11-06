@@ -1,8 +1,8 @@
 # Pretty Wide Quest Log (PWQL)
 
-A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags, rewards, quest chains, and a quest map for every quest. Share quests with your party and auto-announce dungeon quests. Works with Questie, Spoken, VoiceOver, and ElvUI.
+Wide quest log with a quest route and quest arrow. You pick the quests, we help with a clean route to get them done fast. Quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI.
 
-**TL;DR:** The quest log Blizzard should have shipped. Everything about a quest on one screen, and your whole group on the same quests without typing a word.
+**TL;DR:** Quest with confidence and speed. The quest log Blizzard should have shipped, a route through every quest you picked, and your whole group on the same quests without typing a word.
 
 ### Forever
 
@@ -32,11 +32,14 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 2. Type `/pwql` to open the Options Interface and pick how zones and quests are sorted.
 3. Press your quest log key (L), or click the quest log button on the micro menu.
 4. Drag the grip in the bottom-right corner to make the window as tall as you like.
-5. _"Your quest log's sorted. Now go find Mankrik's wife."_
+5. With Questie on, open your zone map (M) to see your route, then follow the Quest Arrow.
+6. _"Your quest log's sorted. Now go find Mankrik's wife."_
 
 ## Features
 
 📖 **Everything at a Glance** // Your whole quest list and every detail of the selected quest side by side, with level, dungeon, raid, elite, group, and PvP tags to size up a quest before diving in.
+
+🧭 **A Clean Route, Start to Finish** // Your quests laid out as one route on the zone map, and an arrow on screen pointing to the next waypoint. Less guessing, more questing.
 
 🗂️ **Organized and Easy to Scan** // Sort zones and quests by level or name, with roomier lines, cleaner headings, and checkmarks on finished objectives, all true to Blizzard's look.
 
@@ -46,18 +49,25 @@ A wide, resizable dual-pane quest log with quest levels, dungeon and elite tags,
 
 ## Tips & Tricks
 
+### Routes & the Quest Arrow
+
+Both need Questie. Open your zone map and every quest in your log is laid out as one route, nearest first, with a marker on each objective and turn-in. The Quest Arrow points to the next waypoint and lists what's left to do there. In a party, it picks up your party members' quests too, when they run Questie.
+
+Routes aren't perfect, but for most quest lists they'll beat guessing an order in your head (=
+
+| Click | What It Does |
+| --- | --- |
+| **Drag** the Quest Arrow | Move it. |
+| **Right-Click** the Quest Arrow | Reroute around the current objective. |
+| **Middle-Click** the Quest Arrow | Reset all routes. |
+
+To give the route room, the zone map opens full size: Routes turns off the game's `miniWorldMap` setting and says so in chat when it does. To keep the map small, turn off Open the Zone Map Full Size under Routes on Zone Map.
+
 ### Quest Chains
 
 Never lose your place in a long chain again. With Questie installed, the selected quest's details list every step of its chain, checking off the ones you've turned in and highlighting the one you're on. Hover any step for Questie's tooltip on it.
 
 <img width="800" src="https://github.com/user-attachments/assets/6cf6eebe-5eaf-4b0e-98d3-b9811741f6ed" />
-
-### Handy Clicks
-
-| Click | What It Does |
-| --- | --- |
-| **Right-Click** a zone name | Share all its quests with your party, or abandon its gray ones. |
-| **Click** a quest's ID | Get its Wowhead link, ready to copy. |
 
 ## Testing & Localization Status
 
@@ -77,9 +87,10 @@ Never lose your place in a long chain again. With Questie installed, the selecte
 
 ## Appreciation & History
 
-👾 **I didn't create this add-on, I just updated it.**
+🚀 **This add-on stands on the shoulders of those that came before.**
 
 * Iriel and Kudane's [DoubleWide](https://www.wowinterface.com/downloads/info6887-DoubleWide.html)
+* Smariot's [QuestHelper](https://www.wowinterface.com/downloads/info9896-QuestHelper.html)
 * bloodline\_'s [Wide Quest Log](https://www.wowinterface.com/downloads/info25249-WideQuestLog.html)
 * bloodline\_'s [Wide Quest Log Levels](https://www.wowinterface.com/downloads/info25272-WideQuestLogLevels.html)
 * CloneVince's [Wide Quest Log](https://www.curseforge.com/wow/addons/widequestlog)
@@ -108,6 +119,6 @@ Never lose your place in a long chain again. With Questie installed, the selecte
 
 * DarrenKosick's [BetterQuestLog](https://www.curseforge.com/wow/addons/betterquestlog)
 * Kerzo's [Kerzo Classic Quest Log](https://www.curseforge.com/wow/addons/kerzo-classic-quest-log)
-* bitekenny's [StBu Master Questlog | Forever](https://www.curseforge.com/wow/addons/stbu-master-questlog)
+* DonCoohd's [Questdon: Quest & Dungeon Helper](https://www.curseforge.com/wow/addons/questdon)
+* TheWonder90's [Questie Arrow](https://www.curseforge.com/wow/addons/questie-magic-arrow-2)
 * bitekenny's [StBu MasterQuestLog | The Burning Crusade](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
-* bitekenny's [StBu QuestLogLayout | Classic](https://www.curseforge.com/wow/addons/sb-questloglayout)

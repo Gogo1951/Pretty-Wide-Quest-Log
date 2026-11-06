@@ -3,7 +3,7 @@
 		One of Questie's quest icons, drawn again on the map. The canvas makes its pins from a named
 		template, which only XML can declare
 	-->
-	<Frame name="PrettyWideQuestLogQuestiePinTemplate" mixin="MapCanvasPinMixin" enableMouse="true" virtual="true">
+	<Frame name="PrettyWideQuestLogQuestiePinTemplate" mixin="PrettyWideQuestLogPinMixin" enableMouse="true" virtual="true">
 		<Size x="12" y="12"/>
 		<Layers>
 			<Layer level="ARTWORK" textureSubLevel="-1">
@@ -23,5 +23,5 @@
 		(Questie-Map-Area-Layer.lua). It takes no mouse, so dragging the map and hovering the icons above it pass
 		straight through
 	-->
-	<Frame name="PrettyWideQuestLogAreaPinTemplate" mixin="MapCanvasPinMixin" virtual="true"/>
+	<Frame name="PrettyWideQuestLogAreaPinTemplate" mixin="PrettyWideQuestLogPinMixin" virtual="true"/>
 </Ui>
