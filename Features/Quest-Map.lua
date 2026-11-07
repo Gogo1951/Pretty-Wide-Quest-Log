@@ -117,13 +117,21 @@ ns.AddWideQuestLogPart(function()
 		return nil
 	end
 
+	--[[
+		The map the canvas was given, or nil before its first. Blizzard's canvas:GetMapID() answers the player's
+		map until one is set, so it can't tell whether the canvas has a map yet
+	]]
+	local function CanvasMap()
+		return canvas.mapID
+	end
+
 	-- Set while the canvas is showing but hasn't drawn yet, for want of a map (the canvas's OnShow below)
 	local drawPending = false
 
 	-- Returns whether the map moved, which redraws every layer
 	function questMap.ShowMap(mapID)
 		mapID = DrawableMap(mapID)
-		if not mapID or canvas:GetMapID() == mapID then
+		if not mapID or CanvasMap() == mapID then
 			return false
 		end
 		canvas:SetMapID(mapID)
@@ -142,12 +150,12 @@ ns.AddWideQuestLogPart(function()
 	]]
 	canvas:SetScript("OnShow", function(self)
 		questMap.FollowQuest()
-		if not self:GetMapID() then
+		if not CanvasMap() then
 			if not questMap.ShowMap(MapUtil.GetDisplayableMapForPlayer()) and C_Map.GetFallbackWorldMapID then
 				questMap.ShowMap(C_Map.GetFallbackWorldMapID())
 			end
 		end
-		if self:GetMapID() then
+		if CanvasMap() then
 			MapCanvasMixin.OnShow(self)
 		else
 			drawPending = true

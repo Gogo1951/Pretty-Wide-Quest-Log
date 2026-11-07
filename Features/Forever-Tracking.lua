@@ -6,7 +6,7 @@ local L = ns.L
 --------------------------------------------------------------------------------
 
 -- While Questie's tracker is in charge, a quest counts as tracked only if it shows there (README-Technical).
-local questieTracker, questiePlayer
+local questieTracker
 
 --[[
 	Returns Questie's tracker if it's in charge of this quest, false if it's in charge but can't show
@@ -17,12 +17,11 @@ local function TrackerFor(questID)
 		return nil
 	end
 	questieTracker = questieTracker or ns.ImportQuestieModule("QuestieTracker")
-	questiePlayer = questiePlayer or ns.ImportQuestieModule("QuestiePlayer")
-	if not (questieTracker and type(questieTracker.IsTrackedByQuestie) == "function" and questiePlayer) then
+	local log = ns.QuestieLogEntries()
+	if not (questieTracker and type(questieTracker.IsTrackedByQuestie) == "function" and log) then
 		return nil
 	end
-	local log = questiePlayer.currentQuestlog
-	return (log and log[questID] ~= nil) and questieTracker or false
+	return log[questID] ~= nil and questieTracker or false
 end
 
 function ns.CanTrack(questID)

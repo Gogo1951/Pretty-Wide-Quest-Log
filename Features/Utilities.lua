@@ -76,6 +76,40 @@ function ns.ImportQuestieModule(name)
 	return loaded and type(module) == "table" and module or nil
 end
 
+--[[
+	Questie's quest log, keyed by quest ID, or nil when there's none to read. Questie 12.6.3 moved it from
+	QuestiePlayer.currentQuestlog (each value the quest) to the ActiveQuests module (each value an
+	acceptance, the quest under .quest, nil for a quest Questie's database lacks). The second return says
+	which. ImportModule hands back an empty table for a module it doesn't have, so GetAll is the test
+]]
+function ns.QuestieLogEntries()
+	local activeQuests = ns.ImportQuestieModule("ActiveQuests")
+	if activeQuests and type(activeQuests.GetAll) == "function" then
+		local loaded, log = pcall(activeQuests.GetAll)
+		if loaded and type(log) == "table" then
+			return log, true
+		end
+	end
+	local player = ns.ImportQuestieModule("QuestiePlayer")
+	local log = player and player.currentQuestlog
+	return type(log) == "table" and log or nil, false
+end
+
+-- Each quest in Questie's quest log that its database knows, quest ID to Questie's quest
+function ns.QuestieQuestLog()
+	local log, acceptances = ns.QuestieLogEntries()
+	if not acceptances then
+		return log or {}
+	end
+	local quests = {}
+	for questID, acceptance in pairs(log) do
+		if type(acceptance) == "table" and type(acceptance.quest) == "table" then
+			quests[questID] = acceptance.quest
+		end
+	end
+	return quests
+end
+
 --------------------------------------------------------------------------------
 -- VoiceOver
 --------------------------------------------------------------------------------

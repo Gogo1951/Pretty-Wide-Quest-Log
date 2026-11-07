@@ -44,7 +44,18 @@ if C_QuestLog.GetInfo then
 	ns.IsQuestFailed = C_QuestLog.IsFailed
 	ns.IsQuestDisabledForSession = C_QuestLog.IsQuestDisabledForSession
 	ns.GetSelectedQuestID = C_QuestLog.GetSelectedQuest
-	ns.SelectQuest = C_QuestLog.SetSelectedQuest
+
+	--[[
+		Selects only when the selection differs. Every details repaint selects the quest it shows, and a
+		selection made from add-on code can mark Blizzard's objective tracker dirty, leaving its next
+		update tainted (README-Technical, Taint)
+	]]
+	function ns.SelectQuest(questID)
+		if C_QuestLog.GetSelectedQuest() ~= questID then
+			C_QuestLog.SetSelectedQuest(questID)
+		end
+	end
+
 	ns.IsPushableQuest = C_QuestLog.IsPushableQuest
 	ns.CanAbandonQuest = C_QuestLog.CanAbandonQuest
 
