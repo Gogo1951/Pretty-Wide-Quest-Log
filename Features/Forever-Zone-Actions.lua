@@ -80,7 +80,7 @@ end
 ]]
 local function RestoreSelection()
 	if state.selectedQuestID then
-		C_QuestLog.SetSelectedQuest(state.selectedQuestID)
+		ns.SelectQuest(state.selectedQuestID)
 	end
 	ns.RequestUpdate()
 end
@@ -103,7 +103,7 @@ function ns.ShareQuests(questIDs)
 		end
 		local questID = questIDs[position]
 		if questID and C_QuestLog.GetLogIndexForQuestID(questID) and C_QuestLog.IsPushableQuest(questID) then
-			C_QuestLog.SetSelectedQuest(questID)
+			ns.SelectQuest(questID)
 			QuestLogPushQuest()
 			RestoreSelection()
 		end

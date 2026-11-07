@@ -2,7 +2,7 @@ local _, ns = ...
 
 --[[
 	Routes: what the route reads from Questie and the client. The player's position and zone, Questie's
-	quest log and its database's escort and instance quests, and the signature that says when to plan
+	quest log and its database's escort and instance quests, the client's timed quests, and the signature that says when to plan
 	again. Distances are in world yards, from Questie's copy of HereBeDragons, which the arrow uses too
 ]]
 
@@ -150,10 +150,7 @@ routes.IsInZone = IsInZone
 -- Questie's quest log
 --------------------------------------------------------------------------------
 
-local function QuestLog()
-	local QuestiePlayer = ns.ImportQuestieModule("QuestiePlayer")
-	return QuestiePlayer and type(QuestiePlayer.currentQuestlog) == "table" and QuestiePlayer.currentQuestlog or {}
-end
+local QuestLog = ns.QuestieQuestLog
 routes.QuestLog = QuestLog
 
 -- 1 done, -1 failed, 0 not yet, as Questie counts it
@@ -216,25 +213,63 @@ end
 routes.IsEscort = IsEscort
 
 --[[
+	The quests whose timer is running, as a set of quest IDs. WoW Forever's C_QuestLog.GetQuestTimers names
+	each timer's quest; elsewhere GetQuestTimers counts the timers and GetQuestIndexForTimer finds each one's
+	quest log entry, which says its quest ID, so the quest log's selection is never touched. Asked fresh
+	each time: a timer starts and ends with no change Questie sees
+]]
+local function TimedQuests()
+	local timed = {}
+	if C_QuestLog and C_QuestLog.GetQuestTimers then
+		for _, info in ipairs(C_QuestLog.GetQuestTimers() or {}) do
+			if type(info) == "table" and info.questID then
+				timed[info.questID] = true
+			end
+		end
+	elseif GetQuestTimers and GetQuestIndexForTimer and GetQuestLogTitle then
+		for timer = 1, select("#", GetQuestTimers()) do
+			local index = GetQuestIndexForTimer(timer)
+			local questID = index and select(8, GetQuestLogTitle(index))
+			if questID then
+				timed[questID] = true
+			end
+		end
+	end
+	return timed
+end
+routes.TimedQuests = TimedQuests
+
+--[[
 	Whether a quest is a dungeon or raid quest, by the game's tag for it, the one that puts the D or R after
-	its level. The route goes around their objectives, which are inside the instance, and the arrow never
-	points at them; Questie's own icons for them stay on the map, as the route doesn't stand in for them.
-	The turn-in, out in the world, is still on the route once the quest is done. Remembered as escorts are
+	its level. The whole quest is left off the route, its objectives and its turn-in, and the arrow never
+	points at it; Questie's own icons for it stay on the map, as the route doesn't stand in for them.
+
+	Questie's tag first, as its corrections fix the game's, then the client's. Questie asks the client once,
+	again a second later, and then keeps "no tag" for good, so a quest whose tag loads after that has the
+	client's D in the quest list and on the route's lines but none from Questie. Remembered as escorts are,
+	but only once either has a tag: until then it's asked again, and the signature plans again when it loads
 ]]
 local INSTANCE_KINDS = { DUNGEON = true, RAID = true }
 local instanceQuests = {}
+
+local function QuestieTag(questID)
+	local QuestieDB = ns.ImportQuestieModule("QuestieDB")
+	if QuestieDB and type(QuestieDB.GetQuestTagInfo) == "function" then
+		local ok, tagID = pcall(QuestieDB.GetQuestTagInfo, questID)
+		return ok and tagID or nil
+	end
+end
 
 local function IsInstanceQuest(questID)
 	if instanceQuests[questID] ~= nil then
 		return instanceQuests[questID]
 	end
-	local QuestieDB = ns.ImportQuestieModule("QuestieDB")
-	if not (QuestieDB and type(QuestieDB.GetQuestTagInfo) == "function") then
+	local tagID = QuestieTag(questID) or ns.GetQuestTagByID(questID)
+	if not tagID then
 		return false
 	end
-	local ok, tagID = pcall(QuestieDB.GetQuestTagInfo, questID)
 	local kinds = ns.QUEST_TAG_SUFFIXES or {}
-	local found = ok and tagID ~= nil and INSTANCE_KINDS[kinds[tagID]] == true
+	local found = INSTANCE_KINDS[kinds[tagID]] == true
 	instanceQuests[questID] = found
 	return found
 end
@@ -252,16 +287,17 @@ end
 routes.HasSpawns = HasSpawns
 
 --[[
-	What the route depends on, as text: each quest's state and whether it's in an instance, each
-	objective's being done and having spawns, the same of the party's quests (routes.PartyQuests), the
-	skipped stops, the player's zone and whether they're a ghost. The route is planned again when this
-	changes. Nil until Questie is ready
+	What the route depends on, as text: each quest's state, whether it's in an instance and whether its
+	timer is running, each objective's being done and having spawns, the same of the party's quests
+	(routes.PartyQuests), the skipped stops, the player's zone and whether they're a ghost. The route is
+	planned again when this changes. Nil until Questie is ready
 ]]
 function routes.Signature()
 	if not routes.IsQuestieReady() then
 		return nil
 	end
 	local parts = {}
+	local timed = TimedQuests()
 	for questID, quest in pairs(QuestLog()) do
 		if type(quest) == "table" then
 			local bits = {}
@@ -271,6 +307,7 @@ function routes.Signature()
 			table.sort(bits)
 			parts[#parts + 1] = tostring(questID)
 				.. (IsInstanceQuest(questID) and "i" or "")
+				.. (timed[questID] and "t" or "")
 				.. "="
 				.. tostring(QuestState(quest))
 				.. ":"

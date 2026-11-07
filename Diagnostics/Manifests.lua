@@ -1245,9 +1245,11 @@ function ns:BuildTrackingContextReport()
 	-- The tracking marks and Untrack All go by Questie's tracker once it has taken over (Tracking-Mark.lua)
 	lines[#lines + 1] = string.format("Questie's tracker has taken over: %s", YesNo(ns.IsQuestieTracking()))
 	if QUEST_ID_API then
-		local player = ns.ImportQuestieModule("QuestiePlayer")
-		local log = player and player.currentQuestlog
-		lines[#lines + 1] = string.format("QuestiePlayer module: %s", player and "found" or "not found")
+		local log, acceptances = ns.QuestieLogEntries()
+		lines[#lines + 1] = string.format(
+			"Questie's quest log: %s",
+			not log and "not found" or acceptances and "ActiveQuests" or "QuestiePlayer.currentQuestlog"
+		)
 		lines[#lines + 1] = string.format("Quests in Questie's quest log: %s", log and CountKeys(log) or "n/a")
 		if tracker then
 			lines[#lines + 1] = string.format(
@@ -1261,7 +1263,7 @@ function ns:BuildTrackingContextReport()
 			and profile.trackerEnabled
 			and tracker
 			and tracker.IsTrackedByQuestie
-			and player
+			and log
 			and true
 		lines[#lines + 1] =
 			string.format("Tracking decided by: %s", questieDecides and "Questie's tracker" or "Blizzard's watch list")

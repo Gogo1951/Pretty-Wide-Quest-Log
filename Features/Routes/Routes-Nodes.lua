@@ -3,8 +3,8 @@ local _, ns = ...
 --[[
 	Routes: the route's nodes, from Questie's quest log and database. Every objective not yet done becomes
 	a node whose candidates are its blobs (Routes-Blobs.lua), and every done quest's turn-in a node too (a
-	quest not yet done isn't routed to its turn-in). Routes-Solver.lua orders them; Routes-Stops.lua makes
-	the stops.
+	quest not yet done isn't routed to its turn-in). Dungeon and raid quests are left out, objectives and
+	turn-in both. Routes-Solver.lua orders them; Routes-Stops.lua makes the stops.
 
 	Only the zone the player is in counts, with the caves and cities inside it (routes.IsInZone): an
 	objective's spawns or a turn-in elsewhere are left out, whichever zone the quest is filed under, so a
@@ -109,13 +109,23 @@ local function ByKey(a, b)
 	return a.key < b.key
 end
 
+-- Yards from the start to the nearest of a quest's turn-in places in the zone, or math.huge for none here
+local function TurnInDistance(quest, start, yield)
+	local nearest = math.huge
+	for _, blob in ipairs(TurnInBlobs(quest, start, yield)) do
+		local dx, dy = blob.x - start.x, blob.y - start.y
+		nearest = math.min(nearest, math.sqrt(dx * dx + dy * dy))
+	end
+	return nearest
+end
+
 --[[
 	Every node for the route, and the player's position it starts from ({ x, y, instance, zone }). Nil while
 	Questie isn't ready or the client won't give the player's position. Each node is
 	{ key, kind, questID, questName, quest, objective, candidates, blobs }: kind is "objective" or
 	"turnIn", quest and objective Questie's live tables (for the level and progress), and blobs every
-	place in the zone it can be done. routes.PinEngaged adds requires,
-	the nodes one must wait on
+	place in the zone it can be done. A timed or escort quest's nodes are urgent too, with turnInDistance,
+	how far its turn-in is. routes.PinEngaged adds requires, the nodes one must wait on
 ]]
 function routes.BuildNodes(yield)
 	if not routes.IsQuestieReady() then
@@ -127,14 +137,18 @@ function routes.BuildNodes(yield)
 	end
 	local start = { x = x, y = y, instance = instance, zone = zone, corpse = corpse }
 	local skipped = routes.skipped
+	local timed = routes.TimedQuests()
 
 	local nodes = {}
 	for questID, quest in pairs(QuestLog()) do
-		if type(quest) == "table" then
+		-- A dungeon or raid quest isn't on the route at all, only on the map (routes.IsInstanceQuest)
+		if type(quest) == "table" and not IsInstanceQuest(questID) then
 			local state = QuestState(quest)
 			local questName = quest.name or tostring(questID)
-			local escort = state == 0 and IsEscort(questID)
-			if state == 0 and not IsInstanceQuest(questID) then
+			-- Timed and escort quests go ahead of the rest, the one turned in nearest first
+			local urgent = state ~= -1 and (timed[questID] or IsEscort(questID)) or nil
+			local turnInDistance = urgent and TurnInDistance(quest, start, yield) or nil
+			if state == 0 then
 				ForEachObjective(quest, function(objectiveKey, objective)
 					if type(objective) == "table" and not objective.Completed then
 						local key = questID .. ":" .. objectiveKey
@@ -152,7 +166,8 @@ function routes.BuildNodes(yield)
 								candidates = Candidates(blobs, start, true),
 								blobs = blobs,
 								spawns = blobs.spawns,
-								escort = escort or nil,
+								urgent = urgent,
+								turnInDistance = turnInDistance,
 							}
 						end
 					end
@@ -173,6 +188,8 @@ function routes.BuildNodes(yield)
 						candidates = Candidates(blobs, start, false),
 						blobs = blobs,
 						ready = true, -- Done: it can be turned in now
+						urgent = urgent,
+						turnInDistance = turnInDistance,
 					}
 				end
 			end
@@ -338,32 +355,64 @@ end
 --[[
 	What goes first on the route, ahead of the rest, which waits on it. First of all:
 
-	An escort under way, its objectives (most often the place the NPC is taken to). The NPC won't wait
-	while the route sends the player around the zone, so nothing else is planned until it's done; a
-	failed escort is Questie's -1 and isn't on the route at all.
+	Every timed or escort quest (node.urgent), its objectives or, once done, its turn-in. A timer won't
+	wait while the route sends the player around the zone, nor will an escorted NPC, so nothing else is
+	planned until they're all done. With more than one, the quest whose turn-in is nearest goes first,
+	then the next nearest, each waiting on the one before; one turned in outside the zone goes last. Of
+	these, only their own nodes are pinned to the blob the player is in. A failed one is Questie's -1 and
+	isn't on the route at all.
 
 	Otherwise every objective or turn-in whose blob the player is in, at that blob, so the route
 	finishes the camp the player is working before it sends them anywhere else, even where the
 	shortest trip would come back to it later or a denser camp elsewhere has the same mobs. Each such
 	node gets that blob as its only candidate.
 
-	Then, but for an escort, every done quest turned in within TURN_IN_REACH, at the place nearest. The
+	Then, but for a timed or escort quest, every done quest turned in within TURN_IN_REACH, at the place nearest. The
 	shortest trip would often save it for last, but a turn-in usually opens the next quest in its chain,
 	and that's worth a short walk now. One across the zone still waits until the route passes it.
 
 	Returns the keys of the nodes pinned to the blob the player is in, which become routes.engaged when the
 	plan is drawn, for the next plan and for noticing the player walking into or out of one
 ]]
+local function IsHurrying(nodes)
+	for _, node in ipairs(nodes) do
+		if node.urgent then
+			return true
+		end
+	end
+	return false
+end
+
+-- Timed and escort quests, each { questID, distance, nodes }, the one turned in nearest first
+local function UrgentQuests(nodes)
+	local quests, byQuest = {}, {}
+	for _, node in ipairs(nodes) do
+		if node.urgent then
+			local quest = byQuest[node.questID]
+			if not quest then
+				quest = { questID = node.questID, distance = node.turnInDistance or math.huge, nodes = {} }
+				byQuest[node.questID] = quest
+				quests[#quests + 1] = quest
+			end
+			quest.nodes[#quest.nodes + 1] = node
+		end
+	end
+	table.sort(quests, function(a, b)
+		if a.distance ~= b.distance then
+			return a.distance < b.distance
+		end
+		return a.questID < b.questID
+	end)
+	return quests
+end
+
 function routes.PinEngaged(nodes, start)
 	local engaged, first, isFirst = {}, {}, {}
 	local previous = routes.engaged or {}
-	local escorting = false
+	local hurrying = IsHurrying(nodes)
 	for _, node in ipairs(nodes) do
-		escorting = escorting or node.escort == true
-	end
-	for _, node in ipairs(nodes) do
-		-- During an escort only its own objectives are pinned to the blob the player is in
-		local blob = (node.escort or not escorting) and EngagedBlob(node, start.x, start.y, previous[node.key])
+		-- During a timed or escort quest only its own nodes are pinned to the blob the player is in
+		local blob = (node.urgent or not hurrying) and EngagedBlob(node, start.x, start.y, previous[node.key])
 		node.inArea = nil
 		if blob then
 			blob.penalty = 0
@@ -372,27 +421,36 @@ function routes.PinEngaged(nodes, start)
 			-- Standing in its area, not just working on it from further off: areas overlapping here are one stop
 			node.inArea = routes.InArea(node, start.x, start.y, previous[node.key]) or nil
 		end
-		if node.escort or (blob and not escorting) then
+		if blob and not hurrying then
 			first[#first + 1] = node
 			isFirst[node] = true
 		end
 	end
 
-	local turnIns, isTurnIn = {}, {}
-	if not escorting then
-		for _, node in ipairs(nodes) do
-			local blob = node.ready and not isFirst[node] and NearestWithin(node, start.x, start.y, TURN_IN_REACH)
-			if blob then
-				blob.penalty = 0
-				node.candidates = { blob }
-				turnIns[#turnIns + 1] = node
-				isTurnIn[node] = true
+	-- Each timed or escort quest ahead of the ones turned in further off, and all of them ahead of the rest
+	local before = {}
+	if hurrying then
+		for _, quest in ipairs(UrgentQuests(nodes)) do
+			for _, node in ipairs(quest.nodes) do
+				before[node] = true
 			end
+			WaitOn(nodes, before, quest.nodes)
+		end
+		return engaged
+	end
+
+	local turnIns, isTurnIn = {}, {}
+	for _, node in ipairs(nodes) do
+		local blob = node.ready and not isFirst[node] and NearestWithin(node, start.x, start.y, TURN_IN_REACH)
+		if blob then
+			blob.penalty = 0
+			node.candidates = { blob }
+			turnIns[#turnIns + 1] = node
+			isTurnIn[node] = true
 		end
 	end
 
 	-- The nearby turn-ins after what's first, everything else after both
-	local before = {}
 	for node in pairs(isFirst) do
 		before[node] = true
 	end
@@ -412,13 +470,10 @@ function routes.EngagedSignature(nodes)
 	local x, y = routes.Origin()
 	local keys = {}
 	if x and nodes then
-		local escorting = false
+		local hurrying = IsHurrying(nodes)
 		for _, node in ipairs(nodes) do
-			escorting = escorting or node.escort == true
-		end
-		for _, node in ipairs(nodes) do
-			-- During an escort, walking through a camp of another quest's doesn't change the route
-			local counts = node.escort or not escorting
+			-- During a timed or escort quest, walking through a camp of another quest's doesn't change the route
+			local counts = node.urgent or not hurrying
 			if counts and EngagedBlob(node, x, y, routes.engaged and routes.engaged[node.key]) then
 				keys[#keys + 1] = node.key
 			end
