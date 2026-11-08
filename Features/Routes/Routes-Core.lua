@@ -227,6 +227,7 @@ function routes.SetSetting(key, value)
 end
 
 function routes.Clear()
+	routes.CancelPlan()
 	routes.stops = {}
 	routes.camps = {}
 	routes.signature = nil
@@ -252,6 +253,24 @@ local planner = CreateFrame("Frame")
 planner:Hide()
 local job, sliceStarted, replanQueued
 local onTaxi = false -- On a flight path: nothing is planned until the player lands
+
+--[[
+	The quest IDs in a quest log, listed first: on Questie before 12.6.3 the log is Questie's own table, which
+	can change while a plan's yield waits, and a pairs walk can't take that
+]]
+function routes.LoggedQuestIDs(log)
+	local questIDs = {}
+	for questID in pairs(log) do
+		questIDs[#questIDs + 1] = questID
+	end
+	return questIDs
+end
+
+-- Drops a plan underway and any asked for after it, so it can't put back what was just cleared or reset
+function routes.CancelPlan()
+	job, replanQueued = nil, nil
+	planner:Hide()
+end
 
 -- Whether the player is on a flight path, as the watcher last saw
 function routes.IsOnTaxi()
@@ -349,6 +368,7 @@ local checkElapsed, sincePlan = 0, 0
 
 -- A new zone or continent, or a landing: the old route may not be on it, so it's planned from here
 local function OnNewArea()
+	routes.CancelPlan()
 	routes.start = nil
 	checkElapsed = CHECK_INTERVAL
 	sincePlan = REPLAN_INTERVAL

@@ -139,11 +139,14 @@ routes.ARROW_LAYOUT = {
 	list grows and shrinks below it. StopMovingOrSizing anchors by whichever corner or edge is nearest
 	instead, which would move the arrow each time the list changed height
 ]]
+local convertPending -- A spot saved by another anchor point, held by its top once the list has its height (Point)
+
 local function HoldByTop()
 	local left, top, width = frame:GetLeft(), frame:GetTop(), frame:GetWidth()
 	if not (left and top) then
 		return
 	end
+	convertPending = nil
 	local x = left + width / 2
 	frame:ClearAllPoints()
 	frame:SetPoint("TOP", UIParent, "BOTTOMLEFT", x, top)
@@ -161,10 +164,11 @@ local function PlaceFrame()
 	local point = routes.ArrowPoint()
 	if type(point) == "table" and point[1] then
 		frame:SetPoint(point[1], UIParent, point[2], point[3] / scale, point[4] / scale)
-		if point[1] ~= "TOP" then -- MIGRATION (remove after 2026-12-07): spots released builds saved by other points
-			HoldByTop()
-		end
+		-- MIGRATION (remove after 2026-12-07): spots released builds saved by other points, held by their top
+		-- once the list has laid out, so the frame is as tall as it was when the spot was saved
+		convertPending = point[1] ~= "TOP" or nil
 	else
+		convertPending = nil
 		frame:SetPoint("TOP", UIParent, "CENTER", 0, UIParent:GetHeight() / 4 / scale)
 	end
 end
@@ -296,6 +300,9 @@ local function Point(self, elapsed)
 	if survey or view ~= listed or nextStop ~= listedNext then
 		listed, listedNext = view, nextStop
 		nextShown = routes.ListArrowQuests(view, here and areaNote or nil, passing, nextStop)
+		if convertPending then
+			HoldByTop()
+		end
 	end
 	if not located then
 		arrow:Hide()
@@ -408,6 +415,9 @@ end
 
 routes.OnLogin(function()
 	loggedIn = true
+	-- The scale first, as a saved spot is in the screen's units (PlaceFrame)
+	appliedScale = routes.Settings().arrowScale
+	frame:SetScale(appliedScale)
 	PlaceFrame()
 	Refresh()
 end)

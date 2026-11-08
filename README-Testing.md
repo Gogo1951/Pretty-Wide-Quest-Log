@@ -6,7 +6,7 @@ Pretty Wide Quest Log turns the quest log into one wide window, with your quest 
 
 ## What's New
 
-1. With Questie on, press `M` and follow the route's markers through your objectives and turn-ins; a dungeon quest's objectives should be one gray-ringed marker at the dungeon's entrance.
+1. With Questie on, press `M` and follow the route's markers through your objectives and turn-ins; a dungeon quest's objectives should be one red-ringed marker at the dungeon's entrance.
 2. Right-click a marker on the zone map to take it off the route.
 3. Turn on **Show Next Objective** from the Quest Arrow's menu and follow the arrow to an objective; once there it should read "Current Objective Area" with a dimmed "Next Objective" line under it.
 4. Turn on **Show Upcoming Turn-Ins** from the Quest Arrow's menu; each quest's turn-in should join the route, with Questie's gray question mark, before you finish the quest.
