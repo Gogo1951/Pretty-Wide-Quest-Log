@@ -18,7 +18,8 @@ local GetColor = ns.GetColor
     bordered frame. The panel is registered as this builder, so every repaint
     rebuilds it and the toggle takes effect on the next one.
 
-    Run Tests holds the live tools: the Event Log, the Taint Log, and pointers
+    Run Tests holds the live tools: the Event Log, the Tracker Taint Watch
+    (where Blizzard's objective tracker exists), the Taint Log, and pointers
     to the game's own tools and Funkeh's. Settings, Code, Data and Localization
     each have a Run All, a row per report, and one box that shows whatever ran
     last on that tab. The runner lives in Diagnostics/Report-Runner.lua; everything here reads
@@ -193,6 +194,57 @@ local function BuildEventLogBox(order)
 	})
 end
 
+local function TrackerTaintState()
+	local state, path, context = ns:GetTrackerTaintState()
+	if state == "found" then
+		return GetColor("TITLE") .. string.format(D.TRACKER_TAINT_FOUND, path, context) .. "|r"
+	elseif state == "watching" then
+		return GetColor("TITLE") .. D.TRACKER_TAINT_WATCHING .. "|r"
+	elseif state == "stopped" then
+		return GetColor("HELP") .. D.TRACKER_TAINT_STOPPED .. "|r"
+	end
+	return GetColor("HELP") .. D.TRACKER_TAINT_IDLE .. "|r"
+end
+
+local function TrackerTaintWatching()
+	return ns.diagnostics.trackerTaint ~= nil and ns.diagnostics.trackerTaint.watching
+end
+
+local function NoTrackerTaintReport()
+	return ns.diagnostics.trackerTaintReport == nil
+end
+
+-- Left out on clients without Blizzard's objective tracker, where there's nothing to watch
+local function BuildTrackerTaintBox(order)
+	if not ns.HasTrackerToWatch() then
+		return nil
+	end
+	return Box(D.TRACKER_TAINT_TITLE, order, {
+		descIntro = HelpDesc(D.TRACKER_TAINT_INTRO, 1),
+		rowControls = Row(2, {
+			Desc(TrackerTaintState, nil, nil, BOX_ROW_WIDTH - 3 * LOG_BUTTON_WIDTH - ROW_SLACK),
+			Button(D.TRACKER_TAINT_START, D.TRACKER_TAINT_START_DESCRIPTION, LOG_BUTTON_WIDTH, function()
+				ns:StartTrackerTaintWatch()
+				Refresh()
+			end, TrackerTaintWatching),
+			Button(D.TRACKER_TAINT_STOP, D.TRACKER_TAINT_STOP_DESCRIPTION, LOG_BUTTON_WIDTH, function()
+				ns:StopTrackerTaintWatch()
+				Refresh()
+			end, function()
+				return not TrackerTaintWatching()
+			end),
+			Button(D.TRACKER_TAINT_SHOW, D.TRACKER_TAINT_SHOW_DESCRIPTION, LOG_BUTTON_WIDTH, function()
+				ns.diagnostics.trackerTaintReport = ns:BuildTrackerTaintReport()
+				Refresh()
+			end),
+		}),
+		outputTrackerTaint = ReportOutput(function()
+			return ns.diagnostics.trackerTaintReport
+		end, 3, 8, NoTrackerTaintReport),
+		descCopy = HelpDesc(D.COPY_HINT, 4, NoTrackerTaintReport),
+	})
+end
+
 local function TaintState()
 	local level = ns:GetTaintLogState()
 	return GetColor(level > 0 and "TITLE" or "HELP") .. string.format(D.TAINT_STATE, level) .. "|r"
@@ -245,9 +297,10 @@ local function BuildRunTestsGroup(order)
 		args = {
 			descIntro = ns.OptionsDesc(D.RUN_TESTS_INTRO, 1),
 			boxEventLog = BuildEventLogBox(2),
-			boxTaint = BuildTaintBox(3),
-			boxGameTools = BuildGameToolsBox(4),
-			boxExternalTools = BuildExternalToolsBox(5),
+			boxTrackerTaint = BuildTrackerTaintBox(3),
+			boxTaint = BuildTaintBox(4),
+			boxGameTools = BuildGameToolsBox(5),
+			boxExternalTools = BuildExternalToolsBox(6),
 		},
 	}
 end

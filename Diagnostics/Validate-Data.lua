@@ -24,7 +24,8 @@ local GetItemInfoInstant = C_Item.GetItemInfoInstant
 ]]
 local GetItemSpell = C_Item.GetItemSpell
 local GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo
-local GetItemStats = ns.GetItemStats
+-- WoW Forever ships C_Item.GetItemStats; the Classic clients have only the legacy global, which returns the same table
+local GetItemStats = C_Item.GetItemStats or _G.GetItemStats
 local GetItemClassName = C_Item.GetItemClassInfo
 local GetItemSubClassName = C_Item.GetItemSubClassInfo
 local GetSpellDescription = C_Spell.GetSpellDescription

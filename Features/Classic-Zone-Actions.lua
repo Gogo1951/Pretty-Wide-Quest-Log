@@ -141,25 +141,40 @@ end
 
 	Shares each quest still in the log, wherever its zone is, ns.GetShareInterval() apart as it was when
 	the run began; the game reports each result in chat. ns.sharingQuests is set until the last one goes,
-	so a second run can't start alongside
+	so a second run can't start alongside; each share runs through securecall, so one that errors is
+	reported and the run still reaches its end. A share due in combat waits, checking every interval,
+	until combat ends, and the run picks up where it stopped. Leaving the group ends the run
 ]]
+local function ShareOne(questID)
+	WithEveryZoneOpen(function()
+		local index = questID and ns.GetLogIndexForQuestID(questID)
+		if index then
+			SelectQuestLogEntry(index)
+			if GetQuestLogPushable() then
+				QuestLogPushQuest()
+			end
+		end
+	end)
+	if QuestLogFrame:IsShown() then
+		QuestLog_Update()
+	end
+end
+
 function ns.ShareQuests(questIDs)
 	ns.sharingQuests = true
 	local interval = ns.GetShareInterval()
 	local function Share(position)
-		local questID = questIDs[position]
-		WithEveryZoneOpen(function()
-			local index = questID and ns.GetLogIndexForQuestID(questID)
-			if index then
-				SelectQuestLogEntry(index)
-				if GetQuestLogPushable() then
-					QuestLogPushQuest()
-				end
-			end
-		end)
-		if QuestLogFrame:IsShown() then
-			QuestLog_Update()
+		if not IsInGroup() then
+			ns.sharingQuests = nil
+			return
 		end
+		if InCombatLockdown() then
+			C_Timer.After(interval, function()
+				Share(position)
+			end)
+			return
+		end
+		securecall(ShareOne, questIDs[position])
 		if position < #questIDs then
 			C_Timer.After(interval, function()
 				Share(position + 1)

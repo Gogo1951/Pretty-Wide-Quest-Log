@@ -44,10 +44,36 @@ ns.AddWideQuestLogPart(function()
 		the row shows a different entry, so the buttons are dealt out again by what each row shows, through
 		VoiceOver's own button functions
 	]]
+	-- Whether every part of VoiceOver dealing the buttons calls is there, so an update of it that renames one only leaves the buttons alone
+	local OVERLAY_FUNCTIONS = { "CreatePlayButton", "UpdatePlayButton", "UpdateQuestTitle", "UpdatePlayButtonTexture" }
+	local function CanDealButtons(voiceOver, overlay)
+		if
+			not (
+				type(overlay) == "table"
+				and type(overlay.displayedButtons) == "table"
+				and type(overlay.questPlayButtons) == "table"
+				and type(voiceOver.GetQuestLogTitle) == "function"
+				and type(voiceOver.Enums) == "table"
+				and type(voiceOver.Enums.SoundEvent) == "table"
+				and voiceOver.Enums.SoundEvent.QuestAccept ~= nil
+				and type(voiceOver.DataModules) == "table"
+				and type(voiceOver.DataModules.PrepareSound) == "function"
+			)
+		then
+			return false
+		end
+		for _, name in ipairs(OVERLAY_FUNCTIONS) do
+			if type(overlay[name]) ~= "function" then
+				return false
+			end
+		end
+		return true
+	end
+
 	function ns.MatchVoiceOverButtons(order)
 		local voiceOver = order and ns.GetVoiceOver()
 		local overlay = voiceOver and voiceOver.QuestOverlayUI
-		if not (overlay and overlay.displayedButtons) then
+		if not CanDealButtons(voiceOver, overlay) then
 			return
 		end
 		local getTitle = voiceOver.GetQuestLogTitle -- VoiceOver's own wrapper where it has one, else Blizzard's

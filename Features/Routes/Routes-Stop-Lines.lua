@@ -10,6 +10,19 @@ local L = ns.L
 
 local IsArea = routes.IsArea
 
+--[[
+	The corpse's gravestone, the one the game marks it with on the world map and minimap (Blizzard's
+	CorpsePinTemplate: a cell of the POI icons), on its waypoint on the map (Routes-Map.lua) and in front of
+	its line. The coords are { left, right, top, bottom }
+]]
+routes.CORPSE_ICON = "Interface\\Minimap\\POIIcons"
+routes.CORPSE_ICON_COORDS = { 0.875, 1, 0, 0.125 }
+
+-- "Run Back to Your Corpse", led by the gravestone sized to the font the line is drawn in
+local function CorpseLine(fontSource)
+	return ns.InlineIcon(fontSource, routes.CORPSE_ICON, routes.CORPSE_ICON_COORDS) .. " " .. L["ROUTES_CORPSE"]
+end
+
 --------------------------------------------------------------------------------
 -- What a stop holds, for the arrow and the map's tooltip
 --------------------------------------------------------------------------------
@@ -75,6 +88,7 @@ local function PositionAt(stop)
 		return x, y
 	end
 end
+routes.PositionAt = PositionAt
 
 --[[
 	The quests at a stop, each { task, here, turnIn, distance }: task the first of its tasks there, here
@@ -133,21 +147,82 @@ function routes.QuestObjectives(entry)
 	return objectives
 end
 
+-- A count as the quest log writes it, "4 / 12"
+function routes.CountText(have, need)
+	return string.format("%s / %s", tostring(have or 0), tostring(need))
+end
+
+-- A player's class color, where the client says the class; white otherwise
+function routes.ClassColor(unit)
+	local ok, _, class = pcall(UnitClass, unit)
+	local color = ok
+		and ns.IsReadable(class)
+		and type(class) == "string"
+		and RAID_CLASS_COLORS
+		and RAID_CLASS_COLORS[class]
+	if color then
+		return color.r, color.g, color.b
+	end
+	return ns.GetColorRGB("TEXT")
+end
+
 --[[
-	Calls back with each line describing the stop's quests: isTitle, text, then r, g, b. Under each quest,
-	only what's to do at the stop: its objectives there not yet done. Where it's only turned in there, the
-	quest is one line, "Turn in [2] Wayward Weapons". At most maxQuests quests, then a count of the rest.
-	A corpse is one line too, "Run back to your corpse"
+	A member's progress on an objective, from Questie's share of their quest log, by the objective's place
+	in the quest. Questie's own extra objectives (SpecialObjectives) aren't shared, so they have none
+]]
+local function MemberObjective(quest, member, objective)
+	local index = objective.Index
+	if index and type(quest.Objectives) == "table" and quest.Objectives[index] == objective then
+		local remote = member.objectives[index]
+		return type(remote) == "table" and remote or nil
+	end
+end
+
+--[[
+	Who still needs an objective, in a party, each { name, unit, have, need }: the player first, where it's
+	their quest, then each member Questie shares a quest log for, by name. Anyone done with it is left off
+]]
+local function StillNeeded(entry, objective)
+	local quest = entry.task.quest or {}
+	local rows = {}
+	if not quest.party and not objective.Completed then
+		rows[1] = {
+			name = routes.UnitFullName("player") or UnitName("player"),
+			unit = "player",
+			have = objective.Collected,
+			need = objective.Needed,
+		}
+	end
+	for _, member in ipairs(routes.MemberProgress(entry.task.questID)) do
+		local remote = MemberObjective(quest, member, objective)
+		if remote and not remote.finished then
+			rows[#rows + 1] =
+				{ name = member.shortName, unit = member.name, have = remote.fulfilled, need = remote.required }
+		end
+	end
+	return rows
+end
+
+--[[
+	Calls back with each line describing the stop's quests: kind ("title", "objective", "name" or "more"),
+	text, r, g, b, then the count on the right, if any. Under each quest, only what's to do at the stop: its
+	objectives there not yet done, each with its count, "4 / 12", as the quest log writes it. In a party,
+	with Show Party Objectives on (routes.ShowsParty), who still needs each objective is listed under it with their own count, the player first, the rest by
+	name, each in their class color; the objective has no count of its own then. Where it's only turned in
+	there, the quest is one line, "Turn in [2] Wayward Weapons". At most maxQuests quests, then a count of
+	the rest. A corpse is one line too, the gravestone then "Run Back to Your Corpse", sized for the arrow's
+	title font (GameFontNormal)
 ]]
 function routes.ForEachStopLine(stop, maxQuests, callback)
 	if stop.corpse then
-		callback(true, L["ROUTES_CORPSE"], ns.GetColorRGB("TEXT"))
+		callback("title", CorpseLine(GameFontNormal), ns.GetColorRGB("TEXT"))
 		return
 	end
+	local inParty = routes.ShowsParty()
 	local quests = routes.QuestsAt(stop, PositionAt(stop))
 	for i, entry in ipairs(quests) do
 		if i > maxQuests then
-			callback(false, string.format(L["ROUTES_MORE_TASKS"], #quests - maxQuests), ns.GetColorRGB("HELP"))
+			callback("more", string.format(L["ROUTES_MORE_TASKS"], #quests - maxQuests), ns.GetColorRGB("HELP"))
 			return
 		end
 		-- Its objectives here, nearest first, else in the quest log's order
@@ -171,11 +246,21 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 		]]
 		if entry.turnIn and #toDo == 0 then
 			local title = routes.QuestTitle(entry.task)
-			callback(true, string.format(L["ROUTES_TURN_IN_QUEST"], title), ns.GetColorRGB("TITLE"))
+			callback("title", string.format(L["ROUTES_TURN_IN_QUEST"], title), ns.GetColorRGB("TITLE"))
 		else
-			callback(true, routes.QuestTitle(entry.task))
+			local text, red, green, blue = routes.QuestTitle(entry.task)
+			callback("title", text, red, green, blue)
 			for _, objective in ipairs(toDo) do
-				callback(false, routes.ObjectiveText(objective), ns.GetColorRGB("TEXT"))
+				local rows = inParty and StillNeeded(entry, objective) or {}
+				local count = #rows == 0
+					and objective.Needed
+					and routes.CountText(objective.Collected, objective.Needed)
+				red, green, blue = ns.GetColorRGB("TEXT")
+				callback("objective", objective.Description or "", red, green, blue, count or nil)
+				for _, row in ipairs(rows) do
+					red, green, blue = routes.ClassColor(row.unit)
+					callback("name", row.name, red, green, blue, row.need and routes.CountText(row.have, row.need))
+				end
 			end
 		end
 	end
@@ -197,13 +282,8 @@ local ROW_INDENT = " "
 
 -- A name in its class color, where the client says the class
 local function PlayerName(unit, name)
-	local ok, _, class = pcall(UnitClass, unit)
-	local color = ok
-		and ns.IsReadable(class)
-		and type(class) == "string"
-		and RAID_CLASS_COLORS
-		and RAID_CLASS_COLORS[class]
-	return color and color:WrapTextInColorCode(name) or name
+	local red, green, blue = routes.ClassColor(unit)
+	return string.format("|cff%02x%02x%02x%s|r", red * 255, green * 255, blue * 255, name)
 end
 
 -- One objective line: its check, name, and "4 / 12" on the right, where it has a count
@@ -211,22 +291,10 @@ local function AddObjective(tooltip, objective, have, need, done)
 	local left = ROW_INDENT .. ns.CheckIcon(GameTooltipText, done) .. " " .. (objective.Description or "")
 	local red, green, blue = ns.GetColorRGB(done and "HELP" or "TEXT")
 	if need then
-		local count = string.format("%s / %s", tostring(have or 0), tostring(need))
+		local count = routes.CountText(have, need)
 		tooltip:AddDoubleLine(left, count, red, green, blue, red, green, blue)
 	else
 		tooltip:AddLine(left, red, green, blue)
-	end
-end
-
---[[
-	A member's progress on an objective, from Questie's share of their quest log, by the objective's place
-	in the quest. Questie's own extra objectives (SpecialObjectives) aren't shared, so they have none
-]]
-local function MemberObjective(quest, member, objective)
-	local index = objective.Index
-	if index and type(quest.Objectives) == "table" and quest.Objectives[index] == objective then
-		local remote = member.objectives[index]
-		return type(remote) == "table" and remote or nil
 	end
 end
 
@@ -253,7 +321,7 @@ end
 -- Under a quest's title: the player's progress on its objectives here, then each party member's
 local function AddProgress(tooltip, entry, objectives)
 	local quest = entry.task.quest or {}
-	local inParty = routes.IsInParty()
+	local inParty = routes.ShowsParty()
 	local shown = false
 	if not quest.party then
 		local rows = {}
@@ -265,7 +333,13 @@ local function AddProgress(tooltip, entry, objectives)
 				done = objective.Completed,
 			}
 		end
-		shown = AddPlayer(tooltip, PlayerName("player", UnitName("player")), rows, inParty, shown)
+		shown = AddPlayer(
+			tooltip,
+			PlayerName("player", routes.UnitFullName("player") or UnitName("player")),
+			rows,
+			inParty,
+			shown
+		)
 	end
 	for _, member in ipairs(inParty and routes.MemberProgress(entry.task.questID) or {}) do
 		local rows = {}
@@ -287,11 +361,11 @@ end
 --[[
 	Adds a stop's quests to the tooltip, a blank line between them: each quest's title, then its objectives
 	at the stop, done or not, in the quest log's order. Where nothing's left but the turn-in, the quest is
-	one line, "Turn in [2] Wayward Weapons". A corpse is one line too, "Run back to your corpse"
+	one line, "Turn in [2] Wayward Weapons". A corpse is one line too, the gravestone then "Run Back to Your Corpse"
 ]]
 function routes.AddStopTooltip(tooltip, stop)
 	if stop.corpse then
-		tooltip:AddLine(L["ROUTES_CORPSE"], ns.GetColorRGB("TEXT"))
+		tooltip:AddLine(CorpseLine(GameTooltipText), ns.GetColorRGB("TEXT"))
 		return
 	end
 	for _, entry in ipairs(routes.QuestsAt(stop, PositionAt(stop))) do

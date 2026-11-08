@@ -168,10 +168,7 @@ ns.AddWideQuestLogPart(function()
 		end
 	end
 
-	--[[
-		The pane is written by QuestLog_UpdateQuestDetails() and again while QuestFrameItems_Update()
-		rebuilds it, so this follows both
-	]]
+	-- The pane is written by QuestLog_UpdateQuestDetails(), which rebuilds its rewards too, so this follows it
 	local function ShowQuestID()
 		local title, _, _, _, _, _, _, questID = GetQuestLogTitle(GetQuestLogSelection())
 		if (not title) or not questID then
@@ -289,8 +286,6 @@ ns.AddWideQuestLogPart(function()
 	hooksecurefunc("QuestFrameItems_Update", function(questState)
 		if questState == "QuestLog" then -- The quest giver window's rewards use it too
 			AlignRewards()
-			UpdateQuestChain()
-			ShowQuestID()
 		end
 	end)
 end)

@@ -102,12 +102,27 @@ function ns.OptionsRoutesControl(key, control, order, hidden)
 	return control
 end
 
+-- A Quality of Life setting takes effect at once: the quest giver window, and the dungeon quests' checks
+function ns.ApplyQualityOfLifeSettings()
+	ns.ApplyQuestGiverCleanup()
+	if ns.dungeonQuests then
+		ns.dungeonQuests.Watch()
+	end
+end
+
 --[[
 	Whether the Quest Log switch asks for the other quest log than this session runs: it applies only as the
 	saved settings load (Core.lua), so it waits for a reload. A client with no wide quest log yet has none to wait for
 ]]
 function ns.IsQuestLogReloadPending()
 	return ns.hasWideQuestLog == true and (ns.db.profile.enableWideQuestLog and true or false) ~= ns.wideQuestLogActive
+end
+
+-- The silver line under the Quest Log switch, on the General and Quest Log panels, while it waits for its reload
+function ns.QuestLogReloadPendingText()
+	if ns.IsQuestLogReloadPending() then
+		return L["FEATURE_QUEST_LOG_RELOAD_PENDING"]
+	end
 end
 
 -- A silver line shown only while getText returns something
@@ -143,6 +158,105 @@ function ns.OptionsSubRow(order, hidden, controls)
 		args[key] = control
 	end
 	return { type = "group", name = "", inline = true, order = order, hidden = hidden, args = args }
+end
+
+--------------------------------------------------------------------------------
+-- Example Lines
+--------------------------------------------------------------------------------
+
+--[[
+	How a line reaches whoever reads it, which decides how its Example is drawn: a whisper as the player
+	receiving it sees it, and group chat as party chat, the one every group has. chatType is the client's
+	ChatTypeInfo key, so a player who recolored a channel sees their own color; hex is for a client that
+	hasn't filled that table in
+]]
+local SAMPLE_FORMS = {
+	PARTY = { chatType = "PARTY", hex = "AAAAFF", prefix = CHAT_PARTY_GET },
+	WHISPER = { chatType = "WHISPER", hex = "FF80FF", prefix = CHAT_WHISPER_GET },
+}
+
+local function ChatColor(form)
+	local info = ChatTypeInfo and ChatTypeInfo[form.chatType]
+	if not info then
+		return "|cff" .. form.hex
+	end
+	return format(
+		"|cff%02x%02x%02x",
+		math.floor(info.r * 255 + 0.5),
+		math.floor(info.g * 255 + 0.5),
+		math.floor(info.b * 255 + 0.5)
+	)
+end
+
+-- A panel falls back to white after a link's |r where chat falls back to the channel's color, so it's opened again
+local function Tint(color, text)
+	return color .. text:gsub("|r", "|r" .. color) .. "|r"
+end
+
+-- The receiving client draws a {rtN} token as its mark
+local function RaidIconTexture(index)
+	return "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_" .. index .. ":0|t"
+end
+
+-- The sender as chat names them: the character the panel is opened on, in its class color
+local function SampleSender()
+	local _, class = UnitClass("player")
+	local color = ns.CLASS_COLORS[class or ""] or ns.PALETTE.TEXT
+	return "[|cff" .. color .. (GetUnitName("player") or UnitName("player") or "") .. "|r]"
+end
+
+--[[
+	An Example line: the silver label, then the line drawn as it will arrive. PRINT is the player's own
+	window (ns.BuildPrintLine), PARTY and WHISPER chat from the player's character
+]]
+function ns.RenderSample(formKey, message)
+	local line
+	if formKey == "PRINT" then
+		line = ns.BuildPrintLine(message)
+	else
+		local form = SAMPLE_FORMS[formKey]
+		local shown = message:gsub("{rt(%d)}", RaidIconTexture)
+		line = Tint(ChatColor(form), form.prefix:format(SampleSender()) .. shown)
+	end
+	return GetColor("HELP") .. L["SAMPLE_EXAMPLE"]:format(line .. GetColor("HELP")) .. "|r"
+end
+
+-- The flavor's sample quests as the features take them; a title the client hasn't loaded yet is asked for
+function ns.SampleQuests()
+	local quests = {}
+	for _, questID in ipairs(ns.SAMPLE_QUEST_IDS) do
+		local title = ns.GetQuestTitleByID(questID)
+		if not title then
+			if C_QuestLog.RequestLoadQuestByID then
+				C_QuestLog.RequestLoadQuestByID(questID)
+			end
+			title = L["SAMPLE_QUEST_LOADING"]:format(questID)
+		end
+		quests[#quests + 1] = { questID = questID, title = title }
+	end
+	return quests
+end
+
+-- A client with no sample quests shows no Example lines
+function ns.NoSampleQuests()
+	return #ns.SAMPLE_QUEST_IDS == 0
+end
+
+-- An Example under a control, indented as a sub-option and shown only while hidden() is false
+function ns.OptionsExampleRow(order, example, hidden)
+	return ns.OptionsSubRow(order, function()
+		return hidden() or ns.NoSampleQuests()
+	end, {
+		example = {
+			type = "description",
+			name = function()
+				return ns.NoSampleQuests() and "" or example()
+			end,
+			fontSize = "medium",
+			width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH,
+			order = 2,
+		},
+	})
 end
 
 --------------------------------------------------------------------------------

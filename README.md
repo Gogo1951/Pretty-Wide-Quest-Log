@@ -2,21 +2,9 @@
 
 Wide quest log with a quest route and quest arrow. You pick the quests, we help with a clean route to get them done fast. Quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI.
 
-**TL;DR:** Quest with confidence and speed. The quest log Blizzard should have shipped, a route through every quest you picked, and your whole group on the same quests without typing a word.
+**TL;DR:** Quest with confidence and speed. A clean route through every quest you picked, an arrow to follow, the quest log Blizzard should have shipped, and your whole group on the same quests without typing a word.
 
-### Forever
-
-🎧 **Keeps Your Quest-Givers Talking** // Works with Spoken and VoiceOver, so the narration doesn't skip a beat.
-
-<img width="800" src="https://github.com/user-attachments/assets/2fc1879e-a781-4310-b90b-dbbae9391b64" />
-
-### TBC & Era
-
-🔎 **A Map Without the Icon Soup** // Questie is the best thing to happen to Classic questing, but with a dozen quests in a zone, the map turns into icon soup. The map beside your log shows Questie's data for the selected quest, shading each objective's area with one icon in it instead of a pin on every spawn, so you can focus on exactly where you need to go.
-
-🌍 **Follow Quests Across Zones** // Some quests take you all over the world. Switch between every zone a quest visits, right from the map, and keep the whole journey in view.
-
-<img width="800" src="https://github.com/user-attachments/assets/052eb021-d91b-45b3-849d-5202897f6baa" />
+<img width="400" src="https://github.com/user-attachments/assets/469c4f94-6db2-467d-b4bb-98e2d41be536" />
 
 ### Example Messages
 
@@ -30,18 +18,18 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 
 1. Install the add-on, ideally using [CurseForge](https://www.curseforge.com/wow/addons/pretty-wide-quest-log) or [Wago](https://addons.wago.io/addons/pretty-wide-quest-log).
 2. Type `/pwql` to open the Options Interface and pick how zones and quests are sorted.
-3. Press your quest log key (L), or click the quest log button on the micro menu.
-4. Drag the grip in the bottom-right corner to make the window as tall as you like.
-5. With Questie on, open your zone map (M) to see your route, then follow the Quest Arrow.
+3. With Questie on, open your zone map (M) to see your route, then follow the Quest Arrow.
+4. Press your quest log key (L), or click the quest log button on the micro menu.
+5. Drag the grip in the bottom-right corner to make the window as tall as you like.
 6. _"Your quest log's sorted. Now go find Mankrik's wife."_
 
 ## Features
 
-📖 **Everything at a Glance** // Your whole quest list and every detail of the selected quest side by side, with level, dungeon, raid, elite, group, and PvP tags to size up a quest before diving in.
+🧭 **A Clean Route, Start to Finish** // Every quest you picked, laid out as one route on the zone map, nearest first, with an arrow on screen pointing to the next waypoint. Less guessing, more questing.
 
-🧭 **A Clean Route, Start to Finish** // Your quests laid out as one route on the zone map, and an arrow on screen pointing to the next waypoint. Less guessing, more questing.
+🔎 **A Map Without the Icon Soup** // The map beside your log shows only the selected quest, one shaded area and one icon per objective, and flips between every zone a quest visits. No more digging through a dozen quests' pins.
 
-🗂️ **Organized and Easy to Scan** // Sort zones and quests by level or name, with roomier lines, cleaner headings, and checkmarks on finished objectives, all true to Blizzard's look.
+📖 **Everything at a Glance** // Your quest list and the selected quest's details side by side, sorted by level or name, with level, dungeon, raid, elite, group, and PvP tags to size up a quest before diving in.
 
 📣 **Your Whole Party, On the Same Page** // Walk into a dungeon and your party learns which of your quests are inside and gets every one you can share, with a friendly whisper for anyone who misses one.
 
@@ -51,11 +39,11 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 
 ### Routes & the Quest Arrow
 
-<img width="400" src="https://github.com/user-attachments/assets/469c4f94-6db2-467d-b4bb-98e2d41be536" />
+🧠 Routes and the Quest Arrow need Questie.
 
-Open your zone map to see all your quests organized into a clean route, starting with the nearest. Each objective and turn-in gets a marker. The Quest Arrow points you to the next waypoint and shows what's left to do there. In a party, it also includes quests from party members who are running Questie.
-
-🧠 This feature requires Questie. 
+* Each objective and turn-in gets a marker on the zone map, and the Quest Arrow shows what's left to do at the next waypoint.
+* In a party, the route also picks up quests from party members who are running Questie.
+* While the route is on your zone map, the add-on keeps the game's Mini World Map setting off, so the map opens full size with room for the route. Turn off Open the Zone Map Full Size in the Options Interface to keep yours small.
 
 Fun fact: Questie once planned a Routes feature for TBC Classic, but it never made it out of development. Much of this add-on's user experience grew out of Aero's and my work on that project.
 
@@ -66,6 +54,18 @@ Fun fact: Questie once planned a Routes feature for TBC Classic, but it never ma
 Never lose your place in a long chain again. With Questie installed, the selected quest's details list every step of its chain, checking off the ones you've turned in and highlighting the one you're on. Hover any step for Questie's tooltip on it.
 
 <img width="800" src="https://github.com/user-attachments/assets/6cf6eebe-5eaf-4b0e-98d3-b9811741f6ed" />
+
+### The Quest Log on Each Client
+
+Spoken and VoiceOver keep their play buttons on your quest list, so the narration doesn't skip a beat.
+
+**Forever**
+
+<img width="800" src="https://github.com/user-attachments/assets/2fc1879e-a781-4310-b90b-dbbae9391b64" />
+
+**TBC & Era**
+
+<img width="800" src="https://github.com/user-attachments/assets/052eb021-d91b-45b3-849d-5202897f6baa" />
 
 ## Testing & Localization Status
 

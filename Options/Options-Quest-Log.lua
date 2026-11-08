@@ -55,13 +55,6 @@ local function Inactive()
 	return not ns.wideQuestLogActive
 end
 
--- The switch applies at the next reload, so while it differs from this session a line under it says so
-local function ReloadPending()
-	if ns.IsQuestLogReloadPending() then
-		return L["FEATURE_QUEST_LOG_RELOAD_PENDING"]
-	end
-end
-
 --------------------------------------------------------------------------------
 -- Rows
 --------------------------------------------------------------------------------
@@ -194,7 +187,7 @@ function ns.BuildQuestLogOptions()
 				"FEATURE_QUEST_LOG_DESCRIPTION",
 				3
 			),
-			reloadPending = ns.OptionsStatusLine(ReloadPending, 4),
+			reloadPending = ns.OptionsStatusLine(ns.QuestLogReloadPendingText, 4),
 
 			spaceSorting0 = ns.OptionsSpacer(5, Hidden),
 			headerSorting = ns.OptionsHeader(L["QUEST_LOG_SORTING_HEADER"], 6, Hidden),

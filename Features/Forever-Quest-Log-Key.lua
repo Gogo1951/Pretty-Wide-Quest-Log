@@ -29,7 +29,7 @@ function ns.TakeOverQuestLog()
 
 	hooksecurefunc("ToggleQuestLog", function()
 		if CanTakeOverFromMap() then
-			HideUIPanel(WorldMapFrame)
+			ns.TrackerTaintStep("ToggleQuestLog takeover: HideUIPanel", HideUIPanel, WorldMapFrame)
 			if not ns.WasClosedForPanel(WorldMapFrame) then
 				ns.ToggleQuestLogWindow()
 			end
@@ -38,8 +38,8 @@ function ns.TakeOverQuestLog()
 
 	hooksecurefunc("QuestMapFrame_OpenToQuestDetails", function(questID)
 		if questID and ns.GetLogIndexForQuestID(questID) and CanTakeOverFromMap() then
-			HideUIPanel(WorldMapFrame)
-			ns.ShowQuest(questID)
+			ns.TrackerTaintStep("OpenToQuestDetails takeover: HideUIPanel", HideUIPanel, WorldMapFrame)
+			ns.TrackerTaintStep("OpenToQuestDetails takeover: ShowQuest", ns.ShowQuest, questID)
 		end
 	end)
 

@@ -18,7 +18,7 @@ ns.SAMPLE_ZONE_AREA_ID = 40 -- Westfall
 How We Got the Data
 
 Last Validated
-	2026-11-06, Classic Era 1.15.9.70576
+	2026-11-07, Classic Era 1.15.9.70576
 
 Notes
 	- Three quests from The Deadmines, a dungeon every current client has, that the Quality of Life panel's

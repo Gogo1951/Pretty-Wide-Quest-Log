@@ -63,16 +63,25 @@ local function Track(questID)
 	return true
 end
 
---[[
-	WatchFrame listens for no event a watch change fires, so it's redrawn here, as Blizzard's own Track button
-	does; none of its buttons is secure, so this is safe in combat
-]]
+-- WatchFrame listens for no event a watch change fires, so it's redrawn here, as Blizzard's own Track button does
 local function Redraw()
 	WatchFrame_Update()
 	ns.RequestUpdate()
 end
 
+-- Changing the watch list from add-on code in combat taints the objective tracker, so it waits for combat to end
+local function RefusedInCombat()
+	if InCombatLockdown() then
+		UIErrorsFrame:AddMessage(ERR_NOT_IN_COMBAT, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, 1.0)
+		return true
+	end
+	return false
+end
+
 function ns.ToggleTracking(questID)
+	if RefusedInCombat() then
+		return
+	end
 	if ns.IsTracked(questID) then
 		Untrack(questID)
 	else
@@ -83,6 +92,9 @@ end
 
 -- Tracks or untracks every quest given, in order, so Track All fills a nearly full watch list from the top of the list down
 function ns.SetAllTracked(questIDs, track)
+	if RefusedInCombat() then
+		return
+	end
 	for _, questID in ipairs(questIDs) do
 		if ns.IsTracked(questID) ~= track then
 			if not track then

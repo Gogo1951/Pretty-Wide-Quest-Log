@@ -119,8 +119,17 @@ end
 	fork, which keeps the VoiceOver global. Returns that global while either is loaded with its quest log
 	part switched on, else nil. rawget, as the global falls back to _G for anything it doesn't hold itself
 ]]
+local function IsVoiceOverLoaded()
+	for _, name in ipairs(ns.VOICEOVER_ADDON_NAMES) do
+		if C_AddOns.IsAddOnLoaded(name) then
+			return true
+		end
+	end
+	return false
+end
+
 function ns.GetVoiceOver()
-	if not (C_AddOns.IsAddOnLoaded("AI_VoiceOver") or C_AddOns.IsAddOnLoaded("Spoken_Quests")) then
+	if not IsVoiceOverLoaded() then
 		return nil
 	end
 	local voiceOver = type(VoiceOver) == "table" and VoiceOver
@@ -163,75 +172,3 @@ function ns.ExplainShareButton(button)
 	end)
 	button:HookScript("OnLeave", GameTooltip_Hide)
 end
-
---------------------------------------------------------------------------------
--- Item Stats
---------------------------------------------------------------------------------
-
---[[
-	An item's stat table from its link, for Validate Data. WoW Forever ships C_Item.GetItemStats; the
-	Classic clients have only the legacy global, which returns the same table. Resolved once at load,
-	modern first
-]]
-ns.GetItemStats = C_Item.GetItemStats or GetItemStats
-
---------------------------------------------------------------------------------
--- Tooltip Text
---------------------------------------------------------------------------------
-
---[[
-	An item's or spell's tooltip as plain lines, a right-hand column kept after " >> ", for Validate Data.
-	kind is "item" or "spell". C_TooltipInfo hands the lines over as data where the client ships its
-	GetItemByID and GetSpellByID getters; elsewhere they are read off a hidden tooltip that is never shown.
-	Color escapes are stripped. A read can throw on an odd ID, so callers protect it
-]]
-local SCAN_TOOLTIP_NAME = "PrettyWideQuestLogScanTooltip"
-local TOOLTIP_DATA_GETTERS = C_TooltipInfo
-	and C_TooltipInfo.GetItemByID
-	and C_TooltipInfo.GetSpellByID
-	and { item = C_TooltipInfo.GetItemByID, spell = C_TooltipInfo.GetSpellByID }
-local scanTooltip
-
-local function PlainText(text)
-	if type(text) ~= "string" then
-		return nil
-	end
-	return (text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|cn[^:]*:", ""):gsub("|r", ""))
-end
-
-local function JoinTooltipLine(left, right)
-	left = PlainText(left) or ""
-	right = PlainText(right)
-	if right and right ~= "" then
-		return left .. " >> " .. right
-	end
-	return left
-end
-
-local function ReadTooltipData(kind, id)
-	local lines = {}
-	local data = TOOLTIP_DATA_GETTERS[kind](id)
-	for _, line in ipairs(data and data.lines or {}) do
-		lines[#lines + 1] = JoinTooltipLine(line.leftText, line.rightText)
-	end
-	return lines
-end
-
-local function ReadScanTooltip(kind, id)
-	if not scanTooltip then
-		scanTooltip = CreateFrame("GameTooltip", SCAN_TOOLTIP_NAME, nil, "GameTooltipTemplate")
-	end
-	scanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-	scanTooltip:ClearLines()
-	scanTooltip:SetHyperlink(kind .. ":" .. id)
-	local lines = {}
-	for index = 1, scanTooltip:NumLines() do
-		local left = _G[SCAN_TOOLTIP_NAME .. "TextLeft" .. index]
-		local right = _G[SCAN_TOOLTIP_NAME .. "TextRight" .. index]
-		lines[#lines + 1] = JoinTooltipLine(left and left:GetText(), right and right:IsShown() and right:GetText())
-	end
-	scanTooltip:Hide()
-	return lines
-end
-
-ns.GetTooltipLines = TOOLTIP_DATA_GETTERS and ReadTooltipData or ReadScanTooltip

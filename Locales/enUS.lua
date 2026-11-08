@@ -15,7 +15,7 @@ L["CHAT_LOADED"] =
 	"Version %s. Settings (including the option to disable this message) are under Options > AddOns > Pretty Wide Quest Log. Enjoying this add-on? Tell a friend, Favorite it on CurseForge, or Star it on GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "As a safety precaution, the Options Interface cannot be opened during combat."
 L["CHAT_QUESTIE_MISSING_FEATURES"] =
-	"Without Questie, the quest map shows less, and quest chains and the Turn In total stay hidden. Turn on Questie in the AddOns list to see them."
+	"Without Questie, the quest map shows less, and quest chains and the Turn-In total stay hidden. Turn on Questie in the AddOns list to see them."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus is also turned on, and the two will fight over the quest log. Turn off Wide Quest Log Plus in the AddOns list, then reload."
 
@@ -155,6 +155,7 @@ L["TAB_ROUTES_MAP"] = "Routes on Zone Map"
 L["TAB_ROUTES_MAP_DESCRIPTION"] =
 	"A route through your quest objectives and turn-ins on the zone map, in the order to do them, from where you stand."
 L["ROUTES_MAP_HEADER"] = "Zone Map"
+L["ROUTES_MAP_DESCRIPTION"] = "How the zone map opens while it shows the route."
 L["FULL_SIZE_MAP"] = "Open the Zone Map Full Size"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"Opens the zone map maximized, as its own maximize button does, so the route has room. If you shrink the map, it opens full size again next time."
@@ -162,6 +163,7 @@ L["HIDE_QUESTIE_ICONS"] = "Hide Questie's Icons on the Route"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
 	"Hides Questie's map icons for what's on the route, so the markers stand in for them. Hover a marker to see its icons."
 L["ROUTES_MARKERS_HEADER"] = "Markers"
+L["ROUTES_MARKERS_DESCRIPTION"] = "The markers for each waypoint on the route."
 L["MARKER_SIZE"] = "Marker Size"
 L["MARKER_SIZE_DESCRIPTION"] = "How big the route's markers are on the zone map."
 L["MARKER_SIZE_SMALL"] = "Small"
@@ -169,6 +171,7 @@ L["MARKER_SIZE_MEDIUM"] = "Medium"
 L["MARKER_SIZE_LARGE"] = "Large"
 L["MARKER_SIZE_HUGE"] = "Huge"
 L["ROUTES_LINE_HEADER"] = "Route Line"
+L["ROUTES_LINE_DESCRIPTION"] = "The marching dots that lead from you to each marker."
 L["SHOW_ROUTE_LINE"] = "Show the Route Line"
 L["SHOW_ROUTE_LINE_DESCRIPTION"] = "Draws marching dots from you to each marker in turn. Off shows just the markers."
 L["LINE_SPEED"] = "Line Speed"
@@ -180,9 +183,10 @@ L["LINE_SPEED_FAST"] = "Fast"
 L["LINE_OPACITY"] = "Line Opacity"
 L["LINE_OPACITY_DESCRIPTION"] = "How solid the dots are; lower lets more of the map show through."
 L["ROUTES_PARTY_HEADER"] = "Party"
+L["ROUTES_PARTY_DESCRIPTION"] = "What your party adds to the route."
 L["PARTY_QUESTS"] = "Include Party Members' Quests"
 L["PARTY_QUESTS_DESCRIPTION"] =
-	"In a party, the route and the Quest Arrow also take in quests your party members have and you don't, shown just like your own. It needs Questie on both ends to share them. Their dungeon quests are left out, as yours are."
+	"In a party, the route and the Quest Arrow also take in quests your party members have and you don't, shown just like your own. It needs Questie on both ends to share them. Their dungeon quests are left out, as the objectives are inside the dungeon."
 
 --------------------------------------------------------------------------------
 -- Options: Quest Arrow Panel
@@ -190,19 +194,19 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Quest Arrow"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"An arrow on screen pointing to the next waypoint on the route, with the quests and objectives to do there. Right-click it to reroute around the current objective; middle-click it to reset all routes."
+	"An arrow on screen pointing to the next waypoint on the route, with the quests and objectives to do there. Hover it for a menu where you can ignore one objective at a time and see what you've ignored. Middle-click it to clear the ignore list."
 L["QUEST_ARROW_HEADER"] = "Arrow"
+L["QUEST_ARROW_DESCRIPTION"] = "Where the Quest Arrow sits and how big it is."
 L["ARROW_SIZE"] = "Arrow Size"
 L["ARROW_SIZE_DESCRIPTION"] = "How big the Quest Arrow is, with the text under it."
-L["ARROW_CYCLE"] = "Eye and Arrow Cycle (Seconds)"
-L["ARROW_CYCLE_DESCRIPTION"] =
-	"In an objective area, the Quest Arrow takes turns: the eye, listing the objectives around you, then the arrow, pointing on to the next waypoint. Each gets half of this time."
 L["LOCK_ARROW"] = "Lock the Quest Arrow"
 L["LOCK_ARROW_DESCRIPTION"] = "Keeps the Quest Arrow where it is, so dragging it does nothing."
 L["RESET_ARROW"] = "Arrow Position"
 L["RESET_ARROW_BUTTON"] = "Reset"
+L["RESET_ARROW_CONFIRM"] = "Move the Quest Arrow back to its starting spot?"
 L["RESET_ARROW_DESCRIPTION"] = "Puts the Quest Arrow back where it starts, near the top middle of the screen."
 L["QUEST_ARROW_TEXT_HEADER"] = "Under the Arrow"
+L["QUEST_ARROW_TEXT_DESCRIPTION"] = "What the Quest Arrow lists under itself."
 L["SHOW_DISTANCE"] = "Show Distance"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_ARRIVED, as the Quest Arrow shows them
 L["SHOW_DISTANCE_DESCRIPTION"] = 'Shows how many yards away the next waypoint is. "%s" and "%s" show either way.'
@@ -212,7 +216,17 @@ L["QUESTS_LISTED"] = "Maximum Quests Listed"
 -- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
 L["QUESTS_LISTED_DESCRIPTION"] =
 	'The most quests the Quest Arrow lists under itself for one waypoint. Any more are counted on a line of their own, such as "%s".'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_NEXT_OBJECTIVE"] = "Show Next Objective"
+-- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
+L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
+	'At a "%s", lists "%s" under it, dimmed: a small arrow to the waypoint after, and what\'s to do there.'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_UPCOMING_TURN_INS"] = "Show Upcoming Turn-Ins"
+L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
+	"Puts each quest's turn-in on the route before its objectives are done, marked with Questie's gray question mark, so you can see where you'll hand it in. Turned off, a turn-in joins the route once the quest is complete."
 L["QUEST_ARROW_HIDING_HEADER"] = "Hiding"
+L["QUEST_ARROW_HIDING_DESCRIPTION"] = "When the Quest Arrow steps out of the way."
 L["HIDE_IN_RAIDS"] = "Hide in Raid Groups"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "Hides the Quest Arrow while you're in a raid group."
 L["HIDE_IN_INSTANCES"] = "Hide in Instances"
@@ -276,7 +290,7 @@ L["UNTRACK_ALL"] = "Untrack All"
 L["HIDE_MAP"] = "Hide Map"
 L["TURN_IN_XP"] = "%s XP"
 L["TURN_IN_SEPARATOR"] = " / "
-L["TURN_IN_SUMMARY"] = "Turn In: %s"
+L["TURN_IN_SUMMARY"] = "Turn-In: %s"
 L["TURN_IN_TOOLTIP"] = "Ready to Turn In"
 L["RESIZE_TOOLTIP"] = "Drag to resize the quest log."
 
@@ -287,6 +301,8 @@ L["RESIZE_TOOLTIP"] = "Drag to resize the quest log."
 L["SHARE_QUESTS"] = "Share Quests"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"Offers your party the quests in this zone the game lets you share, one every %d seconds."
+-- TRANSLATORS: %s is a quest's name
+L["CHAT_SHARING_AFTER_COMBAT"] = "Sharing %s when combat ends."
 L["CHAT_SHARING_ZONE_ONE"] = "Sharing 1 quest from %s."
 -- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "Sharing %d quests from %s, one every %d seconds."
@@ -296,27 +312,68 @@ L["CHAT_SHARING_ZONE_NONE"] = "None of your quests from %s can be shared."
 -- Routes on Zone Map and the Quest Arrow
 --------------------------------------------------------------------------------
 
-L["ROUTES_ARRIVED"] = "You're there"
-L["ROUTES_OBJECTIVE_AREA"] = "Objective Area"
+L["ROUTES_ARRIVED"] = "You're There"
+-- TRANSLATORS: where the Quest Arrow would be while its waypoint is on another continent
+L["ROUTES_OTHER_MAP"] = "Waypoint on Another Map"
+L["ROUTES_OBJECTIVE_AREA"] = "Current Objective Area"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when an objective there can be done nowhere else on the route
+L["ROUTES_AREA_FINISH"] = "Finish Here Before Moving On"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when the route passes more of these mobs or objects later
+L["ROUTES_AREA_MORE"] = "More Along the Route"
+-- TRANSLATORS: heads the one line under the Quest Arrow's list naming where the route goes after this area
+L["ROUTES_NEXT_OBJECTIVE"] = "Next Objective"
+-- TRANSLATORS: heads the dimmed objectives the player is passing through, planned for later on the route
+L["ROUTES_WHILE_HERE"] = "While You're Here"
 -- TRANSLATORS: %d is a distance in yards
-L["ROUTES_YARDS"] = "%d yds"
+L["ROUTES_YARDS"] = "%d Yards"
+-- TRANSLATORS: ROUTES_YARDS for a distance of exactly 1
+L["ROUTES_YARD"] = "%d Yard"
 -- TRANSLATORS: %d is how many more quests the Quest Arrow has at this waypoint than it lists
-L["ROUTES_MORE_TASKS"] = "+%d more here"
-L["ROUTES_TURN_IN"] = "Turn in quest"
+L["ROUTES_MORE_TASKS"] = "+%d More Here"
+L["ROUTES_TURN_IN"] = "Turn In Quest"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "Turn in %s"
-L["ROUTES_CORPSE"] = "Run back to your corpse"
--- TRANSLATORS: Heads the list of NPCs, mobs and objects found at a route waypoint
+L["ROUTES_CORPSE"] = "Run Back to Your Corpse"
+-- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Look For"
 L["ROUTES_CLICK_DRAG"] = "Drag"
 L["ROUTES_CLICK_RIGHT"] = "Right-Click"
 L["ROUTES_CLICK_MIDDLE"] = "Middle-Click"
 L["ROUTES_DRAG_MOVE"] = "Move Quest Arrow"
-L["ROUTES_RIGHT_CLICK_REROUTE"] = "Reroute Current Objective"
+L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignore This Waypoint"
+-- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
+L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignore This Objective"
+L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Back on the Route"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "Reset All Routes"
+L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Clear Ignore List"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "Rerouted around %s."
-L["ROUTES_RESET"] = "All routes reset: rerouted objectives are back on the route."
+L["ROUTES_SKIPPED"] = "Ignoring %s until the ignore list is cleared."
+L["ROUTES_RESET"] = "All routes reset: ignored objectives and party members are back on the route."
+L["ROUTES_IGNORE_CLEARED"] = "Ignore list cleared: ignored objectives are back on the route."
+L["ROUTES_GROUP_JOINED_CLEARED"] = "Joined a group: ignored objectives and party members are back on the route."
+L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: ignored objectives and party members are back on the route."
+-- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
+L["ROUTES_MENU_IGNORE"] = "Ignore %s"
+-- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
+L["ROUTES_MENU_IGNORED"] = "Ignored"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_TURN_IN"] = "%s Turn-In"
+L["ROUTES_MENU_GROUP_OBJECTIVES"] = "Show Party Objectives"
+L["ROUTES_MENU_ON"] = "On"
+L["ROUTES_MENU_OFF"] = "Off"
+L["ROUTES_MENU_OUT_OF_ZONE"] = "Out of Zone"
+L["ROUTES_MENU_NO_QUESTIE"] = "No Questie"
+L["ROUTES_MENU_OFFLINE"] = "Offline"
+-- TRANSLATORS: %s is a party member's name; On or Off shows beside it
+L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objectives from %s"
+-- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
+L["ROUTES_IGNORED"] = "Ignoring %s for %s until the ignore list is cleared."
+-- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
+L["ROUTES_UNIGNORED"] = "%s is back on the route."
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_IGNORED"] = "Leaving %s's objectives off the route."
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_INCLUDED"] = "%s's objectives are back on the route."
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players

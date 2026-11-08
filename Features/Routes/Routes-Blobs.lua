@@ -8,6 +8,7 @@ local _, ns = ...
 local routes = ns.routes
 
 local IsInZone = routes.IsInZone
+local IsInstanceMap = routes.IsInstanceMap
 
 local CLUSTER_RADIUS = 180 -- Yards from a blob's middle its spawns lie within, as the quest map's areas
 local MAX_CANDIDATES = 6 -- Blobs an objective offers the route at most: the densest, and the nearest
@@ -18,13 +19,9 @@ local SPAWNS_PER_YIELD = 64
 
 -- Routes-Stops.lua sizes and names stops by the same
 routes.MIN_STOP_RADIUS, routes.NAME_LIMIT = MIN_STOP_RADIUS, NAME_LIMIT
+routes.SPARSE_PENALTY = SPARSE_PENALTY -- For a blob Routes-Nodes.lua adds to the candidates for being shared
 
-local HBD
-
-local function HereBeDragons()
-	HBD = HBD or LibStub("HereBeDragonsQuestie-2.0", true)
-	return HBD
-end
+local HereBeDragons = routes.HereBeDragons
 
 --------------------------------------------------------------------------------
 -- Spawns into blobs
@@ -39,11 +36,17 @@ local function NewPoints()
 end
 routes.NewPoints = NewPoints
 
+local function AddPoint(points, x, y, name)
+	local n = points.count + 1
+	points.count = n
+	points.x[n], points.y[n], points.name[n] = x, y, name or false
+end
+
 --[[
-	Adds each spawn in a Questie spawn table ({ [areaID] = { { x, y, phase }, ... } }, x and y 0-100) to
-	points, in world yards, where it's in the zone and Questie's phasing shows it
+	Each spawn in a Questie spawn table ({ [areaID] = { { x, y, phase }, ... } }, x and y 0-100) that
+	Questie's phasing shows, on a map keepMap(mapID) keeps, handed to add in world yards and continent
 ]]
-local function AddSpawns(points, spawns, name, start, yield)
+local function ForEachSpawn(spawns, yield, keepMap, add)
 	local hbd = HereBeDragons()
 	local ZoneDB = ns.ImportQuestieModule("ZoneDB")
 	local Phasing = ns.ImportQuestieModule("Phasing")
@@ -51,18 +54,15 @@ local function AddSpawns(points, spawns, name, start, yield)
 		return
 	end
 	local checkPhase = Phasing and Phasing.IsSpawnVisible
-	local xs, ys, names = points.x, points.y, points.name
 	for areaID, list in pairs(spawns) do
 		local mapID = ZoneDB:GetUiMapIdByAreaId(areaID)
-		if mapID and type(list) == "table" and IsInZone(mapID, start.zone) then
+		if mapID and type(list) == "table" and keepMap(mapID) then
 			for i, spawn in ipairs(list) do
 				local x, y = spawn[1], spawn[2]
 				if x and y and x >= 0 and y >= 0 and (not checkPhase or Phasing.IsSpawnVisible(spawn[3])) then
 					local worldX, worldY, worldInstance = hbd:GetWorldCoordinatesFromZone(x / 100, y / 100, mapID)
-					if worldX and worldInstance == start.instance then
-						local n = points.count + 1
-						points.count = n
-						xs[n], ys[n], names[n] = worldX, worldY, name or false
+					if worldX then
+						add(worldX, worldY, worldInstance)
 					end
 				end
 				if i % SPAWNS_PER_YIELD == 0 then
@@ -72,7 +72,67 @@ local function AddSpawns(points, spawns, name, start, yield)
 		end
 	end
 end
+
+--[[
+	Adds each spawn to points, in world yards, where it's in the zone. With outdoors, a spawn on a
+	dungeon's or raid's map is left out too (routes.IsInstanceMap), as the route can't lead there
+]]
+local function AddSpawns(points, spawns, name, start, yield, outdoors)
+	ForEachSpawn(spawns, yield, function(mapID)
+		return IsInZone(mapID, start.zone) and not (outdoors and IsInstanceMap(mapID))
+	end, function(x, y, instance)
+		if instance == start.instance then
+			AddPoint(points, x, y, name)
+		end
+	end)
+end
 routes.AddSpawns = AddSpawns
+
+--[[
+	Adds every spawn, whatever the zone, to points for its continent (byInstance, points by world
+	instance), for the camps every map shows (Routes-Camps.lua). A dungeon's or raid's spawns, which no
+	world map shows (Questie keeps most at -1, -1), go at its entrances instead, one point each, as Questie
+	draws their icons there; any other on a dungeon's or raid's map is left out
+]]
+function routes.AddWorldSpawns(byInstance, spawns, name, yield)
+	if type(spawns) ~= "table" then
+		return
+	end
+	local function Add(x, y, instance)
+		local points = byInstance[instance]
+		if not points then
+			points = NewPoints()
+			byInstance[instance] = points
+		end
+		AddPoint(points, x, y, name)
+	end
+	local hbd = HereBeDragons()
+	local ZoneDB = ns.ImportQuestieModule("ZoneDB")
+	local canEnter = hbd and ZoneDB and ZoneDB.GetDungeonLocation and ZoneDB.GetUiMapIdByAreaId
+	local outside = {}
+	for areaID, list in pairs(spawns) do
+		local entrances = canEnter and type(list) == "table" and ZoneDB:GetDungeonLocation(areaID)
+		if type(entrances) == "table" then
+			for _, entrance in ipairs(entrances) do
+				local mapID = type(entrance) == "table" and ZoneDB:GetUiMapIdByAreaId(entrance[1])
+				local x, y, instance
+				if mapID and entrance[2] and entrance[3] then
+					x, y, instance = hbd:GetWorldCoordinatesFromZone(entrance[2] / 100, entrance[3] / 100, mapID)
+				end
+				if x then
+					for _ = 1, math.max(1, #list) do
+						Add(x, y, instance)
+					end
+				end
+			end
+		else
+			outside[areaID] = list
+		end
+	end
+	ForEachSpawn(outside, yield, function(mapID)
+		return not IsInstanceMap(mapID)
+	end, Add)
+end
 
 local function ByCountThenPosition(a, b)
 	if a.count ~= b.count then

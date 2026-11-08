@@ -98,7 +98,7 @@ end
 	Centered in the bottom row, in the gap between Abandon Quest and Share Quest. Placed when it first
 	shows: on Classic Era and TBC those buttons are Blizzard's, and Classic-Quest-Log.lua records them as
 	ns.abandonButton and ns.shareButton only after Classic-Quest-List.lua has made the line (on WoW
-	Forever, Forever-Quest-Log.lua makes them first)
+	Forever and Mists, Forever-Quest-Log.lua makes them first)
 ]]
 local function PlaceTurnInLine(line)
 	if line.placed then

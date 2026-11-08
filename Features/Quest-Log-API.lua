@@ -23,9 +23,9 @@ if C_QuestLog.GetInfo then
 
 	function ns.SetQuestZoneCollapsed(index, collapsed)
 		if collapsed then
-			CollapseQuestHeader(index)
+			ns.TrackerTaintStep("CollapseQuestHeader", CollapseQuestHeader, index)
 		else
-			ExpandQuestHeader(index)
+			ns.TrackerTaintStep("ExpandQuestHeader", ExpandQuestHeader, index)
 		end
 	end
 
@@ -52,20 +52,47 @@ if C_QuestLog.GetInfo then
 	]]
 	function ns.SelectQuest(questID)
 		if C_QuestLog.GetSelectedQuest() ~= questID then
-			C_QuestLog.SetSelectedQuest(questID)
+			ns.TrackerTaintStep("SetSelectedQuest", C_QuestLog.SetSelectedQuest, questID)
 		end
 	end
 
 	ns.IsPushableQuest = C_QuestLog.IsPushableQuest
 	ns.CanAbandonQuest = C_QuestLog.CanAbandonQuest
 
+	--[[
+		WoW Forever blocks QuestLogPushQuest in combat for add-on code, a click on the add-on's own button
+		included, and no secure button or slash command shares a quest. So a share asked for in combat says
+		so in chat and goes out when combat ends (Core's PLAYER_REGEN_ENABLED), if the quest is still
+		shareable and the party still there; a second one asked for meanwhile takes its place
+	]]
+	local pendingShare
+	ns.questLogApi = {}
+
+	function ns.questLogApi:OnPlayerRegenEnabled()
+		local questID = pendingShare
+		pendingShare = nil
+		if
+			questID
+			and C_QuestLog.GetLogIndexForQuestID(questID)
+			and C_QuestLog.IsPushableQuest(questID)
+			and IsInGroup()
+		then
+			QuestMapQuestOptions_ShareQuest(questID)
+		end
+	end
+
 	function ns.ShareQuest(questID)
-		QuestMapQuestOptions_ShareQuest(questID)
+		if InCombatLockdown() then
+			pendingShare = questID
+			ns:PrintMessage(ns.L["CHAT_SHARING_AFTER_COMBAT"]:format(C_QuestLog.GetTitleForQuestID(questID) or questID))
+			return
+		end
+		ns.TrackerTaintStep("QuestMapQuestOptions_ShareQuest", QuestMapQuestOptions_ShareQuest, questID)
 	end
 
 	-- Asks whether to abandon the quest, as the game's own Abandon button does
 	function ns.AskToAbandonQuest(questID)
-		QuestMapQuestOptions_AbandonQuest(questID)
+		ns.TrackerTaintStep("QuestMapQuestOptions_AbandonQuest", QuestMapQuestOptions_AbandonQuest, questID)
 	end
 else
 	--[[
@@ -257,14 +284,17 @@ else
 	end
 end
 
--- Whether a party unit has a quest in its log, by quest ID; nil when the client can't tell
+--[[
+	Whether a party unit has a quest in its log, by quest ID; nil when the client can't tell. A caller that
+	knows the quest's log index passes it, so a client without C_QuestLog.IsUnitOnQuest needn't search the log
+]]
 if C_QuestLog.IsUnitOnQuest then
 	function ns.IsUnitOnQuest(unit, questID)
 		return C_QuestLog.IsUnitOnQuest(unit, questID)
 	end
 else
-	function ns.IsUnitOnQuest(unit, questID)
-		local index = IsUnitOnQuest and ns.GetLogIndexForQuestID(questID)
+	function ns.IsUnitOnQuest(unit, questID, questLogIndex)
+		local index = IsUnitOnQuest and (questLogIndex or ns.GetLogIndexForQuestID(questID))
 		return index and IsUnitOnQuest(index, unit)
 	end
 end

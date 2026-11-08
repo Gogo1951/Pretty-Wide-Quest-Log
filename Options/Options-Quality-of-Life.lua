@@ -1,6 +1,5 @@
 local _, ns = ...
 local L = ns.L
-local GetColor = ns.GetColor
 
 -- While the Quality of Life switch at the top of the panel is off, every setting under it is hidden
 local function Hidden()
@@ -27,7 +26,7 @@ local function Toggle(key, nameKey, order)
 		end,
 		set = function(_, value)
 			ns.db.profile[key] = value
-			ns.ApplyQuestGiverCleanup()
+			ns.ApplyQualityOfLifeSettings()
 		end,
 	}
 end
@@ -56,99 +55,21 @@ end
 -- Example Lines
 --------------------------------------------------------------------------------
 
---[[
-	How a line reaches whoever reads it, which decides how its Example is drawn: a whisper as the player
-	receiving it sees it, and group chat as party chat, the one every group has. chatType is the client's
-	ChatTypeInfo key, so a player who recolored a channel sees their own color; hex is for a client that
-	hasn't filled that table in
-]]
-local SAMPLE_FORMS = {
-	PARTY = { chatType = "PARTY", hex = "AAAAFF", prefix = CHAT_PARTY_GET },
-	WHISPER = { chatType = "WHISPER", hex = "FF80FF", prefix = CHAT_WHISPER_GET },
-}
-
-local function ChatColor(form)
-	local info = ChatTypeInfo and ChatTypeInfo[form.chatType]
-	if not info then
-		return "|cff" .. form.hex
-	end
-	return format(
-		"|cff%02x%02x%02x",
-		math.floor(info.r * 255 + 0.5),
-		math.floor(info.g * 255 + 0.5),
-		math.floor(info.b * 255 + 0.5)
-	)
-end
-
--- A panel falls back to white after a link's |r where chat falls back to the channel's color, so it's opened again
-local function Tint(color, text)
-	return color .. text:gsub("|r", "|r" .. color) .. "|r"
-end
-
--- The receiving client draws a {rtN} token as its mark
-local function RaidIconTexture(index)
-	return "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_" .. index .. ":0|t"
-end
-
--- The sender as chat names them: the character the panel is opened on, in its class color
-local function SampleSender()
-	local _, class = UnitClass("player")
-	local color = ns.CLASS_COLORS[class or ""] or ns.PALETTE.TEXT
-	return "[|cff" .. color .. (GetUnitName("player") or UnitName("player") or "") .. "|r]"
-end
-
---[[
-	An Example line: the silver label, then the line drawn as it will arrive. PRINT is the player's own
-	window (ns.BuildPrintLine), PARTY and WHISPER chat from the player's character
-]]
-local function RenderSample(formKey, message)
-	local line
-	if formKey == "PRINT" then
-		line = ns.BuildPrintLine(message)
-	else
-		local form = SAMPLE_FORMS[formKey]
-		local shown = message:gsub("{rt(%d)}", RaidIconTexture)
-		line = Tint(ChatColor(form), form.prefix:format(SampleSender()) .. shown)
-	end
-	return GetColor("HELP") .. L["SAMPLE_EXAMPLE"]:format(line .. GetColor("HELP")) .. "|r"
-end
-
--- The flavor's sample quests as the features take them; a title the client hasn't loaded yet is asked for
-local function SampleQuests()
-	local quests = {}
-	for _, questID in ipairs(ns.SAMPLE_QUEST_IDS) do
-		local title = ns.GetQuestTitleByID(questID)
-		if not title then
-			if C_QuestLog.RequestLoadQuestByID then
-				C_QuestLog.RequestLoadQuestByID(questID)
-			end
-			title = L["SAMPLE_QUEST_LOADING"]:format(questID)
-		end
-		quests[#quests + 1] = { questID = questID, title = title }
-	end
-	return quests
-end
-
--- A client with no sample quests shows no Example lines
-local function NoSamples()
-	return #ns.SAMPLE_QUEST_IDS == 0
-end
-
 -- The first share-failed whisper, as the party member receives it
 local function ShareWhisperExample()
-	local quest = SampleQuests()[1]
-	return RenderSample("WHISPER", ns.BuildShareWhisper("WHISPER_SHARE_FAILED", quest.questID, quest.title))
+	local quest = ns.SampleQuests()[1]
+	return ns.RenderSample("WHISPER", ns.BuildShareWhisper("WHISPER_SHARE_FAILED", quest.questID, quest.title))
 end
 
 -- The first message of the dungeon announcement, as the group reads it
 local function DungeonAnnounceExample()
-	return RenderSample("PARTY", ns.BuildDungeonAnnouncement(SampleQuests())[1] or "")
+	return ns.RenderSample("PARTY", ns.BuildDungeonAnnouncement(ns.SampleQuests())[1] or "")
 end
 
 -- What sharing an area's quests prints, at the pace the slider sets
 local function AreaSharePrintExample(areaID)
 	local area = C_Map.GetAreaInfo(areaID) or tostring(areaID)
-	return RenderSample("PRINT", ns.BuildSharePrint(#ns.SAMPLE_QUEST_IDS, area))
+	return ns.RenderSample("PRINT", ns.BuildSharePrint(#ns.SAMPLE_QUEST_IDS, area))
 end
 
 -- Sharing the dungeon's quests, under Automatic Dungeon Quest Sharing
@@ -158,24 +79,7 @@ end
 
 -- Sharing a zone's quests with Share Quests, under the slider, so it reads as pacing those shares too
 local function ZoneSharePrintExample()
-	return AreaSharePrintExample(ns.SAMPLE_ZONE_AREA_ID or ns.SAMPLE_DUNGEON_AREA_ID)
-end
-
--- An Example under a control, indented as a sub-option and shown only while hidden() is false
-local function ExampleRow(order, example, hidden)
-	return ns.OptionsSubRow(order, function()
-		return hidden() or NoSamples()
-	end, {
-		example = {
-			type = "description",
-			name = function()
-				return NoSamples() and "" or example()
-			end,
-			fontSize = "medium",
-			width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH,
-			order = 2,
-		},
-	})
+	return AreaSharePrintExample(ns.SAMPLE_ZONE_AREA_ID)
 end
 
 --------------------------------------------------------------------------------
@@ -195,7 +99,7 @@ function ns.BuildQualityOfLifeOptions()
 				"FEATURE_QUALITY_OF_LIFE_SUMMARY",
 				3,
 				nil,
-				ns.ApplyQuestGiverCleanup
+				ns.ApplyQualityOfLifeSettings
 			),
 
 			spaceQuestGivers0 = ns.OptionsSpacer(10, Hidden),
@@ -236,10 +140,10 @@ function ns.BuildQualityOfLifeOptions()
 					ns.db.profile.shareInterval = value
 				end,
 			},
-			shareIntervalExampleRow = ExampleRow(26.5, ZoneSharePrintExample, Hidden),
+			shareIntervalExampleRow = ns.OptionsExampleRow(26.5, ZoneSharePrintExample, Hidden),
 			spaceShareWhispers = ns.OptionsSpacer(27, Hidden),
 			shareWhispers = Toggle("shareWhispers", "SHARE_WHISPERS", 28),
-			shareWhisperExampleRow = ExampleRow(29, ShareWhisperExample, function()
+			shareWhisperExampleRow = ns.OptionsExampleRow(29, ShareWhisperExample, function()
 				return Hidden() or not ns.db.profile.shareWhispers
 			end),
 
@@ -249,12 +153,12 @@ function ns.BuildQualityOfLifeOptions()
 			descDungeonQuests = ns.OptionsDesc(L["DUNGEON_QUESTS_INTRO"], 33, Hidden),
 			spaceDungeonQuests2 = ns.OptionsSpacer(34, Hidden),
 			dungeonAnnounce = Toggle("dungeonAnnounce", "DUNGEON_ANNOUNCE", 35),
-			dungeonAnnounceExampleRow = ExampleRow(36, DungeonAnnounceExample, function()
+			dungeonAnnounceExampleRow = ns.OptionsExampleRow(36, DungeonAnnounceExample, function()
 				return Hidden() or not ns.db.profile.dungeonAnnounce
 			end),
 			spaceDungeonShare = ns.OptionsSpacer(37, Hidden),
 			dungeonShare = Toggle("dungeonShare", "DUNGEON_SHARE", 38),
-			dungeonShareExampleRow = ExampleRow(39, SharePrintExample, function()
+			dungeonShareExampleRow = ns.OptionsExampleRow(39, SharePrintExample, function()
 				return Hidden() or not ns.db.profile.dungeonShare
 			end),
 		},

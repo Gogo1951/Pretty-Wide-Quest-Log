@@ -63,10 +63,13 @@ Data/Default-Settings.lua
 # Pretty Wide Quest Log
 Features/Core.lua
 Features/Utilities.lua
-Features/Quest-Log-API.lua
-Features/Quest-Sort.lua
 Features/Announcements.lua
+Features/Quest-Log-API.lua
+Features/Quest-Details-Data.lua
+Features/Quest-Sort.lua
 Features/Quest-Display.lua
+Features/Quest-Objectives.lua
+Features/Quest-Info-Style.lua
 Features/Quest-Rewards.lua
 Features/Tracking-Mark.lua
 Features/Wowhead-Link.lua
@@ -94,6 +97,7 @@ Features/Quest-Map.xml
 Features/Quest-Map.lua
 Features/Questie-Map.xml
 Features/Questie-Map.lua
+Features/Questie-Map-Quest-Giver.lua
 Features/Questie-Map-Areas.lua
 Features/Questie-Map-Area-Layer.lua
 Features/Forever-Quest-Map.lua
@@ -105,6 +109,7 @@ Features/Mists-Quest-Portrait.lua
 Diagnostics/Diagnostics-Core.lua
 Diagnostics/Manifests.lua
 Diagnostics/Event-Log.lua
+Diagnostics/Tracker-Taint.lua
 Diagnostics/Code-Reports.lua
 Diagnostics/Settings-Reports.lua
 Diagnostics/Validate-Data.lua

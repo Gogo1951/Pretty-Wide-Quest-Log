@@ -26,6 +26,8 @@ noQuestsText:Hide()
 local PLUS_TEXTURE = "Interface\\Buttons\\UI-PlusButton-Up"
 local MINUS_TEXTURE = "Interface\\Buttons\\UI-MinusButton-Up"
 local TITLE_HIGHLIGHT = "Interface\\QuestFrame\\UI-QuestLogTitleHighlight"
+local PARTY_TEXTURE = "Interface\\AddOns\\Pretty-Wide-Quest-Log\\Includes\\Images\\Party-On-Quest"
+local SPACE = LAYOUT.SPACE
 
 local function ToggleHeader(questLogIndex)
 	local entry = ns.GetQuestLogEntry(questLogIndex)
@@ -98,12 +100,18 @@ end
 local function OpenQuestMenu(row)
 	local questID = row.data.questID
 	MenuUtil.CreateContextMenu(row, function(_, root)
-		root:CreateButton(ns.IsTracked(questID) and UNTRACK_QUEST or TRACK_QUEST, function()
+		-- The same rules as the details pane's Track and Share buttons
+		local tracked, disabled = ns.IsTracked(questID), ns.IsQuestDisabledForSession(questID)
+		root:CreateButton(tracked and UNTRACK_QUEST or TRACK_QUEST, function()
 			ns.ToggleTracking(questID)
-		end):SetEnabled(ns.CanTrack(questID))
+		end):SetEnabled(
+			not InCombatLockdown()
+				and ns.CanTrack(questID)
+				and ((tracked and ns.CanRemoveQuestWatch()) or (not tracked and not disabled))
+		)
 		root:CreateButton(SHARE_QUEST, function()
 			ns.ShareQuest(questID)
-		end):SetEnabled(ns.IsPushableQuest(questID) and IsInGroup())
+		end):SetEnabled(not disabled and ns.IsPushableQuest(questID) and IsInGroup())
 		if ns.CanAbandonQuest(questID) then
 			root:CreateButton(ABANDON_QUEST, function()
 				ns.AskToAbandonQuest(questID)
@@ -121,7 +129,7 @@ local function Row_OnClick(self, button)
 	if data.isHeader then
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		ToggleHeader(data.questLogIndex)
-	elseif ChatFrameUtil and ChatFrameUtil.TryInsertQuestLinkForQuestID(data.questID) then
+	elseif ChatFrameUtil.TryInsertQuestLinkForQuestID(data.questID) then
 		return -- Shift-click with a chat box open links the quest
 	elseif IsShiftKeyDown() then
 		ns.ToggleTracking(data.questID) -- Otherwise it toggles tracking, as in Classic
@@ -134,19 +142,17 @@ local function Row_OnClick(self, button)
 end
 
 --[[
-	While in a group, a quest's row lists the party members who have it, in class colors, as Blizzard's
-	own quest log rows do on Classic Era and TBC. Only the player's party (their raid subgroup in a raid),
-	and nothing for a member whose answer the game keeps secret. With any answer secret, "none" would be a
-	guess, so it isn't shown
+	The party members who have a quest, as class-colored names, and whether the game kept any member's
+	answer secret. Only the player's party (their raid subgroup in a raid), and nobody whose answer is secret
 ]]
-local function ShowPartyOnQuest(row, questID)
-	if not (IsInGroup() and PARTY_QUEST_STATUS_ON) then
-		return
-	end
+local function GetPartyOnQuest(questID, questLogIndex)
 	local names, anySecret = {}, false
+	if not IsInGroup() then
+		return names, anySecret
+	end
 	for index = 1, GetNumSubgroupMembers() do
 		local unit = "party" .. index
-		local onQuest = ns.IsUnitOnQuest(unit, questID)
+		local onQuest = ns.IsUnitOnQuest(unit, questID, questLogIndex)
 		local name = GetUnitName(unit, true)
 		local _, class = UnitClass(unit)
 		if not ns.IsReadable(onQuest, name, class) then
@@ -156,7 +162,23 @@ local function ShowPartyOnQuest(row, questID)
 			names[#names + 1] = color and color:WrapTextInColorCode(name) or name
 		end
 	end
+	return names, anySecret
+end
+
+--[[
+	While in a group, hovering a quest's row lists the party members who have it, as Blizzard's own quest
+	log rows do on Classic Era and TBC, under the client's own labels. With any answer secret, "none" would
+	be a guess, so it isn't shown
+]]
+local function ShowPartyOnQuest(row, questID, questLogIndex)
+	if not IsInGroup() then
+		return
+	end
+	local names, anySecret = GetPartyOnQuest(questID, questLogIndex)
 	if #names == 0 and (anySecret or not PARTY_QUEST_STATUS_NONE) then
+		return
+	end
+	if #names > 0 and not PARTY_QUEST_STATUS_ON then
 		return
 	end
 	GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
@@ -181,7 +203,7 @@ local function Row_OnEnter(self)
 	if data and data.isHeader then
 		ns.ShowZoneShareButton(self, data.title)
 	elseif data and data.questID then
-		ShowPartyOnQuest(self, data.questID)
+		ShowPartyOnQuest(self, data.questID, data.questLogIndex)
 	end
 end
 
@@ -207,6 +229,16 @@ local function SetupRow(row)
 	row.Tag = row:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	row.Tag:SetPoint("RIGHT", -2, 0)
 	row.Tag:SetJustifyH("RIGHT")
+
+	-- How many party members have the quest: a group icon and the count, just left of the tag
+	row.PartyCount = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+	row.PartyCount:SetJustifyH("RIGHT")
+	row.PartyCount:SetTextColor(ns.GetColorRGB("INFO"))
+	row.PartyIcon = row:CreateTexture(nil, "ARTWORK")
+	row.PartyIcon:SetTexture(PARTY_TEXTURE)
+	row.PartyIcon:SetVertexColor(ns.GetColorRGB("INFO"))
+	row.PartyIcon:SetSize(16, 16)
+	row.PartyIcon:SetPoint("RIGHT", row.PartyCount, "LEFT", -SPACE.TIGHT, 0)
 
 	row.Check = row:CreateTexture(nil, "ARTWORK")
 	row.Check:SetSize(16, 16)
@@ -240,6 +272,8 @@ local function InitRow(row, data)
 
 	row.Text:SetWidth(0)
 	row.Tag:SetText(nil)
+	row.PartyCount:SetText(nil)
+	row.PartyIcon:Hide()
 	row.Check:Hide()
 	ns.HideVoiceOverButton(row)
 	row:EnableMouse(not data.isSpacer)
@@ -269,11 +303,25 @@ local function InitRow(row, data)
 
 		local tag = GetQuestTag(data)
 		if tag then
-			row.Tag:SetText(PARENS_TEMPLATE and PARENS_TEMPLATE:format(tag) or ("(" .. tag .. ")"))
+			row.Tag:SetText(PARENS_TEMPLATE:format(tag))
 		end
 
-		-- Shorten the title if it would run into the tag
-		local room = LAYOUT.LIST_WIDTH - textX - (tag and (row.Tag:GetStringWidth() + 6) or 2)
+		local used = tag and (row.Tag:GetStringWidth() + 6) or 2
+		local onQuest = #(GetPartyOnQuest(questID, data.questLogIndex))
+		if onQuest > 0 then
+			row.PartyCount:ClearAllPoints()
+			if tag then
+				row.PartyCount:SetPoint("RIGHT", row.Tag, "LEFT", -SPACE.LINE, 0)
+			else
+				row.PartyCount:SetPoint("RIGHT", -2, 0)
+			end
+			row.PartyCount:SetText(onQuest)
+			row.PartyIcon:Show()
+			used = used + row.PartyCount:GetStringWidth() + SPACE.TIGHT + 16 + SPACE.LINE
+		end
+
+		-- Shorten the title if it would run into the party count or the tag
+		local room = LAYOUT.LIST_WIDTH - textX - used
 		if row.Text:GetStringWidth() > room then
 			row.Text:SetWidth(room)
 		end
@@ -340,7 +388,7 @@ local function UpdateListButtons(quests, allCollapsed)
 	end
 	trackButton.questIDs, trackButton.trackAll = questIDs, trackAll
 	trackButton:SetText(trackAll and L["TRACK_ALL"] or L["UNTRACK_ALL"])
-	trackButton:SetEnabled(trackAll or (anyTracked and ns.CanRemoveQuestWatch()))
+	trackButton:SetEnabled(not InCombatLockdown() and (trackAll or (anyTracked and ns.CanRemoveQuestWatch())))
 end
 
 --------------------------------------------------------------------------------

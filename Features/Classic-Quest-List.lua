@@ -16,7 +16,7 @@ ns.AddWideQuestLogPart(function()
 
 	local frameHeight = (QuestLogTitle1 and QuestLogTitle1:GetHeight() or 0)
 	if frameHeight < 8 then
-		frameHeight = 16 -- QUESTLOG_QUEST_HEIGHT
+		frameHeight = QUESTLOG_QUEST_HEIGHT
 	end
 
 	--[[
@@ -55,6 +55,27 @@ ns.AddWideQuestLogPart(function()
 	for i = 1, QUESTS_DISPLAYED do
 		HookRow(_G["QuestLogTitle" .. i])
 	end
+
+	--[[
+		Blizzard puts a shift-clicked quest into the chat box as the row's text, which now leads with its level
+		tag, so the plain title takes its place. Questie inserts its own quest link instead
+	]]
+	hooksecurefunc("QuestLogTitleButton_OnClick", function(row)
+		local editBox = row.plainTitle and IsModifiedClick("CHATLINK") and ChatFrameUtil.GetActiveWindow()
+		if not editBox or C_AddOns.IsAddOnLoaded(ns.QUESTIE_ADDON_NAME) then
+			return
+		end
+		local inserted = (row:GetText() or ""):gsub("^ *", "")
+		local text, last = editBox:GetText(), nil
+		local from = text:find(inserted, 1, true)
+		while from do
+			last = from
+			from = text:find(inserted, from + 1, true)
+		end
+		if last and inserted ~= row.plainTitle then
+			editBox:SetText(text:sub(1, last - 1) .. row.plainTitle .. text:sub(last + #inserted))
+		end
+	end)
 
 	--[[
 		QuestLog_Update() only fills rows up to QUESTS_DISPLAYED, so rows a taller window created and a
@@ -194,6 +215,7 @@ ns.AddWideQuestLogPart(function()
 			local title, level, _, isHeader, _, _, _, questID = GetQuestLogTitle(index)
 
 			ns.UpdateZoneShareButton(row, isHeader and title)
+			row.plainTitle = not isHeader and title or nil
 			if isHeader then
 				row:SetText(ns.ZoneHeaderText(title or ""))
 				text:SetPoint("LEFT", row, "LEFT", LAYOUT.HEADER_TEXT_X, 0)

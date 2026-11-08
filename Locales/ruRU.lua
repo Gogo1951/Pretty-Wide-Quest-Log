@@ -168,6 +168,8 @@ L["TAB_ROUTES_MAP"] = "Маршруты на карте зоны"
 L["TAB_ROUTES_MAP_DESCRIPTION"] =
 	"Маршрут через цели ваших заданий и места их сдачи на карте зоны, в том порядке, в котором их выполнять, от того места, где вы стоите."
 L["ROUTES_MAP_HEADER"] = "Карта зоны"
+L["ROUTES_MAP_DESCRIPTION"] =
+	"Как открывается карта зоны, пока на ней показан маршрут."
 L["FULL_SIZE_MAP"] = "Открывать карту зоны в полном размере"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"Открывает карту зоны развёрнутой, как это делает её собственная кнопка развёртывания, чтобы маршруту хватало места. Если вы уменьшите карту, в следующий раз она снова откроется в полном размере."
@@ -175,6 +177,7 @@ L["HIDE_QUESTIE_ICONS"] = "Скрывать значки Questie на маршр
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
 	"Скрывает значки Questie на карте для всего, что есть на маршруте, чтобы их заменили метки. Наведите курсор на метку, чтобы увидеть её значки."
 L["ROUTES_MARKERS_HEADER"] = "Метки"
+L["ROUTES_MARKERS_DESCRIPTION"] = "Метки для каждой путевой точки маршрута."
 L["MARKER_SIZE"] = "Размер меток"
 L["MARKER_SIZE_DESCRIPTION"] = "Насколько крупные метки маршрута на карте зоны."
 L["MARKER_SIZE_SMALL"] = "Маленький"
@@ -182,6 +185,7 @@ L["MARKER_SIZE_MEDIUM"] = "Средний"
 L["MARKER_SIZE_LARGE"] = "Большой"
 L["MARKER_SIZE_HUGE"] = "Огромный"
 L["ROUTES_LINE_HEADER"] = "Линия маршрута"
+L["ROUTES_LINE_DESCRIPTION"] = "Бегущие точки, ведущие от вас к каждой метке."
 L["SHOW_ROUTE_LINE"] = "Показывать линию маршрута"
 L["SHOW_ROUTE_LINE_DESCRIPTION"] =
 	"Рисует бегущие точки от вас к каждой метке по очереди. Если выключено, видны только метки."
@@ -195,9 +199,10 @@ L["LINE_OPACITY"] = "Непрозрачность линии"
 L["LINE_OPACITY_DESCRIPTION"] =
 	"Насколько плотные точки; чем ниже, тем больше карты просвечивает сквозь них."
 L["ROUTES_PARTY_HEADER"] = "Группа"
+L["ROUTES_PARTY_DESCRIPTION"] = "Что ваша группа добавляет к маршруту."
 L["PARTY_QUESTS"] = "Учитывать задания участников группы"
 L["PARTY_QUESTS_DESCRIPTION"] =
-	"В группе маршрут и Стрелка заданий учитывают и задания, которые есть у участников группы, но нет у вас, и показывают их так же, как ваши. Чтобы делиться ими, Questie нужен у обеих сторон. Их задания подземелий не учитываются, как и ваши."
+	"В группе маршрут и Стрелка заданий учитывают и задания, которые есть у участников группы, но нет у вас, и показывают их так же, как ваши. Чтобы делиться ими, Questie нужен у обеих сторон. Их задания подземелий не учитываются, так как их цели находятся внутри подземелья."
 
 --------------------------------------------------------------------------------
 -- Options: Quest Arrow Panel
@@ -205,22 +210,23 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Стрелка заданий"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"Стрелка на экране, указывающая на следующую путевую точку маршрута, с заданиями и целями, которые там нужно выполнить. Щёлкните по ней правой кнопкой, чтобы проложить маршрут в обход текущей цели; средней кнопкой, чтобы сбросить все маршруты."
+	"Стрелка на экране, указывающая на следующую путевую точку маршрута, с заданиями и целями, которые там нужно выполнить. Наведите на неё курсор, чтобы открыть меню, где можно игнорировать цели по одной и увидеть, что вы игнорируете. Щёлкните по ней средней кнопкой, чтобы очистить список игнорирования."
 L["QUEST_ARROW_HEADER"] = "Стрелка"
+L["QUEST_ARROW_DESCRIPTION"] =
+	"Где находится Стрелка заданий и какого она размера."
 L["ARROW_SIZE"] = "Размер стрелки"
 L["ARROW_SIZE_DESCRIPTION"] =
 	"Насколько крупная Стрелка заданий вместе с текстом под ней."
-L["ARROW_CYCLE"] = "Цикл глаза и стрелки (секунды)"
-L["ARROW_CYCLE_DESCRIPTION"] =
-	"В области цели Стрелка заданий чередуется: сначала глаз, перечисляющий цели вокруг вас, затем стрелка, указывающая дальше, на следующую путевую точку. Каждому достаётся половина этого времени."
 L["LOCK_ARROW"] = "Закрепить Стрелку заданий"
 L["LOCK_ARROW_DESCRIPTION"] =
 	"Оставляет Стрелку заданий на месте, так что перетаскивание ничего не делает."
 L["RESET_ARROW"] = "Положение стрелки"
 L["RESET_ARROW_BUTTON"] = "Сбросить"
+L["RESET_ARROW_CONFIRM"] = "Вернуть Стрелку заданий на исходное место?"
 L["RESET_ARROW_DESCRIPTION"] =
 	"Возвращает Стрелку заданий на исходное место, вверху по центру экрана."
 L["QUEST_ARROW_TEXT_HEADER"] = "Под стрелкой"
+L["QUEST_ARROW_TEXT_DESCRIPTION"] = "Что Стрелка заданий перечисляет под собой."
 L["SHOW_DISTANCE"] = "Показывать расстояние"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_ARRIVED, as the Quest Arrow shows them
 L["SHOW_DISTANCE_DESCRIPTION"] =
@@ -232,7 +238,17 @@ L["QUESTS_LISTED"] = "Максимум заданий в списке"
 -- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
 L["QUESTS_LISTED_DESCRIPTION"] =
 	'Сколько заданий самое большее Стрелка заданий перечисляет под собой для одной путевой точки. Остальные считаются отдельной строкой, например "%s".'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_NEXT_OBJECTIVE"] = "Показывать следующую цель"
+-- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
+L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
+	'Когда показана "%s", ниже приглушённо выводится "%s": маленькая стрелка к следующей путевой точке и то, что там нужно сделать.'
+L["SHOW_UPCOMING_TURN_INS"] = "Показывать будущие сдачи"
+L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
+	"Добавляет сдачу каждого задания в маршрут ещё до выполнения его целей, с серым вопросительным знаком Questie, чтобы было видно, где вы его сдадите. Если выключено, сдача появляется в маршруте, когда задание выполнено."
 L["QUEST_ARROW_HIDING_HEADER"] = "Скрытие"
+L["QUEST_ARROW_HIDING_DESCRIPTION"] =
+	"Когда Стрелка заданий скрывается, чтобы не мешать."
 L["HIDE_IN_RAIDS"] = "Скрывать в рейдовых группах"
 L["HIDE_IN_RAIDS_DESCRIPTION"] =
 	"Скрывает Стрелку заданий, пока вы в рейдовой группе."
@@ -312,6 +328,8 @@ L["RESIZE_TOOLTIP"] = "Перетащите, чтобы изменить раз�
 L["SHARE_QUESTS"] = "Поделиться заданиями"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"Предлагает группе задания этой зоны, которые игра позволяет передать, по одному каждые %d сек."
+-- TRANSLATORS: %s is a quest's name
+L["CHAT_SHARING_AFTER_COMBAT"] = "Задание %s будет передано после окончания боя."
 L["CHAT_SHARING_ZONE_ONE"] = "Передаётся 1 задание из зоны %s."
 -- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] =
@@ -324,29 +342,73 @@ L["CHAT_SHARING_ZONE_NONE"] =
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "Вы на месте"
-L["ROUTES_OBJECTIVE_AREA"] = "Область цели"
+-- TRANSLATORS: where the Quest Arrow would be while its waypoint is on another continent
+L["ROUTES_OTHER_MAP"] = "Путевая точка на другой карте"
+L["ROUTES_OBJECTIVE_AREA"] = "Текущая область цели"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when an objective there can be done nowhere else on the route
+L["ROUTES_AREA_FINISH"] = "Закончите здесь, прежде чем идти дальше"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when the route passes more of these mobs or objects later
+L["ROUTES_AREA_MORE"] = "Ещё встретятся по маршруту"
+-- TRANSLATORS: heads the one line under the Quest Arrow's list naming where the route goes after this area
+L["ROUTES_NEXT_OBJECTIVE"] = "Следующая цель"
+-- TRANSLATORS: heads the dimmed objectives the player is passing through, planned for later on the route
+L["ROUTES_WHILE_HERE"] = "Раз уж вы здесь"
 -- TRANSLATORS: %d is a distance in yards
 L["ROUTES_YARDS"] = "%d м"
+-- TRANSLATORS: ROUTES_YARDS for a distance of exactly 1
+L["ROUTES_YARD"] = "%d м"
 -- TRANSLATORS: %d is how many more quests the Quest Arrow has at this waypoint than it lists
 L["ROUTES_MORE_TASKS"] = "Ещё +%d здесь"
 L["ROUTES_TURN_IN"] = "Сдать задание"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "Сдать: %s"
 L["ROUTES_CORPSE"] = "Вернитесь к своему телу"
--- TRANSLATORS: Heads the list of NPCs, mobs and objects found at a route waypoint
+-- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Ищите"
--- TRANSLATORS: %s is the party members a waypoint's objective is for, such as "Alice, Bob"
-L["ROUTES_FOR_MEMBERS"] = "Для: %s"
 L["ROUTES_CLICK_DRAG"] = "Перетаскивание"
 L["ROUTES_CLICK_RIGHT"] = "Правый щелчок"
 L["ROUTES_CLICK_MIDDLE"] = "Средний щелчок"
 L["ROUTES_DRAG_MOVE"] = "Переместить Стрелку заданий"
-L["ROUTES_RIGHT_CLICK_REROUTE"] = "Обойти текущую цель"
+L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Игнорировать эту путевую точку"
+-- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
+L["ROUTES_RIGHT_CLICK_IGNORE"] = "Игнорировать эту цель"
+L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Вернуть на маршрут"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "Сбросить все маршруты"
+L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Очистить список игнорирования"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "Маршрут проложен в обход: %s."
+L["ROUTES_SKIPPED"] =
+	"Маршрут игнорирует %s до очистки списка игнорирования."
 L["ROUTES_RESET"] =
-	"Все маршруты сброшены: обойдённые цели снова на маршруте."
+	"Все маршруты сброшены: игнорируемые цели и участники группы снова на маршруте."
+L["ROUTES_IGNORE_CLEARED"] =
+	"Список игнорирования очищен: игнорируемые цели снова на маршруте."
+L["ROUTES_GROUP_JOINED_CLEARED"] =
+	"Вы вступили в группу: игнорируемые цели и участники группы снова на маршруте."
+L["ROUTES_GROUP_LEFT_CLEARED"] =
+	"Вы покинули группу: игнорируемые цели и участники группы снова на маршруте."
+-- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
+L["ROUTES_MENU_IGNORE"] = "Игнорировать: %s"
+-- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
+L["ROUTES_MENU_IGNORED"] = "Игнорируется"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_TURN_IN"] = "Сдача: %s"
+L["ROUTES_MENU_GROUP_OBJECTIVES"] = "Показывать цели группы"
+L["ROUTES_MENU_ON"] = "Вкл."
+L["ROUTES_MENU_OFF"] = "Выкл."
+L["ROUTES_MENU_OUT_OF_ZONE"] = "В другой зоне"
+L["ROUTES_MENU_NO_QUESTIE"] = "Нет Questie"
+L["ROUTES_MENU_OFFLINE"] = "Не в сети"
+-- TRANSLATORS: %s is a party member's name; On or Off shows beside it
+L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Цели участника %s"
+-- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
+L["ROUTES_IGNORED"] =
+	"Маршрут игнорирует %s для задания %s до очистки списка игнорирования."
+-- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
+L["ROUTES_UNIGNORED"] = "%s: снова на маршруте."
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_IGNORED"] = "Цели участника %s убраны с маршрута."
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_INCLUDED"] = "Цели участника %s снова на маршруте."
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players

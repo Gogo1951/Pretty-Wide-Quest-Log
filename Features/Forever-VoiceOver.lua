@@ -28,10 +28,22 @@ local function TakeLeftoverButton()
 	end
 end
 
+-- VoiceOver's overlay, when every part of VoiceOver this file calls is there, so an update of it that renames one only drops the buttons
 local function GetOverlay()
 	local voiceOver = ns.GetVoiceOver()
 	local overlay = voiceOver and voiceOver.QuestOverlayUI
-	if overlay and overlay.MakePlayButton and overlay.BindPlayButton and overlay.SetPlayButtonState then
+	local soundEvents = type(voiceOver) == "table" and type(voiceOver.Enums) == "table" and voiceOver.Enums.SoundEvent
+	local dataModules = type(voiceOver) == "table" and voiceOver.DataModules
+	if
+		type(overlay) == "table"
+		and type(overlay.MakePlayButton) == "function"
+		and type(overlay.BindPlayButton) == "function"
+		and type(overlay.SetPlayButtonState) == "function"
+		and type(soundEvents) == "table"
+		and soundEvents.QuestAccept ~= nil
+		and type(dataModules) == "table"
+		and type(dataModules.PrepareSound) == "function"
+	then
 		return overlay, voiceOver
 	end
 end

@@ -170,17 +170,19 @@ local SHARE_WHISPER_KEYS = {
 }
 
 --[[
-	The quest with the longest title in the log, in bytes: its ID and title. Read with every zone open
-	(ns.LogQuests), since a zone collapsed in Blizzard's log lists none of its quests
+	The quest with the longest title in the log, in bytes: its ID and title, and how many zones went
+	uncounted. Read through ns.DiagnosticLogQuests, which never opens a zone or selects a quest, so a
+	zone collapsed in Blizzard's log (Classic Era, TBC and Mists) lists none of its quests
 ]]
 local function LongestQuestTitle()
 	local longest, longestID = "", nil
-	for _, quest in ipairs(ns.LogQuests()) do
+	local quests, collapsed = ns.DiagnosticLogQuests()
+	for _, quest in ipairs(quests) do
 		if quest.title and quest.questID and #quest.title > #longest then
 			longest, longestID = quest.title, quest.questID
 		end
 	end
-	return longestID, longest
+	return longestID, longest, collapsed
 end
 
 --[[
@@ -190,12 +192,15 @@ end
 ]]
 function ns:BuildMessageLengthReport()
 	local lines = { GetClientHeader(), "" }
-	local questID, title = LongestQuestTitle()
+	local questID, title, collapsed = LongestQuestTitle()
+	local uncounted = collapsed > 0 and string.format(" (not counting %d collapsed zones)", collapsed) or ""
 	if not questID then
-		lines[#lines + 1] = "No quests in the log: pick up a quest to measure with."
+		lines[#lines + 1] = "No quests in the log"
+			.. uncounted
+			.. ": pick up a quest, or open its zone in the quest log, to measure with."
 		return table.concat(lines, "\n")
 	end
-	lines[#lines + 1] = string.format("Longest quest title: %s (%d bytes)", title, #title)
+	lines[#lines + 1] = string.format("Longest quest title: %s (%d bytes)%s", title, #title, uncounted)
 	lines[#lines + 1] = string.format("Chat limit: %d bytes", ns.CHAT_MESSAGE_MAX_LENGTH)
 	lines[#lines + 1] = ""
 	for _, key in ipairs(SHARE_WHISPER_KEYS) do

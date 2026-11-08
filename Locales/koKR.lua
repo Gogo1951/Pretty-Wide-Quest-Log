@@ -164,6 +164,7 @@ L["TAB_ROUTES_MAP"] = "지역 지도 경로"
 L["TAB_ROUTES_MAP_DESCRIPTION"] =
 	"현재 위치에서 시작해 퀘스트 목표와 완료 보고 장소를 할 순서대로 잇는, 지역 지도 위의 경로입니다."
 L["ROUTES_MAP_HEADER"] = "지역 지도"
+L["ROUTES_MAP_DESCRIPTION"] = "경로를 표시하는 동안 지역 지도가 열리는 방식입니다."
 L["FULL_SIZE_MAP"] = "지역 지도를 최대 크기로 열기"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"지도의 최대화 버튼을 누른 것처럼 지역 지도를 최대화해서 열어 경로가 들어갈 공간을 확보합니다. 지도를 줄여도 다음에는 다시 최대 크기로 열립니다."
@@ -171,6 +172,7 @@ L["HIDE_QUESTIE_ICONS"] = "경로의 Questie 아이콘 숨기기"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
 	"경로에 있는 대상의 Questie 지도 아이콘을 숨기고 표식이 대신 표시되게 합니다. 표식에 마우스를 올리면 그 아이콘을 볼 수 있습니다."
 L["ROUTES_MARKERS_HEADER"] = "표식"
+L["ROUTES_MARKERS_DESCRIPTION"] = "경로의 각 경유지 표식입니다."
 L["MARKER_SIZE"] = "표식 크기"
 L["MARKER_SIZE_DESCRIPTION"] = "지역 지도에 표시되는 경로 표식의 크기입니다."
 L["MARKER_SIZE_SMALL"] = "작게"
@@ -178,6 +180,7 @@ L["MARKER_SIZE_MEDIUM"] = "보통"
 L["MARKER_SIZE_LARGE"] = "크게"
 L["MARKER_SIZE_HUGE"] = "아주 크게"
 L["ROUTES_LINE_HEADER"] = "경로선"
+L["ROUTES_LINE_DESCRIPTION"] = "내 위치에서 각 표식까지 이어지는 움직이는 점입니다."
 L["SHOW_ROUTE_LINE"] = "경로선 표시"
 L["SHOW_ROUTE_LINE_DESCRIPTION"] =
 	"내 위치에서 각 표식까지 차례로 움직이는 점을 그립니다. 끄면 표식만 표시합니다."
@@ -191,9 +194,10 @@ L["LINE_OPACITY"] = "경로선 불투명도"
 L["LINE_OPACITY_DESCRIPTION"] =
 	"점이 얼마나 진하게 보이는지 정합니다. 낮을수록 지도가 더 많이 비쳐 보입니다."
 L["ROUTES_PARTY_HEADER"] = "파티"
+L["ROUTES_PARTY_DESCRIPTION"] = "파티가 경로에 더하는 것입니다."
 L["PARTY_QUESTS"] = "파티원의 퀘스트 포함"
 L["PARTY_QUESTS_DESCRIPTION"] =
-	"파티 중에는 경로와 퀘스트 화살표에 파티원에게는 있고 나에게는 없는 퀘스트도 포함하며, 내 퀘스트와 똑같이 표시합니다. 이를 공유하려면 양쪽 모두 Questie가 있어야 합니다. 파티원의 던전 퀘스트는 내 것과 마찬가지로 제외됩니다."
+	"파티 중에는 경로와 퀘스트 화살표에 파티원에게는 있고 나에게는 없는 퀘스트도 포함하며, 내 퀘스트와 똑같이 표시합니다. 이를 공유하려면 양쪽 모두 Questie가 있어야 합니다. 파티원의 던전 퀘스트는 목표가 던전 안에 있으므로 제외됩니다."
 
 --------------------------------------------------------------------------------
 -- Options: Quest Arrow Panel
@@ -201,19 +205,19 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "퀘스트 화살표"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"경로의 다음 경유지를 가리키는 화면 위 화살표로, 그곳에서 할 퀘스트와 목표를 함께 보여 줍니다. 오른쪽 클릭하면 현재 목표를 우회하도록 경로를 바꾸고, 가운데 클릭하면 모든 경로를 초기화합니다."
+	"경로의 다음 경유지를 가리키는 화면 위 화살표로, 그곳에서 할 퀘스트와 목표를 함께 보여 줍니다. 마우스를 올리면 목표를 하나씩 무시하고 무시한 항목을 확인할 수 있는 메뉴가 열립니다. 가운데 클릭하면 무시 목록을 비웁니다."
 L["QUEST_ARROW_HEADER"] = "화살표"
+L["QUEST_ARROW_DESCRIPTION"] = "퀘스트 화살표의 위치와 크기입니다."
 L["ARROW_SIZE"] = "화살표 크기"
 L["ARROW_SIZE_DESCRIPTION"] = "퀘스트 화살표와 그 아래 글자의 크기입니다."
-L["ARROW_CYCLE"] = "눈과 화살표 전환 주기(초)"
-L["ARROW_CYCLE_DESCRIPTION"] =
-	"목표 구역 안에서는 퀘스트 화살표가 번갈아 바뀝니다. 먼저 주변 목표를 나열하는 눈, 그다음 다음 경유지를 가리키는 화살표가 나옵니다. 각각 이 시간의 절반씩 표시됩니다."
 L["LOCK_ARROW"] = "퀘스트 화살표 잠금"
 L["LOCK_ARROW_DESCRIPTION"] = "퀘스트 화살표를 제자리에 고정해 끌어도 움직이지 않게 합니다."
 L["RESET_ARROW"] = "화살표 위치"
 L["RESET_ARROW_BUTTON"] = "초기화"
+L["RESET_ARROW_CONFIRM"] = "퀘스트 화살표를 처음 위치로 되돌릴까요?"
 L["RESET_ARROW_DESCRIPTION"] = "퀘스트 화살표를 처음 위치인 화면 위쪽 가운데로 되돌립니다."
 L["QUEST_ARROW_TEXT_HEADER"] = "화살표 아래"
+L["QUEST_ARROW_TEXT_DESCRIPTION"] = "퀘스트 화살표가 아래에 나열하는 내용입니다."
 L["SHOW_DISTANCE"] = "거리 표시"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_ARRIVED, as the Quest Arrow shows them
 L["SHOW_DISTANCE_DESCRIPTION"] =
@@ -225,7 +229,16 @@ L["QUESTS_LISTED"] = "최대 표시 퀘스트 수"
 -- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
 L["QUESTS_LISTED_DESCRIPTION"] =
 	'퀘스트 화살표가 한 경유지에 대해 아래에 나열하는 최대 퀘스트 수입니다. 나머지는 "%s"처럼 별도의 줄에 개수로 표시됩니다.'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_NEXT_OBJECTIVE"] = "다음 목표 표시"
+-- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
+L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
+	'"%s"일 때 그 아래에 "%s" 줄을 흐리게 표시해, 그다음 경유지를 가리키는 작은 화살표와 그곳에서 할 일을 보여 줍니다.'
+L["SHOW_UPCOMING_TURN_INS"] = "예정된 퀘스트 완료 표시"
+L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
+	"목표를 마치기 전에도 각 퀘스트의 완료 지점을 경로에 넣고 Questie의 회색 물음표로 표시해, 어디서 완료할지 미리 볼 수 있습니다. 끄면 퀘스트를 완료한 뒤에 완료 지점이 경로에 추가됩니다."
 L["QUEST_ARROW_HIDING_HEADER"] = "숨기기"
+L["QUEST_ARROW_HIDING_DESCRIPTION"] = "퀘스트 화살표를 숨기는 경우입니다."
 L["HIDE_IN_RAIDS"] = "공격대에서 숨기기"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "공격대에 있는 동안 퀘스트 화살표를 숨깁니다."
 L["HIDE_IN_INSTANCES"] = "인스턴스에서 숨기기"
@@ -301,6 +314,8 @@ L["RESIZE_TOOLTIP"] = "끌어서 퀘스트 목록 크기를 조절합니다."
 L["SHARE_QUESTS"] = "퀘스트 공유"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"이 지역에서 게임이 공유를 허용하는 퀘스트를 %d초마다 하나씩 파티에 제안합니다."
+-- TRANSLATORS: %s is a quest's name
+L["CHAT_SHARING_AFTER_COMBAT"] = "전투가 끝나면 %s 퀘스트를 공유합니다."
 L["CHAT_SHARING_ZONE_ONE"] = "%s의 퀘스트 1개를 공유합니다."
 -- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "퀘스트 %d개를 공유합니다 (%s), %d초마다 하나씩."
@@ -311,28 +326,70 @@ L["CHAT_SHARING_ZONE_NONE"] = "%s의 퀘스트 중 공유할 수 있는 퀘스�
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "도착"
-L["ROUTES_OBJECTIVE_AREA"] = "목표 구역"
+-- TRANSLATORS: where the Quest Arrow would be while its waypoint is on another continent
+L["ROUTES_OTHER_MAP"] = "다른 지도에 있는 경유지"
+L["ROUTES_OBJECTIVE_AREA"] = "현재 목표 구역"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when an objective there can be done nowhere else on the route
+L["ROUTES_AREA_FINISH"] = "다음으로 가기 전에 여기서 마치세요"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when the route passes more of these mobs or objects later
+L["ROUTES_AREA_MORE"] = "경로상에 더 있음"
+-- TRANSLATORS: heads the one line under the Quest Arrow's list naming where the route goes after this area
+L["ROUTES_NEXT_OBJECTIVE"] = "다음 목표"
+-- TRANSLATORS: heads the dimmed objectives the player is passing through, planned for later on the route
+L["ROUTES_WHILE_HERE"] = "여기 온 김에"
 -- TRANSLATORS: %d is a distance in yards
 L["ROUTES_YARDS"] = "%d미터"
+-- TRANSLATORS: ROUTES_YARDS for a distance of exactly 1
+L["ROUTES_YARD"] = "%d미터"
 -- TRANSLATORS: %d is how many more quests the Quest Arrow has at this waypoint than it lists
 L["ROUTES_MORE_TASKS"] = "여기에 +%d개 더"
 L["ROUTES_TURN_IN"] = "퀘스트 완료 보고"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "%s 완료 보고"
 L["ROUTES_CORPSE"] = "내 시체로 달려가세요"
--- TRANSLATORS: Heads the list of NPCs, mobs and objects found at a route waypoint
+-- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "찾을 대상"
--- TRANSLATORS: %s is the party members a waypoint's objective is for, such as "Alice, Bob"
-L["ROUTES_FOR_MEMBERS"] = "대상: %s"
 L["ROUTES_CLICK_DRAG"] = "끌기"
 L["ROUTES_CLICK_RIGHT"] = "오른쪽 클릭"
 L["ROUTES_CLICK_MIDDLE"] = "가운데 클릭"
 L["ROUTES_DRAG_MOVE"] = "퀘스트 화살표 이동"
-L["ROUTES_RIGHT_CLICK_REROUTE"] = "현재 목표 우회"
+L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "이 경유지 무시"
+-- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
+L["ROUTES_RIGHT_CLICK_IGNORE"] = "이 목표 무시"
+L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "다시 경로에 포함"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "모든 경로 초기화"
+L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "무시 목록 비우기"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "경로 우회: %s."
-L["ROUTES_RESET"] = "모든 경로 초기화: 우회한 목표가 다시 경로에 포함되었습니다."
+L["ROUTES_SKIPPED"] = "무시 목록을 비울 때까지 %s 항목을 무시합니다."
+L["ROUTES_RESET"] = "모든 경로 초기화: 무시한 목표와 파티원이 다시 경로에 포함되었습니다."
+L["ROUTES_IGNORE_CLEARED"] =
+	"무시 목록을 비웠습니다: 무시한 목표가 다시 경로에 포함되었습니다."
+L["ROUTES_GROUP_JOINED_CLEARED"] =
+	"파티에 참가했습니다: 무시한 목표와 파티원이 다시 경로에 포함되었습니다."
+L["ROUTES_GROUP_LEFT_CLEARED"] =
+	"파티를 떠났습니다: 무시한 목표와 파티원이 다시 경로에 포함되었습니다."
+-- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
+L["ROUTES_MENU_IGNORE"] = "%s 무시"
+-- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
+L["ROUTES_MENU_IGNORED"] = "무시됨"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_TURN_IN"] = "%s 완료 보고"
+L["ROUTES_MENU_GROUP_OBJECTIVES"] = "파티 목표 표시"
+L["ROUTES_MENU_ON"] = "켜짐"
+L["ROUTES_MENU_OFF"] = "꺼짐"
+L["ROUTES_MENU_OUT_OF_ZONE"] = "다른 지역"
+L["ROUTES_MENU_NO_QUESTIE"] = "Questie 없음"
+L["ROUTES_MENU_OFFLINE"] = "오프라인"
+-- TRANSLATORS: %s is a party member's name; On or Off shows beside it
+L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "%s 님의 목표"
+-- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
+L["ROUTES_IGNORED"] = "%s 항목(%s)을 무시 목록을 비울 때까지 무시합니다."
+-- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
+L["ROUTES_UNIGNORED"] = "%s 항목이 다시 경로에 포함되었습니다."
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_IGNORED"] = "%s 님의 목표를 경로에서 제외합니다."
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_INCLUDED"] = "%s 님의 목표가 다시 경로에 포함되었습니다."
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players

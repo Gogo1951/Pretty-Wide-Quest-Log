@@ -161,6 +161,7 @@ L["TAB_ROUTES_MAP"] = "Rotas no mapa da zona"
 L["TAB_ROUTES_MAP_DESCRIPTION"] =
 	"Uma rota pelos seus objetivos de missão e entregas no mapa da zona, na ordem em que fazê-los, a partir de onde você está."
 L["ROUTES_MAP_HEADER"] = "Mapa da zona"
+L["ROUTES_MAP_DESCRIPTION"] = "Como o mapa da zona abre enquanto mostra a rota."
 L["FULL_SIZE_MAP"] = "Abrir o mapa da zona em tamanho máximo"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"Abre o mapa da zona maximizado, como faz o próprio botão de maximizar dele, para a rota ter espaço. Se você diminuir o mapa, ele abre em tamanho máximo de novo na próxima vez."
@@ -168,6 +169,7 @@ L["HIDE_QUESTIE_ICONS"] = "Ocultar os ícones do Questie na rota"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
 	"Oculta os ícones de mapa do Questie para o que está na rota, para que os marcadores fiquem no lugar deles. Passe o mouse sobre um marcador para ver os ícones dele."
 L["ROUTES_MARKERS_HEADER"] = "Marcadores"
+L["ROUTES_MARKERS_DESCRIPTION"] = "Os marcadores de cada ponto de passagem da rota."
 L["MARKER_SIZE"] = "Tamanho dos marcadores"
 L["MARKER_SIZE_DESCRIPTION"] = "O tamanho dos marcadores da rota no mapa da zona."
 L["MARKER_SIZE_SMALL"] = "Pequeno"
@@ -175,6 +177,7 @@ L["MARKER_SIZE_MEDIUM"] = "Médio"
 L["MARKER_SIZE_LARGE"] = "Grande"
 L["MARKER_SIZE_HUGE"] = "Enorme"
 L["ROUTES_LINE_HEADER"] = "Linha da rota"
+L["ROUTES_LINE_DESCRIPTION"] = "Os pontos em marcha que vão de você até cada marcador."
 L["SHOW_ROUTE_LINE"] = "Mostrar a linha da rota"
 L["SHOW_ROUTE_LINE_DESCRIPTION"] =
 	"Desenha pontos em marcha de você até cada marcador, um de cada vez. Desativado, mostra só os marcadores."
@@ -188,9 +191,10 @@ L["LINE_OPACITY"] = "Opacidade da linha"
 L["LINE_OPACITY_DESCRIPTION"] =
 	"O quanto os pontos são sólidos; quanto mais baixa, mais o mapa aparece através deles."
 L["ROUTES_PARTY_HEADER"] = "Grupo"
+L["ROUTES_PARTY_DESCRIPTION"] = "O que o seu grupo acrescenta à rota."
 L["PARTY_QUESTS"] = "Incluir missões dos membros do grupo"
 L["PARTY_QUESTS_DESCRIPTION"] =
-	"Em grupo, a rota e a Seta de missões também incluem missões que os membros do seu grupo têm e você não, mostradas como as suas. É preciso ter o Questie dos dois lados para compartilhá-las. As missões de masmorra deles ficam de fora, como as suas."
+	"Em grupo, a rota e a Seta de missões também incluem missões que os membros do seu grupo têm e você não, mostradas como as suas. É preciso ter o Questie dos dois lados para compartilhá-las. As missões de masmorra deles ficam de fora, pois os objetivos ficam dentro da masmorra."
 
 --------------------------------------------------------------------------------
 -- Options: Quest Arrow Panel
@@ -198,19 +202,19 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Seta de missões"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"Uma seta na tela apontando para o próximo ponto de passagem da rota, com as missões e objetivos a fazer lá. Clique nela com o botão direito para desviar do objetivo atual; com o botão do meio para redefinir todas as rotas."
+	"Uma seta na tela apontando para o próximo ponto de passagem da rota, com as missões e objetivos a fazer lá. Passe o mouse sobre ela para ver um menu onde você pode ignorar um objetivo por vez e ver o que ignorou. Clique nela com o botão do meio para limpar a lista de ignorados."
 L["QUEST_ARROW_HEADER"] = "Seta"
+L["QUEST_ARROW_DESCRIPTION"] = "Onde a Seta de missões fica e qual é o tamanho dela."
 L["ARROW_SIZE"] = "Tamanho da seta"
 L["ARROW_SIZE_DESCRIPTION"] = "O tamanho da Seta de missões, com o texto embaixo dela."
-L["ARROW_CYCLE"] = "Ciclo de olho e seta (segundos)"
-L["ARROW_CYCLE_DESCRIPTION"] =
-	"Em uma área de objetivo, a Seta de missões se alterna: o olho, listando os objetivos ao seu redor, e depois a seta, apontando para o próximo ponto de passagem. Cada um fica com metade deste tempo."
 L["LOCK_ARROW"] = "Travar a Seta de missões"
 L["LOCK_ARROW_DESCRIPTION"] = "Mantém a Seta de missões onde está, então arrastá-la não faz nada."
 L["RESET_ARROW"] = "Posição da seta"
 L["RESET_ARROW_BUTTON"] = "Redefinir"
+L["RESET_ARROW_CONFIRM"] = "Colocar a Seta de missões de volta no lugar inicial?"
 L["RESET_ARROW_DESCRIPTION"] = "Coloca a Seta de missões de volta onde ela começa, no alto, no meio da tela."
 L["QUEST_ARROW_TEXT_HEADER"] = "Embaixo da seta"
+L["QUEST_ARROW_TEXT_DESCRIPTION"] = "O que a Seta de missões lista embaixo dela."
 L["SHOW_DISTANCE"] = "Mostrar distância"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_ARRIVED, as the Quest Arrow shows them
 L["SHOW_DISTANCE_DESCRIPTION"] =
@@ -222,7 +226,16 @@ L["QUESTS_LISTED"] = "Máximo de missões listadas"
 -- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
 L["QUESTS_LISTED_DESCRIPTION"] =
 	'O máximo de missões que a Seta de missões lista embaixo dela para um ponto de passagem. As demais são contadas em uma linha própria, como "%s".'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_NEXT_OBJECTIVE"] = "Mostrar próximo objetivo"
+-- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
+L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
+	'Em "%s", lista "%s" embaixo, esmaecido: uma setinha até o ponto de passagem seguinte e o que há para fazer lá.'
+L["SHOW_UPCOMING_TURN_INS"] = "Mostrar entregas futuras"
+L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
+	"Coloca a entrega de cada missão na rota antes de os objetivos serem concluídos, marcada com o ponto de interrogação cinza do Questie, para você ver onde vai entregá-la. Desligado, uma entrega entra na rota quando a missão estiver concluída."
 L["QUEST_ARROW_HIDING_HEADER"] = "Ocultar"
+L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Quando a Seta de missões sai do caminho."
 L["HIDE_IN_RAIDS"] = "Ocultar em grupos de raide"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "Oculta a Seta de missões enquanto você está em um grupo de raide."
 L["HIDE_IN_INSTANCES"] = "Ocultar em instâncias"
@@ -297,6 +310,8 @@ L["RESIZE_TOOLTIP"] = "Arraste para redimensionar o registro de missões."
 L["SHARE_QUESTS"] = "Compartilhar missões"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"Oferece ao seu grupo as missões desta zona que o jogo deixa você compartilhar, uma a cada %d segundos."
+-- TRANSLATORS: %s is a quest's name
+L["CHAT_SHARING_AFTER_COMBAT"] = "Compartilhando %s quando o combate terminar."
 L["CHAT_SHARING_ZONE_ONE"] = "Compartilhando 1 missão de %s."
 -- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "Compartilhando %d missões de %s, uma a cada %d segundos."
@@ -307,28 +322,68 @@ L["CHAT_SHARING_ZONE_NONE"] = "Nenhuma das suas missões de %s pode ser comparti
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "Você chegou"
-L["ROUTES_OBJECTIVE_AREA"] = "Área do objetivo"
+-- TRANSLATORS: where the Quest Arrow would be while its waypoint is on another continent
+L["ROUTES_OTHER_MAP"] = "Ponto de passagem em outro mapa"
+L["ROUTES_OBJECTIVE_AREA"] = "Área do objetivo atual"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when an objective there can be done nowhere else on the route
+L["ROUTES_AREA_FINISH"] = "Termine aqui antes de seguir"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when the route passes more of these mobs or objects later
+L["ROUTES_AREA_MORE"] = "Mais ao longo da rota"
+-- TRANSLATORS: heads the one line under the Quest Arrow's list naming where the route goes after this area
+L["ROUTES_NEXT_OBJECTIVE"] = "Próximo objetivo"
+-- TRANSLATORS: heads the dimmed objectives the player is passing through, planned for later on the route
+L["ROUTES_WHILE_HERE"] = "Já que você está aqui"
 -- TRANSLATORS: %d is a distance in yards
-L["ROUTES_YARDS"] = "%d m"
+L["ROUTES_YARDS"] = "%d metros"
+-- TRANSLATORS: ROUTES_YARDS for a distance of exactly 1
+L["ROUTES_YARD"] = "%d metro"
 -- TRANSLATORS: %d is how many more quests the Quest Arrow has at this waypoint than it lists
 L["ROUTES_MORE_TASKS"] = "+%d a mais aqui"
 L["ROUTES_TURN_IN"] = "Entregar missão"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "Entregar %s"
 L["ROUTES_CORPSE"] = "Volte até o seu corpo"
--- TRANSLATORS: Heads the list of NPCs, mobs and objects found at a route waypoint
+-- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Procure"
--- TRANSLATORS: %s is the party members a waypoint's objective is for, such as "Alice, Bob"
-L["ROUTES_FOR_MEMBERS"] = "Para %s"
 L["ROUTES_CLICK_DRAG"] = "Arrastar"
 L["ROUTES_CLICK_RIGHT"] = "Clique direito"
 L["ROUTES_CLICK_MIDDLE"] = "Clique do meio"
 L["ROUTES_DRAG_MOVE"] = "Mover a Seta de missões"
-L["ROUTES_RIGHT_CLICK_REROUTE"] = "Desviar do objetivo atual"
+L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorar este ponto de passagem"
+-- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
+L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorar este objetivo"
+L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "De volta à rota"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "Redefinir todas as rotas"
+L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Limpar lista de ignorados"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "Rota desviada para evitar %s."
-L["ROUTES_RESET"] = "Todas as rotas redefinidas: os objetivos desviados voltaram para a rota."
+L["ROUTES_SKIPPED"] = "Ignorando %s até a lista de ignorados ser limpa."
+L["ROUTES_RESET"] = "Todas as rotas redefinidas: os objetivos e membros do grupo ignorados voltaram para a rota."
+L["ROUTES_IGNORE_CLEARED"] = "Lista de ignorados limpa: os objetivos ignorados voltaram para a rota."
+L["ROUTES_GROUP_JOINED_CLEARED"] =
+	"Você entrou em um grupo: os objetivos e membros do grupo ignorados voltaram para a rota."
+L["ROUTES_GROUP_LEFT_CLEARED"] = "Você saiu do grupo: os objetivos e membros do grupo ignorados voltaram para a rota."
+-- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
+L["ROUTES_MENU_IGNORE"] = "Ignorar %s"
+-- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
+L["ROUTES_MENU_IGNORED"] = "Ignorado"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_TURN_IN"] = "Entrega de %s"
+L["ROUTES_MENU_GROUP_OBJECTIVES"] = "Mostrar objetivos do grupo"
+L["ROUTES_MENU_ON"] = "Ligado"
+L["ROUTES_MENU_OFF"] = "Desligado"
+L["ROUTES_MENU_OUT_OF_ZONE"] = "Fora da zona"
+L["ROUTES_MENU_NO_QUESTIE"] = "Sem Questie"
+L["ROUTES_MENU_OFFLINE"] = "Offline"
+-- TRANSLATORS: %s is a party member's name; On or Off shows beside it
+L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objetivos de %s"
+-- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
+L["ROUTES_IGNORED"] = "Ignorando %s de %s até a lista de ignorados ser limpa."
+-- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
+L["ROUTES_UNIGNORED"] = "%s voltou para a rota."
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_IGNORED"] = "Os objetivos de %s ficam fora da rota."
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_INCLUDED"] = "Os objetivos de %s voltaram para a rota."
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players

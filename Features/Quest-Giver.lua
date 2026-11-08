@@ -2,8 +2,9 @@ local _, ns = ...
 
 --[[
 	Every client: the quest giver window's own pages, styled like the quest details, and the quest log's
-	level tags in a quest giver's list of quests. The gossip window's spacing is in Gossip.lua, and the
-	greeting and progress pages, with the quest ID under the progress page, in Quest-Giver-Pages.lua
+	level tags in a quest giver's list of quests. The gossip window's greeting and quest lines are in
+	Gossip.lua, and the greeting and progress pages, with the quest ID under the progress page, in
+	Quest-Giver-Pages.lua
 ]]
 
 --[[
@@ -99,13 +100,13 @@ if QuestFrame then
 end
 
 --[[
-	Reward names, wherever QuestInfo shows rewards: the quest giver window, and on WoW Forever and Mists
-	the quest details too. Blizzard draws them white on a dark name plate, and skins (ElvUI)
-	that hide the plate leave them white, with a shadow, on the bare parchment. With the plate hidden they
-	take the description's color, without the shadow, as the rest of the parchment's text does. The
-	buttons are shared, so every display restyles every button it shows. Skins restyle them in hooks that
-	may run after this one, so it runs again a frame later. On a quest giver page with the cleanup off
-	they go back to the color and shadow they had
+	Reward names, wherever QuestInfo shows rewards while the cleanup is on: the quest giver window, and
+	Blizzard's own quest details, which share its buttons. Blizzard draws them white on a dark name plate,
+	and skins (ElvUI) that hide the plate leave them white, with a shadow, on the bare parchment. With the
+	plate hidden they take the description's color, without the shadow, as the rest of the parchment's
+	text does. The buttons are shared, so every display restyles every button it shows. Skins restyle them
+	in hooks that may run after this one, so it runs again a frame later. With the cleanup off they go back
+	to the color and shadow they had
 ]]
 local namesBefore = {} -- Each name's color and shadow from before this add-on changed them
 
@@ -209,7 +210,7 @@ if QuestInfo_Display then
 		if onQuestGiverPage and ns.IsQuestGiverCleanupOn() then
 			SpaceQuestGiverPage(template, parentFrame)
 		end
-		namesStyled = (not onQuestGiverPage) or ns.IsQuestGiverCleanupOn()
+		namesStyled = ns.IsQuestGiverCleanupOn()
 		StyleRewardNames(namesStyled)
 		C_Timer.After(0, StyleRewardNamesLater)
 	end)
@@ -219,8 +220,7 @@ end
 	The window's own pages and the shared QuestInfo text, styled with the cleanup on and put
 	back to Blizzard's with it off. Done as the saved settings load, before Blizzard first lays any of
 	them out, so its measurements match, and again when the switch or the profile changes. A window
-	already open is laid out to match the next time it opens; WoW Forever's quest log, which restyles
-	the shared text before every repaint, repaints at once
+	already open is laid out to match the next time it opens
 ]]
 function ns.ApplyQuestGiverCleanup()
 	local on = ns.IsQuestGiverCleanupOn()
@@ -262,16 +262,5 @@ local function TagQuestLine(button, level, questID)
 	button.levelTaggedText = button:GetText()
 	return true
 end
-ns.TagQuestLine = TagQuestLine -- The greeting page's quest lines too (Quest-Giver-Pages.lua)
-
--- The gossip window, on every client: each quest line is set up from its gossip quest info
-local function TagGossipQuest(button, questInfo)
-	if TagQuestLine(button, questInfo.questLevel, questInfo.questID) then
-		button:Resize()
-	end
-end
-for _, mixin in ipairs({ GossipSharedAvailableQuestButtonMixin, GossipSharedActiveQuestButtonMixin }) do
-	if mixin and mixin.Setup then
-		hooksecurefunc(mixin, "Setup", TagGossipQuest)
-	end
-end
+-- The gossip window's and the greeting page's quest lines too (Gossip.lua, Quest-Giver-Pages.lua)
+ns.TagQuestLine = TagQuestLine

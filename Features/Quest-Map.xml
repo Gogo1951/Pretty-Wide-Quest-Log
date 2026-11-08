@@ -17,4 +17,17 @@
 			<Frame parentKey="BorderFrame" setAllPoints="true"/>
 		</Frames>
 	</Frame>
+	<!--
+		The shown quest's marker on WoW Forever and Mists (Forever-Quest-Map.lua), the size of Questie's
+		icons (Questie-Map.lua). It takes no mouse, so dragging the map passes straight through and a click
+		on it runs nothing
+	-->
+	<Frame name="PrettyWideQuestLogQuestMarkerPinTemplate" mixin="PrettyWideQuestLogPinMixin" virtual="true">
+		<Size x="24" y="24"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Texture" setAllPoints="true"/>
+			</Layer>
+		</Layers>
+	</Frame>
 </Ui>

@@ -1,150 +1,19 @@
 local _, ns = ...
 
 --[[
-	Routes: what the route reads from Questie and the client. The player's position and zone, Questie's
-	quest log and its database's escort and instance quests, the client's timed quests, and the signature that says when to plan
-	again. Distances are in world yards, from Questie's copy of HereBeDragons, which the arrow uses too
+	Routes: what the route reads from Questie and the client. Questie's quest log and its database's escort
+	and instance quests, the client's timed quests, and the signature that says when to plan again. Where
+	the player is, and which maps lie within a zone, is in Routes-Geography.lua
 ]]
 
 local routes = ns.routes
 
-local HBD
-
-local function HereBeDragons()
-	HBD = HBD or LibStub("HereBeDragonsQuestie-2.0", true)
-	return HBD
-end
+local HereBeDragons = routes.HereBeDragons
 
 -- Once Questie has started, its quest log and database are ready to read
 function routes.IsQuestieReady()
-	return Questie and Questie.started and HereBeDragons() and ns.ImportQuestieModule("QuestiePlayer") and true or false
+	return Questie and Questie.started and HereBeDragons() and true or false
 end
-
--- The player's world position in yards, and continent, or nothing where the client won't say
-function routes.PlayerPosition()
-	local hbd = HereBeDragons()
-	if hbd then
-		return hbd:GetPlayerWorldPosition()
-	end
-end
-
--- A map, or the zone a micro map (a cave, a building) sits in
-local function ZoneOf(mapID)
-	local info = mapID and C_Map.GetMapInfo(mapID)
-	while info and info.mapType == Enum.UIMapType.Micro and info.parentMapID and info.parentMapID > 0 do
-		mapID = info.parentMapID
-		info = C_Map.GetMapInfo(mapID)
-	end
-	return mapID
-end
-
--- The zone the player is in, the one the route covers
-function routes.PlayerZone()
-	return ZoneOf(C_Map.GetBestMapForUnit("player"))
-end
-
---[[
-	While the player is a ghost, where their corpse lies: world yards, continent and zone. Asked of the
-	zone the ghost is in first, then each map above it, since the graveyard can be a zone away. Nothing
-	where the client won't say, as for a corpse in a dungeon
-]]
-function routes.CorpsePosition()
-	if not (UnitIsGhost("player") and C_DeathInfo and C_DeathInfo.GetCorpseMapPosition) then
-		return nil
-	end
-	local hbd = HereBeDragons()
-	local mapID = C_Map.GetBestMapForUnit("player")
-	while hbd and mapID and mapID > 0 do
-		local position = C_DeathInfo.GetCorpseMapPosition(mapID)
-		local x, y = position and position.x, position and position.y
-		if x and x >= 0 and x <= 1 and y >= 0 and y <= 1 and (x > 0 or y > 0) then
-			local worldX, worldY, instance = hbd:GetWorldCoordinatesFromZone(x, y, mapID)
-			if worldX then
-				-- The deepest map at the corpse, as a zone
-				local info = C_Map.GetMapInfoAtPosition and C_Map.GetMapInfoAtPosition(mapID, x, y)
-				return worldX, worldY, instance, ZoneOf(info and info.mapID or mapID)
-			end
-		end
-		local info = C_Map.GetMapInfo(mapID)
-		mapID = info and info.parentMapID
-	end
-	return nil
-end
-
---[[
-	Where the route sets out from: the player, or a ghost's corpse, where they'll be once they've run back
-	to it. corpse says which
-]]
-function routes.Origin()
-	local x, y, instance, zone = routes.CorpsePosition()
-	if x then
-		return x, y, instance, zone, true
-	end
-	x, y, instance = routes.PlayerPosition()
-	return x, y, instance, routes.PlayerZone(), false
-end
-
--- Whether a map's parents, followed up to a continent, reach the zone: a cave or building inside it
-local function IsWithinByParents(mapID, zone)
-	local current = mapID
-	local info = current and C_Map.GetMapInfo(current)
-	while info do
-		if current == zone then
-			return true
-		end
-		if info.mapType <= Enum.UIMapType.Continent or not (info.parentMapID and info.parentMapID > 0) then
-			return false
-		end
-		current = info.parentMapID
-		info = C_Map.GetMapInfo(current)
-	end
-	return false
-end
-
---[[
-	Whether the whole of a map lies on the zone's map, on the same continent: a city drawn on the zone's
-	map, as the Exodar is on Azuremyst Isle's. The game files such a city under the continent, not the
-	zone, so its parents don't say
-]]
-local function IsWithinByPlace(mapID, zone)
-	local hbd = HereBeDragons()
-	if not hbd then
-		return false
-	end
-	for _, corner in ipairs({ 0, 1 }) do
-		local worldX, worldY, instance = hbd:GetWorldCoordinatesFromZone(corner, corner, mapID)
-		if not worldX then
-			return false
-		end
-		local x, y = hbd:GetZoneCoordinatesFromWorldInstance(worldX, worldY, instance, zone, true)
-		if not (x and x >= 0 and x <= 1 and y >= 0 and y <= 1) then
-			return false
-		end
-	end
-	return true
-end
-
---[[
-	Whether a map from Questie's database is the zone or inside it: a micro map (a cave, a building), or a
-	city on a map of its own within the zone, as the Exodar is within Azuremyst Isle. Questie draws such a
-	city's NPCs on the zone's map too, so their turn-ins are on the route. Cached by zone, as it's asked
-	per spawn
-]]
-local inZone = {}
-local function IsInZone(mapID, zone)
-	local cache = inZone[zone]
-	if not cache then
-		cache = {}
-		inZone[zone] = cache
-	end
-	local found = cache[mapID]
-	if found == nil then
-		found = IsWithinByParents(mapID, zone) or IsWithinByPlace(mapID, zone)
-		cache[mapID] = found
-	end
-	return found
-end
-routes.IsInZone = IsInZone
 
 --------------------------------------------------------------------------------
 -- Questie's quest log
@@ -162,6 +31,28 @@ local function QuestState(quest)
 	return ok and state or 0
 end
 routes.QuestState = QuestState
+
+--[[
+	Whether the game's own quest log has the quest, for a turn-in: only the player can turn in, so a quest
+	Questie still lists that the game doesn't (turned in or abandoned a moment ago), or a party member's,
+	is never one to go hand in. Where the client can't say, Questie's log stands
+]]
+local function IsOnQuest(questID)
+	if C_QuestLog and type(C_QuestLog.IsOnQuest) == "function" then
+		local ok, on = pcall(C_QuestLog.IsOnQuest, questID)
+		if ok and type(on) == "boolean" then
+			return on
+		end
+	end
+	if type(GetQuestLogIndexByID) == "function" then
+		local ok, index = pcall(GetQuestLogIndexByID, questID)
+		if ok and type(index) == "number" then
+			return index > 0
+		end
+	end
+	return true
+end
+routes.IsOnQuest = IsOnQuest
 
 -- Each objective in the quest log's list, then Questie's own extra ones (such as a portal to close)
 local function ForEachObjective(quest, callback)
@@ -241,8 +132,9 @@ routes.TimedQuests = TimedQuests
 
 --[[
 	Whether a quest is a dungeon or raid quest, by the game's tag for it, the one that puts the D or R after
-	its level. The whole quest is left off the route, its objectives and its turn-in, and the arrow never
-	points at it; Questie's own icons for it stay on the map, as the route doesn't stand in for them.
+	its level. Its objectives are left off the route, as they're inside the instance, but once it's done its
+	turn-in is on it like any other's, where the NPC or object is out in the world (routes.IsInstanceMap);
+	Questie's own icons for it stay on the map, as the route doesn't stand in for them.
 
 	Questie's tag first, as its corrections fix the game's, then the client's. Questie asks the client once,
 	again a second later, and then keeps "no tag" for good, so a quest whose tag loads after that has the
@@ -288,8 +180,8 @@ routes.HasSpawns = HasSpawns
 
 --[[
 	What the route depends on, as text: each quest's state, whether it's in an instance and whether its
-	timer is running, each objective's being done and having spawns, the same of the party's quests
-	(routes.PartyQuests), the skipped stops, the player's zone and whether they're a ghost. The route is
+	timer is running, each objective's being done and having spawns, the party's quests' progress
+	(routes.PartyProgress), the ignored objectives and party members, the members in another zone, Show Upcoming Turn-Ins, the player's zone and whether they're a ghost. The route is
 	planned again when this changes. Nil until Questie is ready
 ]]
 function routes.Signature()
@@ -314,10 +206,14 @@ function routes.Signature()
 				.. table.concat(bits, ",")
 		end
 	end
-	for questID, quest in pairs(routes.PartyQuests(QuestLog())) do
+	--[[
+		The party's from what members have shared, not routes.PartyQuests, whose spawn lists are slow to work
+		out: a party objective's spawns are worked out once, as it first appears, so they add nothing here
+	]]
+	for questID, progress in pairs(routes.PartyProgress(QuestLog())) do
 		local bits = {}
-		for index, objective in pairs(quest.Objectives) do
-			bits[#bits + 1] = index .. (objective.Completed and "+" or "-") .. (HasSpawns(objective) and "s" or "")
+		for index, entry in pairs(progress) do
+			bits[#bits + 1] = index .. (#entry.needed == 0 and "+" or "-")
 		end
 		table.sort(bits)
 		parts[#parts + 1] = "party:"
@@ -329,7 +225,17 @@ function routes.Signature()
 	for key in pairs(routes.skipped) do
 		parts[#parts + 1] = "skip:" .. key
 	end
+	for name in pairs(routes.ignoredMembers) do
+		parts[#parts + 1] = "ignore:" .. name
+	end
+	-- A member in another zone is left out as an ignored one is, until they're back
+	for _, member in ipairs(routes.PartyMembers()) do
+		if routes.IsUnitOutOfZone(member.unit) then
+			parts[#parts + 1] = "away:" .. member.name
+		end
+	end
 	table.sort(parts)
+	parts[#parts + 1] = routes.Settings().showUpcomingTurnIns and "upcoming" or "done-only"
 	parts[#parts + 1] = tostring(routes.PlayerZone())
 	parts[#parts + 1] = UnitIsGhost("player") and "ghost" or "alive"
 	return table.concat(parts, ";")

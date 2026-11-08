@@ -4,7 +4,8 @@ local L = ns.L
 --[[
 	The Routes on Zone Map panel of the Options Interface, which Options.lua registers after Quality of Life,
 	in the Features section's order, where Routes (Features/Routes) is loaded. The settings are Routes' own,
-	on the profile (routes.Settings); each control hides while the switch at the top of the panel is off
+	on the profile (routes.Settings); each control hides while the switch at the top of the panel is off,
+	but Party, which shows while either Routes feature (the zone map's route or the Quest Arrow) is on
 ]]
 
 local function Settings()
@@ -77,6 +78,8 @@ function ns.BuildRoutesMapOptions()
 			spaceMap0 = ns.OptionsSpacer(10, MapHidden),
 			headerMap = ns.OptionsHeader(L["ROUTES_MAP_HEADER"], 11, MapHidden),
 			spaceMap1 = ns.OptionsSpacer(12, MapHidden),
+			descMap = ns.OptionsDesc(L["ROUTES_MAP_DESCRIPTION"], 12.1, MapHidden),
+			spaceMap2 = ns.OptionsSpacer(12.2, MapHidden),
 			fullSizeMap = Toggle("fullSizeMap", "FULL_SIZE_MAP", 13, FullSizeHidden),
 			spaceQuestieIcons = ns.OptionsSpacer(13.5, FullSizeHidden),
 			hideQuestieIcons = Toggle("hideQuestieIcons", "HIDE_QUESTIE_ICONS", 14, MapHidden),
@@ -84,6 +87,8 @@ function ns.BuildRoutesMapOptions()
 			spaceMarkers0 = ns.OptionsSpacer(20, MapHidden),
 			headerMarkers = ns.OptionsHeader(L["ROUTES_MARKERS_HEADER"], 21, MapHidden),
 			spaceMarkers1 = ns.OptionsSpacer(22, MapHidden),
+			descMarkers = ns.OptionsDesc(L["ROUTES_MARKERS_DESCRIPTION"], 22.1, MapHidden),
+			spaceMarkers2 = ns.OptionsSpacer(22.2, MapHidden),
 			markerScaleLabel = ns.OptionsRowLabel(L["MARKER_SIZE"], 23, nil, MapHidden, L["MARKER_SIZE_DESCRIPTION"]),
 			markerScale = ns.OptionsRoutesControl("markerScale", {
 				type = "select",
@@ -97,6 +102,8 @@ function ns.BuildRoutesMapOptions()
 			spaceLine0 = ns.OptionsSpacer(30, MapHidden),
 			headerLine = ns.OptionsHeader(L["ROUTES_LINE_HEADER"], 31, MapHidden),
 			spaceLine1 = ns.OptionsSpacer(32, MapHidden),
+			descLine = ns.OptionsDesc(L["ROUTES_LINE_DESCRIPTION"], 32.1, MapHidden),
+			spaceLine2 = ns.OptionsSpacer(32.2, MapHidden),
 			showLine = Toggle("showLine", "SHOW_ROUTE_LINE", 33, MapHidden),
 			spaceLineSpeed = ns.OptionsSpacer(33.5, LineHidden),
 			lineSpeedLabel = ns.OptionsRowLabel(L["LINE_SPEED"], 34, nil, LineHidden, L["LINE_SPEED_DESCRIPTION"]),
@@ -128,6 +135,8 @@ function ns.BuildRoutesMapOptions()
 			spaceParty0 = ns.OptionsSpacer(40, RouteHidden),
 			headerParty = ns.OptionsHeader(L["ROUTES_PARTY_HEADER"], 41, RouteHidden),
 			spaceParty1 = ns.OptionsSpacer(42, RouteHidden),
+			descParty = ns.OptionsDesc(L["ROUTES_PARTY_DESCRIPTION"], 42.1, RouteHidden),
+			spaceParty2 = ns.OptionsSpacer(42.2, RouteHidden),
 			partyQuests = Toggle("partyQuests", "PARTY_QUESTS", 43, RouteHidden),
 		},
 	}

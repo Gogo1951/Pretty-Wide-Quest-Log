@@ -23,9 +23,14 @@ local function CurrentDungeon()
 	if not INSTANCE_TYPES[instanceType] then
 		return nil
 	end
-	local name = GetRealZoneText() or instanceName
-	local dungeon = { name = name, areaIDs = {}, names = {} }
-	dungeon.names[name] = true
+	-- Either name can be empty while the zone loads, and an empty one names nothing
+	local zoneName = GetRealZoneText()
+	zoneName = zoneName ~= "" and zoneName or nil
+	instanceName = instanceName ~= "" and instanceName or nil
+	local dungeon = { name = zoneName or instanceName, areaIDs = {}, names = {} }
+	if zoneName then
+		dungeon.names[zoneName] = true
+	end
 	if instanceName then
 		dungeon.names[instanceName] = true
 	end
@@ -43,11 +48,13 @@ local function CurrentDungeon()
 		end
 		for zoneID in pairs(dungeon.areaIDs) do
 			local areaName = C_Map.GetAreaInfo(zoneID)
-			if areaName then
+			if areaName and areaName ~= "" then
 				dungeon.names[areaName] = true
+				dungeon.name = dungeon.name or areaName
 			end
 		end
 	end
+	dungeon.name = dungeon.name or ""
 	dungeon.key = instanceID
 	return dungeon
 end

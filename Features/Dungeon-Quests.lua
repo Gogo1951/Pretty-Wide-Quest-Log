@@ -195,10 +195,11 @@ local function StopWatching()
 end
 
 --[[
-	Every ns.DUNGEON_CHECK_INTERVAL seconds in a dungeon with a party. Once every online party member is
-	in range (on WoW Forever, at once), or ns.DUNGEON_SHARE_MAX_WAIT seconds after the wait began, the
-	dungeon is announced if this group hasn't had it, and its quests are shared if anyone in range hasn't
-	had them. Anyone out of range then is shared with once they come in range. A run still going is
+	Every ns.DUNGEON_CHECK_INTERVAL seconds in a dungeon with a party. Once every online party member who
+	still needs the announcement or the shares is in range (on WoW Forever, at once), or
+	ns.DUNGEON_SHARE_MAX_WAIT seconds after the wait began, the dungeon is announced if this group hasn't had
+	it, and its quests are shared if anyone in range hasn't had them. Those already shared with are never
+	waited on, so anyone out of range then is shared with once they come in range. A run still going is
 	waited out. The checks stop once nothing is left to do; Watch starts them again on a loading screen
 	or a change to the group
 ]]
@@ -230,8 +231,11 @@ local function Check()
 	local announce = profile.dungeonAnnounce and not state.announced
 	local everyoneInRange, waitingFor, newInRange = true, false, {}
 	for guid, member in pairs(members) do
-		everyoneInRange = everyoneInRange and member.inRange
-		if profile.dungeonShare and not state.sharedWith[guid] then
+		local needsShare = profile.dungeonShare and not state.sharedWith[guid]
+		if announce or needsShare then
+			everyoneInRange = everyoneInRange and member.inRange
+		end
+		if needsShare then
 			waitingFor = true
 			if member.inRange then
 				newInRange[#newInRange + 1] = guid
@@ -292,6 +296,9 @@ end
 
 -- The owner of this file's second handler for an event another file handles too (Core.lua)
 ns.dungeonQuests = {}
+
+-- A setting or profile change inside a dungeon starts the checks at once, not at the next loading screen
+ns.dungeonQuests.Watch = Watch
 
 -- Someone joined, or a raid group became a party; whether anyone new needs the shares is Check's
 function ns.dungeonQuests:OnGroupRosterUpdate()

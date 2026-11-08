@@ -40,16 +40,20 @@ local function Query(questID, field)
 	return found and value or nil
 end
 
--- A quest's tag and whether it's elite, from Questie's corrected list when it has one, else the client's
+--[[
+	A quest's tag, from Questie's corrected list when it has one, else the client's, and whether it's elite,
+	always the client's: a tag's name is never compared, since it reads differently in every language
+]]
 local function QuestTag(questID)
+	local clientTagID, isElite = ns.GetQuestTagByID(questID)
 	local questieDB = QuestieModule("QuestieDB")
 	if questieDB and type(questieDB.GetQuestTagInfo) == "function" then
-		local found, tagID, tagName = pcall(questieDB.GetQuestTagInfo, questID)
-		if found and (tagID or tagName) then
-			return tagID, ELITE ~= nil and tagName == ELITE
+		local found, tagID = pcall(questieDB.GetQuestTagInfo, questID)
+		if found and tagID then
+			return tagID, isElite
 		end
 	end
-	return ns.GetQuestTagByID(questID)
+	return clientTagID, isElite
 end
 
 -- Questie's own tooltip for a quest, the one its quest links show

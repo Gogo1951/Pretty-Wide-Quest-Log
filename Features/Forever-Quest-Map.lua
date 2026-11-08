@@ -3,11 +3,8 @@ local _, ns = ...
 --[[
 	WoW Forever and Mists: the map's layers and the quest it follows (Quest-Map.lua builds the map itself).
 	The selected quest comes from Questie's icons when it has any (Questie-Map.lua), otherwise from
-	Blizzard's own quest objective area and quest marker
+	Blizzard's own quest objective area and a marker of the window's own
 ]]
-
--- WoW Forever caches the quests on each map; Mists asks each time
-local GetQuestsOnMap = GetQuestsOnMapCached or C_QuestLog.GetQuestsOnMap
 
 local questMap = ns.questMap
 local canvas = questMap.canvas
@@ -15,7 +12,7 @@ local state = ns.questLog
 
 local shownQuestID
 
--- The quest Blizzard's objective area and quest marker are drawn for: the shown one, unless Questie's icons have it
+-- The quest Blizzard's objective area and the marker are drawn for: the shown one, unless Questie's icons have it
 local function BlizzardQuestID()
 	if shownQuestID ~= questMap.questieQuestID then
 		return shownQuestID
@@ -26,6 +23,12 @@ end
 -- Map layers
 --------------------------------------------------------------------------------
 
+--[[
+	Blizzard's explored areas, fog, quest objective area, dungeon entrances and flight points. The
+	entrances and flight points are Blizzard's own pins with Blizzard's own mouse handling, their names on
+	hover. The explored areas and fog take no mouse, and the objective area shows only a tooltip on hover.
+	The objective area draws the shown quest when Questie has no icons for it (below)
+]]
 local providers = {}
 
 -- Each is added only if this client has it
@@ -42,16 +45,16 @@ AddProvider(MapExplorationDataProviderMixin)
 -- Mists has the fog layer but not the frame it draws with
 AddProvider(FogOfWarFrameMixin and FogOfWarDataProviderMixin)
 local blobProvider = AddProvider(QuestBlobDataProviderMixin)
-local questProvider = AddProvider(QuestDataProviderMixin)
 AddProvider(DungeonEntranceDataProviderMixin)
 AddProvider(FlightPointDataProviderMixin)
 
 --[[
-	Blizzard draws objective areas and quest markers only while the questPOI setting is on, and Questie
-	turns it off when its own objectives are chosen, so this map would be left with none for a quest
-	Questie has no icons for. These two are Blizzard's own, less that check, on this map's copies only;
-	the setting itself and the world map are left alone. Both draw the shown quest only, and nothing
-	while Questie's icons are drawing it (BlizzardQuestID)
+	A stopgap until Questie has icons for every quest: Blizzard draws objective areas only while the
+	questPOI setting is on, and Questie turns it off when its own objectives are chosen, so this map would
+	show a quest Questie has no icons for with no area at all. This is Blizzard's own redraw, less that
+	check, on this map's copy only; the setting itself and the world map are left alone. It draws the
+	shown quest only, and nothing while Questie's icons are drawing it (BlizzardQuestID). It acquires no
+	pins, so it draws in combat too
 ]]
 if blobProvider and blobProvider.pin then
 	function blobProvider.pin:Refresh()
@@ -66,69 +69,9 @@ if blobProvider and blobProvider.pin then
 	end
 end
 
-if questProvider then
-	function questProvider:RefreshAllData()
-		self:RemoveAllData()
-
-		local mapID = self:GetMap():GetMapID()
-		local shownID = BlizzardQuestID()
-		if not mapID or not shownID then
-			return
-		end
-
-		-- Mists numbers its quest markers, keeping track of the numbers taken as it adds them
-		if self.AssignMissingNumbersToPins then
-			self.usedQuestNumbers = self.usedQuestNumbers or {}
-			self.pinsMissingNumbers = self.pinsMissingNumbers or {}
-		end
-
-		local pinsToQuantize = {}
-		local mapInfo = C_Map.GetMapInfo(mapID)
-		local questsOnMap = GetQuestsOnMap(mapID)
-		local doesMapShowTaskObjectives = C_TaskQuest.DoesMapShowTaskQuestObjectives(mapID)
-
-		local function CheckAddQuest(questID, x, y, isMapIndicatorQuest, frameLevelOffset, isWaypoint)
-			if
-				questID == shownID
-				and self:ShouldShowQuest(questID, mapInfo.mapType, doesMapShowTaskObjectives, isMapIndicatorQuest)
-			then
-				pinsToQuantize[#pinsToQuantize + 1] = self:AddQuest(questID, x, y, frameLevelOffset, isWaypoint)
-			end
-		end
-
-		if questsOnMap then
-			for i, info in ipairs(questsOnMap) do
-				CheckAddQuest(info.questID, info.x, info.y, info.isMapIndicatorQuest, i)
-			end
-		end
-
-		-- Where to head next when the quest's objectives are in another zone (WoW Forever only)
-		if C_QuestLog.GetNextWaypointForMap then
-			local x, y = C_QuestLog.GetNextWaypointForMap(shownID, mapID)
-			if x and y then
-				CheckAddQuest(shownID, x, y, false, questsOnMap and (#questsOnMap + 1) or 0, true)
-			end
-		end
-
-		if self.AssignMissingNumbersToPins then
-			self:AssignMissingNumbersToPins()
-		end
-
-		self.poiQuantizer:ClearAndQuantize(pinsToQuantize)
-		for _, pin in pairs(pinsToQuantize) do
-			pin:SetPosition(pin.quantizedX or pin.normalizedX, pin.quantizedY or pin.normalizedY)
-		end
-
-		if self.UpdatePing then
-			self:UpdatePing()
-		end
-	end
-end
-
 --[[
 	The canvas calls SetPassThroughButtons on every pin these layers acquire, which WoW blocks in combat
-	when add-on code runs it, so their redraws wait out combat on this map's copies and run once it ends.
-	Wrapped last, over the overrides above
+	when add-on code runs it, so their redraws wait out combat on this map's copies and run once it ends
 ]]
 local heldProviders = {}
 for _, provider in ipairs(providers) do
@@ -149,16 +92,66 @@ function questMap:OnPlayerRegenEnabled()
 	end
 end
 
--- Bottom to top, in the world map's order
+--[[
+	The shown quest's marker, a pin of the window's own that takes no mouse (Quest-Map.xml): at the quest's
+	place on the shown map, or on WoW Forever where to head next when its objectives are in another zone. A
+	question mark once the quest is ready to turn in, an exclamation mark before. Its pins use the window's
+	own pin mixin, so it draws in combat too
+]]
+local MARKER_TEMPLATE = "PrettyWideQuestLogQuestMarkerPinTemplate"
+local MARKER_TEXTURE = "Interface\\GossipFrame\\AvailableQuestIcon"
+local MARKER_TEXTURE_COMPLETE = "Interface\\GossipFrame\\ActiveQuestIcon"
+local GetNextWaypointForMap = C_QuestLog.GetNextWaypointForMap -- WoW Forever only
+
+local function MarkerPosition(questID, mapID)
+	for _, info in ipairs(C_QuestLog.GetQuestsOnMap(mapID) or {}) do
+		if info.questID == questID then
+			return info.x, info.y
+		end
+	end
+	if GetNextWaypointForMap then
+		return GetNextWaypointForMap(questID, mapID)
+	end
+end
+
+local markerProvider = CreateFromMixins(MapCanvasDataProviderMixin)
+
+function markerProvider:RemoveAllData()
+	self:GetMap():RemoveAllPinsByTemplate(MARKER_TEMPLATE)
+end
+
+function markerProvider:RefreshAllData()
+	self:RemoveAllData()
+	local map = self:GetMap()
+	local mapID, questID = map:GetMapID(), BlizzardQuestID()
+	local x, y
+	if mapID and questID then
+		x, y = MarkerPosition(questID, mapID)
+	end
+	if not (x and y) then
+		return
+	end
+	local pin = map:AcquirePin(MARKER_TEMPLATE)
+	pin.Texture:SetTexture(ns.IsQuestComplete(questID) and MARKER_TEXTURE_COMPLETE or MARKER_TEXTURE)
+	pin:UseFrameLevelType("PIN_FRAME_LEVEL_QUEST_MARKER")
+	pin:ApplyFrameLevel()
+	-- The size set in its template, growing a little as the map zooms in, like Questie's icons (Questie-Map.lua)
+	pin:SetScalingLimits(1, 1.0, 1.2)
+	pin:SetPosition(x, y)
+	pin:ApplyCurrentScale()
+end
+
+canvas:AddDataProvider(markerProvider)
+
+-- Bottom to top, in the world map's order, the marker over Questie's icons
 local levels = canvas:GetPinFrameLevelsManager()
 levels:AddFrameLevel("PIN_FRAME_LEVEL_MAP_EXPLORATION")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_FOG_OF_WAR")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_QUEST_BLOB")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_DUNGEON_ENTRANCE")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_FLIGHT_POINT")
-levels:AddFrameLevel("PIN_FRAME_LEVEL_QUEST_PING")
-levels:AddFrameLevel("PIN_FRAME_LEVEL_ACTIVE_QUEST", C_QuestLog.GetMaxNumQuests())
-levels:AddFrameLevel("PIN_FRAME_LEVEL_SUPER_TRACKED_QUEST")
+levels:AddFrameLevel("PIN_FRAME_LEVEL_ACTIVE_QUEST")
+levels:AddFrameLevel("PIN_FRAME_LEVEL_QUEST_MARKER")
 
 --------------------------------------------------------------------------------
 -- Following the selected quest
@@ -166,7 +159,7 @@ levels:AddFrameLevel("PIN_FRAME_LEVEL_SUPER_TRACKED_QUEST")
 
 --[[
 	Questie's icons for the quest when it has any, otherwise the quest's zone (the zone it was given in
-	when it has none, then the player's) with Blizzard's objective area picked out
+	when it has none, then the player's) with Blizzard's objective area and the marker on it
 ]]
 local function ShowQuest(questID)
 	shownQuestID = questID
@@ -183,9 +176,7 @@ local function ShowQuest(questID)
 	if blobProvider and blobProvider.pin then
 		blobProvider.pin:Refresh()
 	end
-	if questProvider then
-		questProvider:RefreshAllData()
-	end
+	markerProvider:RefreshAllData()
 end
 
 function questMap.FollowQuest()

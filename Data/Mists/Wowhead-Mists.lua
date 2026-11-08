@@ -7,7 +7,7 @@ ns.WOWHEAD_QUEST_URL = "https://www.wowhead.com/mop-classic/quest="
 How We Got the Data
 
 Last Validated
-	2026-11-06, MoP Classic 5.5.4.70631
+	2026-11-07, MoP Classic 5.5.4.70631
 
 Notes
 	- The page the quest log's Wowhead link opens, with the quest ID added on the end

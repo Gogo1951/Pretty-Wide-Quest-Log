@@ -80,72 +80,34 @@ ns.AddWideQuestLogPart(function()
 		return zones
 	end
 
-	-- A zone from an area in Questie's database, when the map can show it
-	local function AreaMapID(ZoneDB, areaID)
-		local parentID = areaID and ZoneDB.GetParentZoneId and ZoneDB:GetParentZoneId(areaID)
-		local mapID = areaID and ZoneDB:GetUiMapIdByAreaId(parentID or areaID)
-		return questMap.CanShowMap(mapID) and mapID or nil
-	end
-
-	-- The area holding most of an NPC's or object's spawns in Questie's database
-	local function BusiestArea(spawns)
-		local bestAreaID, bestCount
-		for areaID, list in pairs(type(spawns) == "table" and spawns or {}) do
-			local count = type(list) == "table" and #list or 0
-			if count > 0 and (not bestCount or count > bestCount or (count == bestCount and areaID < bestAreaID)) then
-				bestAreaID, bestCount = areaID, count
-			end
-		end
-		return bestAreaID
-	end
-
-	--[[
-		The zone a quest was given in, from Questie's database: where its quest giver stands, otherwise the
-		zone the quest is filed under, for a quest started from an item. Nil without Questie, or for a quest
-		filed under a class or profession that no NPC or object starts
-	]]
-	function questMap.QuestGiverMapID(questID)
-		local QuestieDB = ns.ImportQuestieModule("QuestieDB")
-		local ZoneDB = ns.ImportQuestieModule("ZoneDB")
-		if not (questID and QuestieDB and QuestieDB.QueryQuestSingle and ZoneDB and ZoneDB.GetUiMapIdByAreaId) then
-			return nil
-		end
-
-		local startedBy = QuestieDB.QueryQuestSingle(questID, "startedBy")
-		if type(startedBy) == "table" then
-			for kind, query in ipairs({ QuestieDB.QueryNPCSingle, QuestieDB.QueryObjectSingle }) do
-				for _, id in ipairs(type(startedBy[kind]) == "table" and startedBy[kind] or {}) do
-					local mapID = AreaMapID(ZoneDB, BusiestArea(query(id, "spawns")))
-					if mapID then
-						return mapID
-					end
-				end
-			end
-		end
-
-		local zoneOrSort = QuestieDB.QueryQuestSingle(questID, "zoneOrSort")
-		return type(zoneOrSort) == "number" and zoneOrSort > 0 and AreaMapID(ZoneDB, zoneOrSort) or nil
-	end
-
 	--------------------------------------------------------------------------------
 	-- Tooltip
 	--------------------------------------------------------------------------------
 
-	-- An icon's objective, with its progress where it counts something
-	local function ObjectiveText(data)
+	-- One space a row, as every list under a heading in the add-on's tooltips is indented
+	local ROW_INDENT = " "
+
+	-- An icon's objective: its description, its progress where it counts something, and whether it's done
+	local function ObjectiveRow(data)
 		local objective = data.ObjectiveData
 		if not (objective and objective.Description) then
 			return nil
 		end
-		if objective.Needed then
-			return string.format(
-				"%s: %s/%s",
-				objective.Description,
-				tostring(objective.Collected or 0),
-				tostring(objective.Needed)
-			)
+		local have, need = objective.Collected or 0, objective.Needed
+		return {
+			description = objective.Description,
+			count = need and string.format("%s / %s", tostring(have), tostring(need)) or nil,
+			done = objective.Completed or (need ~= nil and have >= need) or false,
+		}
+	end
+
+	local function HasObjective(objectives, row)
+		for _, other in ipairs(objectives) do
+			if other.description == row.description then
+				return true
+			end
 		end
-		return objective.Description
+		return false
 	end
 
 	--[[
@@ -158,7 +120,7 @@ ns.AddWideQuestLogPart(function()
 		for other in canvas:EnumeratePinsByTemplate(PIN_TEMPLATE) do
 			local otherX, otherY = other:GetPosition()
 			if math.abs(otherX - x) < CLUSTER_DISTANCE and math.abs(otherY - y) < CLUSTER_DISTANCE then
-				local objective = ObjectiveText(other.data)
+				local objective = ObjectiveRow(other.data)
 				for _, name in ipairs(other.area and other.area.names or { other.data.Name or "" }) do
 					local entry = byName[name]
 					if not entry then
@@ -166,7 +128,7 @@ ns.AddWideQuestLogPart(function()
 						byName[name] = entry
 						entries[#entries + 1] = entry
 					end
-					if objective and not tContains(entry.objectives, objective) then
+					if objective and not HasObjective(entry.objectives, objective) then
 						entry.objectives[#entry.objectives + 1] = objective
 					end
 				end
@@ -178,11 +140,17 @@ ns.AddWideQuestLogPart(function()
 		if quest and quest.name then
 			GameTooltip:AddLine(quest.name)
 		end
-		local helpRed, helpGreen, helpBlue = ns.GetColorRGB("HELP")
 		for _, entry in ipairs(entries) do
 			GameTooltip:AddLine(entry.name, ns.GetColorRGB("TEXT"))
+			-- Each objective leads with the quest log's check once it's done, and its count sits on the right
 			for _, objective in ipairs(entry.objectives) do
-				GameTooltip:AddLine(objective, helpRed, helpGreen, helpBlue, true)
+				local left = ROW_INDENT .. ns.CheckIcon(GameTooltipText, objective.done) .. " " .. objective.description
+				local red, green, blue = ns.GetColorRGB(objective.done and "HELP" or "TEXT")
+				if objective.count then
+					GameTooltip:AddDoubleLine(left, objective.count, red, green, blue, red, green, blue)
+				else
+					GameTooltip:AddLine(left, red, green, blue)
+				end
 			end
 		end
 		GameTooltip:Show()

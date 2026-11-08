@@ -61,15 +61,5 @@ function ns.TakeOverQuestLog()
 		openBeforeToggle = nil
 	end)
 
-	--[[
-		Questie opens a quest by showing Blizzard's quest log, then draws its details there, which takes the
-		quest text back from this window; it's drawn here again a frame later
-	]]
-	hooksecurefunc("QuestInfo_Display", function(_, parentFrame)
-		if parentFrame == QuestLogDetailScrollChildFrame and frame:IsShown() then
-			ns.RequestUpdate()
-		end
-	end)
-
 	ns.questLogTakenOver = true
 end
