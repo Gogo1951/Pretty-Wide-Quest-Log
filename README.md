@@ -4,7 +4,7 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 
 **TL;DR:** Quest with confidence and speed. A clean route through every quest you picked, an arrow to follow, the quest log Blizzard should have shipped, and your whole group on the same quests without typing a word.
 
-<img width="400" src="https://github.com/user-attachments/assets/469c4f94-6db2-467d-b4bb-98e2d41be536" />
+<img width="400" src="https://github.com/user-attachments/assets/345a94f6-3897-4820-8cd3-8415e1cc7d27" />
 
 ### Example Messages
 
