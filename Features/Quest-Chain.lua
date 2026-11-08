@@ -62,6 +62,10 @@ local function ShowQuestieTooltip(row)
 	if not (row.questID and questieLink and type(questieLink.CreateQuestTooltip) == "function") then
 		return
 	end
+	-- Before Questie has started, its tooltip only prints a wait message to chat
+	if not (Questie and Questie.started) then
+		return
+	end
 	GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
 	local link = "questie:" .. row.questID .. ":" .. UnitGUID("player")
 	local shown = pcall(questieLink.CreateQuestTooltip, questieLink, link, GameTooltip)

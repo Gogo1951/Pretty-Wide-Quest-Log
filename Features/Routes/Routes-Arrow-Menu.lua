@@ -109,7 +109,7 @@ local function MenuTasks(view)
 	end
 	local byObjective, turnIns = {}, {}
 	for _, task in ipairs(view.tasks) do
-		if task.key and routes.IsTaskLeft(task) then
+		if task.key and routes.IsTaskLeft(task) and not routes.skipped[task.key] then
 			if task.objective then
 				byObjective[task.objective] = task
 			elseif task.kind == "turnIn" then

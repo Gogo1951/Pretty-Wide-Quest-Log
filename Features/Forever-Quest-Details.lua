@@ -66,6 +66,19 @@ end
 local titleText = Text("QuestTitleFont")
 local objectivesText = Text("QuestFont")
 local timerText = Text("QuestFont")
+local timerExpires -- When the shown quest's timer runs out (GetTime), while the pane shows one
+local sinceTimer = 0
+-- The timer counts down between repaints, which only events bring, as Blizzard's QuestInfo timer did
+detailChild:SetScript("OnUpdate", function(_, elapsed)
+	sinceTimer = sinceTimer + elapsed
+	if sinceTimer < 1 or not timerExpires then
+		return
+	end
+	sinceTimer = 0
+	if timerText:IsShown() then
+		timerText:SetText(TIME_REMAINING .. " " .. SecondsToTime(math.max(0, timerExpires - GetTime())))
+	end
+end)
 local groupSizeText = Text("QuestFont")
 local requiredMoneyText = Text("QuestFont")
 local waypointText = Text("QuestFont")
@@ -419,6 +432,7 @@ function ns.DisplayQuestDetails(resetScroll)
 	end
 	PlaceText(titleText, title, 0)
 	PlaceText(objectivesText, details.objectivesText, LAYOUT.TITLE_SPACE_BELOW)
+	timerExpires = details.timeLeft and (GetTime() + details.timeLeft) or nil
 	if details.timeLeft then
 		PlaceText(timerText, TIME_REMAINING .. " " .. SecondsToTime(details.timeLeft), SPACE.NEAR)
 	end

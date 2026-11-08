@@ -180,7 +180,9 @@ function routes.BuildNodes(yield)
 	local timed = routes.TimedQuests()
 
 	local nodes = {}
-	for questID, quest in pairs(QuestLog()) do
+	local log = QuestLog()
+	for _, questID in ipairs(routes.LoggedQuestIDs(log)) do
+		local quest = log[questID]
 		if type(quest) == "table" then
 			-- A dungeon or raid quest's objectives are inside the instance, so only its turn-in is on the route
 			local instanceQuest = IsInstanceQuest(questID)

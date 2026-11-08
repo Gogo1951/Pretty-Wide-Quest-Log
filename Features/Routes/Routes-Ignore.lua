@@ -157,5 +157,6 @@ function routes.ResetObjectives()
 	routes.engaged = nil
 	routes.worked = {}
 	routes.Print(L["ROUTES_RESET"])
+	routes.CancelPlan()
 	routes.RequestPlan()
 end

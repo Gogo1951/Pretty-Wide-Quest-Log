@@ -1701,7 +1701,7 @@ local function QuestieIcons(pins, questID)
 		if type(icon) == "table" and type(icon.data) == "table" and type(placement) == "table" then
 			total = total + 1
 			local mapID = placement.uiMapID
-			if questID and icon.data.Id == questID and mapID then
+			if questID and icon.data.Id == questID and mapID and not icon.isManualIcon then
 				local reason = SkipReason(icon)
 				local counts = reason and skipped or drawn
 				counts[mapID] = (counts[mapID] or 0) + 1
