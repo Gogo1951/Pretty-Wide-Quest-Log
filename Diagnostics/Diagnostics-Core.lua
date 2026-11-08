@@ -82,6 +82,23 @@ ns.DiagnosticsStrings = {
 	EVENT_LOG_SHOW = "Show",
 	EVENT_LOG_SHOW_DESCRIPTION = "Prints the captured events in the box below, ready to copy.",
 	EVENT_LOG_PRIVACY = "The log includes the text of chat messages it catches, whispers too. Read it through before you paste it anywhere.",
+	TRACKER_TAINT_TITLE = "Tracker Taint Watch",
+	TRACKER_TAINT_INTRO = 'Getting "tainted by '
+		.. TITLE
+		.. '" errors from the objective tracker or Edit Mode? Press Start, then use the quest log as usual: track and untrack quests, open and close zones, click quests, and click quests in the objective tracker. It checks the tracker after each of '
+		.. TITLE
+		.. "'s actions, says in chat the first time one leaves it tainted, and logs every step.",
+	TRACKER_TAINT_IDLE = "Not watching.",
+	TRACKER_TAINT_WATCHING = "Watching, nothing tainted by " .. TITLE .. " yet.",
+	TRACKER_TAINT_STOPPED = "Stopped. Nothing was tainted by " .. TITLE .. ".",
+	TRACKER_TAINT_FOUND = "Found: %s, %s.",
+	TRACKER_TAINT_CHAT = "Objective tracker tainted: %s, %s. Diagnostic Tools has the full log.",
+	TRACKER_TAINT_START = "Start",
+	TRACKER_TAINT_START_DESCRIPTION = "Starts watching the objective tracker, replacing anything caught before.",
+	TRACKER_TAINT_STOP = "Stop",
+	TRACKER_TAINT_STOP_DESCRIPTION = "Stops watching and keeps what was caught, ready to show.",
+	TRACKER_TAINT_SHOW = "Show",
+	TRACKER_TAINT_SHOW_DESCRIPTION = "Prints every step and what it tainted in the box below, ready to copy.",
 	TAINT_TITLE = "Taint Log",
 	TAINT_INTRO = 'Seeing "action blocked" or "interface action failed" errors? Turn this on and the game records the cause to a file. Send the file along with your bug report.',
 	TAINT_STATE = "Taint logging is currently set to level %d (0 = off, 2 = verbose).",
@@ -196,6 +213,9 @@ function ns:SetDiagnosticsEnabled(value)
 		ns.diagnostics.log = nil
 		ns.diagnostics.suppressed = nil
 		ns.diagnostics.eventLogReport = nil
+		ns:StopTrackerTaintWatch()
+		ns.diagnostics.trackerTaint = nil
+		ns.diagnostics.trackerTaintReport = nil
 		ns:StopDiagnosticRun()
 		ns.diagnostics.outputs = {}
 		ns.diagnostics.status = {}
@@ -242,16 +262,77 @@ function ns:FormatCommaNumber(number)
 end
 
 --------------------------------------------------------------------------------
+-- Tooltip Text
+--------------------------------------------------------------------------------
+
+--[[
+	An item's or spell's tooltip as plain lines, a right-hand column kept after " >> ", for Validate Data through TooltipLines below.
+	kind is "item" or "spell". C_TooltipInfo hands the lines over as data where the client ships its
+	GetItemByID and GetSpellByID getters; elsewhere they are read off a hidden tooltip that is never shown.
+	Color escapes are stripped. A read can throw on an odd ID, so callers protect it
+]]
+local SCAN_TOOLTIP_NAME = "PrettyWideQuestLogScanTooltip"
+local TOOLTIP_DATA_GETTERS = C_TooltipInfo
+	and C_TooltipInfo.GetItemByID
+	and C_TooltipInfo.GetSpellByID
+	and { item = C_TooltipInfo.GetItemByID, spell = C_TooltipInfo.GetSpellByID }
+local scanTooltip
+
+local function PlainText(text)
+	if type(text) ~= "string" then
+		return nil
+	end
+	return (text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|cn[^:]*:", ""):gsub("|r", ""))
+end
+
+local function JoinTooltipLine(left, right)
+	left = PlainText(left) or ""
+	right = PlainText(right)
+	if right and right ~= "" then
+		return left .. " >> " .. right
+	end
+	return left
+end
+
+local function ReadTooltipData(kind, id)
+	local lines = {}
+	local data = TOOLTIP_DATA_GETTERS[kind](id)
+	for _, line in ipairs(data and data.lines or {}) do
+		lines[#lines + 1] = JoinTooltipLine(line.leftText, line.rightText)
+	end
+	return lines
+end
+
+local function ReadScanTooltip(kind, id)
+	if not scanTooltip then
+		scanTooltip = CreateFrame("GameTooltip", SCAN_TOOLTIP_NAME, nil, "GameTooltipTemplate")
+	end
+	scanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+	scanTooltip:ClearLines()
+	scanTooltip:SetHyperlink(kind .. ":" .. id)
+	local lines = {}
+	for index = 1, scanTooltip:NumLines() do
+		local left = _G[SCAN_TOOLTIP_NAME .. "TextLeft" .. index]
+		local right = _G[SCAN_TOOLTIP_NAME .. "TextRight" .. index]
+		lines[#lines + 1] = JoinTooltipLine(left and left:GetText(), right and right:IsShown() and right:GetText())
+	end
+	scanTooltip:Hide()
+	return lines
+end
+
+local GetTooltipLines = TOOLTIP_DATA_GETTERS and ReadTooltipData or ReadScanTooltip
+
+--------------------------------------------------------------------------------
 -- Tooltip Lines
 --------------------------------------------------------------------------------
 
 --[[
-    An item's or spell's tooltip lines through ns.GetTooltipLines, protected,
+    An item's or spell's tooltip lines through GetTooltipLines, protected,
     because one id the client chokes on must not end a run of a thousand. A
     throw comes back as its message, so the caller can report it.
 ]]
 local function TooltipLines(kind, id)
-	local ok, lines = pcall(ns.GetTooltipLines, kind, id)
+	local ok, lines = pcall(GetTooltipLines, kind, id)
 	if ok then
 		return lines, nil
 	end

@@ -1,26 +1,24 @@
 # Pretty Wide Quest Log // Test Plan
 
-Pretty Wide Quest Log turns the quest log into one wide window, with your whole quest list beside the quest details and a map of the selected quest. This time we most want you to try the new route on the zone map and the Quest Arrow that follows it, both of which need Questie.
+Pretty Wide Quest Log turns the quest log into one wide window, with your quest list beside the quest details and a map of the selected quest, plus a route on the zone map and a Quest Arrow when Questie is on. This time we most want you to try ignoring objectives from the Quest Arrow and the zone map, and the arrow's new look once you reach an objective.
 
-**Play on Classic Era, Season of Discovery, WoW Forever, TBC Anniversary, and Mists of Pandaria Classic.** If something looks wrong, tell us the check number and what you saw on [Discord](https://discord.gg/eh8hKq992Q).
+**Play on Classic Era, Season of Discovery, WoW Forever, TBC Anniversary, and MoP Classic.** If something looks wrong, tell us the check number and what you saw on [Discord](https://discord.gg/eh8hKq992Q).
 
 ## What's New
 
-1. With Questie on, press `M`; the map should open full size, with markers and marching dots leading through your objectives and turn-ins, nearest first.
-2. Follow the Quest Arrow near the top middle of the screen to an objective, through a fight or two; once there, it should take turns between an eye listing what's around you and the arrow pointing on.
-3. Drag the Quest Arrow somewhere new, right-click it to skip the current objective, then middle-click it to bring skipped objectives back.
-4. Die and release; the Quest Arrow should lead you back to your corpse first.
-5. In a party where you both run Questie, the route should also take in quests they have and you don't.
-6. Enter a dungeon, then join a raid group; the Quest Arrow should hide in both.
-7. Carry a dungeon quest (one with a D after its level) near its dungeon; Questie's icons for it should stay on the map, but the route and the Quest Arrow should leave it out, turn-in included.
-8. Pick up a timed or escort quest alongside your other quests; the route and the Quest Arrow should take you to it first, even from inside another quest's camp. With two, the one turned in nearest should come first.
-9. In a party, hover a zone name in the quest list and click **Share Quests**; anyone too far away should get a whisper naming the quest.
-10. Talk to a quest giver who also has things to say, then turn in a quest; the lines should be evenly spaced and the reward's experience and gold should match the text around them.
+1. With Questie on, press `M` and follow the route's markers through your objectives and turn-ins; a dungeon quest's objectives should be one gray-ringed marker at the dungeon's entrance.
+2. Right-click a marker on the zone map to take it off the route.
+3. Turn on **Show Next Objective** from the Quest Arrow's menu and follow the arrow to an objective; once there it should read "Current Objective Area" with a dimmed "Next Objective" line under it.
+4. Turn on **Show Upcoming Turn-Ins** from the Quest Arrow's menu; each quest's turn-in should join the route, with Questie's gray question mark, before you finish the quest.
+5. Mouse over the Quest Arrow and ignore an objective from its menu; it should stay on the menu's ignore list until you middle-click the arrow.
+6. Take a flight path; the Quest Arrow should hide in the air and come back on landing with a route from where you came down.
+7. In a party, open the Quest Arrow's menu and turn a member's objectives off and back on; anyone without Questie should show "No Questie".
+8. On WoW Forever, share a quest with your party during a fight; it should say it will share once combat ends, and then do it.
 
 ## Everything Else
 
-11. Press `L`, change **Zone Order** and **Quest Order** under **Wide Quest Log** in the options, then click and Shift-Click quests to check each click lands on the quest you clicked.
-12. With Questie on, select a quest that has you kill or collect things; the quest log's map should shade each area, and a quest in a chain should list its steps.
-13. On WoW Forever and Mists of Pandaria Classic, press `L` in and out of combat, and out of combat open the quest log from the micro menu and from a quest in the objective tracker; each should open the wide quest log.
-14. Click a quest's ID in the quest details to get its Wowhead link.
-15. Open the options with `/pwql` and from **Options > AddOns > Pretty Wide Quest Log**, then try `/pwql` in combat; it should refuse with a chat message.
+9. Press `L` and change **Zone Order** and **Quest Order** under **Wide Quest Log** in the options; the list should re-sort, and each click should select the quest you clicked.
+10. With Questie on, select a quest that has you kill or collect things; the map beside the log should shade each area, and a quest in a chain should list its steps.
+11. In a party, walk into a dungeon you have quests for; party chat should list them, and your party should be offered each one you can share.
+12. On WoW Forever and MoP Classic, press `L` in and out of combat, and open the quest log from the micro menu; it should be the wide quest log every time.
+13. Open the options with `/pwql` and from **Options > AddOns > Pretty Wide Quest Log**, then try `/pwql` in combat; it should refuse with a chat message.

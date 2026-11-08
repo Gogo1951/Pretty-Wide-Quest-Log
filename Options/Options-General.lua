@@ -5,13 +5,6 @@ local GetColor = ns.GetColor
 -- The Features switches, two to a line
 local FEATURE_WIDTH = ns.OPTIONS_ROW_WIDTH / 2
 
--- Under the Features switches while the Quest Log switch waits for its reload, as on the Quest Log panel
-local function QuestLogReloadPending()
-	if ns.IsQuestLogReloadPending() then
-		return L["FEATURE_QUEST_LOG_RELOAD_PENDING"]
-	end
-end
-
 --------------------------------------------------------------------------------
 -- General Panel
 --------------------------------------------------------------------------------
@@ -61,7 +54,7 @@ function ns.BuildGeneralOptions()
 			"FEATURE_QUALITY_OF_LIFE_SUMMARY",
 			14,
 			FEATURE_WIDTH,
-			ns.ApplyQuestGiverCleanup
+			ns.ApplyQualityOfLifeSettings
 		),
 		enableRoutesMap = ns.OptionsRoutesToggle(
 			"showMap",
@@ -77,7 +70,7 @@ function ns.BuildGeneralOptions()
 			16,
 			FEATURE_WIDTH
 		),
-		questLogReloadPending = ns.OptionsStatusLine(QuestLogReloadPending, 17),
+		questLogReloadPending = ns.OptionsStatusLine(ns.QuestLogReloadPendingText, 17),
 	}
 
 	AddCommands(args, 100)

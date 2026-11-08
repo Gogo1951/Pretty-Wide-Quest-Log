@@ -26,9 +26,9 @@ ns.Version = GetVersion()
 	where several features handle the same event, each after the first names the key of the ns table that
 	holds its handler (its owner; without one, the handler is on ns). An event listed more than once runs
 	every handler, in this order.
-	Feature files define the handlers; an event is registered only once a loaded file defines one of its
-	handlers, so a client never registers an event only another client's files use. ns.EVENT_NAMES lists
-	what was actually registered.
+	Feature files define the handlers; an event is registered only once a loaded file, or a quest log part
+	run at ADDON_LOADED, defines one of its handlers, so a client never registers an event only another
+	client's files use. ns.EVENT_NAMES lists what was actually registered.
 ]]
 local EVENTS = {
 	{ "ADDON_LOADED", "OnAddonLoaded" },
@@ -60,10 +60,15 @@ local EVENTS = {
 	{ "PLAYER_ALIVE", "OnPlayerAlive", "routes" },
 	{ "PLAYER_UNGHOST", "OnPlayerUnghost", "routes" },
 	{ "ADDON_LOADED", "OnAddonLoaded", "routesMap" },
+	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "routes" },
+	{ "GROUP_JOINED", "OnGroupJoined", "routes" },
+	{ "GROUP_LEFT", "OnGroupLeft", "routes" },
 	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "routesArrow" },
 	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld", "routesArrow" },
 	{ "ZONE_CHANGED_NEW_AREA", "OnZoneChangedNewArea", "routesArrow" },
 	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questMap" },
+	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questLogApi" },
+	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questLogWindow" },
 }
 
 local EVENT_HANDLERS = {}
@@ -93,10 +98,11 @@ eventFrame:SetScript("OnEvent", function(_, event, ...)
 		ns:LogEvent(event, ...)
 	end
 
+	-- Through securecall, so an error is reported and the event's later handlers still run
 	for _, row in ipairs(EVENT_HANDLERS[event]) do
 		local owner, handler = FindHandler(row)
 		if handler then
-			handler(owner, ...)
+			securecall(handler, owner, ...)
 		end
 	end
 end)
@@ -110,6 +116,15 @@ local function RegisterEvent(event)
 end
 
 RegisterEvent("ADDON_LOADED")
+
+-- Every event with a handler defined by now; an event already registered is skipped
+local function RegisterLoadedEvents()
+	for _, event in ipairs(EVENTS) do
+		if event[1] ~= "ADDON_LOADED" and FindHandler(event) then
+			RegisterEvent(event[1])
+		end
+	end
+end
 
 --------------------------------------------------------------------------------
 -- The Wide Quest Log
@@ -139,7 +154,7 @@ local function StartWideQuestLog()
 	ns.wideQuestLogActive = (ns.hasWideQuestLog and ns.db.profile.enableWideQuestLog) and true or false
 	if ns.wideQuestLogActive then
 		for _, build in ipairs(wideQuestLogParts) do
-			build()
+			securecall(build)
 		end
 	end
 	wideQuestLogParts = nil
@@ -160,8 +175,78 @@ function ns:ApplyProfile()
 	if ns.routes then
 		ns.routes.ApplySettings()
 	end
+	if ns.dungeonQuests then
+		ns.dungeonQuests.Watch()
+	end
 	for _, registryName in pairs(ns.OPTIONS_REGISTRY) do
 		AceConfigRegistry:NotifyChange(registryName)
+	end
+end
+
+--[[
+    Characters from another game version, dropped without a word. AceDB keys
+    a character "Name - Realm" on realm clients and "First Last" on the
+    realm-free ones (WoW Forever), so a saved key shaped the other way from
+    the one being played came from a copied WTF folder: its char section,
+    its profile choice and, unless someone still uses it, its own profile go.
+]]
+local REALM_KEY_SEPARATOR = " - "
+
+---@param characterKey any
+---@param realmClient boolean
+---@return boolean
+local function IsOtherClientKey(characterKey, realmClient)
+	if type(characterKey) ~= "string" then
+		return true
+	end
+	return (characterKey:find(REALM_KEY_SEPARATOR, 1, true) ~= nil) ~= realmClient
+end
+
+---@param sv table # the saved table, or one of its namespaces
+---@param realmClient boolean
+---@param profilesInUse table<string, boolean>
+---@return nil
+local function PruneSavedTable(sv, realmClient, profilesInUse)
+	local pruned = {}
+	for _, section in ipairs({ "char", "profileKeys" }) do
+		local characters = sv[section]
+		if type(characters) == "table" then
+			for characterKey in pairs(characters) do
+				if IsOtherClientKey(characterKey, realmClient) then
+					characters[characterKey] = nil
+					pruned[characterKey] = true
+				end
+			end
+		end
+	end
+	if type(sv.profiles) == "table" then
+		for characterKey in pairs(pruned) do
+			if not profilesInUse[characterKey] then
+				sv.profiles[characterKey] = nil
+			end
+		end
+	end
+end
+
+---@return nil
+local function PruneOtherClientCharacters()
+	local currentKey = ns.db.keys and ns.db.keys.char
+	local sv = ns.db.sv
+	if type(currentKey) ~= "string" or type(sv) ~= "table" then
+		return
+	end
+	local realmClient = currentKey:find(REALM_KEY_SEPARATOR, 1, true) ~= nil
+	local profilesInUse = { [ns.db.keys.profile or ""] = true }
+	for characterKey, profileName in pairs(sv.profileKeys or {}) do
+		if not IsOtherClientKey(characterKey, realmClient) then
+			profilesInUse[profileName] = true
+		end
+	end
+	PruneSavedTable(sv, realmClient, profilesInUse)
+	for _, namespace in pairs(sv.namespaces or {}) do
+		if type(namespace) == "table" then
+			PruneSavedTable(namespace, realmClient, profilesInUse)
+		end
 	end
 end
 
@@ -171,21 +256,25 @@ function ns:OnAddonLoaded(name)
 	end
 
 	ns.db = LibStub("AceDB-3.0"):New(ns.SAVED_VARIABLES_NAME, ns.DATABASE_DEFAULTS, true)
+	PruneOtherClientCharacters()
 	for _, message in ipairs({ "OnProfileChanged", "OnProfileReset", "OnProfileCopied" }) do
 		ns.db.RegisterCallback(ns, message, "ApplyProfile")
 	end
-	StartWideQuestLog()
-	ns.ApplyQuestGiverCleanup()
+
+	--[[
+		The options panels and the events come first, so a feature that errors as it sets up below takes
+		only itself down; each setup step runs through securecall, which reports its error and carries on.
+		On Classic Era and TBC the quest log parts define their handlers as they run, so a second pass
+		registers those events once the parts have run
+	]]
 	ns.RegisterOptionsPanels()
+	RegisterLoadedEvents()
 
+	StartWideQuestLog()
+	RegisterLoadedEvents()
+	securecall(ns.ApplyQuestGiverCleanup)
 	if ns.OnDatabaseReady then
-		ns:OnDatabaseReady()
-	end
-
-	for _, event in ipairs(EVENTS) do
-		if event[1] ~= "ADDON_LOADED" and FindHandler(event) then
-			RegisterEvent(event[1])
-		end
+		securecall(ns.OnDatabaseReady, ns)
 	end
 end
 

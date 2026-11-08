@@ -8,6 +8,16 @@ local L = ns.L
 -- While Questie's tracker is in charge, a quest counts as tracked only if it shows there (README-Technical).
 local questieTracker
 
+-- A repaint asks for every quest, so Questie's quest log is read once a frame
+local questieLog, questieLogTime
+local function QuestieLog()
+	local now = GetTime()
+	if questieLogTime ~= now then
+		questieLog, questieLogTime = ns.QuestieLogEntries(), now
+	end
+	return questieLog
+end
+
 --[[
 	Returns Questie's tracker if it's in charge of this quest, false if it's in charge but can't show
 	the quest, or nil if Blizzard's tracker is in charge
@@ -17,7 +27,7 @@ local function TrackerFor(questID)
 		return nil
 	end
 	questieTracker = questieTracker or ns.ImportQuestieModule("QuestieTracker")
-	local log = ns.QuestieLogEntries()
+	local log = QuestieLog()
 	if not (questieTracker and type(questieTracker.IsTrackedByQuestie) == "function" and log) then
 		return nil
 	end
@@ -67,7 +77,7 @@ local function Untrack(questID, tracker)
 		return
 	end
 	if ns.CanRemoveQuestWatch() then
-		C_QuestLog.RemoveQuestWatch(questID) -- Also untracks it in Questie
+		ns.TrackerTaintStep("Untrack", C_QuestLog.RemoveQuestWatch, questID) -- Also untracks it in Questie
 	end
 end
 
@@ -78,12 +88,24 @@ local function Track(questID)
 		return false
 	end
 	-- Adding a watch that already exists is harmless, and is what tells Questie to track it
-	C_QuestLog.AddQuestWatch(questID)
+	ns.TrackerTaintStep("Track", C_QuestLog.AddQuestWatch, questID)
 	return true
+end
+
+-- Changing the watch list from add-on code in combat taints the objective tracker, so it waits for combat to end
+local function RefusedInCombat()
+	if InCombatLockdown() then
+		UIErrorsFrame:AddMessage(ERR_NOT_IN_COMBAT, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, 1.0)
+		return true
+	end
+	return false
 end
 
 local warnedUntrackable = {}
 function ns.ToggleTracking(questID)
+	if RefusedInCombat() then
+		return
+	end
 	local tracker = TrackerFor(questID)
 	if tracker == false then
 		if not warnedUntrackable[questID] then
@@ -107,6 +129,9 @@ end
 	top of the list down. Quests Questie can't track are skipped without a word
 ]]
 function ns.SetAllTracked(questIDs, track)
+	if RefusedInCombat() then
+		return
+	end
 	for _, questID in ipairs(questIDs) do
 		local tracker = TrackerFor(questID)
 		if tracker ~= false and ns.IsTracked(questID) ~= track then

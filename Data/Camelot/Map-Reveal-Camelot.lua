@@ -666,7 +666,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 How We Got the Data
 
 Last Validated
-	2026-11-06, WoW Forever 1.60.1.70790
+	2026-11-07, WoW Forever 1.60.1.70862
 
 Notes
 	- Every area of a zone's map that starts hidden until the character explores it, so the quest map can show the
@@ -691,10 +691,10 @@ Wowhead
 	None.
 
 wago.tools
-	https://wago.tools/db2/WorldMapOverlay?build=1.60.1.70790
-	https://wago.tools/db2/WorldMapOverlayTile?build=1.60.1.70790
-	https://wago.tools/db2/UiMapXMapArt?build=1.60.1.70790
-	https://wago.tools/db2/UiMap?build=1.60.1.70790
+	https://wago.tools/db2/WorldMapOverlay?build=1.60.1.70862
+	https://wago.tools/db2/WorldMapOverlayTile?build=1.60.1.70862
+	https://wago.tools/db2/UiMapXMapArt?build=1.60.1.70862
+	https://wago.tools/db2/UiMap?build=1.60.1.70862
 
 QuestieDB
 	None.

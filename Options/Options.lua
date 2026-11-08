@@ -8,7 +8,7 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 -- Registration
 --------------------------------------------------------------------------------
 
--- Called from Core right after AceDB:New, since the Profiles builder reads ns.db.
+-- Called from Core once AceDB:New has run, before any feature sets up, since the Profiles builder reads ns.db.
 function ns.RegisterOptionsPanels()
 	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.General, ns.BuildGeneralOptions)
 

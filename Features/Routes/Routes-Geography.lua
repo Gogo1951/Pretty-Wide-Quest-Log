@@ -1,0 +1,175 @@
+local _, ns = ...
+
+--[[
+	Routes: where the player is and what the maps say about places. The player's position and zone, a
+	ghost's corpse, and whether a map lies within a zone or a dungeon. Positions are in world yards, from
+	Questie's copy of HereBeDragons (routes.HereBeDragons)
+]]
+
+local routes = ns.routes
+
+local HereBeDragons = routes.HereBeDragons
+
+-- The player's world position in yards, and continent, or nothing where the client won't say
+function routes.PlayerPosition()
+	local hbd = HereBeDragons()
+	if hbd then
+		return hbd:GetPlayerWorldPosition()
+	end
+end
+
+-- A map, or the zone a micro map (a cave, a building) sits in
+local function ZoneOf(mapID)
+	local info = mapID and C_Map.GetMapInfo(mapID)
+	while info and info.mapType == Enum.UIMapType.Micro and info.parentMapID and info.parentMapID > 0 do
+		mapID = info.parentMapID
+		info = C_Map.GetMapInfo(mapID)
+	end
+	return mapID
+end
+
+-- The zone the player is in, the one the route covers
+function routes.PlayerZone()
+	return ZoneOf(C_Map.GetBestMapForUnit("player"))
+end
+
+--[[
+	Whether a party member is in another zone than the player. Not where the client won't say where either
+	one is, as for a member in a dungeon the player isn't in
+]]
+function routes.IsUnitOutOfZone(unit)
+	local mine = routes.PlayerZone()
+	local theirs = ZoneOf(C_Map.GetBestMapForUnit(unit))
+	return mine ~= nil and theirs ~= nil and mine ~= theirs
+end
+
+--[[
+	While the player is a ghost, where their corpse lies: world yards, continent and zone. Asked of the
+	zone the ghost is in first, then each map above it, since the graveyard can be a zone away. Nothing
+	where the client won't say, as for a corpse in a dungeon
+]]
+function routes.CorpsePosition()
+	if not UnitIsGhost("player") then
+		return nil
+	end
+	local hbd = HereBeDragons()
+	local mapID = C_Map.GetBestMapForUnit("player")
+	while hbd and mapID and mapID > 0 do
+		local position = C_DeathInfo.GetCorpseMapPosition(mapID)
+		local x, y = position and position.x, position and position.y
+		if x and x >= 0 and x <= 1 and y >= 0 and y <= 1 and (x > 0 or y > 0) then
+			local worldX, worldY, instance = hbd:GetWorldCoordinatesFromZone(x, y, mapID)
+			if worldX then
+				-- The deepest map at the corpse, as a zone
+				local info = C_Map.GetMapInfoAtPosition(mapID, x, y)
+				return worldX, worldY, instance, ZoneOf(info and info.mapID or mapID)
+			end
+		end
+		local info = C_Map.GetMapInfo(mapID)
+		mapID = info and info.parentMapID
+	end
+	return nil
+end
+
+--[[
+	Where the route sets out from: the player, or a ghost's corpse, where they'll be once they've run back
+	to it. corpse says which
+]]
+function routes.Origin()
+	local x, y, instance, zone = routes.CorpsePosition()
+	if x then
+		return x, y, instance, zone, true
+	end
+	x, y, instance = routes.PlayerPosition()
+	return x, y, instance, routes.PlayerZone(), false
+end
+
+-- Whether a map's parents, followed up to a continent, reach the zone: a cave or building inside it
+local function IsWithinByParents(mapID, zone)
+	local current = mapID
+	local info = current and C_Map.GetMapInfo(current)
+	while info do
+		if current == zone then
+			return true
+		end
+		if info.mapType <= Enum.UIMapType.Continent or not (info.parentMapID and info.parentMapID > 0) then
+			return false
+		end
+		current = info.parentMapID
+		info = C_Map.GetMapInfo(current)
+	end
+	return false
+end
+
+--[[
+	Whether the whole of a map lies on the zone's map, on the same continent: a city drawn on the zone's
+	map, as the Exodar is on Azuremyst Isle's. The game files such a city under the continent, not the
+	zone, so its parents don't say
+]]
+local function IsWithinByPlace(mapID, zone)
+	local hbd = HereBeDragons()
+	if not hbd then
+		return false
+	end
+	for _, corner in ipairs({ 0, 1 }) do
+		local worldX, worldY, instance = hbd:GetWorldCoordinatesFromZone(corner, corner, mapID)
+		if not worldX then
+			return false
+		end
+		local x, y = hbd:GetZoneCoordinatesFromWorldInstance(worldX, worldY, instance, zone, true)
+		if not (x and x >= 0 and x <= 1 and y >= 0 and y <= 1) then
+			return false
+		end
+	end
+	return true
+end
+
+--[[
+	Whether a map from Questie's database is the zone or inside it: a micro map (a cave, a building), or a
+	city on a map of its own within the zone, as the Exodar is within Azuremyst Isle. Questie draws such a
+	city's NPCs on the zone's map too, so their turn-ins are on the route. Cached by zone, as it's asked
+	per spawn
+]]
+local inZone = {}
+local function IsInZone(mapID, zone)
+	local cache = inZone[zone]
+	if not cache then
+		cache = {}
+		inZone[zone] = cache
+	end
+	local found = cache[mapID]
+	if found == nil then
+		found = IsWithinByParents(mapID, zone) or IsWithinByPlace(mapID, zone)
+		cache[mapID] = found
+	end
+	return found
+end
+routes.IsInZone = IsInZone
+
+--[[
+	Whether a map is a dungeon's or a raid's, or a floor of one: it or a map above it is a dungeon map. The
+	game can file a dungeon's map under the zone its entrance is in, so routes.IsInZone alone passes it.
+	Cached, as it's asked per spawn
+]]
+local instanceMaps = {}
+local function IsInstanceMap(mapID)
+	local found = instanceMaps[mapID]
+	if found ~= nil then
+		return found
+	end
+	found = false
+	local info = C_Map.GetMapInfo(mapID)
+	while info do
+		if info.mapType == Enum.UIMapType.Dungeon then
+			found = true
+			break
+		end
+		if info.mapType <= Enum.UIMapType.Continent or not (info.parentMapID and info.parentMapID > 0) then
+			break
+		end
+		info = C_Map.GetMapInfo(info.parentMapID)
+	end
+	instanceMaps[mapID] = found
+	return found
+end
+routes.IsInstanceMap = IsInstanceMap

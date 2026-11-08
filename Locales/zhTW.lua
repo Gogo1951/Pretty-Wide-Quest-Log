@@ -155,6 +155,7 @@ L["TAB_ROUTES_MAP"] = "區域地圖路線"
 L["TAB_ROUTES_MAP_DESCRIPTION"] =
 	"區域地圖上的一條路線，從你所在的位置出發，按完成順序經過你的任務目標和回報地點。"
 L["ROUTES_MAP_HEADER"] = "區域地圖"
+L["ROUTES_MAP_DESCRIPTION"] = "區域地圖顯示路線時的開啟方式。"
 L["FULL_SIZE_MAP"] = "以最大尺寸開啟區域地圖"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"像地圖本身的最大化按鈕一樣，以最大化狀態開啟區域地圖，讓路線有足夠空間。即使你把地圖縮小，下次也會再次以最大尺寸開啟。"
@@ -162,6 +163,7 @@ L["HIDE_QUESTIE_ICONS"] = "隱藏路線上的 Questie 圖示"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
 	"隱藏路線上目標的 Questie 地圖圖示，由標記代替顯示。將滑鼠游標停在標記上可查看其圖示。"
 L["ROUTES_MARKERS_HEADER"] = "標記"
+L["ROUTES_MARKERS_DESCRIPTION"] = "路線上每個路徑點的標記。"
 L["MARKER_SIZE"] = "標記大小"
 L["MARKER_SIZE_DESCRIPTION"] = "路線標記在區域地圖上的大小。"
 L["MARKER_SIZE_SMALL"] = "小"
@@ -169,6 +171,7 @@ L["MARKER_SIZE_MEDIUM"] = "中"
 L["MARKER_SIZE_LARGE"] = "大"
 L["MARKER_SIZE_HUGE"] = "特大"
 L["ROUTES_LINE_HEADER"] = "路線線條"
+L["ROUTES_LINE_DESCRIPTION"] = "從你的位置通往每個標記的移動圓點。"
 L["SHOW_ROUTE_LINE"] = "顯示路線線條"
 L["SHOW_ROUTE_LINE_DESCRIPTION"] =
 	"從你的位置依序向每個標記畫出移動的圓點。關閉後只顯示標記。"
@@ -181,9 +184,10 @@ L["LINE_SPEED_FAST"] = "快"
 L["LINE_OPACITY"] = "線條不透明度"
 L["LINE_OPACITY_DESCRIPTION"] = "圓點的不透明程度；越低，透出的地圖越多。"
 L["ROUTES_PARTY_HEADER"] = "隊伍"
+L["ROUTES_PARTY_DESCRIPTION"] = "你的隊伍為路線增加的內容。"
 L["PARTY_QUESTS"] = "包含隊友的任務"
 L["PARTY_QUESTS_DESCRIPTION"] =
-	"在隊伍中，路線和任務箭頭也會包含隊友有而你沒有的任務，顯示方式與你自己的任務相同。雙方都需要裝有 Questie 才能共享這些任務。他們的地城任務會被排除，與你的一樣。"
+	"在隊伍中，路線和任務箭頭也會包含隊友有而你沒有的任務，顯示方式與你自己的任務相同。雙方都需要裝有 Questie 才能共享這些任務。他們的地城任務會被排除，因為任務目標在地城內。"
 
 --------------------------------------------------------------------------------
 -- Options: Quest Arrow Panel
@@ -191,19 +195,19 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "任務箭頭"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"畫面上的一個箭頭，指向路線上的下一個路徑點，並列出要在那裡完成的任務和目標。右鍵點擊它可讓路線繞過目前目標；中鍵點擊它可重設所有路線。"
+	"畫面上的一個箭頭，指向路線上的下一個路徑點，並列出要在那裡完成的任務和目標。將滑鼠游標停在它上面會顯示一個選單，你可以在其中逐一忽略目標，並查看已忽略的項目。中鍵點擊它可清空忽略清單。"
 L["QUEST_ARROW_HEADER"] = "箭頭"
+L["QUEST_ARROW_DESCRIPTION"] = "任務箭頭的位置和大小。"
 L["ARROW_SIZE"] = "箭頭大小"
 L["ARROW_SIZE_DESCRIPTION"] = "任務箭頭及其下方文字的大小。"
-L["ARROW_CYCLE"] = "眼睛與箭頭輪替時間（秒）"
-L["ARROW_CYCLE_DESCRIPTION"] =
-	"在目標範圍內，任務箭頭會輪流顯示：先是眼睛，列出你周圍的目標；然後是箭頭，指向下一個路徑點。兩者各佔這段時間的一半。"
 L["LOCK_ARROW"] = "鎖定任務箭頭"
 L["LOCK_ARROW_DESCRIPTION"] = "將任務箭頭固定在原位，拖曳不會有作用。"
 L["RESET_ARROW"] = "箭頭位置"
 L["RESET_ARROW_BUTTON"] = "重設"
+L["RESET_ARROW_CONFIRM"] = "要將任務箭頭移回初始位置嗎？"
 L["RESET_ARROW_DESCRIPTION"] = "將任務箭頭放回初始位置，即畫面頂端中間。"
 L["QUEST_ARROW_TEXT_HEADER"] = "箭頭下方"
+L["QUEST_ARROW_TEXT_DESCRIPTION"] = "任務箭頭在下方列出的內容。"
 L["SHOW_DISTANCE"] = "顯示距離"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_ARRIVED, as the Quest Arrow shows them
 L["SHOW_DISTANCE_DESCRIPTION"] =
@@ -215,7 +219,16 @@ L["QUESTS_LISTED"] = "最多列出任務數"
 -- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
 L["QUESTS_LISTED_DESCRIPTION"] =
 	'任務箭頭在一個路徑點下方最多列出的任務數。其餘的任務會在單獨一行中計數，例如"%s"。'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_NEXT_OBJECTIVE"] = "顯示下一個目標"
+-- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
+L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
+	'在"%s"時，於其下方以暗色列出"%s"：一個指向再下一個路徑點的小箭頭，以及在那裡要做的事。'
+L["SHOW_UPCOMING_TURN_INS"] = "顯示即將交付的任務"
+L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
+	"在任務目標完成之前就把交任務的地點加入路線，並以 Questie 的灰色問號標出，讓你看到將在哪裡交付。關閉後，任務完成時才會把交付地點加入路線。"
 L["QUEST_ARROW_HIDING_HEADER"] = "隱藏"
+L["QUEST_ARROW_HIDING_DESCRIPTION"] = "任務箭頭何時自動隱藏。"
 L["HIDE_IN_RAIDS"] = "在團隊中隱藏"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "當你在團隊中時隱藏任務箭頭。"
 L["HIDE_IN_INSTANCES"] = "在副本中隱藏"
@@ -289,6 +302,8 @@ L["RESIZE_TOOLTIP"] = "拖曳以調整任務日誌大小。"
 
 L["SHARE_QUESTS"] = "分享任務"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] = "把本區域中遊戲允許分享的任務分享給隊伍，每 %d 秒一個。"
+-- TRANSLATORS: %s is a quest's name
+L["CHAT_SHARING_AFTER_COMBAT"] = "戰鬥結束後分享 %s。"
 L["CHAT_SHARING_ZONE_ONE"] = "正在分享 %s 的 1 個任務。"
 -- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "正在分享 %d 個任務，來自 %s，每 %d 秒一個。"
@@ -299,28 +314,67 @@ L["CHAT_SHARING_ZONE_NONE"] = "%s 中沒有可以分享的任務。"
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "已到達"
-L["ROUTES_OBJECTIVE_AREA"] = "目標範圍"
+-- TRANSLATORS: where the Quest Arrow would be while its waypoint is on another continent
+L["ROUTES_OTHER_MAP"] = "路徑點在另一張地圖上"
+L["ROUTES_OBJECTIVE_AREA"] = "目前目標範圍"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when an objective there can be done nowhere else on the route
+L["ROUTES_AREA_FINISH"] = "完成這裡再繼續"
+-- TRANSLATORS: under ROUTES_OBJECTIVE_AREA, when the route passes more of these mobs or objects later
+L["ROUTES_AREA_MORE"] = "路線後面還有"
+-- TRANSLATORS: heads the one line under the Quest Arrow's list naming where the route goes after this area
+L["ROUTES_NEXT_OBJECTIVE"] = "下一個目標"
+-- TRANSLATORS: heads the dimmed objectives the player is passing through, planned for later on the route
+L["ROUTES_WHILE_HERE"] = "順路可做"
 -- TRANSLATORS: %d is a distance in yards
 L["ROUTES_YARDS"] = "%d碼"
+-- TRANSLATORS: ROUTES_YARDS for a distance of exactly 1
+L["ROUTES_YARD"] = "%d碼"
 -- TRANSLATORS: %d is how many more quests the Quest Arrow has at this waypoint than it lists
 L["ROUTES_MORE_TASKS"] = "此處還有 +%d 個"
 L["ROUTES_TURN_IN"] = "回報任務"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "回報 %s"
 L["ROUTES_CORPSE"] = "跑回你的屍體處"
--- TRANSLATORS: Heads the list of NPCs, mobs and objects found at a route waypoint
+-- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "尋找"
--- TRANSLATORS: %s is the party members a waypoint's objective is for, such as "Alice, Bob"
-L["ROUTES_FOR_MEMBERS"] = "需要的隊友：%s"
 L["ROUTES_CLICK_DRAG"] = "拖曳"
 L["ROUTES_CLICK_RIGHT"] = "右鍵點擊"
 L["ROUTES_CLICK_MIDDLE"] = "中鍵點擊"
 L["ROUTES_DRAG_MOVE"] = "移動任務箭頭"
-L["ROUTES_RIGHT_CLICK_REROUTE"] = "繞過目前目標"
+L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "忽略此路徑點"
+-- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
+L["ROUTES_RIGHT_CLICK_IGNORE"] = "忽略此目標"
+L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "放回路線"
 L["ROUTES_MIDDLE_CLICK_RESET"] = "重設所有路線"
+L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "清空忽略清單"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "路線已繞過 %s。"
-L["ROUTES_RESET"] = "所有路線已重設：繞過的目標已回到路線上。"
+L["ROUTES_SKIPPED"] = "忽略 %s，直到清空忽略清單。"
+L["ROUTES_RESET"] = "所有路線已重設：已忽略的目標和隊友已回到路線上。"
+L["ROUTES_IGNORE_CLEARED"] = "忽略清單已清空：已忽略的目標已回到路線上。"
+L["ROUTES_GROUP_JOINED_CLEARED"] = "已加入隊伍：已忽略的目標和隊友已回到路線上。"
+L["ROUTES_GROUP_LEFT_CLEARED"] = "已離開隊伍：已忽略的目標和隊友已回到路線上。"
+-- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
+L["ROUTES_MENU_IGNORE"] = "忽略 %s"
+-- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
+L["ROUTES_MENU_IGNORED"] = "已忽略"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_TURN_IN"] = "回報 %s"
+L["ROUTES_MENU_GROUP_OBJECTIVES"] = "顯示隊友目標"
+L["ROUTES_MENU_ON"] = "開啟"
+L["ROUTES_MENU_OFF"] = "關閉"
+L["ROUTES_MENU_OUT_OF_ZONE"] = "不在本區域"
+L["ROUTES_MENU_NO_QUESTIE"] = "無 Questie"
+L["ROUTES_MENU_OFFLINE"] = "離線"
+-- TRANSLATORS: %s is a party member's name; On or Off shows beside it
+L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "%s 的目標"
+-- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
+L["ROUTES_IGNORED"] = "忽略 %s（%s），直到清空忽略清單。"
+-- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
+L["ROUTES_UNIGNORED"] = "%s 已回到路線上。"
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_IGNORED"] = "%s 的目標已移出路線。"
+-- TRANSLATORS: %s is a party member's name
+L["ROUTES_MEMBER_INCLUDED"] = "%s 的目標已回到路線上。"
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players

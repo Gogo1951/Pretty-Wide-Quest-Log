@@ -87,26 +87,34 @@ end
 
 --[[
 	Shares each quest, ns.GetShareInterval() apart as it was when the run began; the game reports each
-	result in chat. ns.sharingQuests is set until the last one goes, so a second run can't start alongside.
+	result in chat. ns.sharingQuests is set until the last one goes, so a second run can't start alongside;
+	each share runs through securecall, so one that errors is reported and the run still reaches its end.
 	WoW Forever blocks QuestLogPushQuest in combat, so a share due then waits, checking every interval,
-	until combat ends; the run picks up where it stopped
+	until combat ends; the run picks up where it stopped. Leaving the group ends the run
 ]]
+local function ShareOne(questID)
+	if questID and C_QuestLog.GetLogIndexForQuestID(questID) and C_QuestLog.IsPushableQuest(questID) then
+		ns.SelectQuest(questID)
+		ns.TrackerTaintStep("QuestLogPushQuest", QuestLogPushQuest)
+		RestoreSelection()
+	end
+end
+
 function ns.ShareQuests(questIDs)
 	ns.sharingQuests = true
 	local interval = ns.GetShareInterval()
 	local function Share(position)
+		if not IsInGroup() then
+			ns.sharingQuests = nil
+			return
+		end
 		if InCombatLockdown() then
 			C_Timer.After(interval, function()
 				Share(position)
 			end)
 			return
 		end
-		local questID = questIDs[position]
-		if questID and C_QuestLog.GetLogIndexForQuestID(questID) and C_QuestLog.IsPushableQuest(questID) then
-			ns.SelectQuest(questID)
-			QuestLogPushQuest()
-			RestoreSelection()
-		end
+		securecall(ShareOne, questIDs[position])
 		if position < #questIDs then
 			C_Timer.After(interval, function()
 				Share(position + 1)

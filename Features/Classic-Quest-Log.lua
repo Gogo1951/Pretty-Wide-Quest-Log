@@ -8,7 +8,12 @@ ns.AddWideQuestLogPart(function()
 	local BOTTOM_CLAMP = 140 + 12 -- Blizzard's: keeps the bottom of the window clear of the action bars
 	local rowHeight = ns.GetQuestRowHeight()
 
-	-- Hooks only; the few writes Blizzard's code sees are unprotected on these clients (README-Technical: Taint).
+	--[[
+		Blizzard's code reads a few things this layout writes: the window's panel attributes (here), the
+		number of list rows (QUESTS_DISPLAYED, Classic-Quest-List.lua) and entries taken off QUEST_WATCH_LIST
+		(Classic-Tracking.lua). It also calls QuestLog_Update and HideUIPanel. All of it is unprotected on
+		these clients (README-Technical: Taint)
+	]]
 
 	-- Set once ElvUI's skin has drawn the window, which then shows no parchment at all (ns.HideQuestLogParchment)
 	local hideParchment = false

@@ -28,17 +28,11 @@
 - **Instead:** The quest log window's title is the game's own Quest Log label, then the Short Name (`Quest Log // PWQL`).
 - **Why:** The window stands in for Blizzard's quest log, so its title leads with the game's own name for it.
 
-### README Showcase has a screenshot per client
+### README Tips & Tricks carries pictures and a third section
 
-- **Departs from:** README rules, the Showcase under the TL;DR showing the add-on in a single item.
-- **Instead:** The Showcase holds a screenshot under a heading for each client, Forever and TBC & Era, with the quest map's feature lines above the TBC & Era one.
-- **Why:** The two clients' quest logs are different windows that look different, so each gets its own picture, and the maintainer keeps the map's lines beside the one they caption.
-
-### README shows quest chains in a screenshot
-
-- **Departs from:** README rules, the README carrying one image, the Showcase's.
-- **Instead:** Tips & Tricks has a Quest Chains section with a screenshot of a quest's chain in the details pane.
-- **Why:** A chain's checked-off, highlighted steps are quicker to understand in a picture than in words.
+- **Departs from:** README rules, the README carrying one image, the Showcase's, and Tips & Tricks holding at most two sub-sections beyond the CVar.
+- **Instead:** The Showcase is the Quest Arrow, and Tips & Tricks holds three sections with pictures: Routes & the Quest Arrow with its Questie Routes fun fact and image, Quest Chains with a screenshot of a chain, and a quest log screenshot for each client, Forever and TBC & Era.
+- **Why:** The README leads with routes, a chain's checked-off steps read faster in a picture than in words, and the two clients' quest logs are different windows that each get their own picture.
 
 ### README's Related Add-ons are hand-picked
 

@@ -3,7 +3,10 @@ local L = ns.L
 
 -- WoW Forever and Mists: the two-pane quest log as a window of its own (ns.LAYOUT).
 
--- Built at once rather than on the Quest Log switch, which only decides whether it takes the quest log key (Core.lua)
+--[[
+	Built at once rather than on the Quest Log switch, which only decides whether the window takes over the
+	quest log key and Blizzard's quest log openings (ToggleQuestLog, the tracker, ShowUIPanel)
+]]
 ns.questLogIsOwnWindow, ns.hasWideQuestLog = true, true
 
 local LAYOUT = ns.LAYOUT
@@ -140,7 +143,11 @@ local function UpdateButtons()
 
 	local tracked, trackable = ns.IsTracked(questID), ns.CanTrack(questID)
 	trackButton:SetText(tracked and UNTRACK_QUEST_ABBREV or TRACK_QUEST_ABBREV)
-	trackButton:SetEnabled(trackable and ((tracked and ns.CanRemoveQuestWatch()) or (not tracked and not disabled)))
+	trackButton:SetEnabled(
+		not InCombatLockdown()
+			and trackable
+			and ((tracked and ns.CanRemoveQuestWatch()) or (not tracked and not disabled))
+	)
 	trackButton.untrackable = not trackable
 end
 
@@ -149,7 +156,7 @@ end
 --------------------------------------------------------------------------------
 
 local function UpdateCount(questCount)
-	local maximumQuests = C_QuestLog.GetMaxNumQuestsCanAccept and C_QuestLog.GetMaxNumQuestsCanAccept() or 0
+	local maximumQuests = C_QuestLog.GetMaxNumQuestsCanAccept()
 	local color = (questCount > maximumQuests) and RED_FONT_COLOR_CODE or HIGHLIGHT_FONT_COLOR_CODE
 	questCountText:SetFormattedText(QUEST_LOG_COUNT_TEMPLATE, color, questCount, maximumQuests)
 end
@@ -215,16 +222,15 @@ function ns:OnQuestTurnedIn()
 	ns.RequestUpdate()
 end
 
+-- A party member's quests changing changes the party count on the quest list's rows
 function ns:OnUnitQuestLogChanged(unit)
-	if unit == "player" then
+	if unit == "player" or (ns.IsReadable(unit) and unit and unit:find("^party")) then
 		ns.RequestUpdate()
 	end
 end
 
 function ns:OnGroupRosterUpdate()
-	if frame:IsShown() then
-		UpdateButtons()
-	end
+	ns.RequestUpdate() -- The buttons, and the party counts on the rows
 end
 
 function ns:OnPlayerLevelUp()
@@ -236,11 +242,20 @@ function ns:OnZoneChangedNewArea()
 	ns.RequestUpdate()
 end
 
--- Close When Combat Starts. The window isn't protected, so it can close in combat
+-- Close When Combat Starts. The window isn't protected, so it can close in combat; open, its tracking controls grey out
 function ns:OnPlayerRegenDisabled()
 	if ns.db.profile.closeInCombat and frame:IsShown() then
 		frame:Hide()
 	end
+	ns.RequestUpdate()
+end
+
+-- The owner of this file's handler for an event other files handle too (Core.lua)
+ns.questLogWindow = {}
+
+-- The tracking controls come back once combat ends
+function ns.questLogWindow:OnPlayerRegenEnabled()
+	ns.RequestUpdate()
 end
 
 --------------------------------------------------------------------------------
@@ -271,9 +286,8 @@ end)
 
 --[[
 	Blizzard's windows that open on the left of the screen (a quest giver, gossip, a vendor, a trainer,
-	the character pane and so on) open on top of this one, and a quest giver's takes the pieces the
-	quest details are drawn with, leaving them blank. So the two make way for each other, as Blizzard's
-	own windows do: this one closes when one of those opens, and closes any that are open when it opens
+	the character pane and so on) open on top of this one. So the two make way for each other, as
+	Blizzard's own windows do: this one closes when one of those opens, and closes any that are open when it opens
 	(out of combat, when Blizzard allows it). Bags aren't such windows, so they're left alone, as is Blizzard's
 	own quest log on Mists while this window takes over from it (Mists-Quest-Log-Key.lua). The panel this
 	one last closed for is remembered until the next frame (ns.WasClosedForPanel)
@@ -307,7 +321,7 @@ local function CloseLeftPanels()
 	for _, area in ipairs(LEFT_PANEL_AREAS) do
 		local panel = GetUIPanel(area)
 		if panel and panel ~= frame then
-			HideUIPanel(panel)
+			ns.TrackerTaintStep("Window opened: HideUIPanel", HideUIPanel, panel)
 		end
 	end
 end
@@ -319,7 +333,8 @@ end
 ]]
 local headersOpened
 frame:SetScript("OnShow", function()
-	CloseLeftPanels() -- First, so the quest details have their pieces back
+	ns.TrackerTaintStep("Window opened")
+	CloseLeftPanels()
 	PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN)
 	frame:SetScale(ns.db.global.scale)
 	ApplyHeight(ns.db.global.height)
@@ -331,15 +346,12 @@ frame:SetScript("OnShow", function()
 end)
 
 frame:SetScript("OnHide", function()
+	ns.TrackerTaintStep("Window closed")
 	state.scrollToQuestID = nil
 	ns.ResetZoneOrder() -- Sorted afresh next time the window opens
 	PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE)
 	StaticPopup_Hide("ABANDON_QUEST")
 	StaticPopup_Hide("ABANDON_QUEST_WITH_ITEMS")
-	-- A quest giver opening hides this window first, so it lays out the shared text in Blizzard's look
-	if not ns.IsQuestGiverCleanupOn() then
-		ns.RestoreQuestInfoStyle()
-	end
 end)
 
 local function Toggle()

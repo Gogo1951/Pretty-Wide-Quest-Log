@@ -16,7 +16,7 @@ ns.QUEST_TAG_SUFFIXES = {
 How We Got the Data
 
 Last Validated
-	2026-11-06, Classic Era 1.15.9.70576
+	2026-11-07, Classic Era 1.15.9.70576
 
 Notes
 	- The quest tags that put a letter after a quest's level, D for a dungeon, R for a raid, P for PvP, G for a

@@ -13,7 +13,7 @@ ns.QUEST_TAG_SUFFIXES = {
 How We Got the Data
 
 Last Validated
-	2026-11-06, TBC Anniversary 2.5.6.70577
+	2026-11-07, TBC Anniversary 2.5.6.70577
 
 Notes
 	- The quest tags that put a letter after a quest's level, D for a dungeon, R for a raid, P for PvP, G for a

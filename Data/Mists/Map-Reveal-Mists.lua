@@ -1529,7 +1529,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 How We Got the Data
 
 Last Validated
-	2026-11-06, MoP Classic 5.5.4.70631
+	2026-11-07, MoP Classic 5.5.4.70631
 
 Notes
 	- Every area of a zone's map that starts hidden until the character explores it, so the quest map can show the

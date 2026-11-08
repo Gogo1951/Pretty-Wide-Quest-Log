@@ -19,10 +19,6 @@ local CORPSE_RADIUS = 30 -- Yards from the corpse that count as being there, ins
 --------------------------------------------------------------------------------
 
 --[[
-	The ordered nodes as stops on start's continent: a node within MERGE_RADIUS of the stop before it
-	joins that stop, so several quests' objectives in one camp make one stop with all of them. A ghost's
-	route starts at their corpse, a stop of its own.
-
 	A stop is an area where one of its blobs is spawns spread out, as a camp of mobs is: the arrow turns
 	into an eye there. Anywhere else it's a point, one NPC or object, or a few in one spot, and the arrow
 	points all the way to it
@@ -50,6 +46,12 @@ local function JoinsStop(stop, node, point)
 	return (node.inArea and stop.inArea) or distanceSquared <= MERGE_RADIUS * MERGE_RADIUS
 end
 
+--[[
+	The ordered nodes as stops on start's continent. A node joins the stop before it as JoinsStop allows:
+	an objective within MERGE_RADIUS, or one whose area the player stands in too, so several quests'
+	objectives in one camp make one stop; a turn-in only with turn-ins within SAME_PLACE, at the same NPC.
+	A ghost's route starts at their corpse, a stop of its own
+]]
 function routes.MakeStops(order, start)
 	local stops = {}
 	local instance, zone = start.instance, start.zone

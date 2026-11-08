@@ -1,9 +1,10 @@
 local _, ns = ...
 
 --[[
-	How a quest's rewards are drawn wherever QuestInfo shows them (the quest details, the quest giver
-	window and the map's details): the experience and gold in the description's font and color, and the
-	space around the reward buttons and between the rewards' sections
+	How a quest's rewards are drawn wherever QuestInfo shows them while the quest giver window cleanup is
+	on (the quest giver window, and Blizzard's own quest details, which share its reward frames): the
+	experience and gold in the description's font and color, and the space around the reward buttons and
+	between the rewards' sections
 ]]
 
 --------------------------------------------------------------------------------
@@ -25,17 +26,14 @@ local function StyleQuestNumber(region, source)
 end
 
 --[[
-	The experience reward, each time QuestInfo shows one (the quest details, the quest giver window and the
-	map's details), in the description's font and color, its thousands grouped like the turn-in line's.
-	On a quest giver page with the quest giver window cleanup off it stays Blizzard's.
+	The experience reward, each time QuestInfo shows one, in the description's font and color, its
+	thousands grouped like the turn-in line's. With the quest giver window cleanup off it stays Blizzard's.
 
 	Skins (ElvUI) add the share of a level it's worth after the number, "2,950 (+20.49%)", in a bright green
 	made for their dark backdrop. On the parchment, where the description is dark, the share takes
-	PARCHMENT_GAIN_COLOR instead. The skin adds it in a hook that may run before or after this one, so
+	the palette's PARCHMENT_GAIN instead. The skin adds it in a hook that may run before or after this one, so
 	only the number at the front is grouped, and the color follows each change to the text
 ]]
-local PARCHMENT_GAIN_COLOR = "1d6b1d" -- A deep green that reads on the parchment
-
 -- Whether a FontString's color is dark, as text on the parchment is
 local function IsDarkText(region)
 	local r, g, b = region:GetTextColor()
@@ -63,7 +61,7 @@ local function CoinButtons(moneyFrame)
 	return buttons
 end
 
-function ns.StyleRewardMoney(styled)
+local function StyleRewardMoney(styled)
 	if not rewardMoney then
 		return
 	end
@@ -107,7 +105,7 @@ if experienceValue and QuestInfo_Display then
 			return
 		end
 		local text = experienceValue:GetText()
-		local recolored = text and (text:gsub("|c%x%x%x%x%x%x%x%x", "|cff" .. PARCHMENT_GAIN_COLOR))
+		local recolored = text and (text:gsub("|c%x%x%x%x%x%x%x%x", ns.GetColor("PARCHMENT_GAIN")))
 		if recolored and recolored ~= text then
 			recoloring = true
 			experienceValue:SetText(recolored)
@@ -117,15 +115,15 @@ if experienceValue and QuestInfo_Display then
 	hooksecurefunc(experienceValue, "SetText", RecolorGain)
 	hooksecurefunc(experienceValue, "SetFormattedText", RecolorGain)
 
-	hooksecurefunc("QuestInfo_Display", function(_, parentFrame)
-		if ns.IsQuestGiverPage(parentFrame) and not ns.IsQuestGiverCleanupOn() then
+	hooksecurefunc("QuestInfo_Display", function()
+		if not ns.IsQuestGiverCleanupOn() then
 			onParchment = false
 			ns.RestoreBlizzardStyle(experienceValue)
 			experienceValue:SetTextColor(blizzardRed, blizzardGreen, blizzardBlue, blizzardAlpha)
-			ns.StyleRewardMoney(false)
+			StyleRewardMoney(false)
 			return
 		end
-		ns.StyleRewardMoney(true)
+		StyleRewardMoney(true)
 		StyleQuestNumber(experienceValue, QuestInfoDescriptionText)
 		onParchment = IsDarkText(QuestInfoDescriptionText)
 		-- The number at the front, grouped or not, with anything after it (the skin's share) kept as it is
@@ -175,8 +173,7 @@ local function SetSpaceAbove(region, space)
 end
 
 --[[
-	Spaces a QuestInfo rewards block to the scale, for WoW Forever and Mists' quest details and the quest
-	giver window on every client: the heading's space under the Rewards heading, reward buttons clear of
+	Spaces a QuestInfo rewards block to the scale, for the quest giver window on every client: the heading's space under the Rewards heading, reward buttons clear of
 	the text around them, each later section of the rewards a step under the one before, and with gold
 	and experience both shown, a blank line's worth between them (without gold, "You will also receive:"
 	is the experience line's own label, so it stays right under it). Blizzard sizes the block to fit what

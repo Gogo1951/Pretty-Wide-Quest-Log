@@ -25,6 +25,9 @@ ns.QUESTIE_NOTICE_DELAY = 20
 ]]
 ns.MAP_SIZE_ADDONS = { "Leatrix_Maps", "Mapster" }
 
+-- VoiceOver and Spoken Quests, its fork, which keeps the VoiceOver global (ns.GetVoiceOver)
+ns.VOICEOVER_ADDON_NAMES = { "AI_VoiceOver", "Spoken_Quests" }
+
 --------------------------------------------------------------------------------
 -- Links
 --------------------------------------------------------------------------------
@@ -57,6 +60,8 @@ ns.PALETTE = {
 	ARROW_TURN = "FFFF00", -- Yellow: The Quest Arrow Pointing to the Side
 	ARROW_WRONG_WAY = "FF3333", -- Red: The Quest Arrow Pointing Behind
 	ROUTE_LINE = "333333", -- Dark Gray: The Route's Line, Plain on the Yellow Maps
+	ROUTE_ALERT_RING = "FF3333", -- Red: A Marker's Ring for a Party Member's or Dungeon Objective
+	PARCHMENT_GAIN = "1D6B1D", -- Deep Green: A Skin's Experience Share, Read on the Parchment
 }
 
 ns.CLASS_COLORS = {

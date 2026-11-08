@@ -125,7 +125,16 @@ ns.AddWideQuestLogPart(function()
 		return canvas.mapID
 	end
 
-	-- Set while the canvas is showing but hasn't drawn yet, for want of a map (the canvas's OnShow below)
+	--[[
+		Whether the canvas can draw: its scroll frame has built the zoom levels every layer asks for. They're
+		built only once the scroll frame takes a map, which comes after canvas.mapID is set, so a map alone
+		doesn't promise them
+	]]
+	local function CanDraw()
+		return canvas.ScrollContainer.zoomLevels ~= nil
+	end
+
+	-- Set while the canvas is showing but can't draw yet, for want of a map (the canvas's OnShow below)
 	local drawPending = false
 
 	-- Returns whether the map moved, which redraws every layer
@@ -135,7 +144,7 @@ ns.AddWideQuestLogPart(function()
 			return false
 		end
 		canvas:SetMapID(mapID)
-		if drawPending then
+		if drawPending and CanDraw() then
 			drawPending = false
 			MapCanvasMixin.OnShow(canvas)
 		end
@@ -155,7 +164,7 @@ ns.AddWideQuestLogPart(function()
 				questMap.ShowMap(C_Map.GetFallbackWorldMapID())
 			end
 		end
-		if CanvasMap() then
+		if CanDraw() then
 			MapCanvasMixin.OnShow(self)
 		else
 			drawPending = true
