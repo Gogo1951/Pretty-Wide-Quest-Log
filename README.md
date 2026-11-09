@@ -6,6 +6,8 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 
 ### Routes on Zone Map
 
+<img width="800" alt="README-Infographic-Routes-on-Zone-Map" src="https://github.com/user-attachments/assets/67e326f3-5914-4dde-8843-d3ed55af852a" />
+
 * **Every Quest, One Route** // Pick your quests and the zone map lays them out as one route, nearest first, turn-ins included.
 * **Your Party's Quests Too** // In a party, quests your friends have and you don't join the route, as long as they run Questie too.
 * **Skip What You Don't Want** // Ignore an objective you'd rather leave and the route plans around it.
@@ -20,12 +22,17 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 
 ### Wide Quest Log
 
+<img width="800" alt="README-Infographic-Wide-Quest-Log" src="https://github.com/user-attachments/assets/02b81053-ffec-4fbf-834b-fb7e855a51a6" />
+
 * **Everything at a Glance** // Your quests by zone, the selected quest's details, and its map, side by side.
 * **Spot the Tough Ones** // Level and type tags like [40D] flag dungeon, raid, elite, group, and PvP quests before you read a word.
 * **A Map Without the Icon Soup** // The map shows only the selected quest, with one shaded area and one icon per objective.
 * **Quest Givers Match** // The quest giver window gets the same clean layout, level tags, and a quest ID that links to Wowhead.
 
 ### Quest Sharing
+
+<img width="800" ![Uploading README-Infographic-Wide-Quest-Log.png…]()
+alt="README-Infographic-Quest-Sharing" src="https://github.com/user-attachments/assets/93f4dbe3-5672-4f37-b3a4-795e62b64d2a" />
 
 * **Dungeon Quests, Sorted** // Walk into a dungeon and your party hears which of your quests are inside, then gets every one you can share.
 * **A Whole Zone in One Click** // Share all of a zone's quests from the quest log, one after another.
