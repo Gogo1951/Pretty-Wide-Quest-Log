@@ -180,6 +180,7 @@ function ns:ApplyProfile()
 	if ns.routes then
 		ns.routes.ApplySettings()
 	end
+	ns.ApplyPlayerIcon()
 	if ns.dungeonQuests then
 		ns.dungeonQuests.Watch()
 	end

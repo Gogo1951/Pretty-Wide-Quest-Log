@@ -2,42 +2,36 @@ local _, ns = ...
 local L = ns.L
 
 --[[
-	The Routes on Zone Map panel of the Options Interface, which Options.lua registers after Quality of Life,
-	in the Features section's order, where Routes (Features/Routes) is loaded. The settings are Routes' own,
-	on the profile (routes.Settings); each control hides while the switch at the top of the panel is off,
-	but Party, which shows while either Routes feature (the zone map's route or the Quest Arrow) is on
+	The Waypoint Markers and Quest Route panels of the Options Interface, which Options.lua registers after
+	Quality of Life, in the Features section's order, where Routes (Features/Routes) is loaded. The settings
+	are Routes' own, on the profile (routes.Settings). Each panel's controls hide while the switch at the top
+	of it is off, but Party, on the Quest Route panel, which shows while anything follows the route (the
+	Waypoint Markers or the Quest Arrow). The Quest Route is drawn between the markers, so its switch is
+	grayed out while they're off
 ]]
 
 local function Settings()
 	return ns.routes.Settings()
 end
 
-local function MapHidden()
+local function MarkersHidden()
 	return not Settings().showMap
+end
+
+-- The route's line shows only with the markers it runs between
+local function RouteHidden()
+	return MarkersHidden() or not Settings().showLine
+end
+
+-- What the route takes in shows for anything that follows it: the markers (and so the route) or the Quest Arrow
+local function PartyHidden()
+	return not (Settings().showMap or Settings().showArrow)
 end
 
 -- A full-width switch for a setting, hidden with its feature
 local function Toggle(key, nameKey, order, hidden)
 	return ns.OptionsRoutesToggle(key, nameKey, nameKey .. "_DESCRIPTION", order, nil, hidden)
 end
-
---------------------------------------------------------------------------------
--- Routes on Zone Map Panel
---------------------------------------------------------------------------------
-
--- Times the markers' 42 pixels and the icon on them (STOP_SIZE in Routes-Map.lua)
-local MARKER_SIZES = {
-	[0.75] = "MARKER_SIZE_SMALL",
-	[1] = "MARKER_SIZE_MEDIUM",
-	[1.25] = "MARKER_SIZE_LARGE",
-	[1.5] = "MARKER_SIZE_HUGE",
-}
-local MARKER_ORDER = { 0.75, 1, 1.25, 1.5 }
-
--- Dots a second the line marches
-local LINE_SPEEDS =
-	{ [0] = "LINE_SPEED_STILL", [0.75] = "LINE_SPEED_SLOW", [1.5] = "LINE_SPEED_NORMAL", [3] = "LINE_SPEED_FAST" }
-local LINE_SPEED_ORDER = { 0, 0.75, 1.5, 3 }
 
 local function Choices(names)
 	local values = {}
@@ -47,61 +41,88 @@ local function Choices(names)
 	return values
 end
 
--- What the route takes in shows for either feature, as both follow the one route
-local function RouteHidden()
-	return not (Settings().showMap or Settings().showArrow)
-end
+--------------------------------------------------------------------------------
+-- Waypoint Markers Panel
+--------------------------------------------------------------------------------
 
-local function LineHidden()
-	return MapHidden() or not Settings().showLine
-end
-
-function ns.BuildRoutesMapOptions()
+-- Marker Size is times the markers' 42 pixels and the icon on them (STOP_SIZE in Routes-Map.lua)
+function ns.BuildWaypointMarkersOptions()
 	return {
 		type = "group",
-		name = L["TAB_ROUTES_MAP"],
+		name = L["TAB_WAYPOINT_MARKERS"],
 		args = {
-			descIntro = ns.OptionsDesc(L["TAB_ROUTES_MAP_DESCRIPTION"], 1),
+			descIntro = ns.OptionsDesc(L["TAB_WAYPOINT_MARKERS_DESCRIPTION"], 1),
 			spaceIntro = ns.OptionsSpacer(2),
-			enableRoutesMap = ns.OptionsRoutesToggle(
+			enableWaypointMarkers = ns.OptionsRoutesToggle(
 				"showMap",
-				"ENABLE_ROUTES_MAP",
-				"FEATURE_ROUTES_MAP_DESCRIPTION",
+				"ENABLE_WAYPOINT_MARKERS",
+				"FEATURE_WAYPOINT_MARKERS_DESCRIPTION",
 				3
 			),
 
-			spaceMap0 = ns.OptionsSpacer(10, MapHidden),
-			headerMap = ns.OptionsHeader(L["ROUTES_MAP_HEADER"], 11, MapHidden),
-			spaceMap1 = ns.OptionsSpacer(12, MapHidden),
-			descMap = ns.OptionsDesc(L["ROUTES_MAP_DESCRIPTION"], 12.1, MapHidden),
-			spaceMap2 = ns.OptionsSpacer(12.2, MapHidden),
-			fullSizeMap = Toggle("fullSizeMap", "FULL_SIZE_MAP", 13, MapHidden),
-			spaceQuestieIcons = ns.OptionsSpacer(13.5, MapHidden),
-			hideQuestieIcons = Toggle("hideQuestieIcons", "HIDE_QUESTIE_ICONS", 14, MapHidden),
+			spaceMap0 = ns.OptionsSpacer(10, MarkersHidden),
+			headerMap = ns.OptionsHeader(L["ROUTES_MAP_HEADER"], 11, MarkersHidden),
+			spaceMap1 = ns.OptionsSpacer(12, MarkersHidden),
+			descMap = ns.OptionsDesc(L["ROUTES_MAP_DESCRIPTION"], 12.1, MarkersHidden),
+			spaceMap2 = ns.OptionsSpacer(12.2, MarkersHidden),
+			fullSizeMap = Toggle("fullSizeMap", "FULL_SIZE_MAP", 13, MarkersHidden),
+			spaceQuestieIcons = ns.OptionsSpacer(13.5, MarkersHidden),
+			hideQuestieIcons = Toggle("hideQuestieIcons", "HIDE_QUESTIE_ICONS", 14, MarkersHidden),
 
-			spaceMarkers0 = ns.OptionsSpacer(20, MapHidden),
-			headerMarkers = ns.OptionsHeader(L["ROUTES_MARKERS_HEADER"], 21, MapHidden),
-			spaceMarkers1 = ns.OptionsSpacer(22, MapHidden),
-			descMarkers = ns.OptionsDesc(L["ROUTES_MARKERS_DESCRIPTION"], 22.1, MapHidden),
-			spaceMarkers2 = ns.OptionsSpacer(22.2, MapHidden),
-			markerScaleLabel = ns.OptionsRowLabel(L["MARKER_SIZE"], 23, nil, MapHidden, L["MARKER_SIZE_DESCRIPTION"]),
+			spaceMarkers0 = ns.OptionsSpacer(20, MarkersHidden),
+			headerMarkers = ns.OptionsHeader(L["ROUTES_MARKERS_HEADER"], 21, MarkersHidden),
+			spaceMarkers1 = ns.OptionsSpacer(22, MarkersHidden),
+			descMarkers = ns.OptionsDesc(L["ROUTES_MARKERS_DESCRIPTION"], 22.1, MarkersHidden),
+			spaceMarkers2 = ns.OptionsSpacer(22.2, MarkersHidden),
+			markerScaleLabel = ns.OptionsRowLabel(
+				L["MARKER_SIZE"],
+				23,
+				nil,
+				MarkersHidden,
+				L["MARKER_SIZE_DESCRIPTION"]
+			),
 			markerScale = ns.OptionsRoutesControl("markerScale", {
 				type = "select",
 				desc = L["MARKER_SIZE_DESCRIPTION"],
-				values = function()
-					return Choices(MARKER_SIZES)
-				end,
-				sorting = MARKER_ORDER,
-			}, 24, MapHidden),
+				values = ns.OptionsSizeValues,
+				sorting = ns.OPTIONS_SIZE_ORDER,
+			}, 24, MarkersHidden),
+		},
+	}
+end
 
-			spaceLine0 = ns.OptionsSpacer(30, MapHidden),
-			headerLine = ns.OptionsHeader(L["ROUTES_LINE_HEADER"], 31, MapHidden),
-			spaceLine1 = ns.OptionsSpacer(32, MapHidden),
-			descLine = ns.OptionsDesc(L["ROUTES_LINE_DESCRIPTION"], 32.1, MapHidden),
-			spaceLine2 = ns.OptionsSpacer(32.2, MapHidden),
-			showLine = Toggle("showLine", "SHOW_ROUTE_LINE", 33, MapHidden),
-			spaceLineSpeed = ns.OptionsSpacer(33.5, LineHidden),
-			lineSpeedLabel = ns.OptionsRowLabel(L["LINE_SPEED"], 34, nil, LineHidden, L["LINE_SPEED_DESCRIPTION"]),
+--------------------------------------------------------------------------------
+-- Quest Route Panel
+--------------------------------------------------------------------------------
+
+-- Dots a second the line marches
+local LINE_SPEEDS =
+	{ [0] = "LINE_SPEED_STILL", [0.75] = "LINE_SPEED_SLOW", [1.5] = "LINE_SPEED_NORMAL", [3] = "LINE_SPEED_FAST" }
+local LINE_SPEED_ORDER = { 0, 0.75, 1.5, 3 }
+
+-- The silver line under the grayed-out switch, saying what turns it back on
+local function NeedsMarkersText()
+	if MarkersHidden() then
+		return L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"]
+	end
+end
+
+function ns.BuildQuestRouteOptions()
+	return {
+		type = "group",
+		name = L["TAB_QUEST_ROUTE"],
+		args = {
+			descIntro = ns.OptionsDesc(L["TAB_QUEST_ROUTE_DESCRIPTION"], 1),
+			spaceIntro = ns.OptionsSpacer(2),
+			enableQuestRoute = ns.OptionsQuestRouteToggle(3),
+			needsMarkers = ns.OptionsStatusLine(NeedsMarkersText, 4),
+
+			spaceLine0 = ns.OptionsSpacer(30, RouteHidden),
+			headerLine = ns.OptionsHeader(L["ROUTES_LINE_HEADER"], 31, RouteHidden),
+			spaceLine1 = ns.OptionsSpacer(32, RouteHidden),
+			descLine = ns.OptionsDesc(L["ROUTES_LINE_DESCRIPTION"], 32.1, RouteHidden),
+			spaceLine2 = ns.OptionsSpacer(32.2, RouteHidden),
+			lineSpeedLabel = ns.OptionsRowLabel(L["LINE_SPEED"], 34, nil, RouteHidden, L["LINE_SPEED_DESCRIPTION"]),
 			lineSpeed = ns.OptionsRoutesControl("lineSpeed", {
 				type = "select",
 				desc = L["LINE_SPEED_DESCRIPTION"],
@@ -109,13 +130,13 @@ function ns.BuildRoutesMapOptions()
 					return Choices(LINE_SPEEDS)
 				end,
 				sorting = LINE_SPEED_ORDER,
-			}, 35, LineHidden),
-			spaceLineOpacity = ns.OptionsSpacer(35.5, LineHidden),
+			}, 35, RouteHidden),
+			spaceLineOpacity = ns.OptionsSpacer(35.5, RouteHidden),
 			lineOpacityLabel = ns.OptionsRowLabel(
 				L["LINE_OPACITY"],
 				36,
 				nil,
-				LineHidden,
+				RouteHidden,
 				L["LINE_OPACITY_DESCRIPTION"]
 			),
 			lineOpacity = ns.OptionsRoutesControl("lineOpacity", {
@@ -125,14 +146,14 @@ function ns.BuildRoutesMapOptions()
 				max = 1,
 				step = 0.1,
 				isPercent = true,
-			}, 37, LineHidden),
+			}, 37, RouteHidden),
 
-			spaceParty0 = ns.OptionsSpacer(40, RouteHidden),
-			headerParty = ns.OptionsHeader(L["ROUTES_PARTY_HEADER"], 41, RouteHidden),
-			spaceParty1 = ns.OptionsSpacer(42, RouteHidden),
-			descParty = ns.OptionsDesc(L["ROUTES_PARTY_DESCRIPTION"], 42.1, RouteHidden),
-			spaceParty2 = ns.OptionsSpacer(42.2, RouteHidden),
-			partyQuests = Toggle("partyQuests", "PARTY_QUESTS", 43, RouteHidden),
+			spaceParty0 = ns.OptionsSpacer(40, PartyHidden),
+			headerParty = ns.OptionsHeader(L["ROUTES_PARTY_HEADER"], 41, PartyHidden),
+			spaceParty1 = ns.OptionsSpacer(42, PartyHidden),
+			descParty = ns.OptionsDesc(L["ROUTES_PARTY_DESCRIPTION"], 42.1, PartyHidden),
+			spaceParty2 = ns.OptionsSpacer(42.2, PartyHidden),
+			partyQuests = Toggle("partyQuests", "PARTY_QUESTS", 43, PartyHidden),
 		},
 	}
 end

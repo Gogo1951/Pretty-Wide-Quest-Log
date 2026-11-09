@@ -40,7 +40,10 @@ function ns.BuildGeneralOptions()
 		spaceFeatures0 = ns.OptionsSpacer(10),
 		headerFeatures = ns.OptionsHeader(L["OPTIONS_FEATURES_HEADER"], 11),
 		spaceFeatures1 = ns.OptionsSpacer(12),
-		-- Each is also at the top of its own panel. The Quest Log's takes effect at the next /reload, which the Options window offers on close (below)
+		--[[
+			Each is also at the top of its own panel. The Quest Log's takes effect at the next /reload, which
+			the Options window offers on close (below)
+		]]
 		enableWideQuestLog = ns.OptionsFeatureToggle(
 			"enableWideQuestLog",
 			"ENABLE_WIDE_QUEST_LOG",
@@ -56,21 +59,30 @@ function ns.BuildGeneralOptions()
 			FEATURE_WIDTH,
 			ns.ApplyQualityOfLifeSettings
 		),
-		enableRoutesMap = ns.OptionsRoutesToggle(
+		enableWaypointMarkers = ns.OptionsRoutesToggle(
 			"showMap",
-			"ENABLE_ROUTES_MAP",
-			"FEATURE_ROUTES_MAP_DESCRIPTION",
+			"ENABLE_WAYPOINT_MARKERS",
+			"FEATURE_WAYPOINT_MARKERS_DESCRIPTION",
 			15,
 			FEATURE_WIDTH
 		),
+		enableQuestRoute = ns.OptionsQuestRouteToggle(16, FEATURE_WIDTH),
 		enableQuestArrow = ns.OptionsRoutesToggle(
 			"showArrow",
 			"ENABLE_QUEST_ARROW",
 			"FEATURE_QUEST_ARROW_DESCRIPTION",
-			16,
+			17,
 			FEATURE_WIDTH
 		),
-		questLogReloadPending = ns.OptionsStatusLine(ns.QuestLogReloadPendingText, 17),
+		enablePlayerIcon = ns.OptionsFeatureToggle(
+			"enablePlayerIcon",
+			"ENABLE_PLAYER_ICON",
+			"FEATURE_PLAYER_ICON_DESCRIPTION",
+			18,
+			FEATURE_WIDTH,
+			ns.ApplyPlayerIcon
+		),
+		questLogReloadPending = ns.OptionsStatusLine(ns.QuestLogReloadPendingText, 19),
 	}
 
 	AddCommands(args, 100)

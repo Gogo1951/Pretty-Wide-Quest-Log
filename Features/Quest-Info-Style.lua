@@ -51,7 +51,11 @@ function ns.RememberBlizzardStyle(region)
 	}
 end
 
--- Puts a remembered FontString's font and line spacing back, keeping its color
+--[[
+	Puts a remembered FontString's font and line spacing back, keeping its color. One Blizzard had given
+	neither a font object nor a font yet when it was remembered has no font to put back, so it keeps the
+	one it has (SetFont takes no empty font)
+]]
 function ns.RestoreBlizzardStyle(region)
 	local style = blizzardStyle[region]
 	if not style then
@@ -60,8 +64,8 @@ function ns.RestoreBlizzardStyle(region)
 	local red, green, blue, alpha = region:GetTextColor()
 	if style.fontObject then
 		region:SetFontObject(style.fontObject)
-	else
-		region:SetFont(style.file, style.size, style.flags)
+	elseif style.file and style.size then
+		region:SetFont(style.file, style.size, style.flags or "")
 	end
 	region:SetTextColor(red, green, blue, alpha)
 	region:SetSpacing(style.spacing)

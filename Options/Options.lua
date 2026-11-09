@@ -28,16 +28,28 @@ function ns.RegisterOptionsPanels()
 	local qualityOfLifePanel =
 		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QualityOfLife, L["TAB_QUALITY_OF_LIFE"], L["ADDON_TITLE"])
 
-	-- Routes on Zone Map and Quest Arrow, in the Features section's order, where Routes is loaded
-	local routesMapPanel, questArrowPanel
+	--[[
+		Waypoint Markers, Quest Route and Quest Arrow, in the Features section's order, where Routes is loaded.
+		Player Icon on Maps follows, on every client, as it isn't part of Routes
+	]]
+	local waypointMarkersPanel, questRoutePanel, questArrowPanel
 	if ns.routes then
-		AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.RoutesMap, ns.BuildRoutesMapOptions)
-		routesMapPanel =
-			AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.RoutesMap, L["TAB_ROUTES_MAP"], L["ADDON_TITLE"])
+		AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.WaypointMarkers, ns.BuildWaypointMarkersOptions)
+		waypointMarkersPanel = AceConfigDialog:AddToBlizOptions(
+			ns.OPTIONS_REGISTRY.WaypointMarkers,
+			L["TAB_WAYPOINT_MARKERS"],
+			L["ADDON_TITLE"]
+		)
+		AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.QuestRoute, ns.BuildQuestRouteOptions)
+		questRoutePanel =
+			AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QuestRoute, L["TAB_QUEST_ROUTE"], L["ADDON_TITLE"])
 		AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.QuestArrow, ns.BuildQuestArrowOptions)
 		questArrowPanel =
 			AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.QuestArrow, L["TAB_QUEST_ARROW"], L["ADDON_TITLE"])
 	end
+	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.PlayerIcon, ns.BuildPlayerIconOptions)
+	local playerIconPanel =
+		AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.PlayerIcon, L["TAB_PLAYER_ICON"], L["ADDON_TITLE"])
 
 	local profilesOptions = ns.BuildProfilesOptions()
 	AceConfig:RegisterOptionsTable(ns.OPTIONS_REGISTRY.Profiles, profilesOptions)
@@ -58,8 +70,10 @@ function ns.RegisterOptionsPanels()
 		mainPanel,
 		questLogPanel,
 		qualityOfLifePanel,
-		routesMapPanel or false,
+		waypointMarkersPanel or false,
+		questRoutePanel or false,
 		questArrowPanel or false,
+		playerIconPanel,
 		profilesPanel,
 		feedbackSupportPanel,
 		diagnosticsPanel,

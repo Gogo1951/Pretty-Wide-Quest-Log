@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<!--
 		Routes: a route through every quest in the log, drawn on the world map, with an arrow to its next
-		stop. Each TOC lists only this file here, and the Routes on Zone Map and Quest Arrow panels in Options
+		stop. Each TOC lists only this file here, and the Waypoint Markers, Quest Route and Quest Arrow panels in Options
 		register only while it's loaded
 	-->
 	<Script file="Routes-Core.lua"/>

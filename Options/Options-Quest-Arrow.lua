@@ -2,7 +2,7 @@ local _, ns = ...
 local L = ns.L
 
 --[[
-	The Quest Arrow panel of the Options Interface, which Options.lua registers after Routes on Zone Map, in
+	The Quest Arrow panel of the Options Interface, which Options.lua registers after Quest Route, in
 	the Features section's order, where Routes (Features/Routes) is loaded. The settings are Routes' own, on
 	the profile (routes.Settings); each control hides while the switch at the top of the panel is off
 ]]

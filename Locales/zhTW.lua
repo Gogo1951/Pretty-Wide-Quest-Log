@@ -34,12 +34,18 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "啟用便利功能"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"整理任務NPC視窗，並幫助隊友接到你的任務：分享節奏、分享未送達時的密語，以及地城任務的通報和分享。即使關閉此項，任務日誌中每個區域的分享任務按鈕仍然可用。"
-L["ENABLE_ROUTES_MAP"] = "啟用區域地圖路線"
-L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
-	"在區域地圖上畫出一條經過你的任務目標和回報地點的路線，由近而遠，以在標記之間移動的圓點顯示。"
+L["ENABLE_WAYPOINT_MARKERS"] = "啟用路徑點標記"
+L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"將區域地圖上每個任務目標的任務圖示合併為一個標記，也就是一個路徑點，放在其怪物或物品最多的地方，每個回報地點也各有一個。將滑鼠移到標記上可查看它所取代的圖示。"
+L["ENABLE_QUEST_ROUTE"] = "啟用任務路線"
+L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
+	"在區域地圖上畫出一條經過你的路徑點標記的路線，由近而遠，以從你的位置依序通往每個標記的移動圓點顯示。需要路徑點標記。"
 L["ENABLE_QUEST_ARROW"] = "啟用任務箭頭"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"在畫面上顯示一個箭頭，即任務箭頭，指向路線上的下一個路徑點，並列出要在那裡完成的任務和目標。預設在團隊和副本中隱藏。"
+L["ENABLE_PLAYER_ICON"] = "啟用地圖玩家圖示"
+L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
+	"在小地圖和區域地圖上，以你職業顏色的箭頭顯示你，以各自職業顏色的圓點顯示隊友，取代暴雪的玩家箭頭和隊伍圓點。"
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"啟用寬版任務日誌需要重新載入介面才會生效，關閉設定介面時會提示你重新載入。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新載入介面才能切換任務日誌。現在重新載入嗎？"
@@ -148,12 +154,12 @@ L["DUNGEON_SHARE_DESCRIPTION"] =
 	"依任務分享中設定的節奏，在所有人都進入範圍後（或一分鐘後；在 WoW Forever 上立即）分享該地城裡所有遊戲允許分享的任務。每位隊友在每個地城只會收到一次，所以之後加入的人也會收到，而離開再進入不會再次分享。開啟分享失敗時密語後，錯過分享的隊友會收到密語，可以再找你要。"
 
 --------------------------------------------------------------------------------
--- Options: Routes on Zone Map Panel
+-- Options: Waypoint Markers Panel
 --------------------------------------------------------------------------------
 
-L["TAB_ROUTES_MAP"] = "區域地圖路線"
-L["TAB_ROUTES_MAP_DESCRIPTION"] =
-	"區域地圖上的一條路線，從你所在的位置出發，按完成順序經過你的任務目標和回報地點。"
+L["TAB_WAYPOINT_MARKERS"] = "路徑點標記"
+L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"區域地圖上每個任務目標和回報地點各一個標記，取代成堆的任務圖示。"
 L["ROUTES_MAP_HEADER"] = "區域地圖"
 L["ROUTES_MAP_DESCRIPTION"] = "區域地圖顯示路線時的開啟方式。"
 L["FULL_SIZE_MAP"] = "以最大尺寸開啟區域地圖"
@@ -170,11 +176,18 @@ L["MARKER_SIZE_SMALL"] = "小"
 L["MARKER_SIZE_MEDIUM"] = "中"
 L["MARKER_SIZE_LARGE"] = "大"
 L["MARKER_SIZE_HUGE"] = "特大"
+
+--------------------------------------------------------------------------------
+-- Options: Quest Route Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ROUTE"] = "任務路線"
+L["TAB_QUEST_ROUTE_DESCRIPTION"] =
+	"區域地圖上的一條路線，從你所在的位置出發，按完成順序經過你的路徑點標記。"
+L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
+	"任務路線連接各個路徑點標記，因此只有在啟用路徑點標記開啟時才會顯示。"
 L["ROUTES_LINE_HEADER"] = "路線線條"
 L["ROUTES_LINE_DESCRIPTION"] = "從你的位置通往每個標記的移動圓點。"
-L["SHOW_ROUTE_LINE"] = "顯示路線線條"
-L["SHOW_ROUTE_LINE_DESCRIPTION"] =
-	"從你的位置依序向每個標記畫出移動的圓點。關閉後只顯示標記。"
 L["LINE_SPEED"] = "線條速度"
 L["LINE_SPEED_DESCRIPTION"] = "圓點向下一個標記移動的速度。"
 L["LINE_SPEED_STILL"] = "靜止"
@@ -237,6 +250,18 @@ L["HIDE_IN_RAIDS"] = "在團隊中隱藏"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "當你在團隊中時隱藏任務箭頭。"
 L["HIDE_IN_INSTANCES"] = "在副本中隱藏"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "在地城、團隊副本和戰場中隱藏任務箭頭。"
+
+--------------------------------------------------------------------------------
+-- Options: Player Icon on Maps Panel
+--------------------------------------------------------------------------------
+
+L["TAB_PLAYER_ICON"] = "地圖玩家圖示"
+L["TAB_PLAYER_ICON_DESCRIPTION"] = "以職業顏色在小地圖和地圖上顯示你和你的隊友。"
+L["PLAYER_ICON_HEADER"] = "圖示"
+L["PLAYER_ICON_DESCRIPTION"] = "你的箭頭和隊友的圓點。"
+L["PLAYER_ICON_SIZE"] = "圖示大小"
+L["PLAYER_ICON_SIZE_DESCRIPTION"] =
+	"你的箭頭和隊友的圓點在小地圖和地圖（包括任務日誌的地圖）上的大小。"
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -320,7 +345,7 @@ L["CHAT_SHARING_ZONE"] = "正在分享 %d 個任務，來自 %s，每 %d 秒一�
 L["CHAT_SHARING_ZONE_NONE"] = "%s 中沒有可以分享的任務。"
 
 --------------------------------------------------------------------------------
--- Routes on Zone Map and the Quest Arrow
+-- Waypoint Markers, Quest Route and the Quest Arrow
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "已到達"

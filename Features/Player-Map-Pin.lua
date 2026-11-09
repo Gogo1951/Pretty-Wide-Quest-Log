@@ -12,7 +12,11 @@ local _, ns = ...
 	are, as in instances. They move while their units do, every INTERVAL. Only the art hides, never the pin,
 	so its OnUpdate keeps watching. Their templates are in Quest-Map.xml. The arrow takes no mouse; a disc
 	takes only the mouse's motion, to name its member on hover as Blizzard's dots did, so the map still
-	drags under both
+	drags under both.
+
+	The Player Icon on Maps feature (enablePlayerIcon) switches them off on the minimap and the world map,
+	giving those back to Blizzard's own, at once (ns.ApplyPlayerIcon). The quest log's map keeps them, as
+	nothing else draws the player there
 ]]
 
 -- The owner of this file's event handlers in Core.lua's EVENTS
@@ -24,6 +28,7 @@ local PARTY_TEMPLATE = "PrettyWideQuestLogPartyPinTemplate"
 -- The levels they're drawn at, added last on each map so they're over everything, the player over the party
 local PARTY_LEVEL = "PIN_FRAME_LEVEL_PWQL_PARTY"
 local PLAYER_LEVEL = "PIN_FRAME_LEVEL_PWQL_PLAYER"
+local PLAYER_SIZE, PARTY_SIZE = 32, 16 -- Their templates' sizes (Quest-Map.xml) at Medium
 local INTERVAL = 0.03 -- Seconds between moves, as often as the Quest Arrow turns
 local PARTY_UNITS = { "party1", "party2", "party3", "party4" }
 -- The arrow already in each class's color, one file per class (WARRIOR.tga), for the minimap, which can't tint it
@@ -43,6 +48,20 @@ local CLASS_ARROW_FILES = {
 	DEMONHUNTER = true,
 	EVOKER = true,
 }
+
+-- Whether the Player Icon on Maps feature is on; the default until the saved settings load
+local function IsPlayerIconOn()
+	if not ns.db then
+		return ns.DATABASE_DEFAULTS.profile.enablePlayerIcon
+	end
+	return ns.db.profile.enablePlayerIcon and true or false
+end
+
+-- The Icon Size setting, times the sizes in Quest-Map.xml's templates and MINIMAP_SIZE
+local function IconScale()
+	local profile = ns.db and ns.db.profile or ns.DATABASE_DEFAULTS.profile
+	return profile.playerIconScale or 1
+end
 
 local function UnitClassFile(unit)
 	local _, class = UnitClass(unit)
@@ -153,10 +172,14 @@ local function OnPartyLeave(pin)
 	end
 end
 
--- The size set in its template, growing a little as the map zooms in, like Questie's icons (Questie-Map.lua)
-local function SetUp(pin, level, place)
+--[[
+	Its template's size (size) times Icon Size, growing a little as the map zooms in, like Questie's icons
+	(Questie-Map.lua)
+]]
+local function SetUp(pin, level, place, size)
 	pin:UseFrameLevelType(level)
 	pin:ApplyFrameLevel()
+	pin:SetSize(size * IconScale(), size * IconScale())
 	pin:SetScalingLimits(1, 1.0, 1.2)
 	pin.Place = place
 	pin:SetScript("OnUpdate", OnUpdate)
@@ -174,6 +197,9 @@ end
 
 function providerMixin:RefreshAllData()
 	self:RemoveAllData()
+	if self.optional and not IsPlayerIconOn() then
+		return
+	end
 	local map = self:GetMap()
 	for _, unit in ipairs(PARTY_UNITS) do
 		local pin = map:AcquirePin(PARTY_TEMPLATE)
@@ -183,11 +209,11 @@ function providerMixin:RefreshAllData()
 		pin:SetMouseClickEnabled(false)
 		pin:SetScript("OnEnter", OnPartyEnter)
 		pin:SetScript("OnLeave", OnPartyLeave)
-		SetUp(pin, PARTY_LEVEL, PlacePartyMember)
+		SetUp(pin, PARTY_LEVEL, PlacePartyMember, PARTY_SIZE)
 	end
 	local pin = map:AcquirePin(PLAYER_TEMPLATE)
 	pin.Arrow:SetVertexColor(ClassColor("player"))
-	SetUp(pin, PLAYER_LEVEL, PlacePlayer)
+	SetUp(pin, PLAYER_LEVEL, PlacePlayer, PLAYER_SIZE)
 end
 
 --[[
@@ -200,27 +226,66 @@ function ns.AddGroupPinLevels(map)
 	levels:AddFrameLevel(PLAYER_LEVEL)
 end
 
-function ns.AddPlayerPin(map)
-	map:AddDataProvider(CreateFromMixins(providerMixin))
+-- Every map's provider, so the Player Icon on Maps settings can redraw them
+local providers = {}
+
+--[[
+	optional: the map is one that has Blizzard's own player arrow and party dots to fall back on (the world
+	map), so the pins follow the Player Icon on Maps switch. Without it they always show (the quest log's map),
+	at the Icon Size set
+]]
+function ns.AddPlayerPin(map, optional)
+	local provider = CreateFromMixins(providerMixin)
+	provider.optional = optional
+	map:AddDataProvider(provider)
+	providers[#providers + 1] = provider
 end
 
 --[[
 	Hides Blizzard's own player arrow and party dots on a map (the world map's GroupMembersPinTemplate),
 	which would otherwise show around the edges of these. Raid members stay. Only the pin's own widget
 	call, never its Lua fields, so nothing of Blizzard's map is tainted; it's done again whenever Blizzard
-	works out who to show
+	works out who to show. With Player Icon on Maps off, Blizzard's are left as Blizzard set them
 ]]
 local function HideBlizzardUnits(pin)
+	if not IsPlayerIconOn() then
+		return
+	end
 	pin:SetShouldShowUnits("player", false)
 	pin:SetShouldShowUnits("party", false)
 end
 
+-- Gives Blizzard's player arrow and party dots back, as Blizzard shows them: the party only outside a raid
+local function ShowBlizzardUnits(pin)
+	pin:SetShouldShowUnits("player", true)
+	pin:SetShouldShowUnits("party", not IsInRaid())
+end
+
+local blizzardGroupMaps = {}
+
 function ns.HideBlizzardGroupPins(map)
+	blizzardGroupMaps[#blizzardGroupMaps + 1] = map
 	for pin in map:EnumeratePinsByTemplate("GroupMembersPinTemplate") do
 		if pin.SetShouldShowUnits then
 			HideBlizzardUnits(pin)
 			if pin.UpdateShownUnits then
 				hooksecurefunc(pin, "UpdateShownUnits", HideBlizzardUnits)
+			end
+		end
+	end
+end
+
+-- Blizzard's group pins on every map that hid them, hidden again or given back to match the switch
+local function ApplyToBlizzardGroupPins()
+	local on = IsPlayerIconOn()
+	for _, map in ipairs(blizzardGroupMaps) do
+		for pin in map:EnumeratePinsByTemplate("GroupMembersPinTemplate") do
+			if pin.SetShouldShowUnits then
+				if on then
+					HideBlizzardUnits(pin)
+				else
+					ShowBlizzardUnits(pin)
+				end
 			end
 		end
 	end
@@ -236,21 +301,26 @@ end
 	in the player's class color.
 
 	Clients from 12.0.7 on, WoW Forever among them, took that away and give no way to hide it. There the
-	arrow is drawn over Blizzard's instead, solid at the back, at the minimap's middle where the player
-	always is, the size it is on the maps: pointing up when the minimap turns with the player (the
-	rotateMinimap setting), otherwise turned the way they face. Where the game won't say which way that is, as in instances, it
-	hides and Blizzard's shows
+	arrow is drawn over Blizzard's instead, at the minimap's middle where the player always is: the same
+	file and size as the player pin on the maps (Quest-Map.xml), so the player looks the same everywhere,
+	pointing up when the minimap turns with the player (the rotateMinimap setting), otherwise turned the
+	way they face. It sits MINIMAP_BACK behind the middle, along the way it points, so its body covers the
+	tail of Blizzard's arrow, which would otherwise show through the notch at its back. Where the game
+	won't say which way the player faces, as in instances, it hides and Blizzard's shows
 ]]
 
---[[
-	The Quest Arrow's arrow with the notch at its back filled in, so Blizzard's arrow under it can't show
-	through there
-]]
-local MINIMAP_TEXTURE = "Interface\\AddOns\\Pretty-Wide-Quest-Log\\Includes\\Images\\Route-Arrow-Solid"
-local MINIMAP_SIZE = 32
+local MINIMAP_TEXTURE = "Interface\\AddOns\\Pretty-Wide-Quest-Log\\Includes\\Images\\Route-Arrow"
+local MINIMAP_SIZE = 32 -- PrettyWideQuestLogPlayerPinTemplate's
+local MINIMAP_BACK = 3 -- Enough to cover Blizzard's arrow's tail with the notch's sides
 local MINIMAP_LEVELS_UP = 20 -- Over the minimap's own pins, Questie's icons among them
+local BLIZZARD_MINIMAP_ARROW = "Interface\\Minimap\\MinimapArrow" -- The minimap's own, for Player Icon on Maps off
 
-local minimapArrow
+local minimapArrow, minimapFrame
+--[[
+	Whether the game's own arrow was given a size other than Medium. The game can't say what size it draws
+	it at, so it's only ever sized for Small, Large or Huge, and put back to MINIMAP_SIZE after
+]]
+local minimapResized = false
 
 local function TurnMinimapArrow(frame, elapsed)
 	frame.sinceTurn = (frame.sinceTurn or 0) + elapsed
@@ -267,6 +337,9 @@ local function TurnMinimapArrow(frame, elapsed)
 		end
 	end
 	minimapArrow:SetRotation(facing)
+	-- Facing turns counterclockwise from north, so straight back is (sin, -cos)
+	local back = MINIMAP_BACK * IconScale()
+	minimapArrow:SetPoint("CENTER", frame, "CENTER", back * math.sin(facing), -back * math.cos(facing))
 	minimapArrow:Show()
 end
 
@@ -277,22 +350,70 @@ local function DrawOverMinimap(minimap)
 	frame:SetFrameLevel(minimap:GetFrameLevel() + MINIMAP_LEVELS_UP)
 	minimapArrow = frame:CreateTexture(nil, "OVERLAY")
 	minimapArrow:SetTexture(MINIMAP_TEXTURE)
-	minimapArrow:SetAllPoints()
+	minimapArrow:SetSize(MINIMAP_SIZE, MINIMAP_SIZE)
+	minimapArrow:SetPoint("CENTER")
 	minimapArrow:SetVertexColor(ClassColor("player"))
 	frame:SetScript("OnUpdate", TurnMinimapArrow)
+	minimapFrame = frame
 end
 
-function playerMapPin:OnPlayerLogin()
+--[[
+	The minimap's arrow to match the switch: the class-colored file, or the minimap's own back; where the
+	arrow is drawn over Blizzard's, that frame shown or hidden. Only a file this add-on set is ever put back,
+	so a class without one leaves the minimap as it was
+]]
+local function ApplyToMinimap()
 	local minimap = _G.Minimap
 	if not minimap then
 		return
 	end
-	local class = UnitClassFile("player")
+	local on = IsPlayerIconOn()
+	local size = MINIMAP_SIZE * IconScale()
 	if minimap.SetPlayerTexture then
+		local class = UnitClassFile("player")
 		if class and CLASS_ARROW_FILES[class] then
-			minimap:SetPlayerTexture(CLASS_ARROWS .. class)
+			minimap:SetPlayerTexture(on and (CLASS_ARROWS .. class) or BLIZZARD_MINIMAP_ARROW)
+		end
+		-- Icon Size, where the client can size the game's arrow; off, it's back to the game's own
+		local resize = on and IconScale() ~= 1
+		if (resize or minimapResized) and minimap.SetPlayerTextureWidth and minimap.SetPlayerTextureHeight then
+			local applied = resize and size or MINIMAP_SIZE
+			minimap:SetPlayerTextureWidth(applied)
+			minimap:SetPlayerTextureHeight(applied)
+			minimapResized = resize
 		end
 	else
-		DrawOverMinimap(minimap)
+		if on and not minimapFrame then
+			DrawOverMinimap(minimap)
+		end
+		if minimapFrame then
+			minimapFrame:SetSize(size, size)
+			minimapArrow:SetSize(size, size)
+			minimapFrame:SetShown(on)
+		end
 	end
+end
+
+--[[
+	The Player Icon on Maps settings, as they change or a profile loads: the minimap's arrow, every map's
+	pins redrawn at Icon Size, and Blizzard's player arrow and party dots on the world map hidden or given back
+]]
+function ns.ApplyPlayerIcon()
+	ApplyToMinimap()
+	--[[
+		Only a map on screen with a map loaded: the quest log's map counts as shown while its window is closed,
+		and before its first map it has no zoom levels for a pin's scale (ApplyCurrentScale). A hidden map
+		redraws every provider as it next shows
+	]]
+	for _, provider in ipairs(providers) do
+		local map = provider:GetMap()
+		if map and map:IsVisible() and map:GetMapID() then
+			provider:RefreshAllData()
+		end
+	end
+	ApplyToBlizzardGroupPins()
+end
+
+function playerMapPin:OnPlayerLogin()
+	ApplyToMinimap()
 end

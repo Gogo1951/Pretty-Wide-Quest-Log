@@ -35,12 +35,18 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Attiva funzioni di comodità"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Riordina la finestra del datore di missioni e aiuta il tuo gruppo a prendere le tue missioni: ritmo di condivisione, sussurri quando una condivisione non raggiunge qualcuno, e annuncio e condivisione delle missioni delle spedizioni. Il pulsante Condividi missioni di una zona nel registro delle missioni funziona anche con questa opzione disattivata."
-L["ENABLE_ROUTES_MAP"] = "Attiva percorsi sulla mappa della zona"
-L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
-	"Traccia sulla mappa della zona un percorso tra i tuoi obiettivi delle missioni e le consegne, partendo dal più vicino, con puntini in movimento tra gli indicatori."
+L["ENABLE_WAYPOINT_MARKERS"] = "Attiva Indicatori dei punti di passaggio"
+L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"Raccoglie le icone delle missioni di ogni obiettivo sulla mappa della zona in un solo indicatore, un punto di passaggio, dove si trova la maggior parte dei suoi nemici od oggetti, più uno per ogni consegna. Passa il mouse su un indicatore per vedere le icone che sostituisce."
+L["ENABLE_QUEST_ROUTE"] = "Attiva Percorso delle missioni"
+L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
+	"Traccia sulla mappa della zona un percorso tra i tuoi indicatori dei punti di passaggio, partendo dal più vicino, con puntini in movimento da te a ogni indicatore, uno alla volta. Richiede gli Indicatori dei punti di passaggio."
 L["ENABLE_QUEST_ARROW"] = "Attiva Freccia delle missioni"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Mostra sullo schermo una freccia, la Freccia delle missioni, che punta al prossimo punto di passaggio del percorso, con le missioni e gli obiettivi da completare lì. Per impostazione predefinita si nasconde nei gruppi da incursione e nelle istanze."
+L["ENABLE_PLAYER_ICON"] = "Attiva icona del giocatore sulle mappe"
+L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
+	"Ti mostra come una freccia del colore della tua classe sulla minimappa e sulla mappa della zona, e i membri del tuo gruppo come dischi del colore della loro, al posto della freccia del giocatore e dei puntini del gruppo di Blizzard."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Attiva registro delle missioni largo ha effetto dopo un ricaricamento, che ti verrà proposto alla chiusura dell'interfaccia delle opzioni."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia registro delle missioni dopo un ricaricamento. Ricaricare ora?"
@@ -156,12 +162,12 @@ L["DUNGEON_SHARE_DESCRIPTION"] =
 	"Condivide ogni missione della spedizione che il gioco ti permette di condividere, al ritmo impostato in Condivisione delle missioni, appena tutti sono a portata (o dopo un minuto; subito su WoW Forever). Ogni membro del gruppo le riceve una volta per spedizione, quindi le riceve anche chi entra dopo, e uscire e rientrare non condivide nulla. Con Sussurra quando una condivisione non riesce attivo, chi si perde una condivisione riceve un sussurro, così può richiederla."
 
 --------------------------------------------------------------------------------
--- Options: Routes on Zone Map Panel
+-- Options: Waypoint Markers Panel
 --------------------------------------------------------------------------------
 
-L["TAB_ROUTES_MAP"] = "Percorsi sulla mappa della zona"
-L["TAB_ROUTES_MAP_DESCRIPTION"] =
-	"Un percorso tra i tuoi obiettivi delle missioni e le consegne sulla mappa della zona, nell'ordine in cui farli, a partire da dove ti trovi."
+L["TAB_WAYPOINT_MARKERS"] = "Indicatori dei punti di passaggio"
+L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"Un indicatore sulla mappa della zona per ogni obiettivo e consegna, al posto di un mucchio di icone delle missioni."
 L["ROUTES_MAP_HEADER"] = "Mappa della zona"
 L["ROUTES_MAP_DESCRIPTION"] = "Come si apre la mappa della zona mentre mostra il percorso."
 L["FULL_SIZE_MAP"] = "Apri la mappa della zona ingrandita"
@@ -178,11 +184,18 @@ L["MARKER_SIZE_SMALL"] = "Piccola"
 L["MARKER_SIZE_MEDIUM"] = "Media"
 L["MARKER_SIZE_LARGE"] = "Grande"
 L["MARKER_SIZE_HUGE"] = "Enorme"
+
+--------------------------------------------------------------------------------
+-- Options: Quest Route Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ROUTE"] = "Percorso delle missioni"
+L["TAB_QUEST_ROUTE_DESCRIPTION"] =
+	"Un percorso tra i tuoi indicatori dei punti di passaggio sulla mappa della zona, nell'ordine in cui farli, a partire da dove ti trovi."
+L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
+	"Il Percorso delle missioni passa tra gli indicatori dei punti di passaggio, quindi appare solo mentre Attiva Indicatori dei punti di passaggio è attivo."
 L["ROUTES_LINE_HEADER"] = "Linea del percorso"
 L["ROUTES_LINE_DESCRIPTION"] = "I puntini in movimento che vanno da te a ogni indicatore."
-L["SHOW_ROUTE_LINE"] = "Mostra la linea del percorso"
-L["SHOW_ROUTE_LINE_DESCRIPTION"] =
-	"Traccia puntini in movimento da te a ogni indicatore, uno alla volta. Se disattivata, mostra solo gli indicatori."
 L["LINE_SPEED"] = "Velocità della linea"
 L["LINE_SPEED_DESCRIPTION"] = "Quanto velocemente i puntini avanzano verso il prossimo indicatore."
 L["LINE_SPEED_STILL"] = "Ferma"
@@ -247,6 +260,18 @@ L["HIDE_IN_RAIDS_DESCRIPTION"] = "Nasconde la Freccia delle missioni mentre sei 
 L["HIDE_IN_INSTANCES"] = "Nascondi nelle istanze"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] =
 	"Nasconde la Freccia delle missioni in spedizioni, incursioni e campi di battaglia."
+
+--------------------------------------------------------------------------------
+-- Options: Player Icon on Maps Panel
+--------------------------------------------------------------------------------
+
+L["TAB_PLAYER_ICON"] = "Icona del giocatore sulle mappe"
+L["TAB_PLAYER_ICON_DESCRIPTION"] = "Tu e il tuo gruppo sulla minimappa e sulle mappe, nei colori delle vostre classi."
+L["PLAYER_ICON_HEADER"] = "Icone"
+L["PLAYER_ICON_DESCRIPTION"] = "La tua freccia e i dischi dei membri del tuo gruppo."
+L["PLAYER_ICON_SIZE"] = "Dimensione dell'icona"
+L["PLAYER_ICON_SIZE_DESCRIPTION"] =
+	"Quanto sono grandi la tua freccia e i dischi dei membri del tuo gruppo sulla minimappa e sulle mappe, compresa la mappa del registro delle missioni."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -331,7 +356,7 @@ L["CHAT_SHARING_ZONE"] = "Condivisione di %d missioni da %s, una ogni %d secondi
 L["CHAT_SHARING_ZONE_NONE"] = "Nessuna delle tue missioni di %s può essere condivisa."
 
 --------------------------------------------------------------------------------
--- Routes on Zone Map and the Quest Arrow
+-- Waypoint Markers, Quest Route and the Quest Arrow
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "Ci sei"

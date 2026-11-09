@@ -34,12 +34,18 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Ativar melhorias de conveniência"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Organiza a janela de missões do PNJ e ajuda seu grupo a pegar suas missões: ritmo de compartilhamento, sussurros quando um compartilhamento não chega a alguém, e anúncio e compartilhamento de missões de masmorra. O botão Compartilhar missões de uma zona no registro de missões também funciona com isto desativado."
-L["ENABLE_ROUTES_MAP"] = "Ativar rotas no mapa da zona"
-L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
-	"Desenha no mapa da zona uma rota pelos seus objetivos de missão e entregas, começando pelo mais próximo, com pontos em marcha entre os marcadores."
+L["ENABLE_WAYPOINT_MARKERS"] = "Ativar Marcadores de pontos de passagem"
+L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"Junta os ícones de missão de cada objetivo no mapa da zona em um só marcador, um ponto de passagem, onde está a maioria dos seus inimigos ou objetos, mais um para cada entrega. Passe o mouse sobre um marcador para ver os ícones que ele substitui."
+L["ENABLE_QUEST_ROUTE"] = "Ativar Rota de missões"
+L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
+	"Desenha no mapa da zona uma rota pelos seus marcadores de pontos de passagem, começando pelo mais próximo, com pontos em marcha de você até cada marcador, um de cada vez. Precisa dos Marcadores de pontos de passagem."
 L["ENABLE_QUEST_ARROW"] = "Ativar Seta de missões"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Mostra uma seta na tela, a Seta de missões, apontando para o próximo ponto de passagem da rota, com as missões e objetivos a fazer lá. Por padrão, ela fica oculta em grupos de raide e instâncias."
+L["ENABLE_PLAYER_ICON"] = "Ativar ícone do jogador nos mapas"
+L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
+	"Mostra você como uma seta na cor da sua classe no minimapa e no mapa da zona, e os membros do seu grupo como discos na cor da deles, no lugar da seta do jogador e dos pontos de grupo da Blizzard."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Ativar registro de missões largo entra em vigor após recarregar, o que será oferecido quando você fechar a interface de opções."
 L["RELOAD_PROMPT"] = "O Pretty Wide Quest Log troca de registro de missões após recarregar. Recarregar agora?"
@@ -154,12 +160,12 @@ L["DUNGEON_SHARE_DESCRIPTION"] =
 	"Compartilha cada missão da masmorra que o jogo deixa você compartilhar, no ritmo definido em Compartilhamento de missões, assim que todos estiverem ao alcance (ou depois de um minuto; na hora no WoW Forever). Cada membro do grupo recebe as missões uma vez por masmorra, então quem entra depois também recebe, e sair e voltar não compartilha nada. Com Sussurrar quando um compartilhamento falhar ativado, quem perder um compartilhamento recebe um sussurro e pode pedir de novo."
 
 --------------------------------------------------------------------------------
--- Options: Routes on Zone Map Panel
+-- Options: Waypoint Markers Panel
 --------------------------------------------------------------------------------
 
-L["TAB_ROUTES_MAP"] = "Rotas no mapa da zona"
-L["TAB_ROUTES_MAP_DESCRIPTION"] =
-	"Uma rota pelos seus objetivos de missão e entregas no mapa da zona, na ordem em que fazê-los, a partir de onde você está."
+L["TAB_WAYPOINT_MARKERS"] = "Marcadores de pontos de passagem"
+L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"Um marcador no mapa da zona para cada objetivo e entrega, no lugar de um monte de ícones de missão."
 L["ROUTES_MAP_HEADER"] = "Mapa da zona"
 L["ROUTES_MAP_DESCRIPTION"] = "Como o mapa da zona abre enquanto mostra a rota."
 L["FULL_SIZE_MAP"] = "Abrir o mapa da zona em tamanho máximo"
@@ -176,11 +182,18 @@ L["MARKER_SIZE_SMALL"] = "Pequeno"
 L["MARKER_SIZE_MEDIUM"] = "Médio"
 L["MARKER_SIZE_LARGE"] = "Grande"
 L["MARKER_SIZE_HUGE"] = "Enorme"
+
+--------------------------------------------------------------------------------
+-- Options: Quest Route Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ROUTE"] = "Rota de missões"
+L["TAB_QUEST_ROUTE_DESCRIPTION"] =
+	"Uma rota pelos seus marcadores de pontos de passagem no mapa da zona, na ordem em que fazê-los, a partir de onde você está."
+L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
+	"A Rota de missões passa entre os marcadores de pontos de passagem, então só aparece enquanto Ativar Marcadores de pontos de passagem está ligado."
 L["ROUTES_LINE_HEADER"] = "Linha da rota"
 L["ROUTES_LINE_DESCRIPTION"] = "Os pontos em marcha que vão de você até cada marcador."
-L["SHOW_ROUTE_LINE"] = "Mostrar a linha da rota"
-L["SHOW_ROUTE_LINE_DESCRIPTION"] =
-	"Desenha pontos em marcha de você até cada marcador, um de cada vez. Desativado, mostra só os marcadores."
 L["LINE_SPEED"] = "Velocidade da linha"
 L["LINE_SPEED_DESCRIPTION"] = "A rapidez com que os pontos avançam até o próximo marcador."
 L["LINE_SPEED_STILL"] = "Parada"
@@ -244,6 +257,18 @@ L["HIDE_IN_RAIDS"] = "Ocultar em grupos de raide"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "Oculta a Seta de missões enquanto você está em um grupo de raide."
 L["HIDE_IN_INSTANCES"] = "Ocultar em instâncias"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "Oculta a Seta de missões em masmorras, raides e campos de batalha."
+
+--------------------------------------------------------------------------------
+-- Options: Player Icon on Maps Panel
+--------------------------------------------------------------------------------
+
+L["TAB_PLAYER_ICON"] = "Ícone do jogador nos mapas"
+L["TAB_PLAYER_ICON_DESCRIPTION"] = "Você e seu grupo no minimapa e nos mapas, nas cores das suas classes."
+L["PLAYER_ICON_HEADER"] = "Ícones"
+L["PLAYER_ICON_DESCRIPTION"] = "Sua seta e os discos dos membros do seu grupo."
+L["PLAYER_ICON_SIZE"] = "Tamanho do ícone"
+L["PLAYER_ICON_SIZE_DESCRIPTION"] =
+	"O tamanho da sua seta e dos discos dos membros do seu grupo no minimapa e nos mapas, incluindo o mapa do registro de missões."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -328,7 +353,7 @@ L["CHAT_SHARING_ZONE"] = "Compartilhando %d missões de %s, uma a cada %d segund
 L["CHAT_SHARING_ZONE_NONE"] = "Nenhuma das suas missões de %s pode ser compartilhada."
 
 --------------------------------------------------------------------------------
--- Routes on Zone Map and the Quest Arrow
+-- Waypoint Markers, Quest Route and the Quest Arrow
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "Você chegou"

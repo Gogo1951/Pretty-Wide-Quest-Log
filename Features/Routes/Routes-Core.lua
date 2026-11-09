@@ -184,13 +184,16 @@ function routes.ResetArrowPosition()
 	end
 end
 
--- Whether anything shows the route: the zone map's route or the Quest Arrow
+--[[
+	Whether anything shows the route: the Waypoint Markers on the zone map or the Quest Arrow. The Quest
+	Route (showLine) is drawn only between the markers, so it never needs a plan of its own
+]]
 function routes.IsWanted()
 	local settings = routes.Settings()
 	return (settings.showMap or settings.showArrow) and true or false
 end
 
--- Whether the map shows the route and the camps at all
+-- Whether the map shows the route at all: the Waypoint Markers, the camps, and the Quest Route between them
 function routes.IsMapShown()
 	local settings = routes.Settings()
 	return settings.showMap

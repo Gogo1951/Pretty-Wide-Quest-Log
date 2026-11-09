@@ -34,12 +34,18 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Activer les améliorations de confort"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Épure la fenêtre de donneur de quêtes et aide votre groupe à prendre vos quêtes : rythme de partage, chuchotements quand un partage rate quelqu'un, et annonce et partage des quêtes de donjon. Le bouton Partager les quêtes d'une zone dans le journal de quêtes fonctionne aussi quand cette option est désactivée."
-L["ENABLE_ROUTES_MAP"] = "Activer les itinéraires sur la carte de zone"
-L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
-	"Trace sur la carte de zone un itinéraire passant par vos objectifs de quête et vos remises de quête, du plus proche au plus lointain, sous forme de points qui défilent entre les marqueurs."
+L["ENABLE_WAYPOINT_MARKERS"] = "Activer les Marqueurs de points de passage"
+L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"Regroupe les icônes de quête de chaque objectif sur la carte de zone en un seul marqueur, un point de passage, là où se trouvent la plupart de ses monstres ou objets, avec un marqueur pour chaque remise de quête. Survolez un marqueur pour voir les icônes qu'il remplace."
+L["ENABLE_QUEST_ROUTE"] = "Activer l'Itinéraire de quête"
+L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
+	"Trace sur la carte de zone un itinéraire passant par vos marqueurs de points de passage, du plus proche au plus lointain, sous forme de points qui défilent de vous jusqu'à chaque marqueur, tour à tour. Nécessite les Marqueurs de points de passage."
 L["ENABLE_QUEST_ARROW"] = "Activer la Flèche de quête"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Affiche à l'écran une flèche, la Flèche de quête, qui pointe vers le prochain point de passage de l'itinéraire, avec les quêtes et objectifs à y accomplir. Par défaut, elle se masque en groupe de raid et en instance."
+L["ENABLE_PLAYER_ICON"] = "Activer l'icône du joueur sur les cartes"
+L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
+	"Vous affiche sous forme de flèche à la couleur de votre classe sur la minicarte et la carte de zone, et les membres de votre groupe sous forme de disques à la couleur de la leur, à la place de la flèche du joueur et des points de groupe de Blizzard."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activer le journal de quêtes large prend effet après un rechargement, proposé à la fermeture de l'interface des options."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après un rechargement. Recharger maintenant ?"
@@ -155,12 +161,12 @@ L["DUNGEON_SHARE_DESCRIPTION"] =
 	"Partage chaque quête du donjon que le jeu vous laisse partager, au rythme réglé dans Partage de quêtes, dès que tout le monde est à portée (ou au bout d'une minute ; immédiatement sur WoW Forever). Chaque membre du groupe les reçoit une fois par donjon, donc quelqu'un qui rejoint plus tard les reçoit aussi, et sortir puis revenir ne partage rien. Avec Chuchoter quand un partage échoue activé, quiconque rate un partage reçoit un chuchotement pour pouvoir la redemander."
 
 --------------------------------------------------------------------------------
--- Options: Routes on Zone Map Panel
+-- Options: Waypoint Markers Panel
 --------------------------------------------------------------------------------
 
-L["TAB_ROUTES_MAP"] = "Itinéraires sur la carte de zone"
-L["TAB_ROUTES_MAP_DESCRIPTION"] =
-	"Un itinéraire passant par vos objectifs de quête et vos remises de quête sur la carte de zone, dans l'ordre où les faire, depuis l'endroit où vous êtes."
+L["TAB_WAYPOINT_MARKERS"] = "Marqueurs de points de passage"
+L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"Un marqueur sur la carte de zone pour chaque objectif et chaque remise de quête, à la place d'un amas d'icônes de quête."
 L["ROUTES_MAP_HEADER"] = "Carte de zone"
 L["ROUTES_MAP_DESCRIPTION"] = "Comment la carte de zone s'ouvre quand elle affiche l'itinéraire."
 L["FULL_SIZE_MAP"] = "Ouvrir la carte de zone en grand"
@@ -177,11 +183,18 @@ L["MARKER_SIZE_SMALL"] = "Petite"
 L["MARKER_SIZE_MEDIUM"] = "Moyenne"
 L["MARKER_SIZE_LARGE"] = "Grande"
 L["MARKER_SIZE_HUGE"] = "Énorme"
+
+--------------------------------------------------------------------------------
+-- Options: Quest Route Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ROUTE"] = "Itinéraire de quête"
+L["TAB_QUEST_ROUTE_DESCRIPTION"] =
+	"Un itinéraire passant par vos marqueurs de points de passage sur la carte de zone, dans l'ordre où les faire, depuis l'endroit où vous êtes."
+L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
+	"L'Itinéraire de quête passe entre les marqueurs de points de passage, il ne s'affiche donc que lorsque Activer les Marqueurs de points de passage est coché."
 L["ROUTES_LINE_HEADER"] = "Ligne d'itinéraire"
 L["ROUTES_LINE_DESCRIPTION"] = "Les points qui défilent de vous jusqu'à chaque marqueur."
-L["SHOW_ROUTE_LINE"] = "Afficher la ligne d'itinéraire"
-L["SHOW_ROUTE_LINE_DESCRIPTION"] =
-	"Trace des points qui défilent de vous jusqu'à chaque marqueur, tour à tour. Désactivée, seuls les marqueurs s'affichent."
 L["LINE_SPEED"] = "Vitesse de la ligne"
 L["LINE_SPEED_DESCRIPTION"] = "La vitesse à laquelle les points défilent vers le prochain marqueur."
 L["LINE_SPEED_STILL"] = "Immobile"
@@ -245,6 +258,18 @@ L["HIDE_IN_RAIDS_DESCRIPTION"] = "Masque la Flèche de quête quand vous êtes d
 L["HIDE_IN_INSTANCES"] = "Masquer en instance"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] =
 	"Masque la Flèche de quête dans les donjons, les raids et les champs de bataille."
+
+--------------------------------------------------------------------------------
+-- Options: Player Icon on Maps Panel
+--------------------------------------------------------------------------------
+
+L["TAB_PLAYER_ICON"] = "Icône du joueur sur les cartes"
+L["TAB_PLAYER_ICON_DESCRIPTION"] = "Vous et votre groupe sur la minicarte et les cartes, aux couleurs de vos classes."
+L["PLAYER_ICON_HEADER"] = "Icônes"
+L["PLAYER_ICON_DESCRIPTION"] = "Votre flèche et les disques des membres de votre groupe."
+L["PLAYER_ICON_SIZE"] = "Taille de l'icône"
+L["PLAYER_ICON_SIZE_DESCRIPTION"] =
+	"La taille de votre flèche et des disques des membres de votre groupe sur la minicarte et les cartes, y compris la carte du journal de quêtes."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -329,7 +354,7 @@ L["CHAT_SHARING_ZONE"] = "Partage de %d quêtes de %s, une toutes les %d seconde
 L["CHAT_SHARING_ZONE_NONE"] = "Aucune de vos quêtes de %s ne peut être partagée."
 
 --------------------------------------------------------------------------------
--- Routes on Zone Map and the Quest Arrow
+-- Waypoint Markers, Quest Route and the Quest Arrow
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "Vous y êtes"
