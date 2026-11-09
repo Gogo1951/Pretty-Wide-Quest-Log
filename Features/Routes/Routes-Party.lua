@@ -61,6 +61,27 @@ function routes.IsMemberOutOfZone(name)
 end
 
 --[[
+	Whether a member is online and in the player's zone, worked out once a frame, as the Quest Arrow's list
+	asks for every quest and objective it shows. A connection WoW Forever keeps secret in combat counts as
+	offline
+]]
+local presence, presenceTime = {}, nil
+local function IsPresent(name)
+	local now = GetTime()
+	if presenceTime ~= now then
+		wipe(presence)
+		presenceTime = now
+	end
+	local present = presence[name]
+	if present == nil then
+		local connected = UnitIsConnected(name)
+		present = ns.IsReadable(connected) and connected == true and not routes.IsMemberOutOfZone(name)
+		presence[name] = present
+	end
+	return present
+end
+
+--[[
 	A member counts while online, in the player's zone, showing the quest, and not ignored from the Quest
 	Arrow's menu (routes.ignoredMembers): Questie lets a member hide one from the party
 ]]
@@ -68,10 +89,7 @@ local function IsSharing(name, questID, visibility)
 	if routes.ignoredMembers[ShortName(name)] then
 		return false
 	end
-	if not UnitIsConnected(name) then
-		return false
-	end
-	if routes.IsMemberOutOfZone(name) then
+	if not IsPresent(name) then
 		return false
 	end
 	if visibility and type(visibility.ShouldShowPartyObjective) == "function" then
@@ -210,6 +228,28 @@ local function PartyQuest(questID, players, QuestieDB, visibility, yield)
 	return quest
 end
 
+--[[
+	Whether a party unit's Questie has shared that it has a quest, for the quest list's party count
+	(Forever-Quest-List.lua): the game only says so for members in range, Questie's shares reach any distance.
+	Whatever the partyQuests setting, which is about routes
+]]
+function routes.QuestieHasUnitOnQuest(unit, questID)
+	local QuestieComms = ns.ImportQuestieModule("QuestieComms")
+	local logs = QuestieComms and QuestieComms.remoteQuestLogs
+	local members = type(logs) == "table" and logs[questID]
+	local full = type(members) == "table" and routes.UnitFullName(unit)
+	if not full then
+		return false
+	end
+	local short = ShortName(full)
+	for name in pairs(members) do
+		if type(name) == "string" and (name == full or ShortName(name) == short) then
+			return true
+		end
+	end
+	return false
+end
+
 -- Questie's party quest logs, by quest ID, while the setting is on and the player is in a party
 local function RemoteLogs()
 	local QuestieComms = ns.ImportQuestieModule("QuestieComms")
@@ -290,7 +330,8 @@ end
 
 --[[
 	The online party members, each { unit, name }: name as routes.UnitFullName gives it. With includeOffline,
-	the offline ones too, each with offline set. Sorted by name
+	the offline ones too, each with offline set. A member whose connection WoW Forever keeps secret in combat
+	counts as offline. Sorted by name
 ]]
 function routes.PartyMembers(includeOffline)
 	local members = {}
@@ -301,7 +342,8 @@ function routes.PartyMembers(includeOffline)
 		local unit = "party" .. i
 		local name = UnitExists(unit) and routes.UnitFullName(unit)
 		if name and name ~= UNKNOWNOBJECT then
-			local online = UnitIsConnected(unit)
+			local connected = UnitIsConnected(unit)
+			local online = ns.IsReadable(connected) and connected == true
 			if online or includeOffline then
 				members[#members + 1] = { unit = unit, name = name, offline = not online or nil }
 			end

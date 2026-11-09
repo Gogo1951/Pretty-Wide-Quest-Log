@@ -87,8 +87,8 @@ ns.AddWideQuestLogPart(function()
 			local row, index = _G["QuestLogTitle" .. i], order[offset + i]
 			local title, isHeader, questID
 			if index and row:IsShown() then
-				local entry = { getTitle(index) }
-				title, isHeader, questID = entry[1], entry[4], entry[8]
+				local _
+				title, _, _, isHeader, _, _, _, questID = getTitle(index)
 			end
 			if questID and not isHeader then
 				if not overlay.questPlayButtons[questID] then
@@ -116,11 +116,14 @@ ns.AddWideQuestLogPart(function()
 	--------------------------------------------------------------------------------
 
 	--[[
-		VoiceOver restyles the rows from its own QuestLog_Update hook, which can run after the list's, so restyle
-		again after it. Hooked whether or not its quest log part is on yet, as that's read from saved settings
+		VoiceOver restyles the rows from its own QuestLog_Update hook, which can run after the list's, so its play
+		buttons and the row styling are redone after it, with the order the list's update built. Hooked whether or
+		not its quest log part is on yet, as that's read from saved settings
 	]]
 	local voiceOverOverlay = type(VoiceOver) == "table" and rawget(VoiceOver, "QuestOverlayUI")
 	if voiceOverOverlay and voiceOverOverlay.Update then
-		hooksecurefunc(voiceOverOverlay, "Update", ns.UpdateClassicQuestList)
+		hooksecurefunc(voiceOverOverlay, "Update", function()
+			ns.RestyleClassicQuestRows()
+		end)
 	end
 end)

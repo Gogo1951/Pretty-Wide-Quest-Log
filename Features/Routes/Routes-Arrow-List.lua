@@ -14,8 +14,8 @@ local frame, distance, note = parts.frame, parts.distance, parts.note
 local nextArrow, nextDistance = parts.nextArrow, parts.nextDistance
 local WIDTH, ARROW_SIZE = layout.WIDTH, layout.ARROW_SIZE
 local NEXT_ARROW_SIZE, EYE_TEXTURE = layout.NEXT_ARROW_SIZE, layout.EYE_TEXTURE
+local DIM_ALPHA = layout.DIM_ALPHA
 local ICON_SIZE = 16 -- The small eye beside "While You're Here": a quarter of the big one, on the doubling scale
-local DIM_ALPHA = 0.72 -- What's on the way and what's next, behind what to do here
 
 --------------------------------------------------------------------------------
 -- The quests at the stop
@@ -81,6 +81,15 @@ local pending = {}
 local nextShown = false -- Whether the Next Objective is laid out, which ListQuests returns
 
 --[[
+	Where each quest's title sits, for the item buttons beside it (Routes-Arrow-Items.lua): rows, each
+	{ questID, top, room, dim } in the frame's own units from its top, room being how far down the quest's
+	lines reach (16 more is clear before what comes next); right, the block's right edge from the frame's left; and version,
+	counted up on every layout. The Next Objective's quest has none, as it isn't where the player is yet
+]]
+local titleRows = { rows = {}, right = 0, version = 0 }
+routes.arrowTitleRows = titleRows
+
+--[[
 	view is what the list is about; note goes under "Current Objective Area"; passing is a stop's worth of
 	objectives on the way, listed dimmed under "While You're Here"; nextStop is where the route goes after
 	the area: dimmed, its arrow and distance in a column on the left, and on the right "Next Objective",
@@ -91,15 +100,15 @@ local function ListQuests(view, noteText, passing, nextStop)
 	local settings = routes.Settings()
 	-- The lines first, so a second with nothing changed lays nothing out again
 	local count, texts = 0, {}
-	local function Add(kind, text, red, green, blue, right, dim, icon, isNext)
+	local function Add(kind, text, red, green, blue, right, dim, icon, isNext, questID)
 		count = count + 1
 		local entry = pending[count] or {}
 		pending[count] = entry
 		entry.kind, entry.text, entry.right, entry.dim, entry.icon = kind, text, right, dim, icon
-		entry.next = isNext
+		entry.next, entry.questID = isNext, questID
 		entry.red, entry.green, entry.blue = red, green, blue
 		texts[count] = string.format(
-			"%s%.2f%.2f%.2f%s|%s|%s%s%s",
+			"%s%.2f%.2f%.2f%s|%s|%s%s%s%s",
 			kind,
 			red,
 			green,
@@ -108,12 +117,13 @@ local function ListQuests(view, noteText, passing, nextStop)
 			right or "",
 			dim and "dim" or "",
 			icon or "",
-			isNext and "next" or ""
+			isNext and "next" or "",
+			questID or ""
 		)
 	end
 	local function AddStop(stop, dim)
-		routes.ForEachStopLine(stop, settings.questsListed, function(kind, text, red, green, blue, right)
-			Add(kind, text, red, green, blue, right, dim)
+		routes.ForEachStopLine(stop, settings.questsListed, function(kind, text, red, green, blue, right, questID)
+			Add(kind, text, red, green, blue, right, dim, nil, nil, questID)
 		end)
 	end
 	if settings.showQuests then
@@ -247,6 +257,26 @@ local function ListQuests(view, noteText, passing, nextStop)
 	end
 	nextArrow:SetShown(nextShown)
 	nextDistance:SetShown(nextShown)
+
+	-- Each quest's title, and how far down its lines reach before the next quest, heading or count
+	wipe(titleRows.rows)
+	local lastRow
+	for i = 1, used do
+		local line, entry = lines[i], pending[i]
+		if entry.kind == "title" or entry.kind == "section" or entry.kind == "more" then
+			lastRow = nil
+		end
+		if entry.kind == "title" and entry.questID and not entry.next then
+			lastRow = { questID = entry.questID, top = line.top, room = 0, dim = entry.dim }
+			titleRows.rows[#titleRows.rows + 1] = lastRow
+		end
+		if lastRow then
+			lastRow.room = line.top + LineHeight(line) - lastRow.top
+		end
+	end
+	titleRows.right = left + blockWidth
+	titleRows.version = titleRows.version + 1
+
 	frame:SetHeight(y)
 	local inset = math.max(0, (WIDTH - math.max(blockWidth, ARROW_SIZE)) / 2)
 	frame:SetHitRectInsets(inset, inset, 0, 0)

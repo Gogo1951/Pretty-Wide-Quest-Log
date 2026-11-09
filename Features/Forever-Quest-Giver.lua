@@ -4,8 +4,11 @@ local _, ns = ...
 
 local LAYOUT = ns.LAYOUT
 
+local rewardNumbersMoved -- Whether AlignRewardNumbers has moved them since they were last put back
+
 -- Gold and experience right-aligned two spaces in from the right edge of a text column width wide, like the objective counts
 local function AlignRewardNumbers(width)
+	rewardNumbersMoved = true
 	local rewardsFrame = QuestInfoRewardsFrame
 	local right = width - ns.TwoSpacesWide(QuestInfoDescriptionText)
 	rewardsFrame.MoneyFrame:ClearAllPoints()
@@ -20,8 +23,12 @@ local function AlignRewardNumbers(width)
 	rewardsFrame.XPFrame.ValueText:SetPoint("RIGHT", rewardsFrame.XPFrame, "LEFT", right, 0)
 end
 
--- Gold and experience back where Blizzard puts them, beside their labels
+-- Gold and experience back where Blizzard puts them, beside their labels, only once AlignRewardNumbers moved them
 local function RestoreRewardNumbers()
+	if not rewardNumbersMoved then
+		return
+	end
+	rewardNumbersMoved = false
 	local rewardsFrame = QuestInfoRewardsFrame
 	rewardsFrame.MoneyFrame:ClearAllPoints()
 	rewardsFrame.MoneyFrame:SetPoint("LEFT", rewardsFrame.ItemReceiveText, "RIGHT", 15, 0)
@@ -103,19 +110,17 @@ end
 --[[
 	After anything calls QuestInfo_Display: on a quest giver page with the cleanup on, the quest details'
 	gold, experience and quest ID. Anywhere else (Blizzard's own quest details, or a quest giver page with
-	the cleanup off) the gold and experience go back to Blizzard's places. Returns whether it was a styled
-	quest giver page
+	the cleanup off) the gold and experience go back to Blizzard's places, where this file moved them
 ]]
 function ns.LayOutQuestGiverPage(template, parentFrame)
 	local width = template and template.contentWidth
 	if ns.IsQuestGiverPage(parentFrame) and width and ns.IsQuestGiverCleanupOn() then
 		AlignRewardNumbers(width)
 		ShowQuestGiverID(parentFrame, width)
-		return true
+		return
 	end
 	questGiverID:Hide()
 	RestoreRewardNumbers()
-	return false
 end
 hooksecurefunc("QuestInfo_Display", function(template, parentFrame)
 	ns.LayOutQuestGiverPage(template, parentFrame)

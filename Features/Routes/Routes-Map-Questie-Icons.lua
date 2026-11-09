@@ -68,30 +68,70 @@ local function IsRouteIcon(data, objectives, turnIns)
 end
 
 --[[
-	Hides the pins holding Questie's icons for what the route stands in for, but for the hovered stop's,
-	and shows again any it hid before that no longer are. The pins are HereBeDragons', which Questie never shows or hides itself, so
-	Questie's own icon state is left alone, and a pin handed out again shows on its own
+	Questie's dimmed icons for a party member's objective, on a quest the player doesn't have. The route
+	draws the ones it plans for as red-ringed waypoints; the rest it leaves out on purpose (Include Party
+	Members' Quests off, a member turned off in the Quest Arrow's menu or away from the zone, a dungeon
+	quest), so Questie's icons for those are hidden as well rather than crowding the map
 ]]
+local function IsPartyIcon(data)
+	local objective = data.Type ~= "available" and data.Type ~= "complete" and data.ObjectiveData
+	return objective and objective.IsPartyObjective == true or false
+end
+
+--[[
+	Hides the pins holding Questie's icons for what the route stands in for, and for every party member's
+	objective, but for the hovered stop's, and shows again any it hid before that no longer are. The pins
+	are HereBeDragons', which Questie never shows or hides itself, so Questie's own icon state is left
+	alone, and a pin handed out again shows on its own
+]]
+-- The sets a pin is checked against, worked out at most once a frame: Questie places pins a batch at a time
+local sets, setsTime = {}, nil
+local function Sets()
+	local now = GetTime()
+	if setsTime ~= now then
+		setsTime = now
+		sets.hide = routes.IsMapShown() and routes.Settings().hideQuestieIcons
+		sets.objectives, sets.turnIns = RouteTasks()
+		sets.hoveredObjectives, sets.hoveredTurnIns = HoveredTasks()
+	end
+	return sets
+end
+
+local function ApplyToPin(pin, current)
+	local data = pin.icon and pin.icon.data
+	local hidden = current.hide
+		and data
+		and (IsRouteIcon(data, current.objectives, current.turnIns) or IsPartyIcon(data))
+		and not IsRouteIcon(data, current.hoveredObjectives, current.hoveredTurnIns)
+	if hidden then
+		pin:Hide()
+		pin.hiddenByRoute = true
+	elseif pin.hiddenByRoute then
+		pin:Show()
+		pin.hiddenByRoute = nil
+	end
+end
+
 local function ApplyQuestieIcons()
 	if not WorldMapFrame then
 		return
 	end
-	local hide = routes.IsMapShown() and routes.Settings().hideQuestieIcons
-	local objectives, turnIns = RouteTasks()
-	local hoveredObjectives, hoveredTurnIns = HoveredTasks()
+	setsTime = nil -- The route or the hovered marker may have changed this frame
+	local current = Sets()
 	for pin in WorldMapFrame:EnumeratePinsByTemplate(QUESTIE_TEMPLATE) do
-		local data = pin.icon and pin.icon.data
-		local hidden = hide
-			and data
-			and IsRouteIcon(data, objectives, turnIns)
-			and not IsRouteIcon(data, hoveredObjectives, hoveredTurnIns)
-		if hidden then
-			pin:Hide()
-			pin.hiddenByRoute = true
-		elseif pin.hiddenByRoute then
-			pin:Show()
-			pin.hiddenByRoute = nil
-		end
+		ApplyToPin(pin, current)
+	end
+end
+
+--[[
+	The pin Questie just placed for an icon, checked as it lands rather than a frame later: Questie redraws
+	a party member's objectives whenever their progress comes in, and a frame is long enough to see them
+	flash. HereBeDragons parents the icon to its pin
+]]
+local function ApplyToPlacedIcon(icon)
+	local pin = icon and icon.GetParent and icon:GetParent()
+	if pin and pin.icon == icon then
+		ApplyToPin(pin, Sets())
 	end
 end
 
@@ -128,4 +168,5 @@ end
 -- The route and its markers call these as they draw (Routes-Map.lua)
 routes.ApplyQuestieIcons = ApplyQuestieIcons
 routes.RequestApplyQuestieIcons = RequestApplyQuestieIcons
+routes.ApplyToPlacedQuestieIcon = ApplyToPlacedIcon
 routes.QuestieTextures = QuestieTextures

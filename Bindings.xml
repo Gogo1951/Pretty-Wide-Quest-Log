@@ -1,0 +1,12 @@
+<!--
+	Key bindings, loaded by the client on its own and never listed in the TOCs. Each name is what the client
+	saves a player's key against, so a renamed binding needs its keys moved over.
+
+	Use Quest Item clicks the Quest Arrow's first Use Item button (Features/Routes/Routes-Arrow-Items.lua),
+	a secure button, so the item is used from a key press, in combat too. The header and the binding's
+	name in the Key Bindings list are set in that file (BINDING_HEADER_PRETTYWIDEQUESTLOG, BINDING_NAME_*).
+	A macro reaches the same button with /click PrettyWideQuestLogQuestItem1
+-->
+<Bindings>
+	<Binding name="CLICK PrettyWideQuestLogQuestItem1:LeftButton" header="PRETTYWIDEQUESTLOG" category="ADDONS" />
+</Bindings>

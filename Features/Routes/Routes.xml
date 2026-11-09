@@ -5,6 +5,7 @@
 		register only while it's loaded
 	-->
 	<Script file="Routes-Core.lua"/>
+	<Script file="Routes-Planner.lua"/>
 	<Script file="Routes-Ignore.lua"/>
 	<Script file="Routes-Solver.lua"/>
 	<Script file="Routes-Party.lua"/>
@@ -20,6 +21,8 @@
 	<Script file="Routes-Map-Size.lua"/>
 	<Script file="Routes-Map-Line.lua"/>
 	<Script file="Routes-Map-Questie-Icons.lua"/>
+	<Script file="Routes-Map-Blizzard-Quests.lua"/>
+	<Script file="Routes-Map-Tooltip.lua"/>
 	<Script file="Routes-Map.lua"/>
 
 	<!--
@@ -31,7 +34,8 @@
 		One stop on the route, or one camp: a disc in its objective's color with Questie's icon for the objective
 		on it. The disc's black ring is part of its art. A party member's marker, and a waypoint's or camp's
 		whose every objective the route won't take, draws the fill alone (Route-Stop-Fill) with a ring over it
-		in place of the black one: white for a party member's, gray for one the route won't take
+		in place of the black one: red (ROUTE_ALERT_RING) for a dungeon or raid quest's or one ignored, white
+		(ROUTE_PARTY_RING) for a party member's
 	-->
 	<Frame name="PrettyWideQuestLogRouteStopPinTemplate" mixin="PrettyWideQuestLogRoutePinMixin" enableMouse="true" virtual="true">
 		<Size x="42" y="42"/>
@@ -56,5 +60,8 @@
 	<Script file="Routes-Arrow-Survey.lua"/>
 	<Script file="Routes-Arrow.lua"/>
 	<Script file="Routes-Arrow-List.lua"/>
+	<Script file="Routes-Arrow-Item-Choice.lua"/>
+	<Script file="Routes-Arrow-Items.lua"/>
 	<Script file="Routes-Arrow-Menu.lua"/>
+	<Script file="Routes-TomTom.lua"/>
 </Ui>

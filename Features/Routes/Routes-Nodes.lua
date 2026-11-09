@@ -145,7 +145,7 @@ local function Unworked(key, blobs)
 	end
 	return #kept > 0 and kept or blobs
 end
-routes.Unworked = Unworked -- What rides along (Routes-Overlaps.lua)
+routes.Unworked = Unworked -- For the camps Routes-Overlaps.lua shares
 
 -- Yards from the start to the nearest of a quest's turn-in places in the zone, or math.huge for none here
 local function TurnInDistance(quest, start, yield, outdoors)
@@ -180,7 +180,9 @@ function routes.BuildNodes(yield)
 	local timed = routes.TimedQuests()
 
 	local nodes = {}
-	for questID, quest in pairs(QuestLog()) do
+	local log = QuestLog()
+	for _, questID in ipairs(routes.LoggedQuestIDs(log)) do
+		local quest = log[questID]
 		if type(quest) == "table" then
 			-- A dungeon or raid quest's objectives are inside the instance, so only its turn-in is on the route
 			local instanceQuest = IsInstanceQuest(questID)

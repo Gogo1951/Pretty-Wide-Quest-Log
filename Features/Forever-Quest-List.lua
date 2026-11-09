@@ -100,22 +100,18 @@ end
 local function OpenQuestMenu(row)
 	local questID = row.data.questID
 	MenuUtil.CreateContextMenu(row, function(_, root)
-		-- The same rules as the details pane's Track and Share buttons
-		local tracked, disabled = ns.IsTracked(questID), ns.IsQuestDisabledForSession(questID)
-		root:CreateButton(tracked and UNTRACK_QUEST or TRACK_QUEST, function()
+		-- The same rules as the Track, Share and Abandon buttons (ns.QuestActions)
+		local actions = ns.QuestActions(questID)
+		root:CreateButton(actions.tracked and UNTRACK_QUEST or TRACK_QUEST, function()
 			ns.ToggleTracking(questID)
-		end):SetEnabled(
-			not InCombatLockdown()
-				and ns.CanTrack(questID)
-				and ((tracked and ns.CanRemoveQuestWatch()) or (not tracked and not disabled))
-		)
+		end):SetEnabled(actions.canTrack)
 		root:CreateButton(SHARE_QUEST, function()
 			ns.ShareQuest(questID)
-		end):SetEnabled(not disabled and ns.IsPushableQuest(questID) and IsInGroup())
+		end):SetEnabled(actions.canShare)
 		if ns.CanAbandonQuest(questID) then
 			root:CreateButton(ABANDON_QUEST, function()
 				ns.AskToAbandonQuest(questID)
-			end)
+			end):SetEnabled(actions.canAbandon)
 		end
 	end)
 end
@@ -142,47 +138,69 @@ local function Row_OnClick(self, button)
 end
 
 --[[
-	The party members who have a quest, as class-colored names, and whether the game kept any member's
-	answer secret. Only the player's party (their raid subgroup in a raid), and nobody whose answer is secret
+	Whether a party unit has a quest. The game only answers for members in range, so where it says no (or keeps
+	the answer secret) a share from the member's Questie counts too (Routes-Party.lua). The second return is
+	whether a "no" is unknown rather than known: the answer stayed secret, or the member is out of range
+]]
+local function IsPartyMemberOnQuest(unit, questID, questLogIndex)
+	local onQuest = ns.IsUnitOnQuest(unit, questID, questLogIndex)
+	local readable = ns.IsReadable(onQuest)
+	if readable and onQuest then
+		return true, false
+	end
+	if ns.routes and ns.routes.QuestieHasUnitOnQuest(unit, questID) then
+		return true, false
+	end
+	local visible = UnitIsVisible(unit)
+	return false, not (readable and ns.IsReadable(visible) and visible)
+end
+
+--[[
+	How many party members have a quest, their names (class-colored where the class is readable), and whether
+	any member's answer is unknown (IsPartyMemberOnQuest). Only the player's party (their raid subgroup in a
+	raid). A secret name or class only leaves the member's name off the tooltip
 ]]
 local function GetPartyOnQuest(questID, questLogIndex)
-	local names, anySecret = {}, false
+	local count, names, anyUnknown = 0, {}, false
 	if not IsInGroup() then
-		return names, anySecret
+		return count, names, anyUnknown
 	end
 	for index = 1, GetNumSubgroupMembers() do
 		local unit = "party" .. index
-		local onQuest = ns.IsUnitOnQuest(unit, questID, questLogIndex)
-		local name = GetUnitName(unit, true)
-		local _, class = UnitClass(unit)
-		if not ns.IsReadable(onQuest, name, class) then
-			anySecret = true
-		elseif onQuest and name then
-			local color = class and RAID_CLASS_COLORS[class]
-			names[#names + 1] = color and color:WrapTextInColorCode(name) or name
+		local onQuest, unknown = IsPartyMemberOnQuest(unit, questID, questLogIndex)
+		if onQuest then
+			count = count + 1
+			local name = GetUnitName(unit, true)
+			local _, class = UnitClass(unit)
+			if name and ns.IsReadable(name) then
+				local color = class and ns.IsReadable(class) and RAID_CLASS_COLORS[class]
+				names[#names + 1] = color and color:WrapTextInColorCode(name) or name
+			end
+		elseif unknown then
+			anyUnknown = true
 		end
 	end
-	return names, anySecret
+	return count, names, anyUnknown
 end
 
 --[[
 	While in a group, hovering a quest's row lists the party members who have it, as Blizzard's own quest
-	log rows do on Classic Era and TBC, under the client's own labels. With any answer secret, "none" would
-	be a guess, so it isn't shown
+	log rows do on Classic Era and TBC, under the client's own labels. With any answer unknown (secret, or a
+	member out of range), "none" would be a guess, so it isn't shown
 ]]
 local function ShowPartyOnQuest(row, questID, questLogIndex)
 	if not IsInGroup() then
 		return
 	end
-	local names, anySecret = GetPartyOnQuest(questID, questLogIndex)
-	if #names == 0 and (anySecret or not PARTY_QUEST_STATUS_NONE) then
+	local count, names, anyUnknown = GetPartyOnQuest(questID, questLogIndex)
+	if count == 0 and (anyUnknown or not PARTY_QUEST_STATUS_NONE) then
 		return
 	end
-	if #names > 0 and not PARTY_QUEST_STATUS_ON then
+	if count > 0 and not PARTY_QUEST_STATUS_ON then
 		return
 	end
 	GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
-	if #names > 0 then
+	if count > 0 then
 		GameTooltip:AddLine(PARTY_QUEST_STATUS_ON)
 		for _, name in ipairs(names) do
 			GameTooltip:AddLine(name)
@@ -307,7 +325,7 @@ local function InitRow(row, data)
 		end
 
 		local used = tag and (row.Tag:GetStringWidth() + 6) or 2
-		local onQuest = #(GetPartyOnQuest(questID, data.questLogIndex))
+		local onQuest = GetPartyOnQuest(questID, data.questLogIndex)
 		if onQuest > 0 then
 			row.PartyCount:ClearAllPoints()
 			if tag then

@@ -11,8 +11,7 @@ local _, ns = ...
 
 --[[
 	The greeting takes the quest text's font and line spacing with the cleanup on, and Blizzard's back with
-	it off. Only the text's look changes: the lines and rows keep Blizzard's places and sizes, as the
-	gossip list measures its rows itself
+	it off. The shown greeting row is styled as Blizzard sets it up
 ]]
 local function StyleGossipGreeting(greetingText)
 	if not greetingText then
@@ -29,6 +28,37 @@ if GossipGreetingTextMixin and GossipGreetingTextMixin.Setup then
 	hooksecurefunc(GossipGreetingTextMixin, "Setup", function(frame)
 		StyleGossipGreeting(frame.GreetingText)
 	end)
+end
+
+--[[
+	The gossip list places its rows by a hidden copy of the greeting of its own (the greetingTextFrame in
+	the greeting's list entry): Blizzard only sets that copy's text and reads its height, never runs its
+	Setup, so the hook above misses it. Left in Blizzard's spacing, it measures a long greeting shorter
+	than the styled row draws, and the first option lands inside the text. So the copy takes the same
+	style after each list update, and when that changes its height the list lays its rows out again. The
+	copy lasts for the session, so from the next update on it's measured in the right style first time
+]]
+local function StyleGossipMeasuringGreeting()
+	local scrollBox = GossipFrame.GreetingPanel and GossipFrame.GreetingPanel.ScrollBox
+	local dataProvider = scrollBox and scrollBox.GetDataProvider and scrollBox:GetDataProvider()
+	if not (dataProvider and dataProvider.FindElementDataByPredicate) then
+		return
+	end
+	local entry = dataProvider:FindElementDataByPredicate(function(elementData)
+		return elementData.greetingTextFrame ~= nil
+	end)
+	local measuringText = entry and entry.greetingTextFrame.GreetingText
+	if not measuringText then
+		return
+	end
+	local measuredHeight = measuringText:GetHeight()
+	StyleGossipGreeting(measuringText)
+	if measuringText:GetHeight() ~= measuredHeight and scrollBox.FullUpdate then
+		scrollBox:FullUpdate(ScrollBoxConstants.UpdateImmediately)
+	end
+end
+if GossipFrame and GossipFrame.Update then
+	hooksecurefunc(GossipFrame, "Update", StyleGossipMeasuringGreeting)
 end
 
 --------------------------------------------------------------------------------

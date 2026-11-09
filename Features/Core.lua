@@ -69,6 +69,10 @@ local EVENTS = {
 	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questMap" },
 	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questLogApi" },
 	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questLogWindow" },
+	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "routesItems" },
+	{ "BAG_UPDATE_DELAYED", "OnBagUpdateDelayed", "routesItems" },
+	{ "BAG_UPDATE_COOLDOWN", "OnBagUpdateCooldown", "routesItems" },
+	{ "PLAYER_TARGET_CHANGED", "OnPlayerTargetChanged", "routesItems" },
 }
 
 local EVENT_HANDLERS = {}

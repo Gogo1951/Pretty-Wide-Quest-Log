@@ -11,7 +11,7 @@ ns.AddWideQuestLogPart(function()
 	local questMap = ns.questMap
 
 	-- Questie's own copy of HereBeDragons, for each zone's size in yards
-	local HBD = LibStub("HereBeDragonsQuestie-2.0", true)
+	local hereBeDragons = LibStub("HereBeDragonsQuestie-2.0", true)
 
 	local CLUSTER_RADIUS = 180 -- Yards from an area's center its spawns lie within, as Questie's own areas
 	local EDGE_PADDING = 35 -- Yards an area reaches past its outermost spawns
@@ -288,8 +288,8 @@ ns.AddWideQuestLogPart(function()
 	-- The map's size in yards, or nothing where it isn't known
 	local function ZoneSize(mapID)
 		local width, height
-		if HBD then
-			width, height = HBD:GetZoneSize(mapID)
+		if hereBeDragons then
+			width, height = hereBeDragons:GetZoneSize(mapID)
 		end
 		if width and height and width > 0 and height > 0 then
 			return width, height

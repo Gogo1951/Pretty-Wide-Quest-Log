@@ -30,9 +30,9 @@
 
 ### README Tips & Tricks carries pictures and a third section
 
-- **Departs from:** README rules, the README carrying one image, the Showcase's, and Tips & Tricks holding at most two sub-sections beyond the CVar.
-- **Instead:** The Showcase is the Quest Arrow, and Tips & Tricks holds three sections with pictures: Routes & the Quest Arrow with its Questie Routes fun fact and image, Quest Chains with a screenshot of a chain, and a quest log screenshot for each client, Forever and TBC & Era.
-- **Why:** The README leads with routes, a chain's checked-off steps read faster in a picture than in words, and the two clients' quest logs are different windows that each get their own picture.
+- **Departs from:** README rules, images living only in the feature blocks, and Tips & Tricks holding at most two sub-sections beyond the Mini-Map Button and CVar.
+- **Instead:** The Quest Arrow's feature block is the one that takes an existing screenshot, and Tips & Tricks holds three sections with pictures: Routes & the Quest Arrow with its Questie Routes fun fact and image, Quest Chains with a screenshot of a chain, and a quest log screenshot for each client, Forever and TBC & Era.
+- **Why:** The route, a chain's checked-off steps and each client's own quest log window read best as pictures beside the tips that explain them.
 
 ### README's Related Add-ons are hand-picked
 

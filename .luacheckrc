@@ -14,6 +14,8 @@ read_globals = {
 	"AvailableQuestsText",
 	"C_AddOns",
 	"C_ChatInfo",
+	"C_Container",
+	"C_CurrencyInfo",
 	"C_DeathInfo",
 	"C_EventUtils",
 	"C_Item",
@@ -65,7 +67,6 @@ read_globals = {
 	"EXPERIENCE_COLON",
 	"FAILED",
 	"FauxScrollFrame_GetOffset",
-	"FauxScrollFrame_Update",
 	"FlightPointDataProviderMixin",
 	"FogOfWarDataProviderMixin",
 	"FogOfWarFrameMixin",
@@ -77,6 +78,7 @@ read_globals = {
 	"GameTooltip",
 	"GameTooltipHeaderText",
 	"GameTooltipText",
+	"GetBindingText",
 	"GetCoinTextureString",
 	"geterrorhandler",
 	"GetMaterialTextColors",
@@ -104,7 +106,6 @@ read_globals = {
 	"GetItemStats",
 	"GetLocale",
 	"GetMaxPlayerLevel",
-	"GetMoneyString",
 	"GetNumGroupMembers",
 	"GetNumQuestLeaderBoards",
 	"GetNumQuestLogEntries",
@@ -130,6 +131,7 @@ read_globals = {
 	"GetQuestLogRewardMoney",
 	"GetQuestLogRewardXP",
 	"GetQuestLogSelection",
+	"GetQuestLogSpecialItemInfo",
 	"GetQuestLogTimeLeft",
 	"GetQuestLogTitle",
 	"GetQuestResetTime",
@@ -140,6 +142,7 @@ read_globals = {
 	"GetTime",
 	"GetUIPanel",
 	"GetUnitName",
+	"GossipFrame",
 	"GossipSharedActiveQuestButtonMixin",
 	"GossipSharedAvailableQuestButtonMixin",
 	"GossipGreetingTextMixin",
@@ -170,6 +173,7 @@ read_globals = {
 	"QUEST_DESCRIPTION",
 	"QUEST_REWARDS",
 	"QUEST_SUGGESTED_GROUP_NUM",
+	"QuestDataProviderMixin",
 	"RAID_CLASS_COLORS",
 	"LE_QUEST_FREQUENCY_DAILY",
 	"LibStub",
@@ -316,8 +320,10 @@ read_globals = {
 	"UnitGUID",
 	"UnitInRange",
 	"UnitIsConnected",
+	"UnitIsFriend",
 	"UnitIsGhost",
 	"UnitIsUnit",
+	"UnitIsVisible",
 	"UnitLevel",
 	"UnitName",
 	"UnitOnTaxi",
@@ -335,6 +341,7 @@ globals = {
 	"SLASH_PRETTYWIDEQUESTLOGOPTIONS1",
 	"PrettyWideQuestLogPinMixin", -- the quest map's pin templates (Questie-Map.xml)
 	"PrettyWideQuestLogRoutePinMixin", -- the route's pin templates (Routes.xml)
+	"BINDING_HEADER_PRETTYWIDEQUESTLOG", -- the Key Bindings heading for Bindings.xml (Routes-Arrow-Items.lua)
 	SlashCmdList = { fields = { "PRETTYWIDEQUESTLOGOPTIONS" } }, -- a field, so only the add-on's own slash entry is writable
 	"QUESTS_DISPLAYED", -- Classic: more list rows in a taller quest log
 	StaticPopupDialogs = {

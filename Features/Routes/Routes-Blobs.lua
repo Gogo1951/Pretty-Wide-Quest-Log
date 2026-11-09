@@ -19,9 +19,9 @@ local SPAWNS_PER_YIELD = 64
 
 -- Routes-Stops.lua sizes and names stops by the same
 routes.MIN_STOP_RADIUS, routes.NAME_LIMIT = MIN_STOP_RADIUS, NAME_LIMIT
-routes.SPARSE_PENALTY = SPARSE_PENALTY -- For a blob Routes-Nodes.lua adds to the candidates for being shared
+routes.SPARSE_PENALTY = SPARSE_PENALTY -- For a blob Routes-Overlaps.lua adds to the candidates for being shared
 
-local HereBeDragons = routes.HereBeDragons
+local GetHereBeDragons = routes.HereBeDragons
 
 --------------------------------------------------------------------------------
 -- Spawns into blobs
@@ -47,10 +47,10 @@ end
 	Questie's phasing shows, on a map keepMap(mapID) keeps, handed to add in world yards and continent
 ]]
 local function ForEachSpawn(spawns, yield, keepMap, add)
-	local hbd = HereBeDragons()
+	local hereBeDragons = GetHereBeDragons()
 	local ZoneDB = ns.ImportQuestieModule("ZoneDB")
 	local Phasing = ns.ImportQuestieModule("Phasing")
-	if not (hbd and ZoneDB and ZoneDB.GetUiMapIdByAreaId and type(spawns) == "table") then
+	if not (hereBeDragons and ZoneDB and ZoneDB.GetUiMapIdByAreaId and type(spawns) == "table") then
 		return
 	end
 	local checkPhase = Phasing and Phasing.IsSpawnVisible
@@ -60,7 +60,8 @@ local function ForEachSpawn(spawns, yield, keepMap, add)
 			for i, spawn in ipairs(list) do
 				local x, y = spawn[1], spawn[2]
 				if x and y and x >= 0 and y >= 0 and (not checkPhase or Phasing.IsSpawnVisible(spawn[3])) then
-					local worldX, worldY, worldInstance = hbd:GetWorldCoordinatesFromZone(x / 100, y / 100, mapID)
+					local worldX, worldY, worldInstance =
+						hereBeDragons:GetWorldCoordinatesFromZone(x / 100, y / 100, mapID)
 					if worldX then
 						add(worldX, worldY, worldInstance)
 					end
@@ -106,9 +107,9 @@ function routes.AddWorldSpawns(byInstance, spawns, name, yield)
 		end
 		AddPoint(points, x, y, name)
 	end
-	local hbd = HereBeDragons()
+	local hereBeDragons = GetHereBeDragons()
 	local ZoneDB = ns.ImportQuestieModule("ZoneDB")
-	local canEnter = hbd and ZoneDB and ZoneDB.GetDungeonLocation and ZoneDB.GetUiMapIdByAreaId
+	local canEnter = hereBeDragons and ZoneDB and ZoneDB.GetDungeonLocation and ZoneDB.GetUiMapIdByAreaId
 	local outside = {}
 	for areaID, list in pairs(spawns) do
 		local entrances = canEnter and type(list) == "table" and ZoneDB:GetDungeonLocation(areaID)
@@ -117,7 +118,8 @@ function routes.AddWorldSpawns(byInstance, spawns, name, yield)
 				local mapID = type(entrance) == "table" and ZoneDB:GetUiMapIdByAreaId(entrance[1])
 				local x, y, instance
 				if mapID and entrance[2] and entrance[3] then
-					x, y, instance = hbd:GetWorldCoordinatesFromZone(entrance[2] / 100, entrance[3] / 100, mapID)
+					x, y, instance =
+						hereBeDragons:GetWorldCoordinatesFromZone(entrance[2] / 100, entrance[3] / 100, mapID)
 				end
 				if x then
 					for _ = 1, math.max(1, #list) do
@@ -195,18 +197,19 @@ local function Cluster(points, yield)
 			local blob = { x = 0, y = 0, count = 0, radius = 0, names = {} }
 			blobs[#blobs + 1] = blob
 			blobOf[seed] = blob
-			local bx, by, bn = sumX[seed], sumY[seed], counts[seed]
+			local blobSumX, blobSumY, blobCount = sumX[seed], sumY[seed], counts[seed]
 			for j = i + 1, cellCount do
 				local other = order[j]
 				if not blobOf[other] then
-					local dx, dy = middleX[other] - bx / bn, middleY[other] - by / bn
+					local dx, dy = middleX[other] - blobSumX / blobCount, middleY[other] - blobSumY / blobCount
 					if dx * dx + dy * dy <= reach then
 						blobOf[other] = blob
-						bx, by, bn = bx + sumX[other], by + sumY[other], bn + counts[other]
+						blobSumX, blobSumY, blobCount =
+							blobSumX + sumX[other], blobSumY + sumY[other], blobCount + counts[other]
 					end
 				end
 			end
-			blob.x, blob.y, blob.count = bx / bn, by / bn, bn
+			blob.x, blob.y, blob.count = blobSumX / blobCount, blobSumY / blobCount, blobCount
 			yield()
 		end
 	end

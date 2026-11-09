@@ -53,22 +53,24 @@ local OnLinePinUpdate = routes.OnRouteLinePinUpdate
 local ApplyQuestieIcons = routes.ApplyQuestieIcons
 local RequestApplyQuestieIcons = routes.RequestApplyQuestieIcons
 local QuestieTextures = routes.QuestieTextures
+local ApplyBlizzardQuests = routes.ApplyBlizzardQuests
+local HookBlizzardQuests = routes.HookBlizzardQuests
 
-local HBDPins
+local hereBeDragonsPins
 
 -- Questie's copies of HereBeDragons and its map pins
 local function Libraries()
-	HBDPins = HBDPins or LibStub("HereBeDragonsQuestie-Pins-2.0", true)
-	return routes.HereBeDragons(), HBDPins
+	hereBeDragonsPins = hereBeDragonsPins or LibStub("HereBeDragonsQuestie-Pins-2.0", true)
+	return routes.HereBeDragons(), hereBeDragonsPins
 end
 
 -- Where a point in world yards falls on a map (0-1, or past it), or nothing on another continent
 local function MapPosition(mapID, x, y, instance)
-	local hbd = Libraries()
-	if not (hbd and x) then
+	local hereBeDragons = Libraries()
+	if not (hereBeDragons and x) then
 		return nil
 	end
-	local mapX, mapY = hbd:GetZoneCoordinatesFromWorldInstance(x, y, instance, mapID, true)
+	local mapX, mapY = hereBeDragons:GetZoneCoordinatesFromWorldInstance(x, y, instance, mapID, true)
 	if mapX and mapY then
 		return { x = mapX, y = mapY }
 	end
@@ -113,7 +115,7 @@ local function IsUntrackedTask(task)
 	return task.untracked or (task.key ~= nil and routes.skipped[task.key] ~= nil)
 end
 
--- A marker whose every objective the route won't take: a red ring for a dungeon's, a silver one for one ignored
+-- A marker whose every objective the route won't take, a dungeon's or one ignored: a red ring
 local function IsUntracked(stop)
 	return not stop.corpse and IsEveryTask(stop, IsUntrackedTask)
 end
@@ -220,19 +222,12 @@ local function QuestieIcon(task)
 end
 
 --[[
-	Whether every task at a stop is a party member's, whose marker has a red ring in place of the black
+	Whether every task at a stop is a party member's, whose marker has a white ring in place of the black
 	one. A stop with any of the player's own on it is the player's, party objectives merged in or not
 ]]
 local function IsPartyStop(stop)
 	return IsEveryTask(stop, function(task)
 		return task.party
-	end)
-end
-
--- Whether every task at a stop is a dungeon or raid quest's, inside the instance: a red ring too
-local function IsDungeonStop(stop)
-	return not stop.corpse and IsEveryTask(stop, function(task)
-		return task.untracked
 	end)
 end
 
@@ -268,16 +263,14 @@ local function AddStopPin(map, stop, position, textures, dim)
 	local task = stop.tasks[1]
 	pin.Disc:SetVertexColor(routes.TaskColor(task))
 	--[[
-		A red ring, to stand out, for a dungeon or raid quest's or a party member's; a silver one for one
-		ignored; else the disc's black ring
+		A red ring, to stand out, for one the route won't take: a dungeon or raid quest's, or one ignored. A
+		white one for a party member's, a quest the player doesn't have; else the disc's black ring
 	]]
 	local ringColor
-	if IsDungeonStop(stop) then
+	if IsUntracked(stop) then
 		ringColor = "ROUTE_ALERT_RING"
-	elseif IsUntracked(stop) then
-		ringColor = "HELP"
 	elseif IsPartyStop(stop) then
-		ringColor = "ROUTE_ALERT_RING"
+		ringColor = "ROUTE_PARTY_RING"
 	end
 	pin.Disc:SetTexture(ringColor and PARTY_DISC_TEXTURE or DISC_TEXTURE)
 	pin.Ring:SetShown(ringColor ~= nil)
@@ -425,11 +418,13 @@ end
 	one of its spawns. On the route's zone an objective the route goes to is its waypoint, so it has no
 	camp marker, and one it doesn't (ignored, or the route running back to the corpse) is dimmed behind
 	the waypoints. On every other map, the continent's too, each is at full strength and there's no route:
-	the route is the zone the player is in
+	the route is the zone the player is in. On a flight path no map has the route, as it's planned again
+	from where the player lands, so every map shows each objective's marker alone
 ]]
 function providerMixin:RefreshAllData()
 	self:RemoveAllData()
 	ApplyQuestieIcons()
+	ApplyBlizzardQuests()
 	if not IsMapShown() then
 		return
 	end
@@ -438,7 +433,7 @@ function providerMixin:RefreshAllData()
 	local mapID = map:GetMapID()
 	local byObjective, byTurnIn = QuestieTextures()
 	local textures = { objectives = byObjective, turnIns = byTurnIn }
-	local onRoute = IsRouteMap(mapID)
+	local onRoute = IsRouteMap(mapID) and not routes.IsOnTaxi()
 	local routeKeys = onRoute and RouteKeys() or {}
 	if onRoute then
 		DrawRoute(map, mapID, textures)
@@ -494,15 +489,20 @@ local function AddToWorldMap()
 	AddFrameLevels(WorldMapFrame)
 	provider = CreateFromMixins(providerMixin)
 	WorldMapFrame:AddDataProvider(provider)
+	HookBlizzardQuests(WorldMapFrame) -- Blizzard's quest markers and objective areas, hidden for the route too
 
 	-- Questie's pins come and go as it draws; the ones the route stands in for stay hidden
 	local _, pins = Libraries()
 	local questieProvider = pins and pins.worldmapProvider
 	if questieProvider then
-		for _, name in ipairs({ "RefreshAllData", "HandlePin" }) do
-			if questieProvider[name] then
-				hooksecurefunc(questieProvider, name, RequestApplyQuestieIcons)
-			end
+		if questieProvider.RefreshAllData then
+			hooksecurefunc(questieProvider, "RefreshAllData", RequestApplyQuestieIcons)
+		end
+		if questieProvider.HandlePin then
+			hooksecurefunc(questieProvider, "HandlePin", function(_, icon)
+				routes.ApplyToPlacedQuestieIcon(icon)
+				RequestApplyQuestieIcons()
+			end)
 		end
 	end
 end
@@ -528,6 +528,7 @@ routes.AddListener(function()
 			provider:RefreshAllData()
 		else
 			ApplyQuestieIcons() -- So Questie's icons come back with the route turned off
+			ApplyBlizzardQuests() -- And Blizzard's quest markers and objective areas
 		end
 	end
 end)

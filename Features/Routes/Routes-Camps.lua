@@ -103,7 +103,8 @@ function routes.BuildCamps(yield)
 		return camps
 	end
 	local log = QuestLog()
-	for questID, quest in pairs(log) do
+	for _, questID in ipairs(routes.LoggedQuestIDs(log)) do
+		local quest = log[questID]
 		if type(quest) == "table" then
 			local state = QuestState(quest)
 			if state == 0 then

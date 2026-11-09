@@ -8,18 +8,31 @@ local _, ns = ...
 
 local routes = ns.routes
 
-local HereBeDragons = routes.HereBeDragons
+local GetHereBeDragons = routes.HereBeDragons
 
 -- Once Questie has started, its quest log and database are ready to read
 function routes.IsQuestieReady()
-	return Questie and Questie.started and HereBeDragons() and true or false
+	return Questie and Questie.started and GetHereBeDragons() and true or false
 end
 
 --------------------------------------------------------------------------------
 -- Questie's quest log
 --------------------------------------------------------------------------------
 
-local QuestLog = ns.QuestieQuestLog
+-- Each quest in Questie's quest log that its database knows, quest ID to Questie's quest
+local function QuestLog()
+	local log, acceptances = ns.QuestieLogEntries()
+	if not acceptances then
+		return log or {}
+	end
+	local quests = {}
+	for questID, acceptance in pairs(log) do
+		if type(acceptance) == "table" and type(acceptance.quest) == "table" then
+			quests[questID] = acceptance.quest
+		end
+	end
+	return quests
+end
 routes.QuestLog = QuestLog
 
 -- 1 done, -1 failed, 0 not yet, as Questie counts it

@@ -25,15 +25,6 @@ local function StyleQuestNumber(region, source)
 	region:SetTextColor(source:GetTextColor())
 end
 
---[[
-	The experience reward, each time QuestInfo shows one, in the description's font and color, its
-	thousands grouped like the turn-in line's. With the quest giver window cleanup off it stays Blizzard's.
-
-	Skins (ElvUI) add the share of a level it's worth after the number, "2,950 (+20.49%)", in a bright green
-	made for their dark backdrop. On the parchment, where the description is dark, the share takes
-	the palette's PARCHMENT_GAIN instead. The skin adds it in a hook that may run before or after this one, so
-	only the number at the front is grouped, and the color follows each change to the text
-]]
 -- Whether a FontString's color is dark, as text on the parchment is
 local function IsDarkText(region)
 	local r, g, b = region:GetTextColor()
@@ -92,6 +83,15 @@ local function StyleRewardMoney(styled)
 	end
 end
 
+--[[
+	The experience reward, each time QuestInfo shows one, in the description's font and color, its
+	thousands grouped like the turn-in line's. With the quest giver window cleanup off it stays Blizzard's.
+
+	Skins (ElvUI) add the share of a level it's worth after the number, "2,950 (+20.49%)", in a bright green
+	made for their dark backdrop. On the parchment, where the description is dark, the share takes
+	the palette's PARCHMENT_GAIN instead. The skin adds it in a hook that may run before or after this one, so
+	only the number at the front is grouped, and the color follows each change to the text
+]]
 local experienceFrame = QuestInfoRewardsFrame and QuestInfoRewardsFrame.XPFrame
 local experienceValue = experienceFrame and experienceFrame.ValueText
 if experienceValue and QuestInfo_Display then

@@ -1,6 +1,6 @@
 # Pretty Wide Quest Log // Technical Reference
 
-This document combines architecture notes and contribution guidance for developers working on Pretty Wide Quest Log. For end-user documentation, see [README.md](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/README.md).
+> Code map for working on Pretty Wide Quest Log: where things live, how they connect, and the traps. Where this and the code disagree, the code wins. For players, see [README.md](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/README.md).
 
 ## File Map
 
@@ -8,1175 +8,1214 @@ This document combines architecture notes and contribution guidance for develope
 Pretty-Wide-Quest-Log/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
-│   │   ├── config.yml                    This add-on's New issue page: the blank-issue link, Discord and CurseForge
-│   │   ├── defect.yml                    Shared, from Common-Core
-│   │   └── request.yml                   Shared, from Common-Core
+│   │   ├── config.yml                      This add-on's New issue page: blank-issue link, Discord, CurseForge
+│   │   ├── defect.yml                      Shared, from Common-Core
+│   │   └── request.yml                     Shared, from Common-Core
 │   └── workflows/
-│       ├── ci.yml                        Calls Common-Core: CI checks on every PR and push to main
-│       ├── issue-labels.yml              Calls Common-Core: labels a new Defect by its Issue Type
-│       └── package.yml                   Calls Common-Core: release packaging on a tag
-├── .gitattributes                        Shared, from Common-Core
-├── .gitignore                            Shared, from Common-Core
-├── .luacheckrc                           Lint config
-├── .pkgmeta                              Library externals and the zip's ignore list, Data/Wrath and Data/Mainline included
-├── Pretty-Wide-Quest-Log_Vanilla.toc     Classic Era, Season of Discovery included
-├── Pretty-Wide-Quest-Log_TBC.toc         TBC Anniversary
-├── Pretty-Wide-Quest-Log_Camelot.toc     WoW Forever
-├── Pretty-Wide-Quest-Log_Mists.toc       Mists of Pandaria Classic
+│       ├── ci.yml                          Calls Common-Core: CI checks on every PR and push to main
+│       ├── issue-labels.yml                Calls Common-Core: labels a new Defect by its Issue Type
+│       └── package.yml                     Calls Common-Core: release packaging on a tag
+├── .gitattributes                          Shared, from Common-Core
+├── .gitignore                              Shared, from Common-Core
+├── .luacheckrc                             Lint config
+├── .pkgmeta                                Externals and ignore list; strips Data/Wrath and Data/Mainline
+├── Bindings.xml                            The Use Quest Item key binding; the client loads it, no TOC line
+├── Pretty-Wide-Quest-Log_Vanilla.toc       Classic Era, Season of Discovery included
+├── Pretty-Wide-Quest-Log_TBC.toc           TBC Anniversary
+├── Pretty-Wide-Quest-Log_Camelot.toc       WoW Forever
+├── Pretty-Wide-Quest-Log_Mists.toc         Mists of Pandaria Classic
 ├── Data/
-│   ├── Flavor.lua                        The flavor from the TOC: ns.FLAVOR, ns.EXPANSION, ns.IS_DISCOVERY, ns.DATA_FOLDER
-│   ├── Data.lua                          Locale, names, links, palette, class colors, registry and options widths, ns.LAYOUT, marks, chat limit, share and dungeon timings
-│   ├── Default-Settings.lua              AceDB defaults, Routes' subtable included
-│   ├── {Game}/Map-Reveal-{Game}.lua      The map's unexplored areas, by map art ID; empty on Wrath and Mainline
-│   ├── {Game}/Quest-Tags-{Game}.lua      Quest tag IDs to the level tag's letter, per flavor
-│   ├── {Game}/Sample-Quests-{Game}.lua   The quests and areas the Example lines name; empty on Mainline
-│   └── {Game}/Wowhead-{Game}.lua         The flavor's Wowhead quest address, a single setting
-├── Diagnostics/                          Diagnostic Tools, with five tabs: Run Tests, Settings, Code, Data, Localization
-│   ├── Diagnostics-Core.lua              Runtime state and the panel's strings
-│   ├── Manifests.lua                     Per-client API rows, Validate Data sources, Game Names rows, the Context reports
-│   ├── Event-Log.lua                     The live Event Log
-│   ├── Tracker-Taint.lua                 The live Tracker Taint Watch, for objective tracker taint on WoW Forever
-│   ├── Code-Reports.lua                  Event Registration, API Endpoints, Library Versions
-│   ├── Settings-Reports.lua              Display Context, Other Add-ons, Saved Variables
-│   ├── Validate-Data.lua                 Checks each data file's IDs against the client, and prints the Wowhead address
-│   ├── Localization-Reports.lua          Locale Context, Game Names, and Message Length for the whispers and the dungeon announcement
-│   ├── Report-Runner.lua                 The report registry, tab groupings and Run All
-│   └── Options-Diagnostics.lua           The panel and its tabs
+│   ├── Flavor.lua                          The flavor from the TOC: ns.FLAVOR, ns.EXPANSION, ns.IS_DISCOVERY, ns.DATA_FOLDER
+│   ├── Data.lua                            Names, links, palette, class colors, panel widths, ns.LAYOUT, marks, chat limit, share and dungeon timings
+│   ├── Default-Settings.lua                AceDB defaults, Routes' subtable included
+│   ├── {Game}/                             Vanilla, Discovery, TBC, Camelot, Mists; Wrath and Mainline ship to no client
+│   ├── {Game}/Map-Reveal-{Game}.lua        The map's unexplored areas, by map art ID
+│   ├── {Game}/Quest-Tags-{Game}.lua        Quest tag IDs to the level tag's letter
+│   ├── {Game}/Sample-Quests-{Game}.lua     The quests and areas the Example lines name
+│   └── {Game}/Wowhead-{Game}.lua           The flavor's Wowhead quest address, a single setting
+├── Diagnostics/                            Diagnostic Tools, copied whole; Manifests.lua is this add-on's part
 ├── Features/
-│   ├── Core.lua                          Version, event dispatcher, AceDB, the Wide Quest Log switch, login notices
-│   ├── Utilities.lua                     Colors, number grouping, secret values, Questie imports, VoiceOver, share interval, the Share button's solo tooltip
-│   ├── Announcements.lua                 Player prints (ns:PrintMessage), the share print, sent messages (ns:Announce), group channel
-│   ├── Quest-Log-API.lua                 Quest log calls by quest ID on every client, plus tags and titles
-│   ├── Quest-Details-Data.lua            WoW Forever and Mists: the selected quest's details as plain data for the window's details pane
-│   ├── Quest-Sort.lua                    The sort rules both quest logs share, and the current zone's match
-│   ├── Quest-Display.lua                 Level tags and their legend, quest titles, quest ID
-│   ├── Quest-Objectives.lua              Objective lines on both quest logs: the check, the count column, inline icons, the two-space inset
-│   ├── Quest-Info-Style.lua              Quest text styling: section headings, line spacing, Blizzard's style kept to put back
-│   ├── Quest-Rewards.lua                 The rewards block's spacing, and experience and gold in the description's font
-│   ├── Tracking-Mark.lua                 The tracking mark in the list, and whether Questie's tracker has taken over
-│   ├── Wowhead-Link.lua                  The quest ID's Wowhead link and its copy popup
-│   ├── Quest-Chain.lua                   The Quest Chain section of the details, from Questie's database
-│   ├── Quest-Giver.lua                   Quest giver window cleanup: its own text, page spacing, reward names, backdrop, level tags
-│   ├── Gossip.lua                        The gossip window's line spacing, while the cleanup is on
-│   ├── Quest-Giver-Pages.lua             The quest giver's greeting and progress pages, and the quest ID under the progress page
-│   ├── Window.lua                        Window title, art, height clamp, resize grip and list buttons, both quest logs
-│   ├── Turn-In-Line.lua                  The Ready to Turn In line and its tooltip, from Questie's quest data
-│   ├── Classic-Tracking.lua              Classic Era and TBC: Track All and Untrack All
-│   ├── Classic-Quest-Sort.lua            Classic Era and TBC: the sorted order, and Blizzard's rows redrawn to show it
-│   ├── Classic-Quest-List.lua            Classic Era and TBC: list rows, row spacing, row style, list buttons, zone name hovers
-│   ├── Classic-VoiceOver.lua             Classic Era and TBC: VoiceOver's play buttons on the sorted rows
-│   ├── Classic-Quest-Details.lua         Classic Era and TBC: detail pane layout, objectives, rewards, daily reset, quest ID
-│   ├── Classic-Quest-Log.lua             Classic Era and TBC: widens Blizzard's window, art, resizing, scale, combat close
-│   ├── Classic-Zone-Actions.lua          Classic Era, TBC and Mists: finding and sharing by quest ID, and the whole log
-│   ├── Zone-Share.lua                    The Share Quests button on a hovered zone name, every client
-│   ├── Share-Reminders.lua               The whisper when a quest share fails for a reason the party member can fix
-│   ├── Dungeon-Quest-Lookup.lua          The dungeon the player is in, and which quests in the log are its
-│   ├── Dungeon-Quests.lua                In a dungeon with a party, announces its quests and shares them with each member once
-│   ├── Quest-Map.xml                     The map's canvas frame, which only XML can build
-│   ├── Quest-Map.lua                     The map beside the window: layout, scale, Show Map / Hide Map
-│   ├── Questie-Map.xml                   Pin templates for Questie's icons and objective areas on the map
-│   ├── Questie-Map.lua                   Questie's icons on the map, their tooltip, zone dropdown, refreshing
-│   ├── Questie-Map-Quest-Giver.lua       The zone a quest was given in, from Questie's database, for picking a quest's map
-│   ├── Questie-Map-Areas.lua             Each objective's spawns clustered into the shapes of its areas
-│   ├── Questie-Map-Area-Layer.lua        The layer the objective areas are shaded on
-│   ├── Classic-Quest-Map.lua             Classic Era and TBC: exploration layer, following the selection
-│   ├── Quest-Map-Reveal.lua              The map's unexplored areas, drawn so the whole zone shows
-│   ├── Classic-ElvUI.lua                 Classic Era and TBC: opaque ElvUI backdrop, ElvUI-styled buttons, map and dropdown
-│   ├── Forever-Quest-Log.lua             WoW Forever and Mists: window, buttons, events, side windows, scale, combat close
-│   ├── Quest-Log-Key.lua                 WoW Forever and Mists: the quest log key, bound over to the window
-│   ├── Forever-Quest-List-Entries.lua    WoW Forever and Mists: the list's entries, built from the log and sorted
-│   ├── Forever-Quest-List.lua            WoW Forever and Mists: list rows, list buttons, zone name clicks
-│   ├── Forever-Quest-Details.lua         WoW Forever and Mists: the detail pane, drawn on frames of its own
-│   ├── Forever-Quest-Giver.lua           WoW Forever and Mists: the quest giver window's gold, experience and quest ID
-│   ├── Forever-VoiceOver.lua             WoW Forever and Mists: VoiceOver's or Spoken Quests' play buttons on the list rows
-│   ├── Forever-Quest-Map.lua             WoW Forever and Mists: Blizzard's layers, quest fallback, following the selection
-│   ├── Forever-Tracking.lua              WoW Forever: tracking and Track All by quest ID, deferring to Questie's tracker
-│   ├── Forever-Quest-Log-Key.lua         WoW Forever: micro menu and tracker clicks taken over from the world map
-│   ├── Forever-Zone-Actions.lua          WoW Forever: finding and sharing by quest ID, and the whole log
-│   ├── Mists-Tracking.lua                Mists: tracking and Track All by log index, redrawing WatchFrame
-│   ├── Mists-Quest-Log-Key.lua           Mists: micro menu and tracker clicks taken over from Blizzard's quest log
-│   ├── Mists-Quest-Portrait.lua          Mists: the quest giver's model under the map, or beside the window
+│   ├── Core.lua                            Version, event dispatcher, AceDB, the Wide Quest Log switch, login notices
+│   ├── Utilities.lua                       Colors, number grouping, secret values, Questie imports and log, VoiceOver, share interval
+│   ├── Announcements.lua                   Player prints, the share print, sent messages, group channel
+│   ├── Quest-Log-API.lua                   Quest log calls by quest ID on every client, plus tags and titles
+│   ├── Quest-Details-Data.lua              WoW Forever and Mists: the selected quest's details as plain data
+│   ├── Quest-Sort.lua                      The sort rules both quest logs share, and the current zone's match
+│   ├── Quest-Display.lua                   Level tags and their legend, quest titles, quest ID
+│   ├── Quest-Objectives.lua                Objective lines on both quest logs: check, count column, inline icons, inset
+│   ├── Quest-Info-Style.lua                Quest text styling: headings, line spacing, Blizzard's style kept to put back
+│   ├── Quest-Rewards.lua                   The rewards block's spacing, experience and gold in the description's font
+│   ├── Tracking-Mark.lua                   The tracking mark in the list, and whether Questie's tracker has taken over
+│   ├── Wowhead-Link.lua                    The quest ID's Wowhead link and its copy popup
+│   ├── Quest-Chain-Data.lua                The selected quest's chain from Questie's database, each part's label and color
+│   ├── Quest-Chain.lua                     The Quest Chain section of the details
+│   ├── Quest-Giver.lua                     Quest giver window cleanup: its own text, page spacing, level tags
+│   ├── Quest-Giver-Skins.lua               What skins (ElvUI) change on the quest giver window, put right: backdrop, reward names
+│   ├── Gossip.lua                          The gossip window's greeting style and quest line tags, while the cleanup is on
+│   ├── Quest-Giver-Pages.lua               The quest giver's greeting and progress pages, and the progress page's quest ID
+│   ├── Window.lua                          Window title, art, height clamp, resize grip and list buttons, both quest logs
+│   ├── Turn-In-Line.lua                    The Ready to Turn In line and its tooltip, from Questie's quest data
+│   ├── Classic-Tracking.lua                Classic Era and TBC: Track All and Untrack All
+│   ├── Classic-Quest-Sort.lua              Classic Era and TBC: the sorted order, and Blizzard's rows redrawn to show it
+│   ├── Classic-Quest-Rows.lua              Classic Era and TBC: the list's rows, how many show and where each goes
+│   ├── Classic-Quest-List.lua              Classic Era and TBC: list update, row style, list buttons, zone name hovers
+│   ├── Classic-VoiceOver.lua               Classic Era and TBC: VoiceOver's play buttons on the sorted rows
+│   ├── Classic-Quest-Details.lua           Classic Era and TBC: detail pane layout, objectives, rewards, daily reset, quest ID
+│   ├── Classic-Quest-Log.lua               Classic Era and TBC: widens Blizzard's window, art, resizing, scale, combat close
+│   ├── Classic-Zone-Actions.lua            Classic Era, TBC and Mists: finding and sharing by quest ID, and the whole log
+│   ├── Zone-Share.lua                      The Share Quests button on a hovered zone name, every client
+│   ├── Share-Reminders.lua                 The whisper when a quest share fails for a reason the party member can fix
+│   ├── Dungeon-Quest-Lookup.lua            The dungeon the player is in, and which quests in the log are its
+│   ├── Dungeon-Quests.lua                  In a party dungeon, announces its quests and shares them with each member once
+│   ├── Quest-Map.xml                       The map's canvas frame, which only XML can build
+│   ├── Quest-Map.lua                       The map beside the window: layout, scale, Show Map / Hide Map
+│   ├── Questie-Map.xml                     Pin templates for Questie's icons and objective areas on the map
+│   ├── Questie-Map.lua                     Questie's icons on the map, the zone dropdown, refreshing
+│   ├── Questie-Map-Tooltip.lua             The tooltip on the map's Questie icons
+│   ├── Questie-Map-Quest-Giver.lua         The zone a quest was given in, for picking a quest's map
+│   ├── Questie-Map-Areas.lua               Each objective's spawns clustered into the shapes of its areas
+│   ├── Questie-Map-Area-Layer.lua          The layer the objective areas are shaded on
+│   ├── Classic-Quest-Map.lua               Classic Era and TBC: exploration layer, following the selection
+│   ├── Quest-Map-Reveal.lua                The map's unexplored areas, drawn so the whole zone shows
+│   ├── Classic-ElvUI.lua                   Classic Era and TBC: opaque ElvUI backdrop, ElvUI-styled buttons, map, dropdown
+│   ├── Forever-Quest-Log.lua               WoW Forever and Mists: window, buttons, events, side windows, scale, combat close
+│   ├── Quest-Log-Key.lua                   WoW Forever and Mists: the quest log key, bound over to the window
+│   ├── Forever-Quest-List-Entries.lua      WoW Forever and Mists: the list's entries, built from the log and sorted
+│   ├── Forever-Quest-List.lua              WoW Forever and Mists: list rows, list buttons, zone name clicks, right-click menu
+│   ├── Forever-Quest-Details-Rewards.lua   WoW Forever and Mists: the details' reward buttons, tooltips, links, item loading
+│   ├── Forever-Quest-Details.lua           WoW Forever and Mists: the detail pane, drawn on frames of its own
+│   ├── Forever-Quest-Giver.lua             WoW Forever and Mists: the quest giver window's gold, experience and quest ID
+│   ├── Forever-VoiceOver.lua               WoW Forever and Mists: VoiceOver's or Spoken Quests' play buttons on the rows
+│   ├── Forever-Quest-Map.lua               WoW Forever and Mists: Blizzard's map layers, the quest marker, following the selection
+│   ├── Forever-Tracking.lua                WoW Forever: tracking and Track All by quest ID, deferring to Questie's tracker
+│   ├── Forever-Quest-Log-Key.lua           WoW Forever: micro menu and tracker clicks taken over from the world map
+│   ├── Forever-Zone-Actions.lua            WoW Forever: finding and sharing by quest ID, and the whole log
+│   ├── Mists-Tracking.lua                  Mists: tracking and Track All by log index, redrawing WatchFrame
+│   ├── Mists-Quest-Log-Key.lua             Mists: micro menu and tracker clicks taken over from Blizzard's quest log
+│   ├── Mists-Quest-Portrait.lua            Mists: the quest giver's model under the map, or beside the window
 │   └── Routes/
-│       ├── Routes.xml                    Lists the Routes files in order, and the two map pin templates
-│       ├── Routes-Core.lua               Settings, listeners, the planner coroutine, the watcher, when to plan again
-│       ├── Routes-Ignore.lua             The ignore list: objectives, turn-ins and party members left off the route
-│       ├── Routes-Solver.lua             Orders the route: cheapest insertion, or-opt, 2-opt, seeded shakes
-│       ├── Routes-Party.lua              Party members' quests from Questie's shared quest logs
-│       ├── Routes-Geography.lua          Position and zone in world yards, a ghost's corpse, which maps lie within a zone
-│       ├── Routes-Questie.lua            Questie's log, escorts, timers, instance quests, the signature
-│       ├── Routes-Blobs.lua              Spawns into blobs, and each objective's candidate places
-│       ├── Routes-Nodes.lua              Objectives and turn-ins into nodes
-│       ├── Routes-Pinning.lua            Progress, camps worked and left, and the node pinned first
-│       ├── Routes-Overlaps.lua           Two objectives at once: one rides along where its spawns overlap another's
-│       ├── Routes-Stops.lua              Ordered nodes merged into waypoints, and each task's text and color
-│       ├── Routes-Stop-Lines.lua         A waypoint's quests for the Quest Arrow and the map tooltip
-│       ├── Routes-Camps.lua              Every place each objective can be done, in every zone, for every map
-│       ├── Routes-Map-Size.lua           The full-size world map, unless another add-on sizes it
-│       ├── Routes-Map-Line.lua           The route's marching line of dots on the world map
-│       ├── Routes-Map-Questie-Icons.lua  Questie's icons hidden under the markers, and the textures the markers borrow
-│       ├── Routes-Map.lua                The route's markers on the world map, their tooltip, the data provider
-│       ├── Routes-Arrow-Survey.lua       What the Quest Arrow sees: the areas the player is in, what's next, where to point
-│       ├── Routes-Arrow.lua              The Quest Arrow: pointing, its colors, the eye, dragging, hiding
-│       ├── Routes-Arrow-List.lua         The quest list under the Quest Arrow
-│       └── Routes-Arrow-Menu.lua         The Quest Arrow's hover menu: ignore, group quests, ignore list, click hints
+│       ├── Routes.xml                      Lists the Routes files in load order, and the two map pin templates
+│       ├── Routes-Core.lua                 Settings, listeners, login setup, migrations, shared helpers
+│       ├── Routes-Planner.lua              The planner coroutine, the watcher, when to plan again
+│       ├── Routes-Ignore.lua               The ignore list: objectives, turn-ins and party members left off the route
+│       ├── Routes-Solver.lua               Orders the route: cheapest insertion, or-opt, 2-opt, seeded shakes
+│       ├── Routes-Party.lua                Party members' quests from Questie's shared quest logs
+│       ├── Routes-Geography.lua            Position and zone in world yards, a ghost's corpse, which maps lie within a zone
+│       ├── Routes-Questie.lua              Questie's log, escorts, timers, instance quests, the signature
+│       ├── Routes-Blobs.lua                Spawns into blobs, and each objective's candidate places
+│       ├── Routes-Nodes.lua                Objectives and turn-ins into nodes
+│       ├── Routes-Pinning.lua              Progress, camps worked and left, and the node pinned first
+│       ├── Routes-Overlaps.lua             Two objectives at once: one rides along where its spawns overlap another's
+│       ├── Routes-Stops.lua                Ordered nodes merged into waypoints, and each task's text and color
+│       ├── Routes-Stop-Lines.lua           A waypoint's quests for the Quest Arrow and the map tooltip
+│       ├── Routes-Camps.lua                Every place each objective can be done, in every zone, for every map
+│       ├── Routes-Map-Size.lua             The full-size world map
+│       ├── Routes-Map-Line.lua             The route's marching line of dots on the world map
+│       ├── Routes-Map-Questie-Icons.lua    Questie's icons hidden under the markers, and the textures the markers borrow
+│       ├── Routes-Map-Blizzard-Quests.lua  WoW Forever: Blizzard's quest markers and objective areas hidden under the route
+│       ├── Routes-Map-Tooltip.lua          A waypoint's or camp's tooltip on the world map
+│       ├── Routes-Map.lua                  The route's markers on the world map, the data provider
+│       ├── Routes-Arrow-Survey.lua         What the Quest Arrow sees: the areas the player is in, what's next, where to point
+│       ├── Routes-Arrow.lua                The Quest Arrow: pointing, its colors, the eye, dragging, hiding
+│       ├── Routes-Arrow-List.lua           The quest list under the Quest Arrow
+│       ├── Routes-Arrow-Item-Choice.lua    Which items get a Use Item button, and where
+│       ├── Routes-Arrow-Items.lua          The Quest Arrow's secure Use Item buttons, their combat holds and the key
+│       ├── Routes-Arrow-Menu.lua           The Quest Arrow's hover menu: ignore, group quests, ignore list, click hints
+│       └── Routes-TomTom.lua               TomTom's own quest arrow stood down while the Quest Arrow shows
 ├── Includes/
-│   ├── Images/                           The icon, window art (PWQL_*.blp), untracked mark, Wowhead link, party icon (Party-On-Quest.tga), Routes art (Route-*.tga)
-│   └── Libraries/                        Vendored LibStub, CallbackHandler and Ace3, never edited
-├── Locales/
-│   ├── enUS.lua                          Source of truth
-│   └── {langCode}.lua                    The other ten supported locales
+│   ├── Images/                             Icon, window art (PWQL_*), marks, party icon, Routes art (Route-*)
+│   └── Libraries/                          Vendored LibStub, CallbackHandler and Ace3, never edited
+├── Locales/                                The enUS.lua source of truth and ten more locales
 ├── Options/
-│   ├── Options-Utilities.lua             Shared rows: feature and Routes switches, sub-option rows, status lines, the reload check and prompt
-│   ├── Options-General.lua               Root panel: the welcome toggle and the four feature switches
-│   ├── Options-Quest-Log.lua             Wide Quest Log panel: the switch, Sorting, Quest Rows, Window & Map, Handy Clicks
-│   ├── Options-Quality-of-Life.lua       Quality of Life panel: the quest giver window, quest sharing, dungeon quests, Example lines
-│   ├── Options-Routes-Map.lua            Routes on Zone Map panel: zone map, markers, route line, party
-│   ├── Options-Quest-Arrow.lua           Quest Arrow panel: size, lock, position, text, hiding
-│   ├── Options-Profiles.lua              Stock AceDBOptions
-│   ├── Options-Feedback-Support.lua      Feedback & Support panel: the Level Up note, the four links and the version line
-│   └── Options.lua                       Registration, opener, /pwql
+│   ├── Options-Utilities.lua               Shared rows: feature and Routes switches, status lines, Example lines, reload check
+│   ├── Options-General.lua                 Root panel: the welcome toggle and the four feature switches
+│   ├── Options-Quest-Log.lua               Wide Quest Log panel: switch, Sorting, Quest Rows, Window & Map, Handy Clicks
+│   ├── Options-Quality-of-Life.lua         Quality of Life panel: quest giver window, sharing, dungeon quests, Example lines
+│   ├── Options-Routes-Map.lua              Routes on Zone Map panel: zone map, markers, route line, party
+│   ├── Options-Quest-Arrow.lua             Quest Arrow panel: size, lock, position, text, item buttons, hiding
+│   ├── Options-Profiles.lua                Stock AceDBOptions
+│   ├── Options-Feedback-Support.lua        Feedback & Support panel
+│   └── Options.lua                         Registration, opener, /pwql
 ├── LICENSE
-├── README.md                             Player-facing overview
-├── README-Notes.md                       Recorded exceptions to the style guide
-├── README-Technical.md                   This document
-└── README-Testing.md                     Manual test plan
+├── README.md                               Player-facing overview
+├── README-Notes.md                         Recorded exceptions to the Style Guide
+├── README-Technical.md                     This document
+└── README-Testing.md                       Manual test plan
 ```
 
-Retired, so don't bring them back: an unsuffixed TOC; the root-level `Legacy.lua`, `Modern.lua`, `Common.lua`, `Layout.lua` and `img/`, whose code lives in `Features/` and art in `Includes/Images/`; `Features/Forever-Quest-Map.xml`, replaced by `Features/Quest-Map.xml`, which every client loads; `Features/Zone-Menu.lua`, replaced by `Features/Zone-Share.lua`; and `Options/Options-Forever-Quest-Log.lua`, whose switch is on the Wide Quest Log panel on every client and whose reload prompt is in `Options/Options-Utilities.lua`. The `WOWHEAD_QUEST_URLS` table in `Data/Data.lua` is retired too: each flavor's address is its own `Data/{Game}/Wowhead-{Game}.lua`.
+Retired, so don't bring them back: an unsuffixed TOC; the root-level `Legacy.lua`, `Modern.lua`, `Common.lua`, `Layout.lua` and `img/` (their code lives in `Features/`, art in `Includes/Images/`); `Features/Forever-Quest-Map.xml` (every client loads `Features/Quest-Map.xml`); `Features/Zone-Menu.lua` (replaced by `Features/Zone-Share.lua`); `Options/Options-Forever-Quest-Log.lua` (its switch is on the Wide Quest Log panel, its reload prompt in `Options/Options-Utilities.lua`); the `WOWHEAD_QUEST_URLS` table (each flavor's address is its own `Data/{Game}/Wowhead-{Game}.lua`); and `ns.MAP_SIZE_ADDONS` (the full-size map works beside map add-ons; see The Zone Map).
 
 ## Architecture
 
 ### Two Quest Logs, One Layout
 
-Classic Era and TBC ship Blizzard's classic `QuestLogFrame`, so the `Features/Classic-*.lua` files widen it in place. They move Blizzard's own regions and rows, swap the art, and hook `QuestLog_Update`, `QuestLog_SetSelection` and `QuestLogTitleButton_OnClick` (the list file, which calls the sort file's order and row redraws) and `QuestLog_UpdateQuestDetails` and `QuestFrameItems_Update` (the details file) to restyle what Blizzard just drew; `Classic-Quest-Log.lua` owns the window itself, its art, resizing and scale. WoW Forever runs the Retail engine, which replaced that frame with a list docked in the world map, so there is nothing to widen, and the `Features/Forever-*.lua` files build a window of their own instead. Mists keeps Blizzard's `QuestLogFrame`, but rides that same window and takes over from Blizzard's (see Taint).
-
-So there are two quest logs and three sets of files. Each client's TOC picks its own, and no quest log file asks which flavor it's on:
-
-- **Classic Era and TBC** list the `Classic-*.lua` files: tracking, sort, list, VoiceOver, details, log and zone actions, then `Classic-Quest-Map.lua` after the shared map files and `Classic-ElvUI.lua` after `Features/Routes/Routes.xml`. Parts run in TOC order, so the log file comes after the list file whose row height it reads (`ns.GetQuestRowHeight`).
-- **WoW Forever** lists `Forever-Tracking.lua`, `Forever-Quest-Log.lua`, the shared `Quest-Log-Key.lua`, `Forever-Quest-Log-Key.lua`, then the list entries, list, details, quest giver, VoiceOver and zone actions files, and `Forever-Quest-Map.lua` after the shared map files.
-- **Mists** lists the same window files with `Mists-Tracking.lua` and `Mists-Quest-Log-Key.lua` in place of WoW Forever's tracking and takeover, `Classic-Zone-Actions.lua` in place of `Forever-Zone-Actions.lua` because its quest log calls are Classic's, and `Mists-Quest-Portrait.lua`, listed last.
-
-The window reads and acts on the log by quest ID, through the `ns` accessors in `Features/Quest-Log-API.lua` (`ns.GetQuestLogEntry`, `ns.GetLogIndexForQuestID`, `ns.SelectQuest`, `ns.IsPushableQuest`, `ns.ShareQuest`, `ns.AskToAbandonQuest` and the rest), which every client loads. Where `C_QuestLog.GetInfo` exists (WoW Forever) they are the client's own calls. Elsewhere they walk the log by index, and those that act on a quest select it, act, then put the player's selection back (`WithQuestSelected`). The same file answers by quest ID on every client for a quest's tag (`ns.GetQuestTagByID`), its title (`ns.GetQuestTitleByID`) and whether a party member has it (`ns.IsUnitOnQuest`), choosing the client's call once at load. The details pane's data comes the same way from `Features/Quest-Details-Data.lua` (WoW Forever and Mists only): `ns.GetSelectedQuestDetails` returns the selected quest's text, objectives and rewards as plain tables, picking each call once (by quest ID where the client has it), and `Forever-Quest-Details.lua` draws them on frames of its own (see Taint).
-
-Where the two window clients differ, shared code tests for the feature, not the flavor: `FogOfWarFrameMixin` and `C_QuestLog.GetNextWaypointForMap` in `Forever-Quest-Map.lua`, `C_QuestLog.GetNextWaypointText`, `GetQuestLogChoiceInfoLootType` and `C_QuestInfoSystem` in `Quest-Details-Data.lua`. Shared feature code reads `ns.FLAVOR` in only three places, all testing for `"Camelot"`: the sent-message marker, which WoW Forever blocks (`Announcements.lua`); the dungeon quests' range check, which WoW Forever answers for no one (see Dungeon Quests); and the party member names Routes matches against Questie's shared logs, which carry WoW Forever's surname (`routes.UnitFullName`, `Routes-Party.lua`). Diagnostics reads it to label the client, for two TBC-only rows, and for Sharing Context's line about party range on WoW Forever. What differs only in data, such as the Wowhead address, comes from the data folder the TOC lists, never from a flavor check. The flavor always comes from the TOC's `X-Flavor` (`Data/Flavor.lua`), never from the client, because WoW Forever's `WOW_PROJECT_ID` has already changed value once. Season of Discovery is the one exception no TOC can name, since it shares the Classic Era client: the Vanilla TOC lists both `Data/Vanilla/` and `Data/Discovery/`, and each of those files returns at once unless `ns.IS_DISCOVERY` (`C_Seasons.GetActiveSeason()`) matches it; `ns.DATA_FOLDER` names the folder that built the tables. The shared files (`Zone-Share.lua`, `Share-Reminders.lua`, `Dungeon-Quests.lua`, `Quest-Map.lua`, `Questie-Map.lua` and the rest) call into whichever files loaded through the same `ns` names: `ns.SharedQuest`, `ns.ShareableZoneQuests`, `ns.ShareQuests`, `ns.LogQuests`, `ns.questMap.FollowQuest`, `ns.questLogFrame`.
-
-Every client shares `ns.LAYOUT` (`Data/Data.lua`) and `Features/Window.lua` (the title, the art, the resize grip), which is why the two look the same. The detail pane's text column (`CONTENT_WIDTH`) is exactly two columns of reward buttons wide (`REWARD_COLUMNS_WIDTH`, 147 + 1 + 147px), because reward buttons can't shrink, with `TEXT_MARGIN` (16) of parchment left, right and top. The window grows by `EXTRA_WIDTH`, whatever that column plus its margins needs beyond the classic art's parchment (x 348 to 658), and `ns.CreateWindowArt` fills the difference with a strip cut from the last `STRIP_SOURCE` (8) pixels of the middle piece, so both seams continue the art on either side. Numbers in the details (objective counts, gold, experience, the quest ID) end two spaces inside the column (`ns.TwoSpacesWide`, `Quest-Objectives.lua`), because body text wraps short of the edge and a number flush against it looks like it runs past.
+- **Classic Era and TBC** ship Blizzard's classic `QuestLogFrame`; the `Features/Classic-*.lua` files widen it in place: move Blizzard's regions and rows, swap the art, and post-hook `QuestLog_Update`, `QuestLog_SetSelection`, `QuestLogTitleButton_OnClick` (list file, which calls the sort file's order and redraws) and `QuestLog_UpdateQuestDetails`, `QuestFrameItems_Update` (details file). `Classic-Quest-Rows.lua` makes and places the rows (`ns.CreateClassicQuestRows`, called from the list's part); `Classic-Quest-Log.lua` owns the window, art, resizing and scale.
+- **WoW Forever** runs the Retail engine, whose quest log is docked in the world map, so there's nothing to widen: the `Forever-*.lua` files build a window of their own.
+- **Mists** keeps Blizzard's `QuestLogFrame` but rides the same own window and takes over from Blizzard's (see Taint).
+- Each TOC picks its files; no quest log file asks which flavor it's on.
+  - Classic Era / TBC: the `Classic-*.lua` set (tracking, sort, rows, list, VoiceOver, details, log, zone actions), `Classic-Quest-Map.lua` after the shared map files, `Classic-ElvUI.lua` after `Routes.xml`. TOC order matters: the log's part reads `ns.GetQuestRowHeight`, which exists only once the list's part has built its rows.
+  - WoW Forever: `Forever-Tracking.lua`, `Forever-Quest-Log.lua`, shared `Quest-Log-Key.lua`, `Forever-Quest-Log-Key.lua`, then list entries, list, details rewards, details, quest giver, VoiceOver, zone actions; `Forever-Quest-Map.lua` after the shared map files.
+  - Mists: the same window files with `Mists-Tracking.lua` and `Mists-Quest-Log-Key.lua`, `Classic-Zone-Actions.lua` (its quest log calls are Classic's), and `Mists-Quest-Portrait.lua` last.
+- **Quest log access by quest ID**: the `ns` accessors in `Features/Quest-Log-API.lua` (`ns.GetQuestLogEntry`, `ns.GetLogIndexForQuestID`, `ns.SelectQuest`, `ns.IsPushableQuest`, `ns.ShareQuest`, `ns.AskToAbandonQuest`, `ns.GetQuestTagByID`, `ns.GetQuestTitleByID`, `ns.IsUnitOnQuest`, …), loaded everywhere. Client's own calls where `C_QuestLog.GetInfo` exists (WoW Forever); elsewhere they walk the log by index, and those that act select, act, then put the selection back (`WithQuestSelected`). Each call is chosen once at load.
+- **Details data** (WoW Forever and Mists): `ns.GetSelectedQuestDetails` (`Quest-Details-Data.lua`) returns text, objectives and rewards as plain tables; `Forever-Quest-Details.lua` draws them (see Taint, Quest Text).
+- **Feature tests, not flavor tests.** Shared code tests for the API or mixin (`FogOfWarFrameMixin`, `C_QuestLog.GetNextWaypointForMap`, `C_QuestInfoSystem`, …). Shared feature code reads `ns.FLAVOR` only for `"Camelot"`: the sent-message marker (`Announcements.lua`), the dungeon quests' range check, and Routes' party names (`routes.UnitFullName`). Diagnostics reads it for labels and a few client-only rows. Data differences come from the TOC's data folder, never a flavor check.
+- **The flavor comes from the TOC's `X-Flavor`** (`Data/Flavor.lua`), never the client: WoW Forever's `WOW_PROJECT_ID` has changed value once already. Season of Discovery shares the Era client, so the Vanilla TOC lists both `Data/Vanilla/` and `Data/Discovery/`, each file returning at once unless `ns.IS_DISCOVERY` matches; `ns.DATA_FOLDER` names the folder that built the tables.
+- Shared files call whichever client files loaded through common `ns` names: `ns.SharedQuest`, `ns.ShareableZoneQuests`, `ns.ShareQuests`, `ns.LogQuests`, `ns.questMap.FollowQuest`, `ns.questLogFrame`.
+- **One layout**: every client shares `ns.LAYOUT` (`Data/Data.lua`) and `Features/Window.lua` (title, art, resize grip). The details column (`CONTENT_WIDTH`) is exactly `REWARD_COLUMNS_WIDTH`, two reward buttons wide, because reward buttons can't shrink; `TEXT_MARGIN` around it. The window grows by `EXTRA_WIDTH` past the classic art's parchment, and `ns.CreateWindowArt` fills it with a strip cut from the middle piece's last `STRIP_SOURCE` pixels so both seams continue the art. Numbers in the details end two spaces inside the column (`ns.TwoSpacesWide`, `Quest-Objectives.lua`): body text wraps short of the edge, and a flush number looks like it runs past.
 
 ### The Wide Quest Log Switch
 
-`enableWideQuestLog` decides, once, as the saved settings load, whether the wide quest log runs this session; `Features/Core.lua` records the answer in `ns.wideQuestLogActive`, true only when the switch is on and a loaded file has a wide quest log to run (`ns.hasWideQuestLog`). The two quest logs need it differently:
-
-- **Classic Era and TBC.** Hooks on Blizzard's quest log can't be removed, so every Classic quest log file, from `Classic-Tracking.lua` to `Classic-ElvUI.lua`, and the shared map files that build on it (`Quest-Map.lua`, `Questie-Map.lua`, `Questie-Map-Quest-Giver.lua`, `Questie-Map-Areas.lua`, `Questie-Map-Area-Layer.lua`, `Quest-Map-Reveal.lua`), wraps its whole body in `ns.AddWideQuestLogPart(function() ... end)`. Core queues those functions at file load and runs them, in TOC order and each through `securecall`, inside `ADDON_LOADED`, only when the switch is on. With it off, Blizzard's quest log window is never reshaped or hooked, with two deliberate exceptions that must work with the switch off: `Share-Reminders.lua` post-hooks `QuestLogPushQuest` at file scope, only to note which quest went out, and `Classic-Zone-Actions.lua` sits outside any part because Share Quests and the share whispers call its `ns.SharedQuest` and the dungeon quests its `ns.LogQuests` and `ns.ShareQuests`; it touches the quest log only when called.
-- **WoW Forever and Mists.** The quest log is the add-on's own window, which stays closed unless something opens it, so `Forever-Quest-Log.lua` sets `ns.questLogIsOwnWindow` (and `ns.hasWideQuestLog`), the files build at file scope, before `ns.db` exists, and `ns.AddWideQuestLogPart` runs the shared map files' parts at once. Only the quest log takeover waits for the switch: `ns.TakeOverQuestLog()`, defined by `Forever-Quest-Log-Key.lua` or `Mists-Quest-Log-Key.lua`, routes the ways into the quest log to the window (see Taint). With the switch off the key opens Blizzard's own quest log: the world map's on WoW Forever, `QuestLogFrame` on Mists.
-
-Core drops its queue once the parts have run, so on Classic Era and TBC a part added after `ADDON_LOADED` throws. Everything a part defines is nil on Classic Era and TBC with the switch off: `ns.RefreshQuestLog`, `ns.ResetWindow`, `ns.ApplyWindowScale`, `ns.ApplyMapScale`, `ns.ResetZoneOrder`, `ns.questLogFrame`, `ns.questMap`, `ns.listButtons`, `ns.abandonButton` and `ns.shareButton`. Code outside a part checks `ns.wideQuestLogActive` before reaching for them, as `ns:ApplyProfile` and `Tracking-Mark.lua` do, and the Wide Quest Log panel's controls are disabled by its `Inactive` gate. `ns.hasQuestMap` is set at file scope in `Quest-Map.lua`, so on Classic Era and TBC it is true even while `ns.questMap` is nil; test `ns.wideQuestLogActive` first.
-
-A change to the switch applies at the next `/reload`. `ns.IsQuestLogReloadPending()` compares the profile's value with `ns.wideQuestLogActive`, so a profile switch counts and flipping it back goes quiet. While it differs, a silver status line says so under the switch on both the General and Wide Quest Log panels, and when the game's Options window closes, `PRETTYWIDEQUESTLOG_RELOAD` offers the reload, a frame after the close. `ns.WatchOptionsForReload` (`Options/Options-Utilities.lua`, beside the prompt) hooks the Options window's `OnHide` the first time any of the add-on's panels shows inside it, because that window may not exist when the add-on loads, and because watching the window rather than the panels still prompts after the player has moved to another category. The Wide Quest Log panel's settings hide while the switch is off (`Hidden`), and gray out while it's on but not yet active (`Inactive`).
-
-The quest giver window styling, the gossip window's greeting, Share Quests' quest log calls, the share whispers, the dungeon quests, Routes and the login notices don't depend on the switch, so they run either way.
+- `enableWideQuestLog` is read once as the saved settings load; `Features/Core.lua` stores the answer in `ns.wideQuestLogActive` (switch on and a loaded file has a wide quest log, `ns.hasWideQuestLog`).
+- **Classic Era and TBC**: hooks on Blizzard's quest log can't be removed, so every Classic quest log file (`Classic-Tracking.lua` through `Classic-ElvUI.lua`) and the shared map files that build on it (`Quest-Map.lua`, `Questie-Map.lua`, `Questie-Map-Tooltip.lua`, `Questie-Map-Quest-Giver.lua`, `Questie-Map-Areas.lua`, `Questie-Map-Area-Layer.lua`, `Quest-Map-Reveal.lua`) wraps its body in `ns.AddWideQuestLogPart(function() ... end)`. Core queues them at file load and runs them in TOC order, each through `securecall`, inside `ADDON_LOADED`, only with the switch on. `Classic-Quest-Rows.lua` defines a function the list's part calls, so it only runs then too.
+  - Deliberate exceptions that must work with the switch off: `Share-Reminders.lua`'s file-scope `QuestLogPushQuest` post-hook (only notes which quest went out), and `Classic-Zone-Actions.lua`, outside any part because Share Quests, the whispers and the dungeon quests call it; it touches the quest log only when called.
+- **WoW Forever and Mists**: the window is the add-on's own and stays closed unless opened, so `Forever-Quest-Log.lua` sets `ns.questLogIsOwnWindow` and `ns.hasWideQuestLog`, files build at file scope (before `ns.db` exists), and `ns.AddWideQuestLogPart` runs parts at once. Only the takeover waits for the switch: `ns.TakeOverQuestLog()` (`Forever-Quest-Log-Key.lua` or `Mists-Quest-Log-Key.lua`). Switch off: the key opens Blizzard's quest log.
+- Core drops its queue after the parts run, so a part added after `ADDON_LOADED` throws.
+- With the switch off on Classic Era and TBC, everything a part defines is nil (`ns.RefreshQuestLog`, `ns.ResetWindow`, `ns.ApplyWindowScale`, `ns.ApplyMapScale`, `ns.ResetZoneOrder`, `ns.questLogFrame`, `ns.questMap`, `ns.listButtons`, `ns.abandonButton`, `ns.shareButton`). Code outside a part checks `ns.wideQuestLogActive` first (`ns:ApplyProfile`, `Tracking-Mark.lua`); the Wide Quest Log panel's controls use its `Inactive` gate. `ns.hasQuestMap` is set at file scope, so it's true while `ns.questMap` is nil: test `ns.wideQuestLogActive` first.
+- **Reload prompt**: a change applies at the next `/reload`. `ns.IsQuestLogReloadPending()` compares the profile's value with `ns.wideQuestLogActive` (a profile switch counts; flipping back goes quiet). A status line shows under the switch on the General and Wide Quest Log panels, and `PRETTYWIDEQUESTLOG_RELOAD` offers the reload a frame after the game's Options window closes. `ns.WatchOptionsForReload` (`Options/Options-Utilities.lua`) hooks that window's `OnHide` the first time a panel shows inside it: the window may not exist at load, and watching it rather than the panels still prompts after the player moves to another category. Panel settings hide with the switch off (`Hidden`) and gray out while a reload is pending (`Inactive`).
+- Independent of the switch: quest giver window styling, gossip greeting, Share Quests' quest log calls, the share whispers, dungeon quests, Routes, login notices.
 
 ### Event Loop
 
-`Features/Core.lua` owns the only event frame. Its `EVENTS` table pairs every event the add-on can handle with a handler named for the event; an event listed more than once runs every handler, in table order. A row with no third field names a handler on `ns`, called as `handler(ns, ...)`, without the event name. Because one name holds one function, each further feature handling the same event keeps its handler on a table of its own, named by its `ns` key in the row's third field (its owner), and is called as `handler(owner, ...)`. Handlers are looked up at every dispatch, a row whose owner or handler doesn't exist is skipped, and each handler runs through `securecall`, so one that errors is reported and the event's later handlers still run:
-
-- `GROUP_ROSTER_UPDATE` runs `ns:OnGroupRosterUpdate` (the window's repaint, WoW Forever and Mists), then `ns.dungeonQuests`', `ns.routes`' (which holds off replanning while a new member's quest log arrives) and `ns.routesArrow`'s.
-- `GROUP_JOINED` and `GROUP_LEFT` run the dungeon quests' `ns:OnGroupJoined` / `ns:OnGroupLeft`, then `ns.shareReminders`' handlers of the same names, then `ns.routes`', which clear the ignore list (`Routes-Ignore.lua`).
-- `PLAYER_LOGIN` runs `ns:OnPlayerLogin` (the notices below), then `ns.routes`'. `PLAYER_ENTERING_WORLD` runs the dungeon quests' `ns:OnPlayerEnteringWorld`, then `ns.routes`' and `ns.routesArrow`'s. `ZONE_CHANGED_NEW_AREA` runs the quest log's `ns:OnZoneChangedNewArea`, then `ns.routes`' and `ns.routesArrow`'s. `QUEST_LOG_UPDATE` runs the window's `ns:OnQuestLogUpdate`, then `ns.routes`'. `PLAYER_DEAD`, `PLAYER_ALIVE` and `PLAYER_UNGHOST` belong to `ns.routes` alone.
-- `ADDON_LOADED` runs `ns:OnAddonLoaded`, then `ns.routesMap:OnAddonLoaded`, which adds the route to `Blizzard_WorldMap` when that loads on demand after login.
-- `PLAYER_REGEN_ENABLED` runs the quest log key's `ns:OnPlayerRegenEnabled` (`Quest-Log-Key.lua`), then `ns.questMap`'s (`Forever-Quest-Map.lua`), `ns.questLogApi`'s (`Quest-Log-API.lua`, WoW Forever only) and `ns.questLogWindow`'s (`Forever-Quest-Log.lua`): the work held during combat (see Combat Lockdown).
-
-Routes takes its events only through these rows. Each TOC lists it with the single line `Features/Routes/Routes.xml`; without that line its owner tables (`ns.routes`, `ns.routesMap`, `ns.routesArrow`) are nil and its rows are skipped.
-
-`ADDON_LOADED` for this add-on runs, in order: `AceDB:New`; `PruneOtherClientCharacters`, which drops characters keyed the other client's way ("Name - Realm" against WoW Forever's realm-free "First Last") from a copied WTF folder; the profile callbacks (`OnProfileChanged`, `OnProfileReset` and `OnProfileCopied`, all to `ns:ApplyProfile`, which also reapplies Routes' settings through `ns.routes.ApplySettings` and restarts the dungeon quests' checks); `ns.RegisterOptionsPanels`; the registration pass; then `StartWideQuestLog` (which sets `ns.wideQuestLogActive` and runs the quest log parts), a second registration pass for the handlers those parts defined, `ns.ApplyQuestGiverCleanup` and `ns:OnDatabaseReady` (a single slot, defined only by `Forever-Quest-Log.lua`, which calls `ns.TakeOverQuestLog()` when the wide quest log runs), each through `securecall`. The options panels and the events come first so a feature that errors as it sets up takes only itself down.
-
-Each pass registers, once each, every event with at least one row whose owner and handler is defined by then; the second skips what the first registered, so `ns.EVENT_NAMES` lists each event once. An event with no such row after the second pass is never registered, whatever is defined later. The second pass is what counts a handler defined inside a Classic quest log part, which exists only with the switch on. So:
-
-- **Classic Era and TBC** register `ADDON_LOADED`, `PLAYER_LOGIN`, `CHAT_MSG_SYSTEM` (the share whispers), `PLAYER_ENTERING_WORLD`, `GROUP_JOINED`, `GROUP_LEFT` and `GROUP_ROSTER_UPDATE` (the dungeon quests, with the share whispers and Routes on some), and Routes' `QUEST_LOG_UPDATE`, `ZONE_CHANGED_NEW_AREA`, `PLAYER_DEAD`, `PLAYER_ALIVE` and `PLAYER_UNGHOST`. The quest log itself works through hooks; its only handlers, `ns:OnZoneChangedNewArea` and `ns:OnPlayerRegenDisabled`, are defined in `Classic-Quest-Log.lua`'s part, so with the switch on the second registration pass registers `PLAYER_REGEN_DISABLED` (Close When Combat Starts, see Combat Lockdown); `ZONE_CHANGED_NEW_AREA` is registered by Routes' rows already. With the switch off neither handler exists, and `PLAYER_REGEN_DISABLED` stays unregistered. Nothing registers `PLAYER_REGEN_ENABLED` here.
-- **WoW Forever and Mists** also register the window's quest events (`QUEST_WATCH_LIST_CHANGED`, `QUEST_ACCEPTED`, `QUEST_REMOVED`, `QUEST_TURNED_IN`, `UNIT_QUEST_LOG_CHANGED`, and `QUEST_LOG_UPDATE`, shared with Routes), `PLAYER_LEVEL_UP`, `PLAYER_REGEN_DISABLED`, `PLAYER_REGEN_ENABLED` and `UPDATE_BINDINGS`. Every handler is defined at file scope (`Forever-Quest-Log.lua`, `Quest-Log-Key.lua`, `Forever-Quest-Map.lua`, `Quest-Log-API.lua`), so all of these register whatever the switch says. With the switch off, the key's `UPDATE_BINDINGS` and `PLAYER_REGEN_ENABLED` handlers do nothing, because `ns.questLogTakenOver` is never set.
-
-`ADDON_LOADED` itself is registered at file load, since it's what starts the rest, and the passes skip it. Its rows run for every add-on that loads, so each handler checks the name. A further handler's owner table (`ns.dungeonQuests`, `ns.shareReminders`, `ns.routes`, `ns.routesMap`, `ns.routesArrow`, `ns.questMap`, `ns.questLogApi`, `ns.questLogWindow`) must exist by the second pass, or its event isn't registered on its account. What was registered is exported as `ns.EVENT_NAMES` for Diagnostics. While Diagnostic Tools' Event Log is recording (`ns.diagnostics.logging`), the dispatcher hands each event to `ns:LogEvent` before its handlers; otherwise that costs one boolean check.
-
-Events don't redraw directly; each lands on a request that coalesces bursts:
-
-- **The window (WoW Forever and Mists).** Every quest event funnels into `ns.RequestUpdate()`, which repaints at most once a frame (`C_Timer.After(0)`) and only while the window is open, because `QUEST_LOG_UPDATE` arrives in bursts; opening the window repaints in full anyway. `PLAYER_LEVEL_UP` is there because the difficulty colors change with the player's level. `UNIT_QUEST_LOG_CHANGED` counts for `"player"` and for a readable `party` unit, whose quests feed the party count on the rows; `GROUP_ROSTER_UPDATE` repaints for the same counts and the Share button, which is enabled only in a group. `PLAYER_REGEN_DISABLED` and `PLAYER_REGEN_ENABLED` repaint so the tracking controls gray out and come back. `ZONE_CHANGED_NEW_AREA` redraws the list so the current zone's mark moves, without re-sorting the zones (see Sorting). A post-hook on Questie's tracker `Update` (installed in `ns:OnDatabaseReady`, whatever the switch says) and a reward item finishing loading (`AskForItem`, `Forever-Quest-Details.lua`) request the same repaint.
-- **The Classic quest log** redraws through Blizzard's own `QuestLog_Update`, which its hooks follow; `ZONE_CHANGED_NEW_AREA` calls it while the window is open.
-- **The docked map.** `questMap.RequestRefresh` (`Questie-Map.lua`) waits `REFRESH_DELAY` (0.2 seconds), because Questie draws in batches over several frames, and only while the canvas is visible.
-- **Routes.** `QUEST_LOG_UPDATE` restarts a `QUEST_LOG_DELAY` (1 second) timer, so Questie has caught up, after which the next check comes at once; the watcher checks every `CHECK_INTERVAL` (2 seconds) and plans only once a change has held still for a whole check, `GROUP_SETTLE_DELAY` (5 seconds) longer after the group's size changes. The death and zone events only pull the next check forward (see Planning and When to Plan Again).
-- **The dungeon quests** start a ticker every `DUNGEON_CHECK_INTERVAL` (2 seconds) while in a party dungeon rather than acting on the event itself.
-
-`PLAYER_LOGIN` prints the welcome, the predecessor warning (see Moving from Wide Quest Log Plus), and, `QUESTIE_NOTICE_DELAY` (20) seconds later so it isn't lost among the other login lines, `CHAT_QUESTIE_MISSING_FEATURES` if Questie isn't loaded. The last two ignore the welcome toggle, because they explain something rather than greet. Routes' handler then migrates its settings, starts its watcher, and runs what Routes put off until the saved settings exist (`routes.OnLogin`).
+- `Features/Core.lua` owns the only event frame. Its `EVENTS` table pairs each event with a handler named for it; an event listed more than once runs every row in table order.
+  - No third field: handler on `ns`, called `handler(ns, ...)`, without the event name.
+  - Third field: the `ns` key of an owner table, called `handler(owner, ...)`. One name holds one function, so each further feature on the same event keeps its handler on its own table.
+  - Handlers are looked up at every dispatch; a missing owner or handler is skipped; each runs through `securecall`, so one erroring doesn't stop the event's later rows.
+- Owners: `ns.dungeonQuests`, `ns.shareReminders`, `ns.questMap`, `ns.questLogApi`, `ns.questLogWindow`, and Routes' `ns.routes`, `ns.routesMap`, `ns.routesArrow`, `ns.routesItems`. Read `EVENTS` for the rows; notable ones:
+  - `ADDON_LOADED` → `ns:OnAddonLoaded`, then `ns.routesMap:OnAddonLoaded` (adds the route when `Blizzard_WorldMap` loads on demand). Its rows run for every add-on, so each checks the name.
+  - `PLAYER_REGEN_ENABLED` → the work held during combat (see Combat Lockdown).
+  - `BAG_UPDATE_DELAYED`, `BAG_UPDATE_COOLDOWN`, `PLAYER_TARGET_CHANGED` → `ns.routesItems` only (the Quest Arrow's Use Item buttons).
+  - `GROUP_JOINED` / `GROUP_LEFT` → dungeon quests, share reminders, then `ns.routes` (clears the ignore list).
+  - `PLAYER_DEAD`, `PLAYER_ALIVE`, `PLAYER_UNGHOST` → `ns.routes` only.
+- Routes takes events only through these rows. Each TOC lists it with the single line `Features/Routes/Routes.xml`; without it the Routes owners are nil and their rows skip.
+- **`ADDON_LOADED` for this add-on, in order**: `AceDB:New`; `PruneOtherClientCharacters`; the profile callbacks (all three to `ns:ApplyProfile`); `ns.RegisterOptionsPanels`; registration pass 1; `StartWideQuestLog` (sets `ns.wideQuestLogActive`, runs the parts); registration pass 2; `ns.ApplyQuestGiverCleanup`; `ns:OnDatabaseReady` (one slot, defined only by `Forever-Quest-Log.lua`, which calls `ns.TakeOverQuestLog()` when the wide quest log runs). Each step through `securecall`; panels and events come first so a feature erroring in setup takes only itself down.
+- **Two registration passes**: each registers, once, every event with at least one row whose owner and handler exist by then; pass 2 picks up handlers defined inside Classic parts (which exist only with the switch on). `ADDON_LOADED` is registered at file load and skipped by the passes. An event with no live row after pass 2 is never registered. What was registered is exported as `ns.EVENT_NAMES` for Diagnostics.
+  - Classic Era / TBC: the quest log works through hooks; its handlers (`ns:OnZoneChangedNewArea`, `ns:OnPlayerRegenDisabled`) live in `Classic-Quest-Log.lua`'s part, so `PLAYER_REGEN_DISABLED` registers only with the switch on.
+  - WoW Forever / Mists: every handler is at file scope (`Forever-Quest-Log.lua`, `Quest-Log-Key.lua`, `Forever-Quest-Map.lua`, `Quest-Log-API.lua`), so all register whatever the switch says; with it off the key's `UPDATE_BINDINGS` and `PLAYER_REGEN_ENABLED` handlers do nothing (`ns.questLogTakenOver` unset).
+- While the Event Log records (`ns.diagnostics.logging`), the dispatcher passes each event to `ns:LogEvent` first; otherwise one boolean check.
+- **Events request, they don't redraw**:
+  - Own window: every quest event funnels into `ns.RequestUpdate()`, at most one repaint a frame and only while open, because `QUEST_LOG_UPDATE` bursts. `PLAYER_LEVEL_UP` because difficulty colors change; `UNIT_QUEST_LOG_CHANGED` for `"player"` and readable `party` units (party counts); `GROUP_ROSTER_UPDATE` for counts and the Share button; `PLAYER_REGEN_DISABLED` / `_ENABLED` to gray and restore tracking controls; `ZONE_CHANGED_NEW_AREA` redraws without re-sorting zones (see Sorting). Questie's tracker `Update` post-hook (installed in `ns:OnDatabaseReady`, whatever the switch) and reward items finishing loading request the same.
+  - Classic quest log: redraws through Blizzard's `QuestLog_Update`, which its hooks follow.
+  - Docked map: `questMap.RequestRefresh` waits `REFRESH_DELAY`, because Questie draws in batches over several frames, and only while the canvas shows.
+  - Routes: debounced by the planner (see Planning and When to Plan Again).
+  - Dungeon quests: a ticker every `ns.DUNGEON_CHECK_INTERVAL` while in a party dungeon.
+- `PLAYER_LOGIN` prints the welcome, the predecessor warning (see Moving from Wide Quest Log Plus) and, `ns.QUESTIE_NOTICE_DELAY` later so it isn't lost among login lines, `CHAT_QUESTIE_MISSING_FEATURES` without Questie. The last two ignore the welcome toggle: they explain, not greet. Routes' handler then migrates its settings, starts the watcher and runs `routes.OnLogin` work.
 
 ### Blizzard's Side Windows (WoW Forever and Mists)
 
-Blizzard's windows that open on the left of the screen (quest giver, gossip, vendor, trainer, character pane) would open on top of the add-on's window. So the two make way for each other, as Blizzard's own windows do: a `ShowUIPanel` hook (`Forever-Quest-Log.lua`) hides this window when a panel in the `left` or `doublewide` area opens, and opening this window first hides whatever holds those areas (`CloseLeftPanels`), out of combat only. Bags aren't panels in those areas and are left alone. So is Blizzard's own quest log on Mists while the window is taking over from it out of combat (`ns.IsTakenOverPanel`, always false on WoW Forever), or opening it would close the window it's meant to open. `ns.WasClosedForPanel` remembers the panel the window last closed for until the next frame, which is how WoW Forever's `ToggleQuestLog` hook tells a close from an open.
+- Blizzard's left-side panels (quest giver, gossip, vendor, trainer, character) and the own window make way for each other, as Blizzard's windows do: a `ShowUIPanel` hook (`Forever-Quest-Log.lua`) hides the window when a `left` or `doublewide` panel opens, and opening the window hides those (`CloseLeftPanels`), out of combat only. Bags are left alone.
+- Exempt: Blizzard's own quest log on Mists while the window is taking over from it out of combat (`ns.IsTakenOverPanel`, always false on WoW Forever), or opening it would close the window it's meant to open.
+- `ns.WasClosedForPanel` remembers the panel the window last closed for until the next frame; that's how WoW Forever's `ToggleQuestLog` hook tells a close from an open.
 
 ### Combat Lockdown
 
-Some actions refuse outright in combat and are never queued; the player does them again afterwards:
+**Refuses, never queued** (the player acts again after):
 
-- The options opener (`ns:OpenOptionsPanel`, `Options/Options.lua`, behind `/pwql`) prints the mandated message (`CHAT_OPTIONS_IN_COMBAT`) and returns.
-- Track and Untrack on WoW Forever and Mists (`ns.ToggleTracking`, `Forever-Tracking.lua`, `Mists-Tracking.lua`) show `ERR_NOT_IN_COMBAT` and do nothing, because changing the watch list from add-on code in combat taints the objective tracker. The bottom Track button, the list's Track All / Untrack All and the right-click menu's Track item are disabled in combat to match.
-- Opening the window leaves Blizzard's side windows open (`CloseLeftPanels` returns), since hiding them goes through the panel manager.
-- The takeover leaves Blizzard's window open: the micro menu button and tracker clicks show the world map on WoW Forever, or `QuestLogFrame` or `QuestLogDetailFrame` on Mists, while the quest log key, bound to the add-on's own button, opens the window either way (see Taint). On Mists `ns.IsTakenOverPanel` is false in combat, so Blizzard's quest log opening then closes the window as any other left-side panel does.
-- Routes never writes the full-size map setting (`miniWorldMap`) in combat; the next `KeepFullSize` call out of combat sets it.
+- The options opener (`ns:OpenOptionsPanel`, `Options/Options.lua`) — the standard combat guard.
+- Track / Untrack on WoW Forever and Mists (`ns.ToggleTracking`): `ERR_NOT_IN_COMBAT`, because a watch change from add-on code in combat taints the objective tracker. Every Track control is disabled in combat to match (`ns.QuestActions` reads `InCombatLockdown`).
+- `CloseLeftPanels`: opening the window leaves Blizzard's side windows open, since hiding them goes through the panel manager.
+- The takeover: in combat the micro menu and tracker clicks leave Blizzard's window open; the quest log key, bound to the add-on's own button, opens the window either way. On Mists `ns.IsTakenOverPanel` is false in combat, so Blizzard's quest log opening then closes the window like any left panel.
+- Routes never writes the `miniWorldMap` CVar in combat; the next `KeepFullSize` out of combat does.
 
-Everything else that can't run in combat holds its work behind a flag or a table and replays it on `PLAYER_REGEN_ENABLED`, whose rows run in this order:
+**Deferred to `PLAYER_REGEN_ENABLED`**, rows in `EVENTS` order:
 
-1. **The quest log key's override binding** (`Quest-Log-Key.lua`). Bindings can't change in combat, so `ns.RouteQuestLogKey` sets `routePending` and returns; `ns:OnPlayerRegenEnabled` routes the key again if the takeover is on.
-2. **The docked map's Blizzard layers** (`Forever-Quest-Map.lua`). The canvas calls `SetPassThroughButtons` on every pin it acquires, which WoW blocks for add-on code in combat, so each provider's `RefreshAllData` (exploration, fog where the client has its frame, the quest objective area) is wrapped: in combat it marks the provider in `heldProviders` and returns, and `questMap:OnPlayerRegenEnabled` refreshes each held one once. The add-on's own pins (`PrettyWideQuestLogPinMixin`, `Quest-Map.lua`; `PrettyWideQuestLogRoutePinMixin`, `Routes-Map.lua`) replace `SetPassThroughButtons` with a no-op, as HereBeDragons-Pins does for Questie's, so they draw in combat.
-3. **A single share on WoW Forever** (`Quest-Log-API.lua`). WoW Forever blocks `QuestLogPushQuest` in combat for add-on code, even on a click, so `ns.ShareQuest` stores the quest in `pendingShare`, one slot that a later request in the same fight replaces, and prints `CHAT_SHARING_AFTER_COMBAT`; `ns.questLogApi:OnPlayerRegenEnabled` shares it if it's still in the log, still shareable and the player still in a group. Mists and the Classic clients share at once.
-4. **The window's tracking controls** (`ns.questLogWindow:OnPlayerRegenEnabled`), which repaint enabled.
+1. Quest log key's override binding (`Quest-Log-Key.lua`): bindings can't change in combat; `ns.RouteQuestLogKey` sets `routePending`.
+2. Docked map's Blizzard layers (`Forever-Quest-Map.lua`): the canvas calls `SetPassThroughButtons` on every pin it acquires, blocked for add-on code in combat, so each copied provider's `RefreshAllData` is wrapped to mark it in `heldProviders` and return. The add-on's own pin mixins (`PrettyWideQuestLogPinMixin`, `PrettyWideQuestLogRoutePinMixin`) make `SetPassThroughButtons` a no-op, as HereBeDragons-Pins does, so they draw in combat.
+3. A single share on WoW Forever (`Quest-Log-API.lua`): WoW Forever blocks `QuestLogPushQuest` for add-on code in combat even on a click. One `pendingShare` slot, replaced by a later request; `CHAT_SHARING_AFTER_COMBAT`; sent after if still in log, shareable and grouped. Mists and Classic share at once.
+4. The window's tracking controls (`ns.questLogWindow`) repaint enabled.
+5. The Quest Arrow's Use Item buttons (`ns.routesItems`, every client): secure buttons, so item, place and showing lock in combat; stale ones fade and catch up here.
 
-Two kinds of work wait without the event, by polling:
+**Waits by polling**:
 
-- **Share Quests and the dungeon quests' runs** (`ns.ShareQuests`, in both zone actions files, every client): a share due in combat checks again every share interval until combat ends, then the run picks up where it stopped. Leaving the group ends it.
-- **Routes.** Its watcher reads `InCombatLockdown()` every frame: as a fight starts it drops any plan underway, since it would set out from where the fight began, and `routes.RequestPlan` in combat only sets `planAfterCombat`; on the first frame out of combat it checks at once and plans if a plan was dropped or asked for. The route and the Quest Arrow's target don't change mid-fight (see Combat under Routes).
+- Share Quests and the dungeon quests' runs (`ns.ShareQuests`, both zone actions files): a share due in combat retries each share interval; leaving the group ends the run.
+- Routes: the planner watches `InCombatLockdown()`; a fight drops any plan underway, `routes.RequestPlan` in combat only flags `planAfterCombat`, and the first frame out checks at once (see Combat under Routes).
 
-Close When Combat Starts (`closeInCombat`) hides the add-on's window on `PLAYER_REGEN_DISABLED` with a plain `Hide`, since the window isn't protected. `Classic-Quest-Log.lua` defines the Classic counterpart, `HideUIPanel(QuestLogFrame)`, which the panel manager allows in combat for that unprotected frame. It lives inside the part, so on Classic Era and TBC the event is registered by the second registration pass, after the parts run (see Event Loop). The add-on's window is its own unprotected frame, and Classic's quest log, its scroll bar and the panel manager's positioning of it are unprotected, so both quest logs work in combat.
+**Close When Combat Starts** (`closeInCombat`) hides the window on `PLAYER_REGEN_DISABLED` with a plain `Hide` (unprotected frame). The Classic counterpart, `HideUIPanel(QuestLogFrame)` in `Classic-Quest-Log.lua`'s part, is allowed in combat for that unprotected frame; it registers on pass 2. Both quest logs work in combat.
 
-## Taint
+### Taint
 
-Classic Era and TBC only hook Blizzard's functions, but these things they do are seen by Blizzard's code as coming from an add-on:
+**Classic Era and TBC** only hook, but Blizzard sees these as add-on writes; none reaches anything protected there:
 
-- The window's new size goes to the panel manager through `SetUIPanelAttribute` (`width` once, `height` and `bottomClampOverride` whenever the height changes), the interface Blizzard provides for this, rather than by replacing the `UIPanelWindows` entry. A client without `SetUIPanelAttribute` gets no attributes.
-- A taller window needs more list rows, so `QUESTS_DISPLAYED` (read by `QuestLog_Update`) is raised, the extra `QuestLogTitle{N}` rows are created here (`ns.SetQuestRowCount`, `Classic-Quest-List.lua`), and `QuestLog_Update` runs when the row count changes.
-- The row spacing moves Blizzard's list rows and widens the list's scroll range through `FauxScrollFrame_Update`.
-- Blizzard's "All" toggle and the Track toggle beside it are faded out and unclickable, with Expand All running `QuestLogCollapseAllButton_OnClick`. Track All and Untrack All do what a shift-click does to each quest: `AutoQuestWatch_Insert` to track, and to untrack, `RemoveQuestWatch` after taking the quest out of `QUEST_WATCH_LIST`; both then call `QuestWatch_Update` and `QuestLog_Update`.
-- The sorted order is drawn on Blizzard's own rows: each row's ID (`SetID`), text and textures are rewritten to the entry at its sorted place, and Blizzard's row handlers read that ID (see Sorting).
-- Share Quests and the dungeon quests select, expand and collapse entries and call `QuestLogPushQuest`, the same call Blizzard's own Share button makes (`Classic-Zone-Actions.lua`).
+- New size to the panel manager via `SetUIPanelAttribute` (`width` once; `height`, `bottomClampOverride` on change), the provided interface, not by replacing the `UIPanelWindows` entry. No attributes on a client without it.
+- Extra `QuestLogTitle{N}` rows created for a taller window (`ShowRowCount`, `Classic-Quest-Rows.lua`) and `QUESTS_DISPLAYED` written: row spacing moves Blizzard's rows, so fewer show than the window holds (`RowsThatFit`) and Blizzard's own scroll range reaches the last entry. A change in the shown count reruns `QuestLog_Update` from the list's hook.
+- Blizzard's All and Track toggles faded and unclickable; Expand All runs `QuestLogCollapseAllButton_OnClick`; Track All / Untrack All do a shift-click's work (`AutoQuestWatch_Insert`; `RemoveQuestWatch` after removing from `QUEST_WATCH_LIST`), then `QuestWatch_Update` and `QuestLog_Update`.
+- The sorted order is drawn on Blizzard's rows (`SetID`, text, textures rewritten); Blizzard's handlers read that ID (see Sorting).
+- Share Quests and the dungeon quests select, expand, collapse and call `QuestLogPushQuest`, as Blizzard's Share button does (`Classic-Zone-Actions.lua`).
 
-None of it reaches anything protected on those clients.
+**WoW Forever** — no Blizzard function is replaced:
 
-On WoW Forever, Blizzard's code sees:
+- Only with the wide quest log active does `ns:OnDatabaseReady` call `ns.TakeOverQuestLog()` (`Forever-Quest-Log-Key.lua`), setting `ns.questLogTakenOver`:
+  - `TOGGLEQUESTLOG` is bound with `SetOverrideBindingClick`, owned by the window, to the hidden `PrettyWideQuestLogToggleButton` (`ns.RouteQuestLogKey`, shared with Mists), so the key never opens Blizzard's log; re-set on `UPDATE_BINDINGS`, deferred out of combat.
+  - `ToggleQuestLog` (micro menu) and `QuestMapFrame_OpenToQuestDetails` (tracker, Questie) are post-hooked: Blizzard's runs first and opens the map; out of combat the hook closes it with `HideUIPanel` in the same frame and opens the window (or that quest). A quest not in the log stays on Blizzard's map.
+- Details never call `QuestInfo_Display` or borrow `QuestInfo` frames: own font strings and own reward buttons (`LargeItemButtonTemplate`, no scripts; `Forever-Quest-Details-Rewards.lua`), tooltips and links via the quest log calls after selecting. So the quest giver window, popup and map details keep `QuestInfo`, and the window draws in combat. `QuestInfo_Display` is post-hooked only for the quest giver window (see Quest Giver Window).
+- Installed at file scope, whatever the switch: the `ShowUIPanel` hook, the `UISpecialFrames` entry (Blizzard reads it through `securecall`), the hidden toggle button, the quest giver's `QuestInfo_Display` hooks. The Questie tracker `Update` hook is installed in `ns:OnDatabaseReady` whatever the switch.
+- Each details repaint selects the quest only when Blizzard's selection differs (`ns.SelectQuest`).
+- Abandon, Share and the right-click menu call Blizzard's `QuestMapQuestOptions_AbandonQuest` / `_ShareQuest` (`ns.AskToAbandonQuest`, `ns.ShareQuest`). Zone expand/collapse via `ExpandQuestHeader` / `CollapseQuestHeader` (`ns.SetQuestZoneCollapsed`; first open expands all, `ns.ExpandAllZones`).
+- Tracking: `C_QuestLog.AddQuestWatch` / `RemoveQuestWatch`, never in combat.
+- Routes hides and re-shows Blizzard's quest marker and objective area pins on the world map and post-hooks those providers' `RefreshAllData` (`Routes-Map-Blizzard-Quests.lua`); it never writes to them or to the `questPOI` CVar.
+- Share Quests and the dungeon quests select each quest and call `QuestLogPushQuest`, then reselect (`Forever-Zone-Actions.lua`).
+- **Objective tracker taint**: if one of these calls fires an event the tracker listens to (`QUEST_WATCH_LIST_CHANGED`, `QUEST_LOG_UPDATE`) while it runs, the tracker marks itself dirty from add-on code and its next update runs tainted, writing its own state tainted, so taint carries until a reload; in a scenario the update reads secret auras and errors (from its own update or Edit Mode's `OnAnyEditModeSystemAnchorChanged`). Every such call goes through `ns.TrackerTaintStep` (`Diagnostics/Tracker-Taint.lua`), which the Tracker Taint Watch (Run Tests) uses to check the tracker's frames, modules and `EditModeManagerFrame` with `issecurevariable` around each step. With the watch off a step costs one check.
 
-- No Blizzard function is replaced. Only when the wide quest log runs this session does `ns:OnDatabaseReady` (inside `ADDON_LOADED`) call `ns.TakeOverQuestLog()` (`Forever-Quest-Log-Key.lua`), which routes the ways into the quest log to the window and sets `ns.questLogTakenOver`; with it off, nothing is routed and the world map keeps the quest log key.
-  - The quest log key (`TOGGLEQUESTLOG`) is bound over with `SetOverrideBindingClick`, owned by the window, to the add-on's own hidden `PrettyWideQuestLogToggleButton` (`ns.RouteQuestLogKey`, `Quest-Log-Key.lua`, shared with Mists), so it never opens Blizzard's quest log, in combat or out. The override is set again on `UPDATE_BINDINGS`, and one that came in combat waits for `PLAYER_REGEN_ENABLED`.
-  - The micro menu button calls `ToggleQuestLog`, and the objective tracker (and Questie) call `QuestMapFrame_OpenToQuestDetails`. Both are post-hooked with `hooksecurefunc`, so Blizzard's own runs first and opens the world map; out of combat the hook closes it with `HideUIPanel` in the same frame and toggles the window, or for a tracker click shows that quest in it. In combat the map is left open, because hiding it goes through the panel manager. A quest that isn't in the log stays on Blizzard's map.
-- The window's details never call `QuestInfo_Display` or borrow Blizzard's `QuestInfo` frames. `Forever-Quest-Details.lua` draws the text on font strings of its own and the rewards on buttons of its own (`LargeItemButtonTemplate`, which has no scripts), from `ns.GetSelectedQuestDetails`; their tooltips and chat links go through the quest log calls (`GameTooltip:SetQuestLogItem`, `SetQuestLogCurrency`, `GetQuestLogItemLink`) after selecting the quest. So the quest giver window, the quest popup and the map's details keep `QuestInfo` to themselves, and the window draws whatever else is open, in combat too. `QuestInfo_Display` is post-hooked only for the quest giver window: `ns.LayOutQuestGiverPage` (`Forever-Quest-Giver.lua`), `Quest-Rewards.lua` and `Quest-Giver.lua`, on every client that has it (see Quest Text and Quest Giver Window).
-- Some of this is installed at file scope, so it runs whatever the Wide Quest Log switch says: the `ShowUIPanel` hook, the `UISpecialFrames` entry, the hidden toggle button, which nothing is bound to while the switch is off, and the quest giver's `QuestInfo_Display` hooks. The hook on Questie's tracker `Update`, added in `ns:OnDatabaseReady`, is installed whatever the switch says too.
-- Every details repaint that draws a quest selects the window's selected quest, calling `C_QuestLog.SetSelectedQuest` only when Blizzard's selection differs (`ns.SelectQuest`, `Features/Quest-Log-API.lua`).
-- The window's name goes in `UISpecialFrames`, so Escape closes it. Blizzard reads that list through `securecall`.
-- Opening the window calls `HideUIPanel` on Blizzard's side windows, only out of combat (see Blizzard's Side Windows).
-- The bottom Abandon and Share buttons and the list's right-click quest menu call Blizzard's own `QuestMapQuestOptions_AbandonQuest` and `QuestMapQuestOptions_ShareQuest` (`ns.AskToAbandonQuest`, `ns.ShareQuest`); a share asked for in combat waits for it to end (see Combat Lockdown). Showing a quest calls `ExpandQuestHeader` on its zone, the window's first open in a session expands every collapsed zone (`ns.ExpandAllZones`), and the list's zone clicks and Expand All / Collapse All call `ExpandQuestHeader` or `CollapseQuestHeader` (`ns.SetQuestZoneCollapsed`).
-- Tracking calls `C_QuestLog.AddQuestWatch` and `C_QuestLog.RemoveQuestWatch`, never in combat (see Questie Tracking).
-- Share Quests and the dungeon quests select each quest (`ns.SelectQuest`) and call `QuestLogPushQuest`, then select the quest the details show again (`Forever-Zone-Actions.lua`).
-- Blizzard's objective tracker can pick up the add-on's taint (GitHub #23). If one of the calls above fires an event the tracker listens to while it runs (`QUEST_WATCH_LIST_CHANGED`, `QUEST_LOG_UPDATE`), the tracker marks itself dirty from add-on code, and its update the next frame runs tainted. That update writes the tracker's state (`isDirty`, `state`, `contentsHeight`) tainted, and every later update reads that state before rewriting it, so the taint carries from update to update until a reload. Inside a scenario the update reads auras, which are secret to tainted code, so it errors whatever started it: the tracker's own next-frame update, or Edit Mode's `OnAnyEditModeSystemAnchorChanged`, which calls `ObjectiveTrackerFrame:Update` directly. To find which call does it, each of these calls goes through `ns.TrackerTaintStep` (`Diagnostics/Tracker-Taint.lua`): Track, Untrack, `SetSelectedQuest`, `ExpandQuestHeader`, `CollapseQuestHeader`, `QuestMapQuestOptions_ShareQuest`, `QuestMapQuestOptions_AbandonQuest`, Share Quests' `QuestLogPushQuest`, the takeover's `HideUIPanel` and `ns.ShowQuest`, the side windows' `HideUIPanel`, and Routes' `SetCVar("miniWorldMap")`. The window opening and closing are logged too. Diagnostic Tools' Tracker Taint Watch (Run Tests; left out where no objective tracker frame exists) checks every string-keyed field of the tracker's frames, its modules and `EditModeManagerFrame` with `issecurevariable`, looking one level into small plain tables, before each step, right after it, a frame later and a second later, and polls each second for anything in between. It says in chat the first time a field reads as tainted by the add-on. With the watch off, a step costs one check and the call.
+**Mists** — the same file-scope pieces, key override and self-drawn details; otherwise:
 
-On Mists the window's file-scope pieces are the same (the `ShowUIPanel` hook, the `UISpecialFrames` entry and the hidden toggle button), and so are the key's override binding and the self-drawn details. The rest differs:
+- No function replaced. `ns.TakeOverQuestLog()` (`Mists-Quest-Log-Key.lua`) post-hooks `ShowUIPanel`, since everything (micro menu, Questie, the tracker's `QuestLog_OpenToQuest` into `QuestLogDetailFrame`) opens `QuestLogFrame` through the panel manager. Out of combat `HideUIPanel` closes Blizzard's in the same frame and the window shows the quest; a second tracker click on the showing quest closes it. A `ToggleQuestLog` post-hook uses `openBeforeToggle` (kept a frame) to close an already-open window.
+- Reading the log selects quests: `SelectQuestLogEntry` on every repaint (`ns.SelectQuest` always selects here), reward tooltips, and `ns.IsPushableQuest` / `ns.ShareQuest` / `ns.AskToAbandonQuest` around `GetQuestLogPushable`, `QuestLogPushQuest`, `SetAbandonQuest` (then Blizzard's own abandon popup), restoring the selection.
+- Blizzard's zones stay expanded: a collapsed zone lists none of its quests, so `ns.ShowEveryQuestLogEntry` calls `ExpandQuestHeader(0)`; collapsing in the window only changes the session's `collapsedZones` (`Quest-Log-API.lua`).
+- Share Quests and dungeon quests go through `Classic-Zone-Actions.lua`.
+- Tracking by index, then `WatchFrame_Update`, since `WatchFrame` hears no event a watch change fires; refuses in combat, as on WoW Forever.
 
-- No Blizzard function is replaced here either. `ns.TakeOverQuestLog()` (`Mists-Quest-Log-Key.lua`) has no world map to deal with, since everything opens Blizzard's `QuestLogFrame` through the panel manager: the micro menu button (`ToggleQuestLog`), Questie's tracker, and the objective tracker, which opens just the quest's details in `QuestLogDetailFrame` (`QuestLog_OpenToQuest`). So it post-hooks `ShowUIPanel`. Out of combat, `HideUIPanel` closes Blizzard's window in the same frame and the window shows the quest it opened to; a second tracker click on the quest already showing closes the window, as Blizzard's does. A `ToggleQuestLog` post-hook closes the window when it was already open as the toggle came, using `openBeforeToggle`, kept until the next frame. In combat Blizzard's stays.
-- Reading the log selects quests. Every details repaint calls `SelectQuestLogEntry` (`ns.SelectQuest` selects every time here), as do the reward tooltips and links, and `ns.IsPushableQuest`, `ns.ShareQuest` and `ns.AskToAbandonQuest` select each quest in turn around `GetQuestLogPushable`, `QuestLogPushQuest` and `SetAbandonQuest` (`GetAbandonQuestItems`, `GetAbandonQuestName`, then Blizzard's own `ABANDON_QUEST` or `ABANDON_QUEST_WITH_ITEMS` popup), restoring the selection after.
-- Zones stay open in Blizzard's log. A collapsed zone there lists none of its quests, so `ns.ShowEveryQuestLogEntry` calls `ExpandQuestHeader(0)` as the list builds, and collapsing a zone in the window only changes `collapsedZones`, kept by name for the session (`Features/Quest-Log-API.lua`).
-- Share Quests and the dungeon quests go through `Classic-Zone-Actions.lua`, which calls `SelectQuestLogEntry`, `ExpandQuestHeader`, `CollapseQuestHeader` and `QuestLogPushQuest`, and `QuestLog_Update` while Blizzard's log is open.
-- Tracking calls `AddQuestWatch` and `RemoveQuestWatch` by index, then `WatchFrame_Update`, since `WatchFrame` listens for no event a watch change fires. It refuses in combat, as on WoW Forever, because a watch change from add-on code then taints the tracker.
+### Questie Tracking
 
-## Questie Tracking
+#### WoW Forever (`Forever-Tracking.lua`)
+
+- Why Questie leads: its tracker learns of a quest only through `C_QuestLog.AddQuestWatch` (the client's auto-watch on accept bypasses it), and shows only quests in its database, which lacks many WoW Forever quests.
+- `TrackerFor(questID)`: Questie is in charge while `Questie.db.profile.trackerEnabled`, `QuestieTracker` has `IsTrackedByQuestie`, and `ns.QuestieLogEntries()` (`Utilities.lua`) returns a log. Returns the tracker, `false` (in charge, but Questie can't show the quest: untrackable), or nil (Blizzard's watch decides). Questie can show it when `QuestieKnows`: on Questie 12.6.3+ (acceptances) the entry carries `.quest`, since a quest its database lacks still has an entry; before that, any entry counts.
+- Questie's log is read at most once a frame (`QuestieLog`, keyed by `GetTime()`): a repaint asks about every quest.
+- Tracked = `IsTrackedByQuestie`; if it throws, `QuestUtils_IsQuestWatched`.
+- Track always calls `AddQuestWatch`, even when Blizzard already watches: that call is what tells Questie. Blizzard's cap still holds under Questie (`ns.HasRoomToTrack`, against `Constants.QuestWatchConsts.MAX_QUEST_WATCHES`; refused with `OBJECTIVES_WATCH_TOO_MANY`).
+- Untrack: Questie's `UntrackQuestId` when Blizzard has no watch; else (or if that's missing or throws) `C_QuestLog.RemoveQuestWatch`, only while `ns.CanRemoveQuestWatch()` (`QuestUtil.CanRemoveQuestWatch`). Both watch calls go through `ns.TrackerTaintStep`.
+- Combat: a watch change from add-on code in combat taints the objective tracker, so `ns.ToggleTracking` / `ns.SetAllTracked` refuse with `ERR_NOT_IN_COMBAT` (Mists too). `ns.QuestActions(questID)` (`Forever-Quest-Log.lua`) is the single enable rule for the bottom Track / Share / Abandon buttons and the right-click menu; `PLAYER_REGEN_ENABLED` repaints.
+- An untrackable quest is refused four ways: one chat line per quest per session (`QUESTIE_CANNOT_SHOW`, `warnedUntrackable`), `QUESTIE_CANNOT_TRACK` on every refused click, a tooltip on the grayed Track button (`trackButton.untrackable`), a grayed menu item.
+- Untracking from Questie's own menu may not touch Blizzard's watch list, so `ns:OnDatabaseReady` post-hooks `QuestieTracker.Update` to `ns.RequestUpdate` (WoW Forever and Mists, whatever the switch says).
+
+#### Classic Era and TBC (`Classic-Tracking.lua`)
+
+- Questie removes Blizzard's watch as it takes a quest (dodging Blizzard's limit), so Blizzard's watch count means nothing under Questie. Untrack All goes by `IsQuestWatched` per listed quest (Questie replaces it): remove the quest from `QUEST_WATCH_LIST` (Blizzard's watch timers forget it, as on a shift-click), then `RemoveQuestWatch` (Questie hooks it).
+- Once Questie's tracker has started (`ns.IsQuestieTracking`, `Tracking-Mark.lua`): every quest trackable, no limit. Before: quests with objectives (`GetNumQuestLeaderBoards`), up to `MAX_WATCHABLE_QUESTS`.
+- No combat refusal: it does what Blizzard's shift-click does.
+
+#### Mists (`Mists-Tracking.lua`)
+
+- Watch calls take a log index (`ns.GetLogIndexForQuestID`). Once Questie's tracker takes over it hooks `AddQuestWatch` / `RemoveQuestWatch` and replaces `IsQuestWatched`, so the same calls reach whichever tracker leads.
+- `ns.CanTrack` and `ns.CanRemoveQuestWatch` are always true: no untrackable quests, and one with no objectives tracks even before Questie starts.
+- `ns.HasRoomToTrack`: already tracked, Questie tracking, or under `MAX_WATCHABLE_QUESTS`; else `QUEST_WATCH_TOO_MANY`. Combat refused as on WoW Forever.
+- Every change ends in `Redraw`: `WatchFrame_Update` (`WatchFrame` hears no event from a watch change), then `ns.RequestUpdate`.
+- `ns.IsTracked` / `ns.HasRoomToTrack` take an optional `questLogIndex`, because a by-ID lookup walks the whole log; WoW Forever's ignore it. Pass it where known.
+
+#### Before Questie's Tracker Starts (Every Client)
+
+- Questie starts its tracker seconds after login, mid staged startup. Until then nothing reads as tracked (Questie's list empty on WoW Forever; `IsQuestWatched` still Blizzard's elsewhere), so with `markUntracked` the untracked mark (`ns.TRACKING_MARKS`) would flash on every row.
+- `ns.ShowTrackingMark` (`Tracking-Mark.lua`) draws no marks while the tracker is enabled but not `started`, and the first time it sees that, hooks `QuestieTracker:HookBaseTracker` to `ns.RefreshQuestLog` (clearing the frozen zone order too), only while `ns.wideQuestLogActive`.
+- Only the marks wait: WoW Forever's Track controls read Questie's log started or not; Mists' follow Blizzard's cap until it starts.
+
+### Sorting
+
+#### Sort Rules (`Quest-Sort.lua`)
+
+- Records carry `sortLevel`, `sortKey` (`ns.NameSortKey`: lowercased full title, so The Hinterlands sorts under T, as Blizzard does) and `sortIndex` (log index); zones add `title` and `averageLevel`.
+- Profile keys (Wide Quest Log panel, Sorting): `zoneSort`, `questSort` (`LEVEL_HIGHEST_FIRST`, `LEVEL_LOWEST_FIRST`, `ALPHABETICAL`), `currentZoneFirst`, `completedFirst`.
+- Zones (`CompareZones`): current zone first if `currentZoneFirst`; then average level (`ns.AverageLevel`; unknown after the rest) or name; ties to name, then log order.
+- Quests (`ns.SortQuests`): ready to turn in first if `completedFirst`; then `questSort`; ties keep log order. Quests outside any zone list before every zone.
+- A quest's level is the one its tag shows: `difficultyLevel` else `level` on the window (Mists has only `level`), `GetQuestLogTitle`'s level on Classic Era and TBC.
+- The add-on does all sorting itself, so each option holds the same on every client.
 
-### WoW Forever
-
-Questie's tracker keeps its own list of tracked quests and only learns about new ones through `C_QuestLog.AddQuestWatch`. The client's automatic watch on accepting a quest bypasses that, so a quest can be watched by Blizzard yet missing from Questie's tracker. Questie's tracker also shows only quests in its database, and many of WoW Forever's own quests aren't in it.
-
-So while Questie's tracker is enabled (`Questie.db.profile.trackerEnabled`), its `QuestieTracker` module imports with an `IsTrackedByQuestie`, and its quest log can be read, `Features/Forever-Tracking.lua` puts Questie in charge (`TrackerFor`). The quest log is `ns.QuestieLogEntries` (`Features/Utilities.lua`): Questie's `ActiveQuests` module from 12.6.3, whose `GetAll` is the test because `ImportModule` hands back an empty table for a module it doesn't have, else `QuestiePlayer.currentQuestlog`. A quest Questie's database lacks has no entry there, so a quest is trackable only if it has one, and counts as tracked only if Questie's tracker shows it (`IsTrackedByQuestie`). A repaint asks about every quest, so the log is read at most once a frame (`QuestieLog`, keyed by `GetTime()`). If `IsTrackedByQuestie` throws, a quest counts as tracked by Blizzard's watch (`QuestUtils_IsQuestWatched`).
-
-Tracking calls `AddQuestWatch` even when Blizzard already has the watch, since that call is what tells Questie. Blizzard's watch cap still holds under Questie: once `C_QuestLog.GetNumQuestWatches()` reaches `Constants.QuestWatchConsts.MAX_QUEST_WATCHES`, Track refuses a quest not already watched with Blizzard's `OBJECTIVES_WATCH_TOO_MANY` (`ns.HasRoomToTrack`). Untracking goes through Questie's `UntrackQuestId` when Blizzard has no watch to remove. Otherwise, or when that Questie call is missing or throws, it goes through `C_QuestLog.RemoveQuestWatch`, but only while `QuestUtil.CanRemoveQuestWatch()` allows it (`ns.CanRemoveQuestWatch`). Both watch calls go through `ns.TrackerTaintStep` (see Taint).
-
-Changing the watch list from add-on code in combat taints Blizzard's objective tracker, so `ns.ToggleTracking` and `ns.SetAllTracked` refuse in combat with `ERR_NOT_IN_COMBAT` on the error frame, and the Track button, Track All and the right-click menu's Track item are grayed out until `PLAYER_REGEN_ENABLED` repaints them. This holds on Mists too.
-
-A quest Questie can't show is refused four ways: a one-time chat explanation per quest per session (`QUESTIE_CANNOT_SHOW`, `warnedUntrackable`), a `QUESTIE_CANNOT_TRACK` error on every refused shift-click, a tooltip on the grayed-out Track button (both lines), and a grayed-out Track item in the list's right-click menu. Untracking from Questie's own menu doesn't always touch Blizzard's watch list, so the window also repaints on Questie's tracker updates: `ns:OnDatabaseReady` (`Features/Forever-Quest-Log.lua`) post-hooks `QuestieTracker.Update`, on WoW Forever and Mists alike.
-
-### Classic Era and TBC
-
-Questie's tracker removes Blizzard's watch as soon as it takes a quest, to stay clear of Blizzard's watch limit, so Blizzard's watch count says nothing about what Questie tracks. Untrack All therefore never counts Blizzard's watches. It goes over the listed quests and untracks each one that `IsQuestWatched` reports as tracked (Questie replaces `IsQuestWatched` with its own tracking state): it takes the quest out of `QUEST_WATCH_LIST`, so Blizzard's watch timers forget it as on a shift-click, and calls `RemoveQuestWatch`, which Questie hooks to untrack in its tracker too. Once Questie's tracker has started (`ns.IsQuestieTracking`, `Features/Tracking-Mark.lua`), every quest is trackable and there's no limit. Before that, Blizzard's rules hold: only quests with objectives (`GetNumQuestLeaderBoards`), up to `MAX_WATCHABLE_QUESTS`. Nothing here refuses in combat; Track All does what Blizzard's own shift-click does.
-
-### Mists
-
-Mists' watch calls take a quest log index, as Classic Era's do, so `Features/Mists-Tracking.lua` takes the quest IDs the window passes and looks up each index (`ns.GetLogIndexForQuestID`). Once Questie's tracker has taken over, it hooks `AddQuestWatch` and `RemoveQuestWatch` and replaces `IsQuestWatched`, so the same calls reach whichever tracker is in charge. No quest is refused, because `ns.CanTrack` and `ns.CanRemoveQuestWatch` are always true: unlike WoW Forever there's no chat explanation or grayed-out Track, and unlike Classic Era and TBC a quest with no objectives can be tracked before Questie starts. `ns.HasRoomToTrack` holds for a quest already tracked, while Questie is tracking, or under `MAX_WATCHABLE_QUESTS` until then. Past that, Track posts `QUEST_WATCH_TOO_MANY`. As on WoW Forever, a change in combat is refused with `ERR_NOT_IN_COMBAT`. Every change ends in `Redraw`, which calls `WatchFrame_Update` (`WatchFrame` listens for no event a watch change fires) and `ns.RequestUpdate`. `ns.IsTracked` and `ns.HasRoomToTrack` take an optional `questLogIndex`, because a lookup by quest ID walks the whole log; WoW Forever's versions ignore it.
-
-### Before Questie's Tracker Starts (Every Client)
-
-Questie starts its tracker a few seconds after login, partway through its staged startup. Until then nothing reads as tracked: on WoW Forever Questie's quest list is still empty, on the other clients `IsQuestWatched` is Blizzard's until Questie replaces it with its own, and on Classic Era and TBC Questie keeps no Blizzard watches. With Mark Untracked Quests on (`markUntracked`, the default), the mark slot shows a red crossed-out eye (`ns.TRACKING_MARKS.untracked`) in front of every quest that isn't tracked; with it off, a teal check in front of every quest that is. So the eye would flash on every quest. `ns.ShowTrackingMark` (`Features/Tracking-Mark.lua`) draws no marks while Questie's tracker is enabled but not yet `started`. The first time it sees that state, it hooks `QuestieTracker:HookBaseTracker`, which Questie calls as the tracker starts, to redraw the quest log through `ns.RefreshQuestLog` (which also clears the frozen zone order), only while the wide quest log runs (`ns.wideQuestLogActive`). Only the marks wait: WoW Forever's Track button and Track All read Questie's quest list whether or not the tracker has started, and Mists' follow Blizzard's cap until it does.
-
-## Sorting
-
-Both quest logs sort with the same rules in `Features/Quest-Sort.lua`, on records that carry `sortLevel`, `sortKey` (the lowercased title, `ns.NameSortKey`) and `sortIndex` (the quest log index). The settings are profile keys from the Wide Quest Log panel's Sorting section:
-
-- **Zones** by `zoneSort`: average quest level (`ns.AverageLevel`), highest first by default (`LEVEL_HIGHEST_FIRST`), or lowest first (`LEVEL_LOWEST_FIRST`), or alphabetical by full name (`ALPHABETICAL`), so The Hinterlands goes under T. A zone whose level isn't known goes after the rest. Zones tied on level fall back to their name, then to the quest log's order. With `currentZoneFirst` (on by default), the zone the player is in goes before them all.
-- **Quests** within each zone by `questSort`, with the same three values: level, highest first by default, or lowest first, or alphabetical. With `completedFirst` (on by default), quests ready to turn in go before the rest, each group in the `questSort` order. Ties fall back to the quest log's order.
-- **Quests outside any zone** list first, before every zone, in the same `questSort` order.
-
-A quest's level is the one its tag shows: on WoW Forever the entry's `difficultyLevel`, or its `level` where it has none (Mists' entries carry only `level`); on Classic Era and TBC the plain `GetQuestLogTitle` level.
-
-The add-on sorts to every option itself, so each one holds the same on every client. The current zone is found by name: `ns.IsCurrentZone` compares a header's text with `GetRealZoneText()`, so a class or profession header never matches, and a dungeon's header matches only while the player is inside it (the dungeon quests rely on that). `ns.SortZones` freezes the zone order, as ranks keyed by zone title, the first time it sorts after the window opens, so turning in or dropping a quest doesn't reshuffle zones under the cursor. A zone the frozen order doesn't know (a quest picked up in a new zone) goes after all of them. The order clears (`ns.ResetZoneOrder`) when the window closes, when a Wide Quest Log panel sort or list setting changes, when the profile changes (`ns:ApplyProfile`), and when Questie's tracker starts; the last three clear it through `ns.RefreshQuestLog`. The freeze includes `currentZoneFirst`: crossing into a new zone (`ZONE_CHANGED_NEW_AREA`) moves the green check after the zone's name (`ns.ZoneHeaderText`, `ns.CURRENT_ZONE_MARK`) at once, but the zone only moves to the top the next time the window opens.
-
-On WoW Forever and Mists, `ns.BuildQuestListEntries` (`Features/Forever-Quest-List-Entries.lua`) builds the sorted entries and `ns.UpdateQuestList` (`Features/Forever-Quest-List.lua`) draws them in the add-on's own list. The visibility rules match the map's quest list: no hidden quests, no task quests (world quests and bonus objectives), a bounty only once it's complete, and no zone whose quests are all left out. It also returns every quest that would show with its zone open, for Track All, the turn-in line and the empty-log check, and whether every zone is collapsed, for Expand All. The first time the window opens in a session, `ns.ExpandAllZones` opens every zone, so collapsing one lasts only until the next login or reload. On Mists the entries come from `GetQuestLogTitle` through `ns.GetQuestLogEntry` (`Features/Quest-Log-API.lua`), which adds `isComplete` and `isFailed`, read from the entry because asking by quest ID there walks the whole log.
-
-While in a group, hovering a quest's row lists the party members who have it, under the client's own `PARTY_QUEST_STATUS_ON`, names in class colors, or `PARTY_QUEST_STATUS_NONE`, as Blizzard's own rows do on Classic Era and TBC; a client without the string shows nothing. For each `party`N unit up to `GetNumSubgroupMembers()` it asks `ns.IsUnitOnQuest` (`C_QuestLog.IsUnitOnQuest`, or `IsUnitOnQuest` by log index where that's missing), so in a raid it covers the player's subgroup only. It passes over a member whose answer, name or class WoW Forever hands back as a secret value (`ns.IsReadable`), and when any answer is secret it shows no "none" line, since that would be a guess.
-
-The same members are counted on the row itself: `Party-On-Quest.tga` (our own art, 16px) and the count in `GameFontHighlight`, both tinted the palette's `INFO` blue, the icon `SPACE.TIGHT` left of the count and the count `SPACE.LINE` left of the tag, or at the row's right edge when there's no tag. The title is shortened to leave room for them. The count repaints on `GROUP_ROSTER_UPDATE` and on `UNIT_QUEST_LOG_CHANGED` for a `party`N unit, as well as the player's own quest log updates. On Classic Era and TBC, Blizzard's rows already show the count as `[`N`]` before the title.
-
-On Classic Era and TBC the rows are Blizzard's. `QuestLog_Update` fills row *i* with quest log entry *i* + scroll offset, and every row handler (click, shift-click track and link, collapse, the party tooltip, Share Quests) finds its entry from the row's ID plus that offset. So after Blizzard draws, `Features/Classic-Quest-Sort.lua` redraws each row with the entry at its sorted place, the way `QuestLog_Update` would, and sets the row's ID to match. `Classic-Quest-List.lua`'s `QuestLog_Update` hook runs, in order: the sort (`ns.BuildClassicDisplayOrder`), the scroll range, the redraw, the row spacing, VoiceOver's buttons, each row's style, the list buttons, the turn-in line, and the map's empty-log check. Selecting a quest highlights its row by place in the list, so the highlight is moved again after `QuestLog_SetSelection`. A collapsed zone lists no quests, so it sorts by its average from when it was last seen open (kept for the session), or after the rest when it hasn't been. When the sorted order matches the quest log's own (zones alphabetical, each zone's quests lowest level first), nothing is redrawn and each row's ID is put back to its place.
-
-Rows are padded on every client (`LAYOUT.ROW_PADDING`, `SPACE.TIGHT`, in `Data/Data.lua`). A quest row is `QUEST_ROW_HEIGHT`, the row's 16px text with 2px above and below, and a zone header `HEADER_ROW_HEIGHT`, tall enough for its Share Quests button with 2px above and below. With `zoneGap` (on by default), every zone header but the first gets `HEADER_GAP` (8px, half a row) above it. The quest details start level with the first quest row (`CONTENT_TOP`). On WoW Forever and Mists the scroll box's extent calculator gives each row its height, and the gap is a blank spacer entry. On Classic Era and TBC, Blizzard's rows keep their own height, and `RowTops` places each one centered in its slot, below the gap. `ExtendScrollRange` widens the scroll range until the last entry can be scrolled fully into view, and `PositionRows` hides the rows pushed past the bottom.
-
-## Expand All, Track All and Show Map
-
-Both quest logs put three buttons in a bar above the list, `LIST_BUTTONS_GAP` (8) apart. `ns.CreateListButtons` (`Features/Window.lua`) makes the first two, and `Features/Quest-Map.lua` hangs Show Map after them from `ns.listButtons`. Each toggles its label (`EXPAND_ALL` or `COLLAPSE_ALL`, `TRACK_ALL` or `UNTRACK_ALL`, Blizzard's `SHOW_MAP` or `HIDE_MAP`) and is sized the first time it shows, once the font is sure to be loaded: the wider of its labels in this locale plus `LAYOUT.LABEL_PADDING` (32), never narrower than `LAYOUT.BUTTON_WIDTH` (123), so no button changes size as its label switches. Expand All and Track All share one width, the widest of their four labels. Collapse All shows while any zone is open, and Expand All once every zone is collapsed.
-
-- **Track All** shows while a listed quest could still be tracked and the watch list has room, and Untrack All once none can. Untrack All grays out when nothing is tracked. It tracks in list order, top down, so a nearly full watch list fills with the quests the player sees first, and stops when the list is full, posting Blizzard's own "too many" string to the error frame (`UIErrorsFrame:AddMessage`): `QUEST_WATCH_TOO_MANY` on Classic Era, TBC and Mists, `OBJECTIVES_WATCH_TOO_MANY` on WoW Forever. On those three the list is never full once Questie's tracker has taken over; on WoW Forever Blizzard's cap holds even then (see Questie Tracking).
-- **Classic Era and TBC** (`Features/Classic-Tracking.lua`) track and untrack exactly as a shift-click on each quest would (see Taint and Questie Tracking): `AutoQuestWatch_Insert` with `QUEST_WATCH_NO_EXPIRE` to track, then `QuestWatch_Update` and `QuestLog_Update`, over the quest log's listed entries in list order, so quests under a collapsed zone are passed by. The buttons sit in the frame of Blizzard's "All" toggle (`QuestLogExpandButtonFrame`), which Blizzard hides while the log is empty. The toggle itself, and Blizzard's Track toggle (`QuestLogTrack`), which would peek out between the buttons, are faded out and unclickable rather than removed. Expand All runs the toggle's click (`QuestLogCollapseAllButton_OnClick`) and takes its label from the toggle's `collapsed`, so Blizzard's record of whether everything is collapsed stays right.
-- **WoW Forever** (`Features/Forever-Tracking.lua`, `ns.SetAllTracked`) covers every quest in the list, collapsed zones included, and skips quests Questie can't show, without the chat explanation a single Track click gives. Expand All is disabled while the list has no quests. Track All is grayed out in combat, and Untrack All also needs `QuestUtil.CanRemoveQuestWatch()`.
-- **Mists** (`Features/Mists-Tracking.lua`, `ns.SetAllTracked`) covers every quest in the list, collapsed zones included, as WoW Forever does, skipping none, and redraws `WatchFrame` when done. Expand All is disabled while the list has no quests, Track All is grayed out in combat, and Untrack All is otherwise never refused.
-- **Show Map** hides on every client while the log is empty (`questMap.SetLogEmpty`, called by both list files), along with the map, which comes back with the first quest. On WoW Forever and Mists "empty" means no quest the list would show; on Classic Era and TBC, no quest log entries. `mapHidden` isn't touched.
-
-## Share Quests
-
-Hovering a zone name shows a **Share Quests** button at the right end of its row (`Features/Zone-Share.lua`, every client). Zone rows are tall enough to hold it: `LAYOUT.HEADER_ROW_HEIGHT` is `LAYOUT.ZONE_SHARE_BUTTON_HEIGHT` (16) plus `LAYOUT.ROW_PADDING` above and below. It's as wide as its label plus `ZONE_SHARE_BUTTON_PADDING` (16). There's one button, moved onto whichever zone row the mouse is over and parented to it, so it hides with the row. It hides as the mouse leaves both the row and the button (`ns.HideZoneShareButton`, and the button's own `OnLeave`), and each list file calls `ns.UpdateZoneShareButton` as it redraws a row, so a row recycled for a quest drops it. On Classic Era and TBC under ElvUI it's skinned with the list buttons (`ns.zoneShareButton`, `Classic-ElvUI.lua`).
-
-It is grayed out while solo (the tooltip says `ERR_NOT_IN_GROUP`; in a group it says `SHARE_ZONE_QUESTS_TOOLTIP` with the interval) and while a share run is still going (`ns.sharingQuests`, which the dungeon quests' sharing sets too), checked every frame while it shows. Clicking finds the zone's quests the game lets the player share (`ns.ShareableZoneQuests`) and prints the line `ns.BuildSharePrint` (`Features/Announcements.lua`) builds: `CHAT_SHARING_ZONE_NONE` when there are none, `CHAT_SHARING_ZONE_ONE` for one, otherwise `CHAT_SHARING_ZONE` with the count, zone and interval. The button then grays itself out and hands the quest IDs to `ns.ShareQuests`. Which quests can be shared is only worked out on the click, because on Classic Era, TBC and Mists that means selecting each quest.
-
-`ns.ShareQuests` shares one quest every `ns.GetShareInterval()` seconds: a `C_Timer.After` chain using the interval as it was when the run began, clearing `ns.sharingQuests` after the last, so a second run can't start alongside. Each share re-finds the quest and checks it's still shareable before it goes, and runs through `securecall`, so one that errors is reported and the run still reaches its end. Leaving the group ends the run. A share that falls due in combat waits, checking again every interval, and the run picks up where it stopped once combat ends; WoW Forever blocks `QuestLogPushQuest` for add-on code in combat, and both Zone-Actions files wait the same way. (WoW Forever's single Share Quest button waits for `PLAYER_REGEN_ENABLED` instead, see Taint.)
-
-The interval is the Quality of Life panel's `shareInterval` slider (default 3, in steps of 1), between `SHARE_INTERVAL_MIN` (3) and `SHARE_INTERVAL_MAX` (10), because a share sooner than 3 seconds after the last gets the party member reported as busy. With the Quality of Life switch off, the default applies. Only the slider enforces the range; `ns.GetShareInterval` (`Features/Utilities.lua`) returns the saved value as it is.
-
-A Zone-Actions file does the work by quest ID through four `ns` names: `ns.ShareableZoneQuests` (the zone's shareable quest IDs, and how many quests it holds), `ns.ShareQuests`, `ns.LogQuests` (every quest with its zone, state and whether it's shareable) and `ns.SharedQuest` (see Share Reminders). In `Classic-Zone-Actions.lua`, which Classic Era, TBC and Mists all load, that's awkward, and the file exists to contain it:
-
-- Sharing acts on the **selected** quest, and only the selected quest can be asked whether it's shareable (`GetQuestLogPushable`), so each quest is selected in turn and the player's selection is put back afterwards. It's put back by its index once the zones are closed again, since every entry is then back where it was, so a selected zone header, or no selection, comes back too.
-- The quest log lists **no quests under a collapsed zone**, so `ns.ShareableZoneQuests` expands the one zone to look and collapses it again. Sharing and listing the whole log (`ns.LogQuests`, for the dungeon quests) expand everything (`ExpandQuestHeader(0)`), then re-collapse the zones that were closed from the bottom up, so the indexes above each one still hold. Sharing does this for each quest as it goes, so a quest under a zone the player has collapsed is still found, and calls `QuestLog_Update` after each share while Blizzard's log is open.
-- Because these expand zones and select quests, no diagnostic report calls them on these clients. The reports read `ns.DiagnosticLogQuests` (`Diagnostics/Manifests.lua`) instead, which reads only open zones' quests and knows only the selected quest's shareability, and Sharing Context's Share Quests line counts the zone's quests without asking which can be shared.
-
-On Classic Era and TBC the button follows `OnEnter` / `OnLeave` hooks on Blizzard's rows (`Classic-Quest-List.lua`), and `StyleQuestRows` updates it on every pass. Zone rows keep Blizzard's own clicks, so a right-click collapses the zone as a left-click does.
-
-On WoW Forever (`Forever-Zone-Actions.lua`) the quest log lists a collapsed zone's quests too, so the zones are left as they are, and `C_QuestLog.IsPushableQuest` answers by quest ID. It leaves out hidden and task quests as the list does, but counts a bounty that isn't complete, which the list doesn't show. Each share selects the quest (`ns.SelectQuest`), calls `QuestLogPushQuest`, then selects the quest the window's details show again. On WoW Forever and Mists the list's `Row_OnEnter` / `Row_OnLeave` show and hide the button, and `InitRow` updates it; `Row_OnClick` toggles a zone on either mouse button, so a right-click collapses it there too. On Mists, `Classic-Zone-Actions.lua` restores Blizzard's selection, which can differ from the quest the window shows.
-
-The button belongs to the wide quest log's list, so with the Wide Quest Log switch off there's none, and the Quality of Life panel says so under Quest Sharing (`ZONE_SHARE_NEEDS_WIDE_LOG`); dungeon quest sharing works either way. Both quest logs' Share Quest buttons explain why they're grayed out when the player isn't in a group (`ns.ExplainShareButton`, `Features/Utilities.lua`). The Wide Quest Log panel's Handy Clicks section lists the easy-to-miss clicks; its Right-Click a Quest row shows only on WoW Forever and Mists (`ns.questLogIsOwnWindow`), because on Classic Era and TBC a right-click on a quest stays Blizzard's.
-
-## Share Reminders
-
-When a share fails for a reason the party member can fix, `Features/Share-Reminders.lua` whispers them which quest it was. Failures they can't fix (not eligible, already on it, already done) get none.
-
-- **Which results.** `FIXABLE_RESULTS` lists the client's own result strings (`ERR_QUEST_PUSH_BUSY_S`, `ERR_QUEST_PUSH_TOO_FAR_S`, `ERR_QUEST_PUSH_LOG_FULL_S`), read through `_G` by name. All three get the same whisper, which doesn't say why: the game already told them. Each string is turned into an anchored pattern at load, its `%s` (or `%1$s`) catching the player's name, so `CHAT_MSG_SYSTEM` is matched in whatever language the client runs. A client without one of the strings skips it.
-- **Which quest.** The result names the player but not the quest, so a `hooksecurefunc` on `QuestLogPushQuest`, which every way of sharing calls, notes the quest as each share goes out through the loaded Zone-Actions file's `ns.SharedQuest`: the log entry it was passed, since WoW Forever's share menus pass one without selecting the quest, or else the selected quest. A zone header notes nothing. A result counts only within `ns.GetShareInterval()` of that share, the gap Share Quests leaves between shares, and each player is whispered once per share.
-- **Which whisper.** A player's first failure gets the full whisper (`WHISPER_SHARE_FAILED`); every later one gets the short follow-up (`WHISPER_SHARE_FAILED_AGAIN`), naming just the quest. `told` remembers who has had the full one until the player joins or leaves a group (`GROUP_JOINED`, `GROUP_LEFT`, party or raid). The dungeon quests handle those events too, so these handlers sit on `ns.shareReminders`, named in their own `EVENTS` rows.
-- **When.** Only with the Quality of Life switch and `shareWhispers` both on (both default on), and only in a party: never in a raid, a battleground or an arena, where it would be too much spam. Sharing itself still works there. During chat lockdown the system message is secret and can't be read (`C_ChatInfo.InChatMessagingLockdown`, checked first on every client), so nothing is sent.
-
-The whisper goes through `ns:Announce`, so it has the house sent-message shape: the marker (`ns.TARGET_MARKER`), the body (the strings for other players are written with no closing period), then ` // ` and the short name (`L["ADDON_SHORT_NAME"]`). WoW Forever blocks raid-marker tokens in chat, so `ns:BuildAnnounceMessage` leaves the marker off there:
-
-```
-{rt3} I tried to share [Quest Name] with you, but it didn't go through. ... // PWQL
-{rt3} Same goes for [Quest Name] // PWQL
-```
-
-The quest reference is the best one that keeps the whole whisper within `ns.CHAT_MESSAGE_MAX_LENGTH` (255 bytes, past which `SendChatMessage` rejects the message), chosen by `ns.FittingQuestReference` (which `ns.ShareWhisperQuestReference` wraps for the whispers): Questie's native quest link (`QuestieLink.GetNativeQuestLinkStringById`, clickable for anyone), then Questie's bracketed text (`GetQuestLinkStringById`, a link for players who run Questie), then the title in brackets, cut on a UTF-8 character boundary to `[Title...]` when even that won't fit. The Localization tab's Message Length report builds each whisper for the longest quest title it can read (through `ns.DiagnosticLogQuests`, so on Classic Era, TBC and Mists a zone collapsed in Blizzard's log goes uncounted, and the report says how many) and shows its byte count, marking it SHORTENED where the title had to be cut.
-
-The Quality of Life panel's Example lines show what happens on this client. They sit under Seconds Between Shares and under the whisper, dungeon announcement and dungeon sharing toggles, each of the last three hiding while its toggle is off, and are built by the same code the features send with: `ns.BuildShareWhisper`, the first message of `ns.BuildDungeonAnnouncement`, and for the two print lines, `ns.BuildSharePrint` with the sample quest count, drawn by `ns.BuildPrintLine` (`ns.RenderSample`, `Options/Options-Utilities.lua`). The silver is only the "Example:" label (`SAMPLE_EXAMPLE`). The whisper draws as the party member receives it and the announcement as party chat, each in the client's own chat colors (`ChatTypeInfo`, with a fixed color for a client that hasn't filled it in), with its prefix (`CHAT_WHISPER_GET`, `CHAT_PARTY_GET`), the player's character as a class-colored sender, and the marker as its icon. The color is reopened after each `|r`, because a panel falls back to white after a link where chat falls back to the channel color. The lines name real quests and areas from the flavor's `ns.SAMPLE_QUEST_IDS`, `ns.SAMPLE_DUNGEON_AREA_ID` (the dungeon sharing line) and `ns.SAMPLE_ZONE_AREA_ID` (the slider's line) (`Data/{Game}/Sample-Quests-{Game}.lua`), with area names from `C_Map.GetAreaInfo`. A title the client hasn't loaded is requested with `C_QuestLog.RequestLoadQuestByID` and shows `SAMPLE_QUEST_LOADING` until it arrives. A flavor with no samples hides the rows.
-
-## Dungeon Quests
-
-In a dungeon with a party, `Features/Dungeon-Quests.lua` tells the party which of the player's quests still need doing there and shares the ones the game lets them share. Both are Quality of Life settings, on by default: `dungeonAnnounce` and `dungeonShare`.
-
-- **Where.** An instance of type `party` or `raid` (`GetInstanceInfo`), while in a party: `IsInGroup()` and not `IsInRaid()`. Nothing runs in a raid group, where announcing and sharing to everyone would be spam; a party that converts to a raid stops, and one that converts back picks up where it left off.
-- **When.** `PLAYER_ENTERING_WORLD`, `GROUP_JOINED` and `GROUP_ROSTER_UPDATE` only start a `C_Timer.NewTicker` that checks every `ns.DUNGEON_CHECK_INTERVAL` (2) seconds, and only while one of the two settings is on in a party dungeon. A Quality of Life setting or profile change starts it at once too (`ns.dungeonQuests.Watch`, from `ns.ApplyQualityOfLifeSettings` and `ns:ApplyProfile`), rather than at the next loading screen. `GROUP_ROSTER_UPDATE` goes to `ns.dungeonQuests:OnGroupRosterUpdate`, since `Forever-Quest-Log.lua` owns `ns:OnGroupRosterUpdate`. The ticker cancels itself once nothing is left to do or the player is no longer in a party dungeon. A check waits until every online party member who still needs the announcement or the shares is in range (`UnitInRange`), or `ns.DUNGEON_SHARE_MAX_WAIT` (60) seconds after the wait began, so the announcement and the shares reach a party that has actually gathered rather than whoever zoned in first. WoW Forever hides party range from add-ons, so there (`ns.FLAVOR == "Camelot"`) everyone counts as in range and both go out on the first check.
-- **Who counts.** The other party members (`GetNumSubgroupMembers`) who are online (`UnitIsConnected`), by GUID. A slot the game hasn't filled in yet, as happens around a loading screen, is left out, so it never reads as someone leaving and coming back. On a client with `issecretvalue`, a member whose GUID or connection comes back secret is left out too (`ns.IsReadable`), since a secret value can't be tested.
-- **What this group has had.** State is keyed by the dungeon's instance ID (the 8th return of `GetInstanceInfo`), so every instance of it, re-entered or reset, shares one key and the key never depends on Questie. Per key it holds whether the dungeon was announced, and the GUIDs its quests were shared with. All of it is held in memory and dropped on `GROUP_LEFT`. So the announcement goes out once per dungeon per group, and the shares once per party member per dungeon: zoning out and back in shares nothing, and someone who joins later gets a run of their own. That run goes through `QuestLogPushQuest`, which offers each quest to the whole party; those who already have it get the game's "already on it" result, which earns no whisper. A member already shared with is never waited on. One still out of range when the wait ends starts a fresh wait, and is shared with once everyone who still needs it is in range, or that wait runs out with them in range.
-- **Login and reload.** A login or `/reload` inside a dungeon isn't arriving there: the group most likely had it already. `PLAYER_ENTERING_WORLD`'s `isInitialLogin` and `isReloadingUi` mark the party as served, so until `ns.DUNGEON_LOGIN_GRACE` (10) seconds after the first member shows up (the roster can fill in late after a login), each check marks the dungeon announced and every member seen as shared with. The next loading screen ends it; anyone who joins after the grace is shared with as usual.
-- **Which quests** (`Features/Dungeon-Quest-Lookup.lua`, which also works out the dungeon and its key, `ns.CurrentDungeon`). A quest counts if it's listed under a quest log header with one of the dungeon's names (`GetRealZoneText()`, the instance name, or the area name of any of its Questie zone IDs; an empty name while the zone loads names nothing), or if Questie places it there: filed under the dungeon (`zoneOrSort`), or a creature, object or item it asks for (creatures and objects by their spawns, items by what drops them), a kill credit, an explore trigger, an extra objective or a required source item found there. This is what catches class quests. The Questie zone ID comes from `ZoneDB.instanceIdToAreaId` on the instance ID, and Questie files some dungeons' quests under a second zone ID, so the dungeon's alternative IDs from `ZoneDB:GetDungeons()` count too. World event quests (holidays and the Darkmoon Faire, by `QuestieEvent.IsEventQuest`) never count, even under the dungeon's header, as Questie can place one in a dungeon it has nothing to do with. Every Questie read is in a `pcall`. Without Questie, or for a dungeon Questie's `ZoneDB` doesn't know, the header alone decides.
-- **The announcement** leaves out quests ready to turn in or failed, and goes to `ns:GetGroupChatChannel()` (instance chat or party, since it never runs in a raid). It's a parts list: each quest named as a share whisper names it (`ns.FittingQuestReference`), joined by `LIST_SEPARATOR`, packed greedily and split only between quests, so a link is never broken. The first message says how many (`DUNGEON_QUESTS_ANNOUNCE`, or `DUNGEON_QUESTS_ANNOUNCE_ONE` for a single quest); every later one has a lead of its own (`DUNGEON_QUESTS_ANNOUNCE_CONTINUED`), so each message reads as a whole. Nothing is sent when no quest is left to do, or during chat lockdown (`C_ChatInfo.InChatMessagingLockdown`); the dungeon still counts as announced.
-- **Sharing** takes every matched quest the game lets the player share (`pushable` from `ns.LogQuests`), ready to turn in or not, and hands them to `ns.ShareQuests`, Share Quests' paced run, with the same `ns.BuildSharePrint` line naming the dungeon. When none can be shared it prints nothing, and the members still count as shared with. While a run is still going (`ns.sharingQuests`, Share Quests' included), sharing waits for the next check, and the members it was for aren't marked until it goes. A failed share gets the usual whisper (see Share Reminders).
-
-```
-{rt3} I have 5 quests to do here: [Quest], [Quest], [Quest] // PWQL
-{rt3} More quests to do here: [Quest], [Quest] // PWQL
-```
-
-Inside a dungeon, the Sharing Context report shows its instance ID, key and Questie zone IDs; whether the player is in a raid group, whether the ticker is watching, whether this group has had the announcement, and how long the party has been waited for (of the 60 seconds); each online party member with whether they're in range and have had the shares (with a line saying WoW Forever hides party range); each matched quest with what matched it (`header` or `Questie`), its state and whether it can be shared; and the announcement as it would be sent, with each message's byte count (`ns.DungeonShareStatus` supplies the group's state). The Message Length report also builds the announcement for every quest it can read that's still to do and flags any message over the limit (OVER). Where the log goes by index (Classic Era, TBC and Mists), both reports read only open zones' quests (`ns.DiagnosticLogQuests`), swapped in for `ns.LogQuests` for the length of the call, so building them doesn't expand the log or move the selection; a quest other than the selected one reads as "sharing not checked", and Sharing Context says how many zones are collapsed.
-
-## Quest Text
-
-Quest text is set the same way in both quest logs and in the quest giver window on every client, from five shared files:
-
-- `Features/Quest-Display.lua` (every client): how a quest is named. The list title with its level tag while `showQuestLevels` is on (`ns.QuestListTitle`, `ns.LevelTag`: "[13]", "[13D]"), the letter from the flavor folder's `ns.QUEST_TAG_SUFFIXES` (`ns.QuestSuffix`; tag 1 is Elite on Classic Era and WoW Forever but Group on TBC, so the tags are data), with E for an elite quest that has no tag of its own; the legend for the Show Quest Levels tooltips (`ns.QuestLevelLegend`, only the letters this client can show); and the quest ID (`ns.StyleQuestID`).
-- `Features/Quest-Objectives.lua` (every client): objective lines (`ns.StyleObjective`), the check icon (`ns.CheckIcon`, `ns.InlineIcon`) and the two-space inset every number in the details shares (`ns.TwoSpacesWide`).
-- `Features/Quest-Info-Style.lua` (every client): the section heading font, the line spacing (`ns.StyleQuestText`), Blizzard's own font and spacing kept to put back (`ns.RememberBlizzardStyle`, `ns.RestoreBlizzardStyle`), the `QuestInfo` pieces the quest giver window cleanup restyles (`ns.StyleQuestInfo`, `ns.RestoreQuestInfoStyle`), and the empty room left under a quest giver page's last piece (`ns.CreateRoomBelow`).
-- `Features/Quest-Details-Data.lua` (WoW Forever and Mists only, loaded right after `Quest-Log-API.lua`): the selected quest's details as plain data (`ns.GetSelectedQuestDetails`).
-- `Features/Quest-Rewards.lua` (every client): rewards wherever Blizzard's `QuestInfo` shows them.
-
-Lines are `LAYOUT.LINE_SPACING` (4) apart; Blizzard leaves none on Classic Era and a little on WoW Forever. The section headings (Description, Rewards, and Objectives wherever the client's `QuestInfo` has that heading) use `PrettyWideQuestLogSectionHeadingFont`, `SECTION_HEADING_SHRINK` (3) smaller than `QuestTitleFont` (18 to 15 in English) so the title reads as the one heading over them, or the title's size under ElvUI, whose title font is already small. That font follows every `SetFont`, `SetShadowColor` and `SetShadowOffset` on `QuestTitleFont`, which skins set after this file loads and again when their font options change.
-
-Every gap, margin and padding is a step on one scale, `LAYOUT.SPACE` in `Data/Data.lua` (`TIGHT` 2, `LINE` 4, `NEAR` 8, `GROUP` 16, `SECTION` 32), each step twice the last, so the space between two things says how closely they belong together: lines of a paragraph 4 apart, a heading 8 over its text, sections 32 apart. Sizes the add-on picks freely follow the same doubling (the Quest Arrow is 64px, its list 512px wide). Positions that line up with Blizzard's art, and Blizzard's own control sizes, stay as they are.
-
-### Two Kinds of Details
-
-- **Classic Era and TBC** restyle Blizzard's own `QuestLog*` regions in place (`Features/Classic-Quest-Details.lua`, a quest log part). Their fonts and spacing are set once, since the quest log has them to itself; their anchors are set to the scale (the title at `CONTENT_TOP`, the objectives `TITLE_SPACE_BELOW` under it, the Description heading `HEADING_SPACE_ABOVE` above, set again after every `QuestLog_UpdateQuestDetails` because Blizzard re-anchors it). Blizzard hangs the first reward button of each section 3px left of the text and the captions 3px in, so a `QuestFrameItems_Update` hook (for `"QuestLog"` only, since the quest giver window calls it too) lines them up with the text, so two columns of buttons fill the column exactly, and spaces them with `Quest-Rewards.lua`'s `ns.SpaceAroundRewardButtons`. Gold is right-aligned two spaces in (`MONEY_RIGHT_PADDING`, 13, makes up for the money frame's own inset). The quest chain and the quest ID go inside the spacer Blizzard hangs under the last piece (`QuestLogSpacerFrame`), made tall enough to hold them, and are placed again a frame later once the pane's layout has settled.
-- **WoW Forever and Mists** draw the details on frames of their own (`Features/Forever-Quest-Details.lua`) from `ns.GetSelectedQuestDetails`, and never call or borrow Blizzard's `QuestInfo`, which the quest giver window and Blizzard's own quest details (the map's on WoW Forever, `QuestLogFrame`'s on Mists) use. So none of the three can leave another's text blank or styled for the wrong place. The pieces go down the column one under another (`Place`), each its own step under the last: the title (just the name, Blizzard's failed format if failed, with no type icon or level since the list has both), the objectives text, then the timer, suggested group size and required gold `SPACE.NEAR` apart, WoW Forever's next waypoint and the objective lines (`SPACE.GROUP` under the text, then `SPACE.LINE` apart), Description, Rewards, the quest chain, and the quest ID `QUEST_ID_GAP` under the last; the scroll child ends `PAGE_TOP` below it. Colors are Blizzard's quest text colors (`GetMaterialTextColors`, `"Stone"` when Quest Text Contrast asks for light text, with its background atlas), a finished objective grayed (0.2) as Blizzard grays it on Mists. Reward buttons are plain `LargeItemButtonTemplate`, two to a row 1px apart, rows `SPACE.TIGHT` apart, the first `REWARD_BUTTONS_SPACE` (8) under its line; names in the item's quality color, counts through `ns.FormatNumber`, unusable rewards tinted red. An item the client hasn't loaded asks for its data once (`ContinueOnItemLoad`) and repaints when it arrives. Hovering re-selects the quest before `GameTooltip:SetQuestLogItem` or `SetQuestLogCurrency`, since those read the selection and something else may have moved it; a modified click links the item. Gold (`GetCoinTextureString`) sits right-aligned on the "You will receive:" line and the experience under it, `MONEY_EXPERIENCE_SPACE` (16) down with gold shown, `SPACE.LINE` without. The scroll bar is the list's `MinimalScrollBar`, because `ScrollFrameTemplate`'s bar differs on each client.
-- **`ns.GetSelectedQuestDetails`** reads Blizzard's quest log selection for most of its calls, so the pane selects the quest first (`ns.SelectQuest`). Where the clients differ the call is chosen once at load, the one by quest ID first (`C_QuestLog.GetRequiredMoney` or `GetQuestLogRequiredMoney`). WoW Forever alone has the suggested group size, the next waypoint text, choice rewards that can be a currency (`GetQuestLogChoiceInfoLootType`, counted apart from the items for their tooltips) and `C_QuestInfoSystem.GetQuestRewardCurrencies`; Mists' reward currency indexes can skip, as Blizzard's own loop allows for, so it looks as far as `GetMaxRewardCurrencies()`. Taught spells leave out ones already known, boost spells and followers; objective lines leave out `spell` and `log` objectives, as Blizzard's details do. Rewards are empty unless `C_QuestLog.ShouldShowQuestRewards`.
-
-### Shared Pieces
-
-- **Objective lines** (`ns.StyleObjective`, both quest logs) take the description's font rather than Blizzard's smaller one. Each line is a check for a finished objective, or a blank the same size so the names line up, the name, and its count ("8 / 8", split from "8/8 Name" on WoW Forever or "Name: 8/8" on Classic) right-aligned in a column of its own, `SPACE.NEAR` clear of the name. The check is sized to the font in whole pixels and dropped a quarter of its size (`CHECK_DROP`), because left to size itself it came out small and riding high in ElvUI's quest font. Skins recolor the lines in hooks that can run after the styling, so each count matches its line's color again a frame later.
-- **Two spaces in.** Body text wraps short of the column's edge, so a number flush against it looks like it runs past. Objective counts, gold, experience and the quest ID end two spaces in, measured in their font on a hidden FontString ("0  0" less "00", since a FontString may not draw trailing spaces).
-- **The quest ID** (`ns.StyleQuestID`) is the description's font `QUEST_ID_FONT_SHRINK` (2) smaller, in its color. Skins recolor the description in hooks that may run after, so the first time it styles a quest ID it hooks `SetTextColor` on the description and recolors the ID, and its chain link, whose color is written into the text, whenever that changes.
-- **TBC's daily quests** get a line under the title saying when dailies reset (`DAILY_RESET`, `GetQuestResetTime`), with the objectives hung `DAILY_RESET_SPACE_BELOW` (8) below it while it shows. Classic Era has no daily quests (`ns.IsDailyFrequency` is false without `LE_QUEST_FREQUENCY_DAILY`), and the line is in the Classic details file, so it shows only on TBC. Its color follows `SetTextColor` on the description, as the quest ID's does.
-
-### Blizzard's QuestInfo
-
-The quest giver window's detail and reward pages on every client, and Blizzard's own quest details on WoW Forever and Mists, share Blizzard's `QuestInfo` pieces. They follow the quest giver window cleanup (see Quest Giver Window), not the Wide Quest Log switch.
-
-- **Styled before layout.** `ns.ApplyQuestGiverCleanup` styles the shared text (`ns.StyleQuestInfo`) as the saved settings load, before Blizzard first lays any of it out, so Blizzard measures the text as it will be drawn; with the cleanup off it puts back the font and spacing `ns.RememberBlizzardStyle` kept (`ns.RestoreQuestInfoStyle`). A piece a client lacks is skipped.
-- **Experience and gold** are set in the description's font and color, rather than Blizzard's white outlined number font, from a `QuestInfo_Display` hook in `Quest-Rewards.lua`. It acts for every caller while the cleanup is on, and puts both back to Blizzard's for every caller while it's off. The experience number's thousands are grouped by `ns.FormatNumber`, because `BreakUpLargeNumbers` can leave them ungrouped. Skins (ElvUI) add the share of a level after the number ("2,950 (+20.49%)") in a bright green made for their dark backdrop, in a hook that may run before or after this one, so only the number at the front is regrouped and the rest kept; while the description is dark (luminance under 0.5, as on the parchment), every color code in that text becomes the palette's `PARCHMENT_GAIN` (`1D6B1D`) after each `SetText` and `SetFormattedText`. Gold gets a font object of its own (`PrettyWideQuestLogMoneyFont`, a copy of the description's with no shadow) on each coin button; Blizzard sizes each coin to its text when it lays the coins out, so after a change of font `MoneyFrame_Update` lays them out again for the same amount.
-- **Reward names** (`Quest-Giver.lua`). Blizzard draws them white on a dark name plate, and a skin that hides the plate leaves them white with a shadow on the bare parchment, so with the cleanup on and the plate hidden (or at alpha 0) they take the description's color without the shadow. The buttons are shared, so every display restyles every button it shows, and again a frame later because skins restyle them in hooks that may run after. With the cleanup off they go back to the color and shadow they had.
-- **The rewards block** on a quest giver page is spaced by `ns.SpaceRewardsBlock` (`Quest-Rewards.lua`): `HEADING_SPACE_BELOW` under the Rewards heading, reward buttons `REWARD_BUTTONS_SPACE` clear of the text around them, each later line `REWARD_LINE_SPACE` (8) where Blizzard leaves 5, and the experience `MONEY_EXPERIENCE_SPACE` under the gold, or `SPACE.LINE` when there's no gold and "You will also receive:" is its own label. Blizzard sizes the block to what it laid out, so the block grows by however much further down its pieces went; running it again on the same layout changes nothing.
-
-## Quest Giver Window
-
-Everything here follows `ns.IsQuestGiverCleanupOn()`: the Quality of Life switch and `giverCleanup` both on (both default on), whatever the Wide Quest Log switch says, so it works alongside Blizzard's quest log too. Turning it on or off, or changing profile, reapplies it at once through `ns.ApplyQuestGiverCleanup` (`Features/Quest-Giver.lua`), which `ns.ApplyQualityOfLifeSettings` (`Options/Options-Utilities.lua`, called by every Quality of Life toggle's `set` and by both Quality of Life switches, on the General and Quality of Life panels) and `ns:ApplyProfile` call, as does Core as the saved settings load. A quest giver window already open is laid out again the next time it opens.
-
-- **Its own text** (`Features/Quest-Giver.lua`): the text the greeting, detail, progress and reward pages hold themselves rather than through `QuestInfo`, chiefly the progress page's, which no client draws with `QuestInfo`. It's found by font, not by name: text in the title's font is a heading, the one hung from the top of its page being the quest's title. Each piece's font and spacing is kept as Blizzard left it the first time it's changed, and put back when the cleanup goes off. It's styled as the saved settings load, before Blizzard first lays it out.
-- **The shared `QuestInfo` text** of the detail and reward pages, on every client, is styled by `ns.StyleQuestInfo` with the cleanup on and put back by `ns.RestoreQuestInfoStyle` with it off (`Features/Quest-Info-Style.lua`, see Quest Text). The page's objective lines keep Blizzard's font, with no check or count column, on every client.
-- **The detail and reward pages** are spaced from a `QuestInfo_Display` hook (`SpaceQuestGiverPage`), which walks the template's elements and sets each piece's space above by what it is (`PIECE_KINDS`): the first piece `PAGE_TOP` (16) down the page; a heading `HEADING_SPACE_ABOVE` (32) under what's above it, and the rewards that plus `REWARDS_HEADING_RISE` (3) on WoW Forever and Mists, whose Rewards heading sits higher in its block; text `TITLE_SPACE_BELOW` or `HEADING_SPACE_BELOW` (8) under the title or heading that introduces it; the smaller pieces (special objectives, group size, timer, objectives frame) `SPACE.NEAR` under the text; the spacer 0. Only `TOPLEFT` anchors move, and the rewards block then goes through `ns.SpaceRewardsBlock`. Blizzard lays each page out afresh, so with the cleanup off it's left alone.
-- **The greeting page** (`Features/Quest-Giver-Pages.lua`) is for a quest giver with quests and nothing else to say. The greeting sits `PAGE_TOP` down; Current Quests and Available Quests sit a section under it, or right under it when the greeting is empty; each list's first line is a heading's space under its heading, and the lines `QUEST_LINE_SPACE` (8) apart. Blizzard's 32px break between the two lists (`QuestGreetingFrameHorizontalBreak`, hidden by skins such as ElvUI but still holding its place) becomes the whole section's space. Blizzard anchors everything but the greeting afresh on each show, so with the cleanup off only the greeting goes back, to the offset kept the first time. It runs from the panel's `OnShow` and from `QuestFrameGreetingPanel_OnShow`, which Blizzard calls directly when the page is already open. Its quest lines are pooled buttons (`titleButtonPool`) where the client has the pool, else `QuestTitleButton1`, `QuestTitleButton2` and so on.
-- **The progress page** (`Features/Quest-Giver-Pages.lua`, every client) is spaced from a `QuestFrameProgressItems_Update` hook: the title `PAGE_TOP` down and its text `TITLE_SPACE_BELOW` under it, the "Required items:" heading a section down, the gold or the first row of items a heading's space under it, and the first row `SPACE.NEAR` under the gold when gold is asked for. The quest ID goes right-aligned, `QUEST_ID_GAP` (32) under the last thing on the page (the left button of the last row of items, else the gold, the heading or the text), and `ns.CreateRoomBelow` keeps `PAGE_TOP` of empty room under it, because a scroll frame scrolls only as far as the last thing on its page, so scrolled to the bottom it sits clear of the page's edge. Blizzard anchors the first row of items afresh each time, so with the cleanup off the title, text, heading and gold go back to the offsets kept the first time each moved, and the quest ID hides.
-- **The gossip window** (`Features/Gossip.lua`, every client, since all share Blizzard's gossip code): with the cleanup on, the greeting takes the quest text's font and line spacing from a hook on `GossipGreetingTextMixin.Setup`, and with it off goes back to Blizzard's. Only the text's look changes: the lines and rows keep Blizzard's places and sizes, because the gossip list measures its rows itself.
-- **A skinned window's backdrop.** ElvUI keeps the parchment but draws the window around it see-through, so Questie's tracker or a nameplate shows through above and below the page. With the cleanup on, the skin's backdrop is opaque in its own color (`customBackdropAlpha = 1`, which ElvUI keeps through its color updates); with it off, it goes back to the skin's own alpha. ElvUI puts the backdrop on `QuestFrame` itself on WoW Forever and Mists, and on `QuestFrame.backdrop` on Classic Era and TBC; a window no skin has touched has neither and is left alone. Skins style the window after this file loads, so it's checked on each `QuestFrame` `OnShow` and by `ns.ApplyQuestGiverCleanup`.
-- **The `QuestInfo` pages on WoW Forever and Mists** (`Features/Forever-Quest-Giver.lua`, which only those two load) get the add-on's details' gold and experience placement and a quest ID, from its own `QuestInfo_Display` hook through `ns.LayOutQuestGiverPage`. Gold and experience are right-aligned two spaces in from the edge of the template's `contentWidth` (`AlignRewardNumbers`). The quest ID goes `QUEST_ID_GAP` under the last piece Blizzard showed on that page (spacer, rewards, objectives, reward text or description); a piece left showing from Blizzard's own quest details sits on that window, not the page, so it doesn't count. The one quest ID, its room below and its Wowhead button move to whichever page shows. For any other caller (Blizzard's own details, or a quest giver page with the cleanup off) the gold and experience go back beside their labels, 15px out, where Blizzard puts them, and the quest ID hides.
-- **Level tags** (`giverLevels`, a sub-option of the cleanup, default on) put the quest log's tag ("[36]", "[40D]") in front of each quest line in a quest giver's list whose level is known (above 0), in the line's own color, with the letter from `ns.GetQuestTagByID` (`ns.TagQuestLine`, `Quest-Giver.lua`): the gossip window through hooks on `GossipSharedAvailableQuestButtonMixin.Setup` and `GossipSharedActiveQuestButtonMixin.Setup`, which then call the line's `Resize`, and the greeting page through its `OnShow` and `QuestFrameGreetingPanel_OnShow` (`Quest-Giver-Pages.lua`), reading `GetActiveLevel` or `GetAvailableLevel` and `GetActiveQuestID` or `GetAvailableQuestInfo`'s fifth return, then making the button tall enough for the longer text. Blizzard can run either more than once on the same text, so each button remembers the text it tagged (`levelTaggedText`) and isn't tagged twice.
-
-## Quest Chain
-
-When Questie knows the selected quest is part of a chain, the quest details show a Quest Chain section `HEADING_SPACE_ABOVE` under the rewards and above the quest ID, on every client (`Features/Quest-Chain.lua`), one row per part, under a heading counting the selected quest's place (`QUEST_CHAIN_PROGRESS`, "Quest Chain (2 of 5)"). On Classic Era and TBC the details file builds it inside its part, so it exists only while the wide quest log runs.
-
-Parts already turned in (`C_QuestLog.IsQuestFlaggedCompleted`) get a check in the objectives' check column (`ns.CheckIcon`) and a faded name (`TURNED_IN_ALPHA`, 0.6), and the selected quest's row sits instead on a faint band in the Description text's own color (`CURRENT_PART_BAND_ALPHA`, 0.12), reaching `CURRENT_PART_BAND_MARGIN` (`SPACE.LINE`) above and below the row so it leaves room around the badge. Rows are `ROW_GAP` (`LAYOUT.HEADER_GAP`, 8) apart, the first a heading's space under the heading. The check and badge have a column of their own, so a name too long for one line wraps under the name.
-
-After the check comes the part's level ("78D") on a badge, a size down from the Description's text (`QUEST_ID_FONT_SHRINK`, 2), in its quest log color: the server's rating for the player where the client rates the part (a part in the log on WoW Forever, through `C_PlayerInfo.GetContentDifficultyQuestForPlayer`), else its level against the player's (`GetQuestDifficultyColor`). The quest log colors are made for dark backgrounds and wash out as text on the parchment, so the badge's box is the same color darkened (`BADGE_SHADE`, 0.3 of each channel): dark green under a green level, dark red under a red one. That reads the same on the parchment and on any skin, and the name stays in the Description's color. The badge is a pill with no art of its own (`CreateBadge`): a cap at each end, a square as tall as the pill under the game's circle mask (`Interface\CharacterFrame\TempPortraitAlphaMask`), and a middle running between the caps' centers, all three one solid color so the overlaps don't show. Every badge is as wide as the widest tag could be (a doubled digit with each suffix letter this client has, measured once per font in `BadgeTextWidth`), plus `BADGE_PAD_X` (8) each side and `BADGE_PAD_Y` (2) above and below, so the names line up; a part with no level keeps the room empty. Hovering a row shows Questie's own quest tooltip (`QuestieLink:CreateQuestTooltip`, for a `questie:<questID>:<player GUID>` link).
-
-The chain comes from Questie's database through `QueryQuestSingle`, every call in a `pcall` since Questie may not be loaded or ready. Walking back, a part counts as the one before only if it's the quest's sole prerequisite (`preQuestSingle` with one entry and no `preQuestGroup`) and names the quest as its `nextQuestInChain`; walking forward follows `nextQuestInChain`. So where a chain branches, only its straight run shows. Both walks together stop at `MAX_PARTS` (25), which only a loop in the data reaches, and a chain of fewer than two parts is no chain. `ns.GetQuestChain` keeps the last chain found (`lastChain`), since the details repaint in bursts and Questie's data doesn't change in a session, and returns that table, so callers only read it. A miss isn't kept, because before Questie's database is ready every quest looks like it's in no chain. Each row's name comes from the client, else Questie's, else the quest ID; it carries a level badge only when Questie gives a level above 0 and a color is known, whatever `showQuestLevels` says. The tag is Questie's corrected `GetQuestTagInfo` tag ID where it has one, else the client's (`ns.GetQuestTagByID`), and whether it's elite is always the client's: a tag's name is never compared, since it reads differently in every language.
-
-The section copies the Description heading's and text's font, color and shadow from the FontStrings themselves, because skins set them there rather than on the font objects. ElvUI recolors those two only after the details are filled, so the section also follows them: the first time it fills, `FollowSourceColors` hooks `SetTextColor` and `SetShadowColor` on both and recolors the heading and every row whenever either changes, whichever runs first.
-
-## Ready to Turn In
-
-`Features/Turn-In-Line.lua` totals the XP and gold waiting in quests ready to turn in, in a line (`TURN_IN_SUMMARY`, `GameFontNormalSmall`) centered between Abandon Quest and Share Quest (`ns.abandonButton`, `ns.shareButton`). Both come from Questie's `QuestXP` module, so the line is hidden while Questie isn't loaded; a quest worth no XP and no gold is left out, and the line hides when none remain. On Classic Era and TBC it counts only quests under open zones, since the quest log lists none under a collapsed zone; WoW Forever and Mists count collapsed zones too. `GetQuestLogRewardXP` is called with `self` and `GetQuestRewardMoney` without, matching how Questie defines each, both in a `pcall`. At the level cap (`GetMaxPlayerLevel()`) it shows only the gold, as quest XP stops there. On Classic Era and TBC the list file makes it inside its part, so it exists only while the wide quest log runs. It's placed the first time it shows rather than when it's made, because there `Classic-Quest-Log.lua` records Blizzard's Abandon and Share buttons as `ns.abandonButton` and `ns.shareButton` only after the list file has made the line (on WoW Forever and Mists, `Forever-Quest-Log.lua` makes them first). Hovering it lists each quest under its zone (`OTHER` for quests outside any zone), zones in the order their first quest comes in, under `TURN_IN_TOOLTIP`, in a tooltip of its own, `PrettyWideQuestLogTurnInTooltip`, made opaque after every `Show` (its `NineSlice` center, and a skin's `backdrop`), since showing restores the see-through style and the list opens over the quest text.
-
-## Wowhead Link
-
-Every quest ID the add-on shows (both quest logs' details, the progress page on every client, the quest giver pages on WoW Forever and Mists) is clickable (`Features/Wowhead-Link.lua`): hovering says so (`WOWHEAD_LINK_TOOLTIP`), and clicking opens `PRETTYWIDEQUESTLOG_WOWHEAD` (`WOWHEAD_LINK_COPY`) with the quest's Wowhead address selected, ready to copy. Both act only while the quest ID line is showing. The popup's edit box puts the address back whenever it's edited, so it can't be lost, and Enter or Escape closes it. The address before the quest ID is `ns.WOWHEAD_QUEST_URL`, a single setting in each flavor folder (`Data/{Game}/Wowhead-{Game}.lua`), so the TOC picks the part of Wowhead: `/classic/` for Classic Era and WoW Forever, whose quests are Classic Era's, and for Season of Discovery (`Data/Discovery/`, which the Classic Era TOC lists after `Data/Vanilla/`; the Vanilla file returns early under Season of Discovery, `ns.IS_DISCOVERY`, and the Discovery file applies only then), `/tbc/` for TBC, and `/mop-classic/` for Mists (the Wrath and Mainline files, which no TOC lists, hold `/wotlk/` and the site root). With no address set, `ns.LinkQuestIDToWowhead` returns without making the link, so a missing file shows no error, only no link; Quest Log Context prints the address (or `(none)`), and the Data tab's Wowhead row prints it or `TABLE MISSING`. `ns.LinkQuestIDToWowhead` marks the FontString (`linksToWowhead`), so `ns.StyleQuestID` starts it with the chain icon (`ns.WOWHEAD_LINK_ICON`) tinted to the quest ID's own color, and returns the button, so a quest ID that moves between parents takes it along.
-
-## Quest Map
-
-`Features/Quest-Map.lua` docks a map to the right of the window on every client, in the map art's proportions (`MAP_ASPECT`, 1002 / 668) and `HEIGHT_SHARE` (0.66) of the visible window's height, measured from the art's top border down to its bottom edge. It is a quest log part like the rest, so on Classic Era and TBC it exists only while the wide quest log runs. `ns.hasQuestMap` is set as the file loads, outside the part, so it is true on every client whose TOC lists the file; `ns.questMap` exists only once the part has run. The map is Blizzard's map canvas (`MapCanvasFrameTemplate`) with a few of the world map's data providers on it, the way the Battlefield Map is built. It is the add-on's own frame, so the world map is never opened or touched. The canvas's `OnLoad` needs its `ScrollContainer` child to exist, which only XML can arrange (the `BorderFrame` beside it is what the canvas turns on to block the mouse while the map is locked), so the frame, `PrettyWideQuestLogMapFrame`, is declared in `Features/Quest-Map.xml` and set up in the Lua file. The same XML file declares `PrettyWideQuestLogQuestMarkerPinTemplate`, the marker WoW Forever and Mists draw (see WoW Forever and Mists below).
-
-The canvas sits in a holder of the add-on's own (`questMap.holder`, a `BackdropTemplate` frame with the dialog box's dark background and border) that takes the mouse, so clicks on the map never reach whatever is behind it. Where the holder goes is a small style table: `edge` (the region whose right edge, top and bottom the offsets are measured from, the window by default), `x` (-34), `top` (-9), `bottom` (45) and `inset` (11, the border's edge to the map inside it), measured in game so the map's left edge meets the window art's right edge and its top lines up with the art's top border. `ns.questMap.SetStyle` changes any of these keys and lays the map out again, for a skin that draws the window differently, as `Classic-ElvUI.lua` does. The layout runs again on every window `OnSizeChanged`.
-
-The mouse wheel doesn't zoom the map: the scroll container's mode is `MAP_CANVAS_MOUSE_WHEEL_ZOOM_BEHAVIOR_NONE`, which leaves the wheel enabled, so scrolling over the map doesn't zoom the camera either. The map art is fitted again (`canvas:OnFrameSizeChanged`) from the scroll container's own `OnSizeChanged`, once a new size has taken rather than when it is asked for.
-
-The canvas calls `SetPassThroughButtons` on every pin it acquires, and WoW blocks that in combat when add-on code runs it. So every pin template of the add-on's own map (the marker, Questie's icons and the objective-area layer) takes `PrettyWideQuestLogPinMixin`, defined at the top of `Quest-Map.lua` outside the part, whose `SetPassThroughButtons` does nothing, as HereBeDragons-Pins does for Questie's pins. Those pins draw in combat; only Blizzard's own layers wait for it to end (see WoW Forever and Mists).
-
-Load order matters. Each TOC lists the map files after the client's quest log and list files and the sharing and dungeon files after them (the last is `Dungeon-Quests.lua`), in this order: `Quest-Map.xml`, `Quest-Map.lua`, `Questie-Map.xml`, `Questie-Map.lua`, `Questie-Map-Quest-Giver.lua`, `Questie-Map-Areas.lua`, `Questie-Map-Area-Layer.lua`, the client's map file (`Classic-Quest-Map.lua` in the Vanilla and TBC TOCs, `Forever-Quest-Map.lua` in the Camelot and Mists TOCs), then `Quest-Map-Reveal.lua`. After it come `Features/Routes/Routes.xml` on every client, then `Classic-ElvUI.lua` on Classic Era and TBC and `Mists-Quest-Portrait.lua` on Mists. The reasons, file by file:
-- `Quest-Map.lua` reads `ns.questLogFrame` and `ns.listButtons` as it builds, and defines the `PrettyWideQuestLogPinMixin` that the pin templates in both XML files name.
-- `Questie-Map.lua`, `Questie-Map-Quest-Giver.lua`, `Questie-Map-Areas.lua` and `Questie-Map-Area-Layer.lua` read `ns.questMap` as they build. The last three only add functions to it (`QuestGiverMapID`, `ObjectiveAreas` and `SpotOutline`, `DrawObjectiveAreas` and `RemoveObjectiveAreas`), which `Questie-Map.lua` and the client's map file call only when drawing.
-- `Questie-Map.lua` defines `ns.questMap.RequestRefresh`, which `Classic-Quest-Map.lua` takes by value as its part runs, as the body of its `QuestLog_UpdateQuestDetails` hook.
-- `Forever-Quest-Map.lua` reads `ns.questMap` and `ns.questLog` and hooks `ns.DisplayQuestDetails` as it loads.
-- `Quest-Map-Reveal.lua` hooks the exploration pin that the client's map file makes.
-- `Mists-Quest-Portrait.lua` reads `ns.questMap.holder` as it loads.
-
-On WoW Forever and Mists all of it runs at file load, since parts run at once there (`ns.questLogIsOwnWindow`) and `Forever-Quest-Map.lua` isn't one. On Classic Era and TBC the parts run in the same order inside `ADDON_LOADED`, once the saved settings are loaded. Routes needs none of the map files: it draws on Blizzard's world map (`WorldMapFrame`) with pin templates of its own, never on this canvas, and reads nothing of `ns.questMap`.
-
-Each client's own map file adds the layers and defines `ns.questMap.FollowQuest`, which the canvas's `OnShow` calls to put the map on the selected quest. On every client that goes through `ns.questMap.FollowQuestieQuest` first (Questie's Icons below), with the client's own fallback map for a quest Questie has no icons for. Each client's map file also registers `PIN_FRAME_LEVEL_QUEST_BLOB`, the frame level the objective areas draw at, and `PIN_FRAME_LEVEL_ACTIVE_QUEST`, the one Questie's pins draw at above them. The canvas needs a map before it first draws, as the Battlefield Map does, because Blizzard's layers ask for zoom levels the scroll container builds only once it has a map, and drawing without them breaks Blizzard's map code. When `FollowQuest` leaves the canvas without a map, `OnShow` tries the player's map (`MapUtil.GetDisplayableMapForPlayer`), then `C_Map.GetFallbackWorldMapID` where the client has it. It calls `MapCanvasMixin.OnShow` only once the zoom levels exist (`ScrollContainer.zoomLevels`); until then it marks the draw as pending, and the first map `ns.questMap.ShowMap` sets runs it (a hide clears the mark). Whether the canvas has a map is read from its own `mapID` field, never `canvas:GetMapID()`, which answers the player's map until one is set: trusting it would skip `SetMapID` whenever the quest is in the player's zone, and the first draw would find no zoom levels.
-
-Show Map / Hide Map sits in the bar above the list, `LAYOUT.LIST_BUTTONS_GAP` after the last of `ns.listButtons` (see Expand All, Track All and Show Map), and the map has its own close button (`UIPanelCloseButtonNoScripts`) in its top-right corner. Hiding it is remembered in `global.mapHidden`, one setting for every character. It has no default and is cleared rather than set false when the map shows, so Reset Profile never hides or shows the map. An empty log hides the map and Show Map too (`questMap.SetLogEmpty`, which each client's list file calls on every update), leaving `mapHidden` as it was. The map is the window's child, so it follows the Window Scale. The Map Scale (`global.mapScale`, default 1, 70% to 130% in 5% steps on the Wide Quest Log panel) scales the holder on top of that through `ns.ApplyMapScale`, which runs on every window `OnShow` and from Reset Window, which puts it back to 1. The Wide Quest Log panel hides the map's settings where `ns.hasQuestMap` isn't set (`MapHidden`), and grays them out while the wide quest log isn't running this session.
-
-`questMap.CanShowMap` accepts only a map with art, because a client can know a map it has no art for (`C_Map.GetMapArtLayers` comes back empty), as with some of the dungeons Questie names, and the canvas can't draw one. `questMap.ShowMap` climbs from such a map through `parentMapID` to the nearest map above it that has art (a dungeon's zone, a zone's continent). It leaves the canvas on the map it had when none has art. It returns whether the map moved, since a move redraws every layer. The dropdown and the quest giver's zone filter with `CanShowMap` without climbing, so a quest whose icons sit only on such maps counts as having no icons.
-
-### WoW Forever and Mists
-
-`Features/Forever-Quest-Map.lua` adds Blizzard's exploration, fog of war and quest objective area (`QuestBlobDataProviderMixin`) layers, each only if the client has its mixin, then a marker layer of its own, and registers their frame levels bottom to top in the world map's order: `PIN_FRAME_LEVEL_MAP_EXPLORATION`, `PIN_FRAME_LEVEL_FOG_OF_WAR`, `PIN_FRAME_LEVEL_QUEST_BLOB`, `PIN_FRAME_LEVEL_ACTIVE_QUEST` (Questie's icons) and `PIN_FRAME_LEVEL_QUEST_MARKER`, the marker over Questie's icons. Mists has the fog layer's provider but not `FogOfWarFrameMixin`, so it gets no fog. No other world map layer is on this map.
-
-A hook on `ns.DisplayQuestDetails` puts the map on the selected quest (`ns.questLog.selectedQuestID`) at once whenever the selection has changed, map showing or not (`ShowQuest`). It then asks for a Questie refresh either way, since Questie's icons can arrive after the quest log changes. `ShowQuest` works out the fallback map first: `GetQuestUiMapID`, else, when that gives nil or 0, the zone the quest was given in (`ns.questMap.QuestGiverMapID`), else the player's zone. It hands that to `FollowQuestieQuest`, so when Questie has icons for the quest the map follows them, as on Classic Era and TBC. It then fires the canvas's `SetFocusedQuestID` for the quest, or `ClearFocusedQuestID` when Questie's icons have it or none is selected, and redraws the marker.
-
-Blizzard's objective area follows the canvas's focused quest, so it draws only for a quest Questie has no icons for, and the selected quest is never drawn twice. It draws only while the `questPOI` setting is on, which Questie turns off when its own objectives are chosen. The add-on leaves both the setting and Blizzard's provider alone, so with Questie's objectives chosen such a quest shows only the marker.
-
-The marker (`PrettyWideQuestLogQuestMarkerPinTemplate`, 24 square, the size of Questie's icons) is the add-on's own rather than Blizzard's quest provider: it takes no mouse, so dragging the map passes straight through and a click runs nothing, and its pin takes `PrettyWideQuestLogPinMixin`, so it draws in combat. It draws for the shown quest unless Questie's icons have it (`ns.questMap.questieQuestID`). It sits at the quest's entry in `C_QuestLog.GetQuestsOnMap` for the map shown, or, where `C_QuestLog.GetNextWaypointForMap` exists (WoW Forever), at the quest's next waypoint on that map when its objectives are in another zone. It is an exclamation mark (`Interface\GossipFrame\AvailableQuestIcon`) until `ns.IsQuestComplete` says the quest is ready, then a question mark (`ActiveQuestIcon`), and keeps its size on screen with the scaling limits Questie's icons use. `ShowQuest` redraws it only after `FollowQuestieQuest` has set `questieQuestID`, because a map move inside `FollowQuestieQuest` redraws every layer, the marker included, while `questieQuestID` still names the last quest.
-
-Blizzard's pin templates take the canvas's `SetPassThroughButtons`, which WoW blocks from add-on code in combat. So the three Blizzard providers have their `RefreshAllData` wrapped on this map's copies: in combat (`InCombatLockdown`) the redraw is held, and `questMap:OnPlayerRegenEnabled` runs each held one once combat ends (`PLAYER_REGEN_ENABLED`, listed in Core's `EVENTS` with the owner `questMap`). The marker layer isn't wrapped, since its pins skip that call. The client differences are feature tests (`FogOfWarFrameMixin`, `C_QuestLog.GetNextWaypointForMap`), never flavor checks. The Quest Map Context report shows which quest Blizzard's objective area and the marker are drawn for, whether combat is holding Blizzard's layers' redraws, and on WoW Forever the next waypoint on the map shown.
-
-### Classic Era and TBC
-
-These clients' world maps draw no quest objective areas or quest markers of Blizzard's, and the clients have no quest objective data to draw them from. So `Features/Classic-Quest-Map.lua` adds only Blizzard's exploration layer, with the frame levels `PIN_FRAME_LEVEL_MAP_EXPLORATION`, `PIN_FRAME_LEVEL_QUEST_BLOB` and `PIN_FRAME_LEVEL_ACTIVE_QUEST`, bottom to top. The quest comes from Questie's icons alone. Without them the map shows the zone the quest was given in (`ns.questMap.QuestGiverMapID`), or the player's zone where Questie doesn't know it. That fallback is passed as a function, so Questie's database is asked only when the quest has no icons. The selected quest is read from `GetQuestLogTitle(GetQuestLogSelection())`, a header counting as none. The map follows the selection through a hook on `QuestLog_UpdateQuestDetails`, which only asks for a refresh.
-
-### Unexplored Areas (Every Client)
-
-The map art leaves out every area the character hasn't explored, so a quest in a new zone would show bare parchment. `Features/Quest-Map-Reveal.lua` hooks `RefreshOverlays` on this canvas's exploration pin (`MapExplorationPinTemplate`), made when each client's map file adds `MapExplorationDataProviderMixin`. After Blizzard draws the explored areas, the hook draws every other area that the flavor's `ns.MAP_REVEAL_OVERLAYS` lists for the map's art ID (`C_Map.GetMapArtID`). Each area is cut into tiles of the current art layer's `tileWidth` and `tileHeight`, the way Blizzard cuts explored ones: the last tile in a row or column is fitted into the smallest power-of-two file from 16 up. The tiles draw at `ARTWORK` sublevel -1, under Blizzard's, and on a full update they join the pin's `textureLoadGroup`. Each entry's key is `"Width:Height:OffsetX:OffsetY"`, and its value is the area's texture file IDs, comma-separated, row by row. An area counts as explored when `C_MapExplorationInfo.GetExploredMapTextures` reports one with the same size and offset, which is the table's key. The table holds only the client's own texture file IDs, so no art ships with the add-on. The table itself ships inside the add-on, so it needs no other map add-on installed. Art IDs and overlays differ between clients, so each of the seven flavor folders has its own `Data/{Game}/Map-Reveal-{Game}.lua`:
-- `Vanilla`, `TBC`, `Camelot` and `Mists` are each listed by their own TOC.
-- `Discovery` is listed by the Vanilla TOC after `Vanilla`. Each file of that pair opens with its `ns.IS_DISCOVERY` guard, so one table is built.
-- `Wrath` and `Mainline` declare empty tables, for flavors no TOC lists, and `.pkgmeta` leaves them out of the zip.
-
-It's always on, with no setting. The world map and the Battlefield Map are left alone, so Leatrix Maps, or any other add-on that reveals the world map, never draws on this map, and this map never draws on theirs. The Quest Map Context report shows the map's art ID, how many areas the table lists for it and how many are explored, how many map arts the table lists, and how many exploration pins the canvas has with `RefreshOverlays` to hook.
-
-### Questie's Icons (Every Client)
-
-`Features/Questie-Map.lua` adds a data provider that draws the selected quest's icons from Questie's world map, its objectives and turn-in, again as pins on this map (`PrettyWideQuestLogQuestiePinTemplate`, in `Questie-Map.xml`). They draw in Questie's textures and colors at `ICON_SIZE` (24, near the size of Blizzard's quest markers) times Questie's scale for the icon's kind (`data:GetIconScale()`). Questie's Global Scale is left out, since it would shrink them along with Questie's own world map icons. Questie's colored objective glow shows when its `alwaysGlowMap` setting is on, sized `GLOW_SCALE` (1.13) times the icon and never on quest-giver or turn-in icons (`Type` `"available"` or `"complete"`). Its color comes from the icon's `ObjectiveData.Color` rather than Questie's glow texture, which Questie shows only once the world map has been opened. The Quest Map Context report counts how many of the quest's icons carry Questie's scale for their kind; the rest draw at `ICON_SIZE`. Questie never draws on this map and isn't told it exists.
-
-The add-on reads Questie's own copy of HereBeDragons-Pins (`HereBeDragonsQuestie-Pins-2.0`). Its `worldmapPins` maps each icon frame to its `uiMapID` and world position, which Questie's copy of HereBeDragons (`HereBeDragonsQuestie-2.0`) turns into the zone's coordinates. Both come through `LibStub`'s silent flag, looked up once as the part builds, since they are Questie's libraries rather than bundled ones; every TOC's `OptionalDeps: Questie` loads Questie first. Nothing is drawn without them. Route lines (`type == "line"`) and icons faded to nothing are left out. Icons Questie's settings hide on its own maps (`hidden`) are kept, since this map shows the quest picked in the quest log, whatever Questie shows elsewhere. For the same reason the icons Routes hides on the world map still draw here: Routes hides HereBeDragons' pins on `WorldMapFrame` (`Routes-Map-Questie-Icons.lua`), and this map tests only the icon's own texture. The canvas draws pins at its own zoom, which would shrink them with this smaller map, so each pin takes the scaling limits Questie's world map pins use (`SetScalingLimits(1, 1.0, 1.2)`) and keeps its size on screen.
-
-Questie's tooltips can't be reused, because they gather their neighbors from the world map's own pins. So hovering a pin shows the add-on's own tooltip: the quest's name, then every NPC or object on a pin within `CLUSTER_DISTANCE` (an area's marker stands for every NPC or object in its area), each followed by its objectives. Each objective row is indented one space, leads with the quest log's check once done, and carries its count ("3 / 8") on the right. That distance (0.015) is a share of the map, tested on each axis apart, not yards like the area constants below.
-
-`ns.questMap.FollowQuestieQuest` picks the zone to show in this order:
-1. The zone picked from the dropdown, while the same quest stays selected.
-2. The player's zone (`MapUtil.GetDisplayableMapForPlayer`), if the selected quest has an icon there.
-3. The zone with the most of its icons.
-4. The client's fallback map (a map ID, or a function asked only when the quest has no icons).
-
-It sets `ns.questMap.questieQuestID` while Questie has icons for the quest, and returns whether it has any.
-
-When the quest has icons in more than one zone, a dropdown (`WowStyle2DropdownTemplate`, Blizzard's menu system, `ZONE_DROPDOWN_WIDTH` 180) sits `LAYOUT.SPACE.NEAR` in from the map's top-left corner listing them, most icons first (ties to the lower map ID). The zone picked there holds until another quest is selected. While it has no icons it's passed over, and it comes back if they return with the same quest still selected.
-
-Questie's icons are followed through hooks on its pin library's `AddWorldMapIconMap`, `AddWorldMapIconWorld`, `RemoveWorldMapIcon` and `RemoveAllWorldMapIcons`, because Questie draws a little after the quest log changes, and a batch at a time. Those hooks, and a resize of the map's scroll container (the circles around icons are sized for the map on screen), ask only for a refresh (`ns.questMap.RequestRefresh`). So do the client's map file, the Show Objective Areas toggle and a profile change (`ns:ApplyProfile`). A refresh is done at most once per `REFRESH_DELAY` (0.2 seconds) and only while the map is showing, checked both when it is asked for and when it runs. It runs `FollowQuest` again, then redraws Questie's provider unless that moved the map, since a move has already redrawn every layer.
-
-### The Quest Giver's Zone (Every Client)
-
-`Features/Questie-Map-Quest-Giver.lua` defines `ns.questMap.QuestGiverMapID`, the zone a quest was given in, from Questie's database. Each client's map file uses it as the fallback for a quest Questie has no icons for: on Classic Era and TBC inside the fallback function, so only then; on WoW Forever and Mists only when `GetQuestUiMapID` gives nil or 0. The Quest Map Context report shows its answer for the selected quest.
-- It reads `QuestieDB` and `ZoneDB` through `ns.ImportQuestieModule` (`Features/Utilities.lua`, a `pcall` around `QuestieLoader:ImportModule`), and returns nil without Questie or without `QueryQuestSingle` or `GetUiMapIdByAreaId`.
-- It walks the quest's starters (`QueryQuestSingle(questID, "startedBy")`), NPCs first, then objects, each in Questie's order. For each it takes the area holding most of that starter's spawns (`QueryNPCSingle` or `QueryObjectSingle` with `"spawns"`; ties go to the lower area ID), and returns the first whose zone the map can show.
-- Otherwise it takes the zone the quest is filed under (`zoneOrSort`, when above 0), which covers a quest started from an item. A negative `zoneOrSort` is a class or profession, so such a quest that no NPC or object starts gets nil.
-- An area with a parent in `ZoneDB` (`GetParentZoneId`) gives way to that parent before `GetUiMapIdByAreaId` turns it into a map, and a map without art (`CanShowMap`) is skipped, not climbed.
-
-### Objective Areas (Every Client)
-
-With Show Objective Areas on (`profile.showObjectiveAreas`, the default), `Features/Questie-Map-Areas.lua` shades where each of the selected quest's objectives is found, the way Questie's own objective areas do it, and Questie's icons for that objective give way to one marker in each area. The toggle is on the Wide Quest Log panel, hidden where there's no map, grayed out while Questie isn't loaded (its tooltip then says why, and the saved choice is kept), and asks for a map refresh when changed. The areas are built from the objective Questie hangs on every icon (`icon.data.ObjectiveData`), whose `spawnList` holds every spawn in Questie's database. Questie's icons can't be used for this, because Questie thins them out where they crowd.
-
-Spawns are kept where Questie's `ZoneDB` (`GetUiMapIdByAreaId`) puts their area on exactly the map shown and Questie's `Phasing` (`IsSpawnVisible`) says they're visible; without `Phasing` every spawn counts. A spawn at the same position with the same icon is counted once. Spawns are measured in yards from the zone's size in Questie's copy of HereBeDragons (`GetZoneSize`). Objects and creatures are grouped apart, by the icon Questie gives them. Each group is sorted by position first, so the same spawns always make the same areas. It is then clustered greedily: a spawn not yet taken takes every later one within `CLUSTER_RADIUS` (180 yards) of the cluster's moving center, over two passes.
-
-Each cluster's shape is the convex hull of its spawns, grown through a ring of `PADDING_POINTS` (24) around each corner, which rounds it off. It grows by `EDGE_PADDING` (35 yards), or by more where the spawns sit close together, so it reaches at least far enough from its middle to clear its marker by `SPOT_GAP` (`LAYOUT.SPACE.LINE`, 4) on screen. A lone spawn comes out as a circle and a line of spawns as a rounded bar. That least reach is worked out in yards from the zone's size and the map's width on screen zoomed all the way out:
-- The scale comes from the scroll container's `GetScaleForMinZoom` where the client has it, else the canvas's current scale.
-- `FALLBACK_MIN_RADIUS` (80 yards) applies when either the scale or the canvas width isn't usable.
-
-So the gap is the same on every zone's map, and a resize of the map redraws the areas. Without a zone size from HereBeDragons nothing is shaded and every icon draws plain.
-
-Within one objective's group, any two clusters whose shapes overlap or come within `TOUCH_GAP` (15 yards) merge into one with a new hull, until none touch. The test is a bounding-box check, then a separating-axis test on the two convex shapes. So each blob has one marker, at the hull's centroid, drawn in the look of an icon of the objective with the area's icon kind, at that objective's icon size. Different objectives' areas, and an objective's objects and creatures, may still overlap. Every icon of the quest left on the map, the turn-in among them, gets a circle of its own that clears it by `SPOT_GAP` (`ns.questMap.SpotOutline`), in its objective's color, or the turn-in's gold (the `TITLE` color). These circles never merge with the areas, and with the setting off they aren't drawn either. Areas are cached per objective (a weak-keyed table) until the map, the least reach (the map's size on screen, or the marker's size), or Questie's spawn list changes.
-
-`Features/Questie-Map-Area-Layer.lua` draws the areas on one pin as large as the map (`PrettyWideQuestLogAreaPinTemplate`, in `Questie-Map.xml`), at `PIN_FRAME_LEVEL_QUEST_BLOB`, acquired only when there's something to shade. `Classic-Quest-Map.lua` registers that level under Questie's icons, and `Forever-Quest-Map.lua` registers it with Blizzard's layers. The pin zooms with the map. Each area's fill is a fan of triangles from its centroid. Each triangle is a white texture whose four corners are moved onto the triangle's three with `SetVertexOffset`, its corners put in counterclockwise order first, at `FILL_ALPHA` (0.3) in the objective's color (gold where Questie gave none). The outline is a `Line` per edge at `OUTLINE_ALPHA` (0.75), its thickness reset on every zoom (`OnCanvasScaleChanged`) so it stays `OUTLINE_WIDTH` (1.5) on screen. Textures and lines are reused from one draw to the next, and the spare ones hidden. Neither takes the mouse. A marker's tooltip lists every NPC or object in its area. An objective with no spawns placed on the map shown keeps Questie's icons, each with its circle. The Quest Map Context report shows the setting and how many areas and icon circles are shaded (`questMap.areaCount`). For when nothing is shaded, it also shows whether Questie's `ZoneDB` and `Phasing` were found, the zone's size in yards, and each objective's spawns in the zone against those placed.
-
-## Quest Giver Portrait (Mists)
-
-Blizzard's Mists quest log shows the quest giver's model beside itself, so `Features/Mists-Quest-Portrait.lua` does the same for the window that stands in for it. The Mists TOC lists the file after every other Features file (after `Routes.xml`), because at load it reads `ns.questLogFrame`, `ns.questLog` and `ns.questMap.holder`, and hooks `ns.DisplayQuestDetails`, `ns.ApplyMapScale` and `ns.OnWindowResizeStopped` (an empty function in `Window.lua` that exists to be hooked).
-
-- **Blizzard's model is left alone.** It's a `ModelScene` of the add-on's own (`PanningModelSceneMixinTemplate`) in a box with the map's border (`holder.backdropInfo`) and a strip under it for the giver's name (`NAME_HEIGHT`, 20). `Pose` follows `QuestFrame_ShowQuestPortrait`: a portrait of -1 is the player, otherwise the giver, on its mount if it has one.
-- **Where it goes.** With the map open, under the map (`GAP`, `LAYOUT.SPACE.LINE`, 4), in Blizzard's 198:230 proportions (`MODEL_WIDTH`, `MODEL_HEIGHT`), ending level with the bottom of the window's art (`LAYOUT.ART_INSET_BOTTOM`) and no wider than the map. Measures go through effective scales, since Map Scale applies to the map and not the box. With under `MIN_MODEL_HEIGHT` (60) of room it hides rather than moving. With the map closed, beside the window at Blizzard's own size (`BESIDE_X`, `BESIDE_Y`, -5 and -42).
-- **What it reads.** `GetQuestLogPortraitGiver` reads Blizzard's selected quest, so nothing changes while that (`ns.GetSelectedQuestID`) isn't the quest the window shows (a quest giver window had the quest text). No selected quest, no giver, or `QuestLogShouldShowPortrait` (where the client has it) saying no hides the box. `posedAs` keeps a repaint from starting the model over, and clears when the window closes or no quest is selected.
-- **When it refits.** Opening or closing the map, resizing the window, or a new Map Scale refit it a frame later (`RequestRefit`), once the map has been laid out to match. During a grip drag (`frame.isResizing`) it hides, and is drawn once as the drag ends.
-
-## ElvUI, VoiceOver and Spoken Quests
-
-### Classic Era and TBC
-
-ElvUI and VoiceOver work on Blizzard's own quest log frames, so the Classic files make room for them rather than replacing what they draw. `Classic-ElvUI.lua` and `Classic-VoiceOver.lua` are wide quest log parts, so neither acts while the Wide Quest Log switch is off. The quest giver window's ElvUI backdrop is handled on every client by `Quest-Giver.lua` (see Quest Giver Window).
-
-- **ElvUI** skins the window but can't know about this add-on's art. `Features/Classic-Quest-Log.lua` removes Blizzard's art and draws its own either way, and on every show moves the resize grip to the skin's backdrop corner (`QuestLogFrame.backdrop`, `AnchorGrip`) when there is one.
-- ElvUI skins the window at login, after this add-on loads, so `Features/Classic-ElvUI.lua` checks on each `OnShow` until the skin has left a backdrop and ElvUI's Skins module is there, then acts once. With ElvUI's quest skin off there's never a backdrop, so the window keeps the add-on's art. `ns.HideQuestLogParchment` (`Classic-Quest-Log.lua`) hides that art and the "no active quests" parchment, and keeps them hidden. The skin's backdrop is ElvUI's see-through Transparent template, which lets Questie's tracker behind the window show through the quest text, so it is made opaque in the same color; `customBackdropAlpha` is ElvUI's own field for that and survives its color updates. Expand All and Track All (`ns.listButtons`), Show Map and the zone Share Quests button (`ns.zoneShareButton`) get ElvUI's `HandleButton`, the map's close button `HandleCloseButton`, the zone dropdown `HandleDropDownBox`, and the map's holder ElvUI's Transparent template in place of its dialog border, made opaque the same way. The map moves beside the skin's backdrop rather than the art (`questMap.SetStyle`, `MAP_GAP`, `LAYOUT.SPACE.LINE`, from it, the map `MAP_INSET`, `LAYOUT.SPACE.TIGHT`, inside its own). The WoW Forever and Mists TOCs don't list this file, so their window keeps its own art under ElvUI.
-- **VoiceOver** puts a play button over the start of each quest title. With it on, the list's row styling starts each title with `ns.VoiceOverTitlePrefix` (`Features/Classic-VoiceOver.lua`): as many spaces as clear 24px (up to 20, measured once, else two), spaces only, since a tab draws as a missing glyph in some fonts, ElvUI's among them.
-- VoiceOver hands out its buttons by Blizzard's order, row *i* to entry *i* + scroll offset. On every list update, `ns.MatchVoiceOverButtons` deals them out again by what each row now shows, through VoiceOver's own button functions (`CreatePlayButton`, `UpdatePlayButton` for a quest a sound pack can read, else `UpdateQuestTitle` with the button disabled, then `UpdatePlayButtonTexture`). It first checks that every VoiceOver field it calls is there, so an update of VoiceOver that renames one only leaves the buttons alone. Those functions rewrite the title and move the check, so the row styling runs after them (only the list buttons, the turn-in line and `questMap.SetLogEmpty` follow it), and the list's update (`ns.UpdateClassicQuestList`) also runs after VoiceOver's overlay `Update`, which can come after the `QuestLog_Update` hook.
-
-**Spoken Quests** is a fork of VoiceOver that keeps the `VoiceOver` global and its quest log functions, so everything above applies to it too. `ns.GetVoiceOver` (`Features/Utilities.lua`) finds either one (`ns.VOICEOVER_ADDON_NAMES`: `AI_VoiceOver`, `Spoken_Quests`), returning the global only when it holds `QuestOverlayUI`, `DataModules` and `Enums` (read with `rawget`, since the global falls back to `_G`), and only while Spoken's quest log part is switched on (`Addon:IsPartOn`). Both are in the TOCs' `OptionalDeps` so the global exists when the Classic file hooks it. That hook goes on whether or not the part is on yet, because Spoken reads the switch from its saved settings after this file loads.
-
-### VoiceOver and Spoken Quests (WoW Forever and Mists)
-
-VoiceOver, or its fork Spoken Quests, puts its play buttons on Blizzard's quest list (the world map's on WoW Forever, `QuestLogFrame`'s on Mists), which this add-on's window stands in for, so with the window on they'd never show. `Features/Forever-VoiceOver.lua` puts one on each quest row of the add-on's own list, at `LAYOUT.QUEST_TEXT_X` where the title would start, and `Forever-Quest-List.lua` moves the title over by what `ns.ShowVoiceOverButton` returns (`TITLE_INSET`, 24: VoiceOver's 20px button and a `SPACE.LINE` gap; 0 without a button). It makes the buttons with VoiceOver's own `MakePlayButton`, `BindPlayButton` and `SetPlayButtonState`, grayed out for a quest no sound pack has a reading of (`DataModules:PrepareSound`), and only when every one of those VoiceOver fields is there. It keeps its own set, one per quest, reusing a button once its quest leaves the log, because Blizzard's list takes VoiceOver's set back to its own rows whenever it redraws. List rows are recycled, so each row lets go of its button (`ns.HideVoiceOverButton`) before it's set up again, unless another row already took it for the same quest.
-
-## Routes
-
-Routes on Zone Map and the Quest Arrow follow one route through the quests in the log, planned by the files in `Features/Routes/`.
-
-- **What the route covers.** Only the zone the player is in (`routes.PlayerZone`), with the caves, buildings and cities inside it. Each objective not yet done offers a few places to do it, which are its Questie spawns clustered into blobs. Each done quest offers its turn-in, and with Show Upcoming Turn-Ins on, so does one not done yet, planned after its objectives. With Show Party Objectives on, the party's quests the player doesn't have add their objectives too (see Party Members' Quests).
-- **How it is ordered.** A solver puts these in the shortest open path from where the player stands, as a traveling salesman problem.
-- **Where it shows.** `Routes-Map.lua` draws the route on Blizzard's world map (`WorldMapFrame`, the "zone map" in player-facing text), with its helpers `Routes-Map-Size.lua`, `Routes-Map-Line.lua`, `Routes-Map-Questie-Icons.lua` and `Routes-Camps.lua`. `Routes-Arrow.lua` points at its next waypoint.
-- **What it needs.** Both need Questie. Every place, objective and count comes from Questie's quest log and database, and every distance comes from Questie's copy of HereBeDragons (`HereBeDragonsQuestie-2.0`, `routes.HereBeDragons`), in world yards.
-- **What it doesn't touch.** Routes is not a quest log part, so it runs on every client whatever the Wide Quest Log switch says. It never draws on the add-on's own map beside the window (`ns.questMap`).
-
-### Loading
-
-Each TOC lists one line, `Features/Routes/Routes.xml`:
-
-- It comes after `Quest-Map-Reveal.lua`.
-- It comes before `Classic-ElvUI.lua` on Classic Era and TBC, and before `Mists-Quest-Portrait.lua` on Mists. On WoW Forever it is the last Features line.
-- It comes before the Diagnostics and Options files.
+#### Current Zone
+
+- `ns.IsCurrentZone` matches header text to `GetRealZoneText()` or, in a dungeon, any name in `ns.CurrentDungeonNames()` (`Dungeon-Quest-Lookup.lua`): headers are area names, and an instance's zone text can be spelled differently. Class and profession headers never match.
+- `ns.CurrentDungeonNames` caches by instance ID, zone text and whether Questie's `ZoneDB` exists, because every repaint asks about every header.
+- `ns.ZoneHeaderText` appends `ns.CURRENT_ZONE_MARK`. Quest Log Context also calls `ns.IsCurrentZone`; the dungeon quests don't (they match `dungeon.names`).
+
+#### Frozen Zone Order
+
+- `ns.SortZones` freezes ranks by zone title on the first sort after the window opens, so a turn-in or drop doesn't reshuffle zones under the cursor. An unranked zone (new pickup) goes last.
+- The freeze covers `currentZoneFirst`: `ZONE_CHANGED_NEW_AREA` moves the mark at once; the zone moves up only at the next open.
+- `ns.ResetZoneOrder` (per client: `Forever-Quest-List-Entries.lua`, or `Classic-Quest-List.lua` calling `ns.ResetClassicZoneOrder`) runs on window close, and through `ns.RefreshQuestLog` on a Wide Quest Log sort or list setting change, a profile change (`ns:ApplyProfile`) and Questie's tracker starting.
+
+#### WoW Forever and Mists
+
+- `ns.BuildQuestListEntries` (`Forever-Quest-List-Entries.lua`) builds; `ns.UpdateQuestList` (`Forever-Quest-List.lua`) draws in its own `WowScrollBoxList`.
+- Visibility matches the map's quest list: no hidden quests, no task quests (world quests, bonus objectives), bounties only once complete, no zone with nothing left to show.
+- Also returns every quest that would show with its zone open (Track All, turn-in line, empty-log check) and whether every zone is collapsed (Expand All).
+- `ns.ExpandAllZones` on the session's first open: a collapse lasts until the next login or reload.
+- Mists' entries come through `ns.GetQuestLogEntry` with `isComplete` / `isFailed` on them; `EntryIsComplete` / `EntryIsFailed` read those first, because by-ID there walks the log.
+
+#### Classic Era and TBC Rows
+
+- The rows stay Blizzard's (other add-ons hook them). `QuestLog_Update` fills row *i* with entry *i* + offset, and every row handler (click, shift-click, collapse, party tooltip, Share Quests hover) finds its entry from row ID + offset. So `Classic-Quest-Sort.lua`'s `RedrawRow` redraws each row as `QuestLog_Update` would for the entry at its sorted place and sets its ID to match.
+- `UpdateList` (`Classic-Quest-List.lua`, post-hook on `QuestLog_Update`), in order: sort (`ns.BuildClassicDisplayOrder`); row count (`rows.RowsThatFit` / `rows.ShowRowCount`; a change reruns `QuestLog_Update` and returns); redraw; positions; VoiceOver buttons; row style (after VoiceOver, whose button functions rewrite titles and move the check); list buttons; turn-in line; map empty-log check.
+- VoiceOver's own `QuestOverlayUI.Update` can run after that hook, so `Classic-VoiceOver.lua` post-hooks it to `ns.RestyleClassicQuestRows` (buttons and styling with the last order; nothing before the first update).
+- The selection highlight goes by place, so it's moved again after `QuestLog_SetSelection` (`ns.PlaceClassicSelectionHighlight`).
+- A collapsed zone lists no quests, so it sorts by its average when last seen open (`knownZoneLevels`, session), else last.
+- When the sorted order equals the log's own (zones alphabetical, quests lowest level first), `BuildDisplayOrder` returns nil: no redraw, row IDs reset.
+- A shift-click link would insert the row's text, which leads with the level tag, so a `QuestLogTitleButton_OnClick` post-hook swaps in `row.plainTitle`, except with Questie loaded (it inserts its own link).
+
+#### Row Spacing
+
+- Every client: `LAYOUT.QUEST_ROW_HEIGHT` and `LAYOUT.HEADER_ROW_HEIGHT` (room for the Share Quests button), each with `ROW_PADDING` above and below; with `zoneGap`, `LAYOUT.HEADER_GAP` above every zone header but the first. Details start level with the first quest row (`LAYOUT.CONTENT_TOP`).
+- WoW Forever and Mists: the scroll box's extent calculator sizes rows; the gap is a spacer entry (`isSpacer`). Rows recycle among headers, quests and spacers, so `InitRow` resets everything.
+- Classic Era and TBC: `Classic-Quest-Rows.lua`, whose `ns.CreateClassicQuestRows` the list's part calls (Blizzard's rows can only be measured then). Rows keep Blizzard's height; `RowTops` centers each in its padded slot below any gap. The quest slot (`ns.GetQuestRowHeight`) is the step the window's height snaps to.
+  - Two counts: capacity from the window's height (`ns.SetQuestRowCount`, from `Classic-Quest-Log.lua`), and rows shown, `QUESTS_DISPLAYED`, which `RowsThatFit` lowers until the last entry fits, padding and gaps included, when scrolled to the end.
+  - Why: Blizzard's scroll range (entries less `QUESTS_DISPLAYED`) must reach the last entry, and `QuestLog_Update` resets it every update, so a wider range set by the add-on is lost and the list jumps back up. Cost: higher up the list, with fewer gaps in view, room is left at the bottom.
+  - `PositionRows` moves Blizzard's rows and hides any pushed past the bottom (and the highlight on one). `QuestLog_Update` fills only up to `QUESTS_DISPLAYED`, so rows beyond it must be hidden here. Rows created here get the list's hover hooks (`hookRow`).
+
+#### Party on a Quest
+
+- WoW Forever and Mists rows: party count (`Party-On-Quest.tga` + number, palette `INFO`) left of the tag or at the right edge; the title shortens to clear it. Hover lists names under `PARTY_QUEST_STATUS_ON`, or shows `PARTY_QUEST_STATUS_NONE`; a client without the string shows nothing.
+- `IsPartyMemberOnQuest`: `ns.IsUnitOnQuest`, which the game answers only in range; where it says no or is secret, `ns.routes.QuestieHasUnitOnQuest` (`Routes-Party.lua`: Questie's shared logs, any distance, regardless of `partyQuests`; skipped without Routes). A "no" is unknown if secret or the member isn't `UnitIsVisible` (a range stand-in); any unknown suppresses the "none" line, which would be a guess.
+- `party`N up to `GetNumSubgroupMembers()` only, so a raid gives the player's subgroup. A secret name or class (`ns.IsReadable`) only drops the name; the member still counts.
+- Repaints on `GROUP_ROSTER_UPDATE`, `UNIT_QUEST_LOG_CHANGED` for a readable `party` unit, and the player's own updates. A change only in Questie's shared logs waits for the next repaint.
+- Quest Log Context reports the game's answers and how many were secret.
+- Classic Era and TBC: Blizzard's `[`N`]` before the title, recomputed by `RedrawRow`.
+
+### Expand All, Track All and Show Map
+
+- Bar above the list, `LAYOUT.LIST_BUTTONS_GAP` apart: `ns.CreateListButtons` (`Window.lua`) makes Expand All and Track All; `Quest-Map.lua` hangs Show Map after the last of `ns.listButtons`.
+- Sized on first show (font loaded): widest label in this locale plus `LAYOUT.LABEL_PADDING`, at least `LAYOUT.BUTTON_WIDTH`; Expand All and Track All share one width. No button resizes as its label switches.
+- Collapse All while any zone is open; Expand All once all are collapsed.
+- Track All while a listed quest can still be tracked and there's room; else Untrack All, grayed when nothing is tracked. Tracks top-down in list order, so a nearly full watch list fills with what the player sees first; stops when full with Blizzard's string on `UIErrorsFrame` (`QUEST_WATCH_TOO_MANY`; WoW Forever `OBJECTIVES_WATCH_TOO_MANY`). Never full under Questie except on WoW Forever.
+- **Classic Era and TBC** (`Classic-Tracking.lua`): a shift-click per quest (`AutoQuestWatch_Insert` with `QUEST_WATCH_NO_EXPIRE`, then `QuestWatch_Update`, `QuestLog_Update`), over listed entries only, so collapsed zones are passed by.
+  - Buttons live in `QuestLogExpandButtonFrame`, which Blizzard hides while the log is empty.
+  - Blizzard's "All" toggle and `QuestLogTrack` (which would peek between the buttons) are faded and unclickable, not removed.
+  - Expand All runs `QuestLogCollapseAllButton_OnClick` and labels itself from the toggle's `collapsed`, keeping Blizzard's record right.
+- **WoW Forever** (`ns.SetAllTracked`): every listed quest, collapsed zones included, silently skipping ones Questie can't show. Grayed in combat; Untrack All also needs `ns.CanRemoveQuestWatch()`.
+- **Mists** (`ns.SetAllTracked`): same coverage, skips none, redraws `WatchFrame`. Grayed in combat only.
+- WoW Forever and Mists: Expand All is disabled with no quests and calls `ns.SetQuestZoneCollapsed` per header (on Mists only `collapsedZones` changes, see Taint).
+- **Show Map** hides with the map while the log is empty (`questMap.SetLogEmpty`, from both list files) and returns with the first quest; `mapHidden` untouched. Empty: no quest the list would show (window), no log entries (Classic Era and TBC).
+
+### Share Quests
+
+- One button (`Zone-Share.lua`, every client, `ns.zoneShareButton`), reparented onto the hovered zone row so it hides with it. Zone rows fit it because `LAYOUT.HEADER_ROW_HEIGHT` derives from `LAYOUT.ZONE_SHARE_BUTTON_HEIGHT`; width is label plus `LAYOUT.ZONE_SHARE_BUTTON_PADDING`.
+- Hides when the mouse leaves both row and button (`ns.HideZoneShareButton`, its `OnLeave`). Each list calls `ns.UpdateZoneShareButton` per redrawn row, so a row recycled for a quest drops it.
+- Classic Era and TBC: `OnEnter` / `OnLeave` hooked on Blizzard's rows (and those `Classic-Quest-Rows.lua` adds), zone from row ID + offset; `StyleQuestRows` updates it each pass. Zone rows keep Blizzard's clicks (right-click collapses too). ElvUI skins it with the list buttons (`Classic-ElvUI.lua`).
+- WoW Forever and Mists: `Row_OnEnter` / `Row_OnLeave`, `InitRow`; `Row_OnClick` toggles a zone on either button.
+- Grayed (re-checked every frame in `OnUpdate`) while solo (tooltip `ERR_NOT_IN_GROUP`, else `SHARE_ZONE_QUESTS_TOOLTIP` with the interval) or while any run is going (`ns.sharingQuests`, dungeon sharing included).
+- Click: `ns.ShareableZoneQuests(zoneTitle)`, print `ns.BuildSharePrint` (`Announcements.lua`: `CHAT_SHARING_ZONE_NONE` / `_ONE` / `CHAT_SHARING_ZONE`), gray itself, `ns.ShareQuests`. Shareability is worked out only on click, because on Classic Era, TBC and Mists it means selecting each quest.
+- No wide quest log, no button; the Quality of Life panel says so (`ZONE_SHARE_NEEDS_WIDE_LOG`). Dungeon sharing works either way.
+
+#### The Run (`ns.ShareQuests`)
+
+- One quest per `ns.GetShareInterval()`, a `C_Timer.After` chain on the interval as of run start; `ns.sharingQuests` blocks a second run until the last share.
+- Each share re-finds the quest, re-checks shareability, and runs in `securecall`, so an error is reported and the run continues.
+- Leaving the group ends it. A share due in combat re-checks every interval, then the run resumes (WoW Forever blocks `QuestLogPushQuest` for add-on code in combat; both files wait alike). WoW Forever's single Share Quest button waits for `PLAYER_REGEN_ENABLED` instead (see Combat Lockdown).
+- Interval: Quality of Life's `shareInterval` slider, bounded by `ns.SHARE_INTERVAL_MIN` / `ns.SHARE_INTERVAL_MAX`; any sooner than the minimum and the game reports the member busy. Quality of Life off: the default. Only the slider enforces the range; `ns.GetShareInterval` (`Utilities.lua`) returns the saved value as is.
+
+#### The Zone-Actions Files
+
+- Four `ns` names: `ns.ShareableZoneQuests` (shareable IDs, and the zone's quest count), `ns.ShareQuests`, `ns.LogQuests` (every quest with zone, state, `pushable`), `ns.SharedQuest` (Share Reminders). Outside any part: Share Quests' calls, the whispers and the dungeon quests need them with the switch off.
+- `Classic-Zone-Actions.lua` (Classic Era, TBC, Mists) contains the index-based awkwardness:
+  - Only the selected quest can be shared or asked `GetQuestLogPushable`, so each is selected in turn; the player's selection is restored by index after zones re-close (entries are back in place), so a selected header or no selection returns too. On Mists that's Blizzard's selection, which can differ from the window's quest.
+  - Collapsed zones list no quests. `ns.ShareableZoneQuests` opens just its zone; `ns.LogQuests` and each share (`WithEveryZoneOpen`) call `ExpandQuestHeader(0)`, then re-collapse from the bottom up so higher indexes hold. Per share, so a zone collapsed mid-run is still searched; `QuestLog_Update` after each while Blizzard's log is open.
+  - So no diagnostic report calls them on these clients: reports use `ns.DiagnosticLogQuests` (`Manifests.lua`; open zones only, shareability for the selected quest only), and Sharing Context's Share Quests line only counts.
+- `Forever-Zone-Actions.lua`: collapsed zones still list their quests, so zones are left alone; `C_QuestLog.IsPushableQuest` by ID. Skips hidden and task quests like the list, but counts incomplete bounties the list hides. Each share: `ns.SelectQuest`, `QuestLogPushQuest` (through `ns.TrackerTaintStep`), reselect the window's quest.
+
+#### Related
+
+- Both logs' Share Quest buttons explain a solo gray-out (`ns.ExplainShareButton`, `Utilities.lua`; hooked because Classic's is Blizzard's).
+- The Handy Clicks right-click row shows only with `ns.questLogIsOwnWindow`: on Classic Era and TBC a right-click on a quest stays Blizzard's.
+- The window's right-click menu lists Abandon only when `ns.CanAbandonQuest`; enables all three from `ns.QuestActions`.
+
+### Share Reminders
+
+`Features/Share-Reminders.lua`: a share that fails for a reason the member can fix earns them a whisper naming the quest; unfixable results (not eligible, already on it, done) earn none.
+
+- **Which results.** `FIXABLE_RESULTS` names client globals (`ERR_QUEST_PUSH_BUSY_S`, `ERR_QUEST_PUSH_TOO_FAR_S`, `ERR_QUEST_PUSH_LOG_FULL_S`) read via `_G`; a missing one is skipped. `NamePattern` turns each into an anchored pattern at load (`%s` or `%1$s` captures the name), so `CHAT_MSG_SYSTEM` matches in any locale. One whisper for all; it doesn't say why, since the game already did.
+- **Which quest.** Results don't name it. A file-scope `hooksecurefunc("QuestLogPushQuest")` (every share path calls it; installed with the switch off too) notes it via `ns.SharedQuest`: the index passed (WoW Forever's menus pass one without selecting), else the selected quest; a header notes nothing. A result counts within `ns.GetShareInterval()` of that share, once per player per share (`whispered`).
+- **Which whisper.** First `WHISPER_SHARE_FAILED`, then `WHISPER_SHARE_FAILED_AGAIN` (quest only). `told` resets on `GROUP_JOINED` / `GROUP_LEFT`, handled on `ns.shareReminders` because the dungeon quests hold the `ns:` names.
+- **When.** Quality of Life and `shareWhispers` on; party only (no raid, battleground or arena: spam), though sharing still works there. Chat lockdown (`C_ChatInfo.InChatMessagingLockdown`, checked first): the system message is secret, nothing sent.
+- **Shape** (`ns:BuildAnnounceMessage`): marker `ns.TARGET_MARKER` (dropped on WoW Forever, which blocks raid-marker tokens), body with no closing period, ` // ` and `L["ADDON_SHORT_NAME"]`: `{rt3} I tried to share [Quest Name] with you, ... // PWQL`.
+- **Quest reference.** `ns.FittingQuestReference` (wrapped by `ns.ShareWhisperQuestReference`) takes the best that keeps the message within `ns.CHAT_MESSAGE_MAX_LENGTH` bytes (`SendChatMessage` rejects longer): Questie's native link (`GetNativeQuestLinkStringById`, clickable for all), Questie's bracketed text (`GetQuestLinkStringById`, a link only with Questie), `[Title]`, then `[Title...]` cut on a UTF-8 boundary.
+- **Message Length report** (Localization tab): each whisper for the longest readable title, bytes, SHORTENED if cut. Reads `ns.DiagnosticLogQuests`, so on index clients collapsed zones go uncounted (it says how many).
+
+#### Example Lines (Quality of Life Panel)
+
+- Built by the sending code (`ns.BuildShareWhisper`, the first message of `ns.BuildDungeonAnnouncement`, `ns.BuildSharePrint` with the sample count) and drawn by `ns.RenderSample` (`Options/Options-Utilities.lua`); under Seconds Between Shares and the whisper / dungeon announcement / dungeon sharing toggles, each hiding with its toggle.
+- Only the "Example:" label (`SAMPLE_EXAMPLE`) takes the help color. Whisper and party lines draw as received: the client's `ChatTypeInfo` colors (fixed fallback), prefix (`CHAT_WHISPER_GET`, `CHAT_PARTY_GET`), class-colored sender, marker icon. Color is reopened after each `|r`: a panel falls back to white after a link where chat falls back to the channel color.
+- Samples: `ns.SAMPLE_QUEST_IDS`, `ns.SAMPLE_DUNGEON_AREA_ID`, `ns.SAMPLE_ZONE_AREA_ID` (`Data/{Game}/Sample-Quests-{Game}.lua`), names via `C_Map.GetAreaInfo`; an unloaded title is requested (`C_QuestLog.RequestLoadQuestByID`) and shows `SAMPLE_QUEST_LOADING`. No samples, no rows.
+
+### Dungeon Quests
+
+`Features/Dungeon-Quests.lua` (when, who, what's been had) and `Features/Dungeon-Quest-Lookup.lua` (which dungeon, which quests): in a dungeon with a party, announce the player's quests still to do there and share the shareable ones. Settings `dungeonAnnounce`, `dungeonShare`.
+
+- **Where.** Instance type in `INSTANCE_TYPES`, `IsInGroup()` and not `IsInRaid()`. Never in a raid group (spam); a party turned raid stops, and resumes if it turns back.
+- **When.** `PLAYER_ENTERING_WORLD`, `GROUP_JOINED` and `GROUP_ROSTER_UPDATE` only start a `C_Timer.NewTicker` (`ns.DUNGEON_CHECK_INTERVAL`), and only with a setting on in a party dungeon. Setting and profile changes start it at once (`ns.dungeonQuests.Watch`, from `ns.ApplyQualityOfLifeSettings`, `ns:ApplyProfile`). Roster updates go to `ns.dungeonQuests:OnGroupRosterUpdate` since `Forever-Quest-Log.lua` owns `ns:OnGroupRosterUpdate`. The ticker stops when nothing is left or the player leaves.
+- **Gathering.** A check waits until every online member still owed the announcement or shares is in range (`UnitInRange`), or `ns.DUNGEON_SHARE_MAX_WAIT` passes, so a gathered party gets them rather than whoever zoned first. WoW Forever hides party range, so there (`IsInRange`, `ns.FLAVOR == "Camelot"`) all count in range and both go on the first check.
+- **Who counts.** Other party members (`GetNumSubgroupMembers`), online (`UnitIsConnected`), by GUID. An unfilled slot (around loading screens) is skipped so it never reads as leave-and-rejoin; so is a secret GUID or connection (`ns.IsReadable`).
+- **What this group has had.** Keyed by instance ID (8th return of `GetInstanceInfo`): every instance of a dungeon shares a key, independent of Questie. Per key: announced, `sharedWith` GUIDs; memory only, dropped on `GROUP_LEFT`. So one announcement per dungeon per group, shares once per member per dungeon, nothing on re-zoning, and a run of their own for a later joiner. That run uses `QuestLogPushQuest`, which offers to the whole party; those who have the quest get "already on it", which earns no whisper. Members already shared with are never waited on; one still out of range when the wait ends starts a fresh wait.
+- **Login and reload.** Not an arrival: `isInitialLogin` / `isReloadingUi` set `adoptPending`, and until `ns.DUNGEON_LOGIN_GRACE` after the first member appears (the roster fills late), each check marks the dungeon announced and members shared. Only if the player was grouped at that loading screen (`groupedAtLogin`); a group formed after is arriving. The next loading screen ends it.
+- **Which quests** (`ns.DungeonQuests`; `ns.CurrentDungeon` gives name, key, Questie zone IDs, header names):
+  - `header`: under a header named `GetRealZoneText()`, the instance name, or the area name of a Questie zone ID (an empty name while loading names nothing).
+  - `Questie`: `zoneOrSort` is the dungeon, or an objective creature or object spawns there, an item drops there, or a kill credit, `triggerEnd`, extra objective or required source item is there. Catches class quests.
+  - Zone IDs: `ZoneDB.instanceIdToAreaId`, plus alternatives from `ZoneDB:GetDungeons()` (Questie files some dungeons under a second ID).
+  - World event quests (`QuestieEvent.IsEventQuest`) never count, even under the header: Questie can place one in an unrelated dungeon.
+  - Every Questie read is `pcall`ed. No Questie, or a dungeon `ZoneDB` lacks: header only.
+  - The header names also drive the current-zone mark in a dungeon (`ns.CurrentDungeonNames`).
+- **Announcement**: skips ready and failed quests; to `ns:GetGroupChatChannel()`. Quests referenced as whispers do (`ns.FittingQuestReference`), joined by `LIST_SEPARATOR`, packed greedily, split only between quests so no link breaks. First message `DUNGEON_QUESTS_ANNOUNCE` (`_ONE` for one), later ones `DUNGEON_QUESTS_ANNOUNCE_CONTINUED`, each reading whole. Nothing to do, or chat lockdown: nothing sent, still counts as announced.
+- **Sharing**: every matched `pushable` quest (`ns.LogQuests`), ready or not, to `ns.ShareQuests` with a `ns.BuildSharePrint` line naming the dungeon. None shareable: no print, members still marked. While `ns.sharingQuests`, it waits for the next check, members unmarked until it goes.
+- **Diagnostics.** In a dungeon, Sharing Context shows the instance ID, key, zone IDs, raid flag, ticker, announced, wait so far, members' range and shares (`ns.DungeonShareStatus`), matched quests (`matchedBy`, state, shareability) and the announcement with bytes. Message Length flags announcement messages OVER. On index clients both swap `ns.DiagnosticLogQuests` in for `ns.LogQuests` during the call (`DungeonQuests`, `Manifests.lua`), so the log isn't expanded nor the selection moved; non-selected quests read "sharing not checked".
+
+### Quest Text
+
+Both quest logs and the quest giver window, every client, set quest text from shared files:
+
+- `Quest-Display.lua`: naming. `ns.QuestListTitle` (tagged only while `showQuestLevels`), `ns.LevelTag`, `ns.QuestSuffix` (letter from the flavor's `ns.QUEST_TAG_SUFFIXES`; tag IDs mean different kinds per flavor, so they're data; E for an untagged elite), `ns.QuestLevelLegend` (only letters this client can show), `ns.StyleQuestID`.
+- `Quest-Objectives.lua`: `ns.StyleObjective`, `ns.CheckIcon` / `ns.InlineIcon`, `ns.TwoSpacesWide`, `ns.ClearObjectiveCounts`.
+- `Quest-Info-Style.lua`: `PrettyWideQuestLogSectionHeadingFont`, `ns.StyleQuestText` (line spacing `LAYOUT.LINE_SPACING`), `ns.RememberBlizzardStyle` / `ns.RestoreBlizzardStyle`, `ns.StyleQuestInfo` / `ns.RestoreQuestInfoStyle`, `ns.CreateRoomBelow`.
+- `Quest-Details-Data.lua` (WoW Forever and Mists, after `Quest-Log-API.lua`): `ns.GetSelectedQuestDetails`, the selected quest as plain data.
+- `Quest-Rewards.lua`: rewards wherever Blizzard's `QuestInfo` shows them.
+
+Section heading font: `QuestTitleFont` less `SECTION_HEADING_SHRINK`, so the title reads as the one heading over Description / Rewards / Objectives. Under ElvUI (checked once at load) no shrink, since its title font is already small. Follows every `SetFont` / `SetShadowColor` / `SetShadowOffset` on `QuestTitleFont`, because skins set it after this file loads and again when their options change.
+
+Spacing: every gap, margin and padding is a step of `LAYOUT.SPACE` (`Data/Data.lua`, each step double the last; the comment there says what each step is for). Free sizes follow the same doubling. Positions matched to Blizzard's art, and Blizzard's own control sizes, stay as they are. Named gaps (`TITLE_SPACE_BELOW`, `HEADING_SPACE_ABOVE` / `_BELOW`, `REWARD_BUTTONS_SPACE`, `REWARD_LINE_SPACE`, `MONEY_EXPERIENCE_SPACE`, `PAGE_TOP`, `QUEST_ID_GAP`, ...) are `LAYOUT` entries built from those steps.
+
+#### Two Kinds of Details
+
+- **Classic Era and TBC** (`Classic-Quest-Details.lua`, a wide quest log part): restyle Blizzard's `QuestLog*` regions in place.
+  - Fonts and spacing set once (the quest log has them to itself); anchors set to the scale. The Description heading's gap is reset after every `QuestLog_UpdateQuestDetails`, because Blizzard re-anchors it each time.
+  - `QuestFrameItems_Update` hook, `"QuestLog"` only (the quest giver window calls it too): Blizzard hangs each section's first reward button 3px left of the text and the captions 3px in; `Realign` zeroes those so two button columns fill the text column exactly, then `ns.SpaceAroundRewardButtons`.
+  - Gold right-aligned two spaces in; `MONEY_RIGHT_PADDING` cancels the money frame's own inset.
+  - Chain and quest ID go inside `QuestLogSpacerFrame` (Blizzard's spacer under the last piece), grown to hold them, placed again a frame later once the pane settles.
+- **WoW Forever and Mists** (`Forever-Quest-Details.lua`): draws on frames of its own from `ns.GetSelectedQuestDetails`, never calling or borrowing `QuestInfo`, which the quest giver window and Blizzard's own details (map's on WoW Forever, `QuestLogFrame`'s on Mists) use, so none can blank or misstyle another's text.
+  - `Place` stacks pieces down the column; `height` accumulates and the scroll child ends `PAGE_TOP` under the last. Order: title (name only, failed format if failed; icon and level are already in the list), objectives text, timer / group size / required gold, WoW Forever's next waypoint, objective lines, Description, Rewards, chain, quest ID.
+  - Timer counts down from an `OnUpdate` on the scroll child (`timerExpires`), because only events repaint the pane.
+  - Colors: `GetMaterialTextColors`, `"Stone"` plus its background atlas when Quest Text Contrast wants light text; finished objectives `FINISHED_COLOR`, as Mists grays them.
+  - Reward buttons (`Forever-Quest-Details-Rewards.lua`, `ns.CreateRewardButtons` → `Fill(index, reward)`, `HideFrom(index)`): plain `LargeItemButtonTemplate`, made on first need, two per row. Quality-colored names, counts via `ns.FormatNumber`, unusable tinted. An unloaded item asks once (`ContinueOnItemLoad`) and calls `ns.RequestUpdate` on arrival. Hover re-selects the quest (`ns.SelectQuest`) before `SetQuestLogItem` / `SetQuestLogCurrency`, since those read the selection and something may have moved it; modified click links the item.
+  - Gold (`CoinText`: `C_CurrencyInfo.GetCoinTextureString`, else the `GetCoinTextureString` global) right-aligned on the "You will receive:" line, experience under it (`MONEY_EXPERIENCE_SPACE` with gold, `SPACE.LINE` without).
+  - Scroll bar is the list's `MinimalScrollBar`, because `ScrollFrameTemplate`'s bar differs per client.
+- **`ns.GetSelectedQuestDetails`**: most calls read Blizzard's selection, so the pane selects first. Client-specific calls are chosen once at load, by-quest-ID variant first. WoW Forever only: group size, next waypoint, currency choices (`GetQuestLogChoiceInfoLootType`, indexed apart from items for their tooltips), `C_QuestInfoSystem.GetQuestRewardCurrencies`. Mists' reward currency indexes can skip, so it scans to `GetMaxRewardCurrencies()`. Spells skip known, boost and follower spells; objectives skip `spell` and `log` types, as Blizzard does. Choices, rewards, money and experience stay empty unless `C_QuestLog.ShouldShowQuestRewards`.
+
+#### Shared Pieces
+
+- **Objective lines** (`ns.StyleObjective`, both logs): description's font, not Blizzard's smaller one. Check (or same-size blank so names align), name, count right-aligned in its own column `SPACE.NEAR` clear. `SplitObjective` handles "8/8 Name" (WoW Forever), "Name: 8/8" (Classic) and zhCN/zhTW's full-width colon. Check sized in whole pixels and dropped `CHECK_DROP`, because self-sized it came out small and riding high in ElvUI's font. Skins recolor lines in hooks that may run after, so counts re-match their line's color a frame later.
+- **Two spaces in** (`ns.TwoSpacesWide`): body text wraps short of the column edge, so a number flush to it looks like it runs past. Counts, gold, experience and quest ID end two spaces in, measured as "0  0" minus "00" because a FontString may not draw trailing spaces.
+- **Quest ID** (`ns.StyleQuestID`): description's font less `QUEST_ID_FONT_SHRINK`, its color. Skins recolor the description later, so on first use it hooks the description's `SetTextColor` and recolors the ID and its chain icon (color baked into the text).
+- **TBC daily reset line** (`DAILY_RESET`, `GetQuestResetTime`, in `Classic-Quest-Details.lua`): under the title, objectives `DAILY_RESET_SPACE_BELOW` under it while shown. Never shows on Classic Era (`ns.IsDailyFrequency` false without `LE_QUEST_FREQUENCY_DAILY`). Color follows the description's `SetTextColor`.
+
+#### Blizzard's QuestInfo
+
+Shared by the quest giver window's detail and reward pages (every client) and Blizzard's own details (WoW Forever, Mists). Follows the quest giver cleanup, not the Wide Quest Log switch.
+
+- **Styled before layout**: `ns.ApplyQuestGiverCleanup` runs `ns.StyleQuestInfo` as saved settings load, before Blizzard first measures, so measurements match what's drawn; off → `ns.RestoreQuestInfoStyle`. Pieces a client lacks are skipped.
+- **Experience and gold** (`QuestInfo_Display` hook, `Quest-Rewards.lua`): description's font and color instead of Blizzard's white outlined number font, for every caller while on; Blizzard's back for every caller while off.
+  - Experience regrouped with `ns.FormatNumber` (`BreakUpLargeNumbers` can leave it ungrouped). ElvUI appends a level-share in bright green from a hook of unknown order, so only the leading number is regrouped; on dark (parchment) text every color code becomes `PARCHMENT_GAIN` after each `SetText` / `SetFormattedText`.
+  - Gold: coin buttons get `PrettyWideQuestLogMoneyFont` (description's font, no shadow). Blizzard sizes coins when it lays them out, so after a font change `MoneyFrame_Update` reruns with `staticMoney`.
+- **Rewards block** (`ns.SpaceRewardsBlock`, called from quest giver page spacing): `HEADING_SPACE_BELOW` under the heading, buttons `REWARD_BUTTONS_SPACE` clear of text, later lines `REWARD_LINE_SPACE` where Blizzard leaves `BLIZZARD_REWARD_LINE_GAP`, experience `MONEY_EXPERIENCE_SPACE` under gold or `SPACE.LINE` without gold (then "You will also receive:" is its own label). Block height grows by how far pieces moved; idempotent on the same layout.
+- **Skin fixes** (`Quest-Giver-Skins.lua`, listed after `Quest-Giver.lua` so its `QuestInfo_Display` pass runs after the page is spaced):
+  - Reward names: Blizzard draws them white on a dark plate; a skin hiding the plate leaves white-with-shadow on bare parchment. With the cleanup on and the plate hidden or alpha 0, names take the description's color, no shadow. Buttons are shared, so every display restyles every button, again a frame later because skins restyle in later hooks. Off → color and shadow kept in `namesBefore`.
+  - Backdrop: see Quest Giver Window.
+
+### Quest Giver Window
+
+Gate: `ns.IsQuestGiverCleanupOn()` = Quality of Life switch and `giverCleanup` (`Quest-Giver.lua`), independent of the Wide Quest Log switch, so it works with Blizzard's quest log. `ns.ApplyQuestGiverCleanup` reapplies at once; called by Core as saved settings load, `ns:ApplyProfile`, and `ns.ApplyQualityOfLifeSettings` (`Options-Utilities.lua`, every Quality of Life toggle and both Quality of Life switches). An open window relays out on its next open.
+
+- **Own text** (`StyleQuestGiverPages`): FontStrings the greeting/detail/progress/reward pages hold directly (chiefly the progress page, which no client draws with `QuestInfo`). Found by font, not name: title's font = heading, the one hung from the page top = the title. Blizzard's style kept on first change, restored when off. Styled at load, before first layout.
+- **Shared `QuestInfo` text**: see Blizzard's QuestInfo. Page objective lines keep Blizzard's font, no check or count column.
+- **Detail and reward page spacing** (`SpaceQuestGiverPage`, `QuestInfo_Display` hook, page + cleanup on only): walks `template.elements`, sets each piece's space above by `PIECE_KINDS` kind (first piece `PAGE_TOP`; heading `HEADING_SPACE_ABOVE`; rewards that plus `REWARDS_HEADING_RISE`; text `TITLE_SPACE_BELOW` / `HEADING_SPACE_BELOW`; detail pieces `SPACE.NEAR`; spacer 0), only on `TOPLEFT` anchors, then `ns.SpaceRewardsBlock`. The rise applies on WoW Forever and Mists, whose Rewards heading sits higher in its block; detected by `ns.LayOutQuestGiverPage` existing (only `Forever-Quest-Giver.lua` defines it). Blizzard lays pages out afresh, so off = left alone.
+- **Greeting page** (`Quest-Giver-Pages.lua`): greeting `PAGE_TOP` down; Current/Available Quests a section under it (or right under when greeting empty); first line a heading's space under its heading, lines `QUEST_LINE_SPACE` apart. `QuestGreetingFrameHorizontalBreak` (hidden by ElvUI but still holding its place) becomes the whole section gap. Blizzard re-anchors all but the greeting each show, so off restores only the greeting (`greetingBlizzardY`). Runs from the panel's `OnShow` and `QuestFrameGreetingPanel_OnShow` (Blizzard calls it directly when already open). Buttons from `titleButtonPool` where present, else `QuestTitleButtonN`.
+- **Progress page** (`Quest-Giver-Pages.lua`, `QuestFrameProgressItems_Update` hook): title `PAGE_TOP`, text `TITLE_SPACE_BELOW`, "Required items:" a section down, gold or first item row a heading's space under it, first row `SPACE.NEAR` under gold. Quest ID right-aligned `QUEST_ID_GAP` under the last shown thing (`LastShown`: left button of the last item row, else gold, heading, text), with `ns.CreateRoomBelow` because a scroll frame only scrolls to its last child. Off: title/text/heading/gold go back to offsets kept on first move (`blizzardY`; the first item row is re-anchored by Blizzard), quest ID hides.
+- **Gossip** (`Gossip.lua`, every client): greeting styled from `GossipGreetingTextMixin.Setup`. The list measures rows with a hidden copy (`greetingTextFrame` in the greeting's data entry) that Blizzard never runs `Setup` on; unstyled, it measures a long greeting too short and the first option overlaps the text. So a `GossipFrame.Update` hook styles the copy and, if its height changed, calls the ScrollBox's `FullUpdate`. The copy persists, so later opens measure right first time.
+- **Skinned backdrop** (`Quest-Giver-Skins.lua`, `ns.UpdateQuestGiverBackdrop`): ElvUI keeps the parchment but makes the window see-through, so trackers/nameplates show through. Cleanup on → opaque in the skin's color via `customBackdropAlpha = 1` (ElvUI honors it through color updates); off → the skin's alpha. Backdrop is on `QuestFrame` (WoW Forever, Mists) or `QuestFrame.backdrop` (Classic Era, TBC); an unskinned window has neither and is left alone. Skins apply after load, so checked on each `QuestFrame` `OnShow` and by `ns.ApplyQuestGiverCleanup`.
+- **WoW Forever and Mists `QuestInfo` pages** (`Forever-Quest-Giver.lua`, `ns.LayOutQuestGiverPage` from its own `QuestInfo_Display` hook): gold and experience right-aligned two spaces in from `template.contentWidth` (`AlignRewardNumbers`); quest ID `QUEST_ID_GAP` under `LastShown` (`LAST_PIECES`, counting only pieces actually on this page, since one left showing from Blizzard's details belongs to that window). One quest ID, its room and its Wowhead button reparent to whichever page shows. Any other caller: quest ID hides, and gold/experience go back beside their labels only if this file moved them (`rewardNumbersMoved`).
+- **Level tags** (`giverLevels`, sub-option of the cleanup; `ns.TagQuestLine`, `Quest-Giver.lua`): log-style tag before each quest line with a known level, line's own color, letter from `ns.GetQuestTagByID`. Gossip: hooks on `GossipSharedAvailableQuestButtonMixin.Setup` / `GossipSharedActiveQuestButtonMixin.Setup`, then the button's own `Resize`. Greeting page: `GetActiveLevel` / `GetAvailableLevel` and `GetActiveQuestID` / `GetAvailableQuestInfo`, button grown for the longer text. Blizzard may run either twice on the same text, so `levelTaggedText` prevents double tags. `Quest-Giver-Pages.lua` captures `ns.TagQuestLine` at load, so `Quest-Giver.lua` must load first.
+
+### Quest Chain
+
+Every client, Questie data only. `Quest-Chain-Data.lua` finds the chain; `Quest-Chain.lua` draws the section (`ns.CreateQuestChainSection`, `ns.UpdateQuestChainSection`), placed `HEADING_SPACE_ABOVE` under the rewards and above the quest ID. On Classic Era and TBC the details part builds it, so it exists only while the wide quest log runs.
+
+- **Finding** (`ns.GetQuestChain`): `QueryQuestSingle` in `pcall` (Questie may be absent or not ready). Back: a part counts only as the quest's sole prerequisite (single `preQuestSingle`, no `preQuestGroup`) that names it as `nextQuestInChain`; forward: `nextQuestInChain`. Branches show only the straight run. Capped at `MAX_PARTS` (only a data loop reaches it); under two parts = no chain. Last hit cached in `lastChain` (details repaint in bursts; Questie data is fixed per session) and returned by reference, so callers only read. Misses aren't cached: before Questie's DB is ready every quest looks chainless.
+- **Labels** (`ns.QuestChainPartLabel`): name from the client, else Questie, else the ID. Badge only when Questie's level > 0 and a color is known, regardless of `showQuestLevels`. Tag is Questie's corrected `GetQuestTagInfo` where present, else the client's; elite is always the client's. Tag names are never compared (localized).
+- **Color** (`ns.QuestChainPartColor`): server difficulty (`C_PlayerInfo.GetContentDifficultyQuestForPlayer`) for a part in the log on WoW Forever, since the server rates only logged quests; else `GetQuestDifficultyColor` by level.
+- **Rows**: heading `QUEST_CHAIN_PROGRESS` with position; rows `ROW_GAP` apart. Turned-in parts (`C_QuestLog.IsQuestFlaggedCompleted`) get `ns.CheckIcon` and `TURNED_IN_ALPHA`; the current part gets a band in the text's color (`CURRENT_PART_BAND_ALPHA`, `CURRENT_PART_BAND_MARGIN` for room around the badge). Check and badge have their own column so long names wrap under the name.
+- **Badge** (`CreateBadge`): a pill with no art (two circle-masked caps plus a middle, one solid color so overlaps don't show). Text is the quest log color, a size down (`QUEST_ID_FONT_SHRINK`); the box is that color times `BADGE_SHADE`, because quest log colors are made for dark backgrounds and wash out on parchment. All badges share the widest possible width (`BadgeTextWidth`: doubled digit with each suffix in `BADGE_SUFFIXES`, cached per font) plus `BADGE_PAD_X` / `BADGE_PAD_Y`, so names align; a part with no level keeps the empty room.
+- **Hover**: Questie's own tooltip (`QuestieLink:CreateQuestTooltip`, `questie:<questID>:<player GUID>`), skipped until `Questie.started` because before that it only prints a wait message to chat.
+- **Fonts**: `CopyFont` reads font, color and shadow off the Description heading and text FontStrings, since skins set them there, not on font objects. ElvUI recolors those only after the details fill, so `FollowSourceColors` hooks `SetTextColor` / `SetShadowColor` on both (once) and recolors heading and rows.
+
+### Ready to Turn In
+
+`Turn-In-Line.lua`: total XP and gold waiting in ready quests, a line (`TURN_IN_SUMMARY`) centered between `ns.abandonButton` and `ns.shareButton`.
+
+- Both numbers come from Questie's `QuestXP`, so no Questie = no line. `GetQuestLogRewardXP` takes `self`, `GetQuestRewardMoney` doesn't (matching Questie's definitions); both in `pcall`. Gold via `CoinText` (`C_CurrencyInfo.GetCoinTextureString`, else the `GetCoinTextureString` global; no gold part without either).
+- Quests worth nothing are dropped; line hides when none remain. At `GetMaxPlayerLevel()` only gold shows.
+- Classic Era and TBC count only quests under open zones (collapsed ones aren't listed); WoW Forever and Mists count all. Callers build `readyQuests` (`Classic-Quest-List.lua` inside its part, `Forever-Quest-List.lua`).
+- Placed on first show, not on creation: on Classic Era and TBC `Classic-Quest-Log.lua` records Blizzard's buttons as `ns.abandonButton` / `ns.shareButton` only after the list part made the line.
+- Tooltip: quests grouped by zone (`OTHER` for none), zones in first-seen order, under `TURN_IN_TOOLTIP`, in its own `PrettyWideQuestLogTurnInTooltip`, made opaque after every `Show` (NineSlice center and a skin's `backdrop`) because showing restores the see-through style and it opens over quest text.
+
+### Wowhead Link
+
+`Wowhead-Link.lua`, `ns.LinkQuestIDToWowhead(parent, text, getQuestID)`: every quest ID the add-on shows (both logs' details, progress page, WoW Forever / Mists quest giver pages) is clickable.
+
+- Hover: `WOWHEAD_LINK_TOOLTIP`. Click: `PRETTYWIDEQUESTLOG_WOWHEAD` popup (`WOWHEAD_LINK_COPY`) with the address selected. Both act only while the ID text is shown. The edit box reverts any edit; Enter/Escape close.
+- Address prefix is `ns.WOWHEAD_QUEST_URL`, one value per flavor in `Data/{Game}/Wowhead-{Game}.lua`, so the TOC picks the site section. Season of Discovery: the Classic Era TOC lists `Data/Discovery/` after `Data/Vanilla/`; each file returns early on the wrong side of `ns.IS_DISCOVERY`.
+- No address → returns without a button: no error, just no link. Quest Log Context prints the address or `(none)`; Validate Data's row prints it or `TABLE MISSING`.
+- Sets `text.linksToWowhead` so `ns.StyleQuestID` prefixes the chain icon (`ns.WOWHEAD_LINK_ICON`) in the ID's color. Returns the button so an ID that changes parents takes it along.
+
+### Quest Map
+
+`Features/Quest-Map.lua`: a map docked right of the window, every client. A quest log part, so on Classic Era and TBC it exists only while the wide quest log runs.
+- `ns.hasQuestMap` is set at file scope, so it's true wherever the TOC lists the file; `ns.questMap` exists only once the part has run.
+- Blizzard's map canvas (`MapCanvasFrameTemplate`) with a few of the world map's data providers, built the way the Battlefield Map is. It's the add-on's own frame: the world map is never opened or touched.
+- The frame, `PrettyWideQuestLogMapFrame`, is declared in `Quest-Map.xml`: the canvas's `OnLoad` needs its `ScrollContainer` child to exist, which only XML can arrange (`BorderFrame` is what the canvas turns on to block the mouse while locked). The same file declares `PrettyWideQuestLogQuestMarkerPinTemplate` (WoW Forever and Mists).
+- Size: `MAP_ASPECT` (the map art's proportions) at `HEIGHT_SHARE` of the visible window's height, art top border to bottom edge.
+- `questMap.holder` (`BackdropTemplate`, dialog box backdrop) takes the mouse, so clicks never reach what's behind the map. Its placement is the `style` table (`edge`, `x`, `top`, `bottom`, `inset`), measured in game to meet the window art. `questMap.SetStyle` changes keys and lays out again, for a skin that draws the window differently (`Classic-ElvUI.lua`). Laid out again on every window `OnSizeChanged`.
+- Wheel mode `MAP_CANVAS_MOUSE_WHEEL_ZOOM_BEHAVIOR_NONE`: no zoom, but the wheel stays enabled, so scrolling over the map doesn't zoom the camera either.
+- The art is refitted (`canvas:OnFrameSizeChanged`) from the scroll container's own `OnSizeChanged`, once a new size has taken, not when it's asked for.
+- **Combat.** The canvas calls `SetPassThroughButtons` on every pin it acquires, which WoW blocks from add-on code in combat. Every pin template of this map (marker, Questie's icons, area layer) takes `PrettyWideQuestLogPinMixin`, whose `SetPassThroughButtons` is a no-op, as HereBeDragons-Pins does for Questie's. It's defined at the top of `Quest-Map.lua`, outside the part, because the XML templates name it. These pins draw in combat; only Blizzard's layers wait (WoW Forever and Mists).
+
+#### Load Order
+
+Each TOC lists, after `Dungeon-Quests.lua`: `Quest-Map.xml`, `Quest-Map.lua`, `Questie-Map.xml`, `Questie-Map.lua`, `Questie-Map-Tooltip.lua`, `Questie-Map-Quest-Giver.lua`, `Questie-Map-Areas.lua`, `Questie-Map-Area-Layer.lua`, the client's map file (`Classic-Quest-Map.lua` in Vanilla and TBC, `Forever-Quest-Map.lua` in Camelot and Mists), `Quest-Map-Reveal.lua`. Then `Routes/Routes.xml`, then `Classic-ElvUI.lua` (Vanilla, TBC) or `Mists-Quest-Portrait.lua` (Mists). Why:
+- `Quest-Map.lua` reads `ns.questLogFrame` and `ns.listButtons` as it builds, and defines the pin mixin both XML files name.
+- Every `Questie-Map-*` file reads `ns.questMap` as it builds. `Questie-Map-Tooltip.lua` also reads `questMap.QUESTIE_PIN_TEMPLATE`, set by `Questie-Map.lua`.
+- The tooltip, quest giver, areas and area layer files only add functions (`ShowPinTooltip`, `QuestGiverMapID`, `ObjectiveAreas`, `SpotOutline`, `DrawObjectiveAreas`, `RemoveObjectiveAreas`), which `Questie-Map.lua` and the client's map file read only when drawing.
+- `Classic-Quest-Map.lua` takes `questMap.RequestRefresh` by value as its `QuestLog_UpdateQuestDetails` hook.
+- `Forever-Quest-Map.lua` reads `ns.questMap` and `ns.questLog` and hooks `ns.DisplayQuestDetails` at load.
+- `Quest-Map-Reveal.lua` hooks the exploration pin the client's map file made.
+- `Mists-Quest-Portrait.lua` reads `ns.questMap.holder` at load.
+
+WoW Forever and Mists run all of it at file load (parts run at once there, `ns.questLogIsOwnWindow`; `Forever-Quest-Map.lua` isn't a part). Classic Era and TBC run the parts in the same order inside `ADDON_LOADED`. Routes needs none of these files: it draws on `WorldMapFrame` with templates of its own and reads nothing of `ns.questMap`.
+
+#### First Draw and Picking a Map
+
+- Each client's map file adds the layers, registers frame levels (`PIN_FRAME_LEVEL_QUEST_BLOB` for the objective areas, `PIN_FRAME_LEVEL_ACTIVE_QUEST` above it for Questie's pins) and defines `ns.questMap.FollowQuest`, which the canvas's `OnShow` calls. Every client goes through `ns.questMap.FollowQuestieQuest` first, with its own fallback map.
+- **The canvas needs a map before it first draws**, as the Battlefield Map does: Blizzard's layers ask for zoom levels the scroll container builds only once it has a map, and drawing without them breaks Blizzard's map code. When `FollowQuest` leaves no map, `OnShow` tries `MapUtil.GetDisplayableMapForPlayer`, then `C_Map.GetFallbackWorldMapID` where it exists. It calls `MapCanvasMixin.OnShow` only once `ScrollContainer.zoomLevels` exists; until then `drawPending`, run by the first map `questMap.ShowMap` sets (a hide clears it).
+- **Whether the canvas has a map is read from `canvas.mapID`, never `canvas:GetMapID()`**, which answers the player's map until one is set: trusting it skips `SetMapID` when the quest is in the player's zone, and the first draw finds no zoom levels.
+- `questMap.CanShowMap` accepts only a map with art (`C_Map.GetMapArtLayers` not empty): a client can know a map it has no art for (some dungeons Questie names) and the canvas can't draw one. `questMap.ShowMap` climbs `parentMapID` to the nearest map with art, stays put when none has any, and returns whether the map moved (a move redraws every layer). The zone dropdown and the quest giver's zone filter with `CanShowMap` without climbing, so a quest whose icons sit only on artless maps counts as having none.
+
+#### Show Map and Map Scale
+
+- Show Map / Hide Map sits `LAYOUT.LIST_BUTTONS_GAP` after the last of `ns.listButtons`; the map has its own close button (`UIPanelCloseButtonNoScripts`) top right.
+- `global.mapHidden`: one setting for every character, no default, cleared (nil) rather than set false when the map shows, so Reset Profile never hides or shows the map.
+- An empty log hides the map and Show Map (`questMap.SetLogEmpty`, called by both list files on every update), leaving `mapHidden` alone.
+- The map is the window's child, so it follows Window Scale. Map Scale (`global.mapScale`, Wide Quest Log panel) scales the holder on top through `ns.ApplyMapScale`, run on every window `OnShow` and from Reset Window, which puts it back. The panel hides the map's settings where `ns.hasQuestMap` isn't set (`MapHidden`) and grays them out while the wide quest log isn't running.
+
+#### WoW Forever and Mists
+
+`Features/Forever-Quest-Map.lua`, not a part.
+- **Layers**, each only if the client has its mixin: Blizzard's exploration, fog of war (also needs `FogOfWarFrameMixin`; Mists has the provider but not the frame, so no fog), quest objective area (`QuestBlobDataProviderMixin`), dungeon entrances, flight points, then a marker layer of its own. Frame levels in the world map's order (the `levels:AddFrameLevel` block), `PIN_FRAME_LEVEL_QUEST_MARKER` over Questie's icons. Entrances and flight points keep Blizzard's own mouse handling (names on hover). No other world map layer.
+- **Following.** A hook on `ns.DisplayQuestDetails` runs `ShowQuest` at once when `ns.questLog.selectedQuestID` changed, map showing or not, then always `RequestRefresh`, since Questie's icons can arrive after the log changes.
+- `ShowQuest`'s fallback: `GetQuestUiMapID`, else (nil or 0) `questMap.QuestGiverMapID`, else the player's zone, handed to `FollowQuestieQuest`. Then `SetFocusedQuestID`, or `ClearFocusedQuestID` when Questie's icons have the quest or nothing is selected, and redraws the blob pin and the marker.
+- **Never drawn twice.** Blizzard's objective area and the marker draw only `BlizzardQuestID`: the shown quest unless `questMap.questieQuestID` has it. `ShowQuest` redraws them only after `FollowQuestieQuest` has set `questieQuestID`, because a map move inside it redraws every layer while `questieQuestID` still names the last quest.
+- **Blob pin `Refresh` is replaced on this map's copy**: Blizzard's redraw less its `questPOI` check, drawing `BlizzardQuestID` only. Questie turns `questPOI` off when its own objectives are chosen, which would leave a quest Questie has no icons for with no area. The CVar and the world map are left alone.
+- **Marker** (`PrettyWideQuestLogQuestMarkerPinTemplate`), the add-on's own rather than Blizzard's quest provider: no mouse (drags pass through, a click runs nothing), and the pin mixin lets it draw in combat. Placed at the quest's entry in `C_QuestLog.GetQuestsOnMap` for the shown map, else `C_QuestLog.GetNextWaypointForMap` where it exists (WoW Forever). `MARKER_TEXTURE`, or `MARKER_TEXTURE_COMPLETE` once `ns.IsQuestComplete`. Scaling limits as Questie's icons.
+- **Combat.** Every Blizzard provider's `RefreshAllData` is wrapped as it's added: in combat it marks `heldProviders` and returns; `questMap:OnPlayerRegenEnabled` (`PLAYER_REGEN_ENABLED`, Core `EVENTS`, owner `questMap`) runs each held one once. The marker isn't wrapped. Replacing a provider's `RefreshAllData` after the wrap drops the hold.
+- Client differences are feature tests (each provider mixin, `FogOfWarFrameMixin`, `GetNextWaypointForMap`), never flavor checks.
+- Quest Map Context shows which quest the objective area and marker draw for, whether combat is holding Blizzard's redraws, and WoW Forever's next waypoint.
+
+#### Classic Era and TBC
+
+`Features/Classic-Quest-Map.lua`. These clients have no Blizzard quest areas or markers, nor data to draw them from, so only the exploration layer; levels `PIN_FRAME_LEVEL_MAP_EXPLORATION`, `PIN_FRAME_LEVEL_QUEST_BLOB`, `PIN_FRAME_LEVEL_ACTIVE_QUEST`.
+- The quest comes from Questie's icons alone. The fallback (`QuestGiverMapID`, else the player's zone) is passed as a function, so Questie's database is asked only when the quest has no icons.
+- Selected quest: `GetQuestLogTitle(GetQuestLogSelection())`, a header counting as none. Follows through a `QuestLog_UpdateQuestDetails` hook that only asks for a refresh.
+
+#### Unexplored Areas (Every Client)
+
+`Features/Quest-Map-Reveal.lua`. The map art leaves out unexplored areas, so a quest in a new zone would show bare parchment. It hooks `RefreshOverlays` on this canvas's exploration pin (`MapExplorationPinTemplate`); after Blizzard draws the explored areas, it draws the rest that `ns.MAP_REVEAL_OVERLAYS` lists for the art ID (`C_Map.GetMapArtID`).
+- Cut into tiles as Blizzard cuts explored ones: the current art layer's `tileWidth`/`tileHeight`, the last tile of a row or column fitted into the smallest power-of-two file (`PieceSize`). `ARTWORK` sublevel -1, under Blizzard's; joins the pin's `textureLoadGroup` on a full update.
+- Entry key `"Width:Height:OffsetX:OffsetY"`, value the texture file IDs comma-separated, row by row. An area counts as explored when `C_MapExplorationInfo.GetExploredMapTextures` reports the same key.
+- Only the client's own file IDs, so no art ships; the table ships, so no other map add-on is needed.
+- Art IDs differ by client, so one `Data/{Game}/Map-Reveal-{Game}.lua` per flavor folder: Vanilla, TBC, Camelot, Mists by their own TOCs; Discovery by the Vanilla TOC after Vanilla, each of the pair guarded by `ns.IS_DISCOVERY` so one table is built; Wrath and Mainline empty, listed by no TOC, left out of the zip by `.pkgmeta`.
+- Always on, no setting. The world map and Battlefield Map are untouched, so Leatrix Maps or any other reveal add-on never draws here, nor this there.
+- Quest Map Context shows the art ID, areas listed vs explored, map arts listed, and exploration pins with `RefreshOverlays` to hook.
+
+#### Questie's Icons (Every Client)
+
+`Features/Questie-Map.lua`: a data provider redrawing the selected quest's Questie icons (objectives, turn-in) as `PrettyWideQuestLogQuestiePinTemplate` pins (`Questie-Map.xml`). Questie never draws on this map and isn't told it exists.
+- **Source.** Questie's own HereBeDragons-Pins (`HereBeDragonsQuestie-Pins-2.0`): `worldmapPins` maps each icon to its `uiMapID` and world position, turned into zone coordinates by `HereBeDragonsQuestie-2.0`. Both through `LibStub`'s silent flag, once at build (Questie's libraries, not bundled; every TOC's `OptionalDeps: Questie` loads Questie first). Without them nothing draws.
+- **`IsShownIcon` leaves out** route lines (`type == "line"`), icons at alpha 0, and manual icons (`isManualIcon`: townsfolk, Show on Map), whose `data.Id` is an NPC's or object's and can equal an unrelated quest's ID. The Quest Map Context counts skip manual icons too.
+- **Kept on purpose:** icons Questie's settings hide (`hidden`), since this map shows the quest picked in the log whatever Questie shows elsewhere; and icons Routes hides on `WorldMapFrame` (`Routes-Map-Questie-Icons.lua`), since this map tests only the icon texture's alpha.
+- **Size.** `ICON_SIZE` times Questie's scale for the icon's kind (`data:GetIconScale()`); Questie's Global Scale is left out, as it would shrink these with Questie's world map icons. `SetScalingLimits` as Questie's world map pins, so pins keep their size on screen instead of shrinking with this smaller canvas.
+- **Glow.** With Questie's `alwaysGlowMap`, at `GLOW_SCALE` times the icon, never on `"available"` or `"complete"` icons. Color from `ObjectiveData.Color`, only the file from `icon.glowTexture`: Questie shows that texture only once the world map has been opened.
+
+`ns.questMap.FollowQuestieQuest(questID, fallback)` picks, in order:
+1. The dropdown's zone, while the same quest stays selected.
+2. The player's zone (`MapUtil.GetDisplayableMapForPlayer`), if the quest has an icon there.
+3. The zone with most of its icons.
+4. The fallback: a map ID, or a function asked only when the quest has no icons.
+
+It sets `questMap.questieQuestID` while Questie has icons for the quest, and returns whether it has any.
+
+- **Zone dropdown** (`WowStyle2DropdownTemplate`, `ZONE_DROPDOWN_WIDTH`, `LAYOUT.SPACE.NEAR` in from the top-left) when icons span more than one zone, most icons first, ties to the lower map ID. A pick holds until another quest is selected; passed over while it has no icons, back if they return with the same quest selected.
+- **Refreshing.** Hooks on Questie's pin library (`AddWorldMapIconMap`, `AddWorldMapIconWorld`, `RemoveWorldMapIcon`, `RemoveAllWorldMapIcons`), since Questie draws a little after the log changes and a batch at a time; the scroll container's resize (circles are sized for the map on screen); the client's map file; the Show Objective Areas toggle; `ns:ApplyProfile`. All only call `questMap.RequestRefresh`: at most once per `REFRESH_DELAY`, only while the canvas is visible (checked on asking and on running). It runs `FollowQuest`, then redraws Questie's provider unless the map moved, which already redrew every layer.
+
+#### Pin Tooltip (Every Client)
+
+`Features/Questie-Map-Tooltip.lua` defines `questMap.ShowPinTooltip`, which `AddPin` sets as each pin's `OnEnter`. Questie's own tooltips can't be reused: they gather neighbors from the world map's own pins.
+- The quest's name, then every NPC or object on a pin within `CLUSTER_DISTANCE` (a share of the map, each axis apart, not yards); an area's marker stands for every NPC or object in its area (`pin.area.names`). Each is followed by its objectives, one per description.
+- Row style: names and objective rows both indented `ROW_INDENT`, so the check slot (`ns.CheckIcon`, checked once done) lines up with the names; the count on the right (`AddDoubleLine`); done rows in `HELP`.
+
+#### The Quest Giver's Zone (Every Client)
+
+`Features/Questie-Map-Quest-Giver.lua`: `ns.questMap.QuestGiverMapID`, the zone a quest was given in, from Questie's database. The fallback for a quest with no Questie icons (Classic Era and TBC inside the fallback function; WoW Forever and Mists only when `GetQuestUiMapID` gives nil or 0). Quest Map Context shows its answer.
+- `QuestieDB` and `ZoneDB` through `ns.ImportQuestieModule`; nil without Questie, `QueryQuestSingle` or `GetUiMapIdByAreaId`.
+- Walks `startedBy`, NPCs then objects in Questie's order; for each, the area with most of its spawns (`BusiestArea`, ties to the lower area ID); the first whose zone the map can show wins.
+- Else the quest's `zoneOrSort` when above 0 (covers item-started quests). Negative is a class or profession, so such a quest no NPC or object starts gets nil.
+- `AreaMapID`: an area with a `ZoneDB` parent (`GetParentZoneId`) gives way to it before `GetUiMapIdByAreaId`; a map without art (`CanShowMap`) is skipped, not climbed.
+
+#### Objective Areas (Every Client)
+
+With Show Objective Areas on (`profile.showObjectiveAreas`), `Features/Questie-Map-Areas.lua` shades where each of the selected quest's objectives is found, as Questie's own areas do, and that objective's icons give way to one marker per area.
+- The toggle (Wide Quest Log panel) is hidden without a map, grayed out without Questie (tooltip says why, saved choice kept), and asks for a map refresh.
+- **Built from `icon.data.ObjectiveData.spawnList`** (every spawn in Questie's database), not Questie's icons, which Questie thins out where they crowd.
+- **Spawns.** Kept where `ZoneDB:GetUiMapIdByAreaId` puts the area on exactly the shown map and `Phasing.IsSpawnVisible` agrees (without `Phasing`, all count); one per position and icon. Measured in yards from `GetZoneSize` (Questie's HereBeDragons). Grouped by Questie's icon, so objects and creatures never share an area. Each group sorted by position, so the same spawns always make the same areas.
+- **Clustering** (`Cluster`): greedy, each untaken spawn takes later ones within `CLUSTER_RADIUS` of the moving center, two passes.
+- **Shape** (`Outline`): convex hull grown through a ring of `PADDING_POINTS` around each corner, by `EDGE_PADDING` or more, so it reaches at least far enough from its middle to clear its marker by `SPOT_GAP` on screen. A lone spawn is a circle, a line of spawns a rounded bar.
+- That least reach (`MinRadius`) is in yards from the zone's size and the canvas width at minimum zoom (`GetScaleForMinZoom` where the client has it, else the current scale; `FALLBACK_MIN_RADIUS` when either is unusable). So the gap is the same on every zone's map, and a map resize redraws the areas. No zone size: nothing shaded, every icon plain.
+- **Merging** (`MergeTouching`): within one objective's group, shapes that overlap or come within `TOUCH_GAP` merge with a new hull until none touch (box check, then separating-axis test), so each blob has one marker, at the hull's centroid, in the look of the objective's icon of that kind. Different objectives, and one objective's objects vs creatures, may still overlap.
+- **Circles.** Every icon left on the map, turn-in included, gets a circle clearing it by `SPOT_GAP` (`questMap.SpotOutline`) in its objective's color, or `TITLE` gold for the turn-in. Never merged with areas; not drawn with the setting off. An objective with no spawns placed on the shown map keeps Questie's icons, each circled.
+- **Cache.** Per objective in a weak-keyed table (`built`) until the map, the least reach (map size on screen, marker size) or Questie's `spawnList` changes.
+
+`Features/Questie-Map-Area-Layer.lua` draws them on one map-sized pin (`PrettyWideQuestLogAreaPinTemplate`) at `PIN_FRAME_LEVEL_QUEST_BLOB`, acquired only when there's something to shade; the pin zooms with the map.
+- Fill: a fan of triangles from the centroid, each a white texture whose four corners `SetVertexOffset` moves onto the triangle's three, corners put counterclockwise first; `FILL_ALPHA`, objective color or `FALLBACK_COLOR`.
+- Outline: a `Line` per edge at `OUTLINE_ALPHA`, thickness reset on `OnCanvasScaleChanged` so it stays `OUTLINE_WIDTH` on screen.
+- Textures and lines are reused between draws, spares hidden. Neither takes the mouse.
+- Quest Map Context shows the setting, `questMap.areaCount` (areas and circles shaded), and for when nothing is shaded: whether `ZoneDB` and `Phasing` were found, the zone's size, and each objective's spawns in the zone vs placed.
+
+### Quest Giver Portrait (Mists)
+
+`Features/Mists-Quest-Portrait.lua`: Blizzard's Mists quest log shows the giver's model beside itself, so this does the same for the window that stands in for it. Not a part. The Mists TOC lists it after every other Features file (after `Routes.xml`), since at load it reads `ns.questLogFrame`, `ns.questLog` and `ns.questMap.holder`, and hooks `ns.DisplayQuestDetails`, `ns.ApplyMapScale` and `ns.OnWindowResizeStopped` (an empty function in `Window.lua` that exists to be hooked).
+- **Blizzard's model is left alone.** A `ModelScene` of its own (`PanningModelSceneMixinTemplate`) in a box with the map's border (`holder.backdropInfo`) and a `NAME_HEIGHT` strip for the giver's name. `Pose` follows `QuestFrame_ShowQuestPortrait`: -1 is the player, otherwise the giver, mounted if it has a mount.
+- **Placement.** Map open: under the map (`GAP`), Blizzard's proportions (`MODEL_WIDTH`, `MODEL_HEIGHT`), ending level with the art's bottom (`LAYOUT.ART_INSET_BOTTOM`), no wider than the map. Measured through effective scales, since Map Scale applies to the map and not the box. Under `MIN_MODEL_HEIGHT` of room it hides rather than moving. Map closed: beside the window at Blizzard's size (`BESIDE_X`, `BESIDE_Y`).
+- **What it reads.** `GetQuestLogPortraitGiver` reads Blizzard's selected quest, so nothing changes while `ns.GetSelectedQuestID` isn't the quest the window shows (a quest giver window took the quest text). No selected quest, no giver, or `QuestLogShouldShowPortrait` (where it exists) saying no hides the box. `posedAs` keeps a repaint from restarting the model; cleared when the window closes or nothing is selected.
+- **Refit.** Map open/close, window resize and Map Scale refit it a frame later (`RequestRefit`), once the map has been laid out. Hidden during a grip drag (`frame.isResizing`), drawn once as it ends.
+
+### ElvUI, VoiceOver and Spoken Quests
+
+#### Classic Era and TBC
+
+ElvUI and VoiceOver work on Blizzard's own quest log frames, so the Classic files make room for them rather than replacing what they draw. `Classic-ElvUI.lua` and `Classic-VoiceOver.lua` are parts, so neither acts with the Wide Quest Log switch off. The quest giver window's ElvUI backdrop is `Quest-Giver-Skins.lua`'s, on every client (see Quest Giver Window).
+- **ElvUI's grip.** `Classic-Quest-Log.lua` removes Blizzard's art and draws its own either way, and on every show moves the resize grip to the skin's backdrop corner (`QuestLogFrame.backdrop`, `AnchorGrip`) when there is one.
+- **ElvUI skins at login, after this add-on loads**, so `Classic-ElvUI.lua` checks on each `OnShow` until there's a backdrop and ElvUI's Skins module, then acts once. With ElvUI's quest skin off there's never a backdrop, and the window keeps the add-on's art.
+  - `ns.HideQuestLogParchment` (`Classic-Quest-Log.lua`) hides that art and the "no active quests" parchment, and keeps them hidden.
+  - The backdrop is ElvUI's see-through Transparent template, which shows Questie's tracker through the quest text, so it's made opaque in its own color; `customBackdropAlpha` is ElvUI's field for that and survives its color updates.
+  - `HandleButton` on `ns.listButtons`, Show Map and `ns.zoneShareButton`; `HandleCloseButton` on the map's close button; `HandleDropDownBox` on the zone dropdown; the holder gets the Transparent template in place of its dialog border, made opaque the same way.
+  - The map moves beside the skin's backdrop instead of the art (`questMap.SetStyle` with `MAP_GAP`, `MAP_INSET`).
+  - The WoW Forever and Mists TOCs don't list this file; their window keeps its own art under ElvUI.
+- **VoiceOver's title padding.** VoiceOver puts a play button over the start of each title. With it on, the list's row styling starts each title with `ns.VoiceOverTitlePrefix` (`Classic-VoiceOver.lua`): enough spaces to clear the button (measured once, else two). Spaces only: a tab draws as a missing glyph in some fonts, ElvUI's among them.
+- **VoiceOver's buttons follow Blizzard's order**, row *i* to entry *i* + scroll offset. `ns.MatchVoiceOverButtons(order)` deals them out again by what each sorted row shows, through VoiceOver's own functions (`CreatePlayButton`; `UpdatePlayButton` for a quest a sound pack can read, else `UpdateQuestTitle` with the button disabled; `UpdatePlayButtonTexture`). `CanDealButtons` checks every VoiceOver field it calls first, so a VoiceOver update that renames one only leaves the buttons alone.
+- **Row styling runs after the buttons.** VoiceOver's functions rewrite the title and move the check, so `UpdateList` (`Classic-Quest-List.lua`) runs `StyleQuestRows` right after `ns.MatchVoiceOverButtons`. VoiceOver's overlay `Update` can run after the `QuestLog_Update` hook and restyle the rows, so it's hooked to `ns.RestyleClassicQuestRows`: buttons and row styling again with the order the last update built (`currentOrder`), without rebuilding the order or rerunning the list's update. Hooked whether or not VoiceOver's quest log part is on yet, since that's read from its saved settings after this file loads.
+
+**Spoken Quests** is a fork of VoiceOver that keeps the `VoiceOver` global and its quest log functions, so all of the above applies to it. `ns.GetVoiceOver` (`Features/Utilities.lua`) finds either (`ns.VOICEOVER_ADDON_NAMES`), returning the global only when it holds `QuestOverlayUI`, `DataModules` and `Enums` (read with `rawget`, since the global falls back to `_G`), and only while Spoken's quest log part is on (`Addon:IsPartOn`). Both are in the TOCs' `OptionalDeps`, so the global exists when the Classic file hooks it.
+
+#### VoiceOver and Spoken Quests (WoW Forever and Mists)
+
+VoiceOver or Spoken Quests puts its play buttons on Blizzard's quest list (the world map's on WoW Forever, `QuestLogFrame`'s on Mists), which the window stands in for, so they'd never show. `Features/Forever-VoiceOver.lua` puts one on each quest row of the add-on's list.
+- `ns.ShowVoiceOverButton(row, questID)` places it at `LAYOUT.QUEST_TEXT_X` and returns `TITLE_INSET` (0 without a button), which `Forever-Quest-List.lua` moves the title over by.
+- Made with VoiceOver's `MakePlayButton`, `BindPlayButton` and `SetPlayButtonState`, disabled for a quest no sound pack can read (`DataModules:PrepareSound`), and only when every one of those fields is there (`GetOverlay`).
+- A set of its own, one per quest, reusing a button once its quest leaves the log (`TakeLeftoverButton`): Blizzard's list takes VoiceOver's own set back to its rows whenever it redraws.
+- Rows are recycled, so each row lets go of its button (`ns.HideVoiceOverButton`) before it's set up again, unless another row already took it for the same quest (`button.row`).
+
+### Routes
+
+Routes on Zone Map and the Quest Arrow follow one route through the quests in the log, planned by `Features/Routes/`.
+
+- **What it covers.** Only the player's zone (`routes.PlayerZone`) with the caves, buildings and cities inside it. Each objective not done offers a few places to do it: its Questie spawns clustered into blobs. Each done quest offers its turn-in; with `showUpcomingTurnIns`, so does one not done, after its objectives. With `partyQuests`, party quests the player lacks add their objectives (see Party Members' Quests).
+- **Order.** Shortest open path from the origin, solved as a traveling salesman problem (`Routes-Solver.lua`).
+- **Views.** `Routes-Map.lua` on `WorldMapFrame` (the "zone map" in player text), helped by `Routes-Map-Size.lua`, `Routes-Map-Line.lua`, `Routes-Map-Questie-Icons.lua`, `Routes-Map-Blizzard-Quests.lua`, `Routes-Map-Tooltip.lua` and `Routes-Camps.lua`. `Routes-Arrow.lua` points at the next waypoint.
+- **Needs Questie.** Every place, objective and count comes from Questie's quest log and database; every distance from Questie's HereBeDragons (`HereBeDragonsQuestie-2.0`, `routes.HereBeDragons`, nil until Questie loads it), in world yards.
+- **Not a quest log part.** Runs on every client whatever the Wide Quest Log switch says. Never draws on the add-on's own map (`ns.questMap`).
+- **TomTom.** `Routes-TomTom.lua` stands TomTom's own quest arrow (its `"poi"` feature) down while the Quest Arrow shows, so a player with both never gets two arrows pointing at different places. Through TomTom's public `SuppressFeature`/`ReleaseFeature`, hooked on `routes.arrowFrame`'s `OnShow`/`OnHide`: session-only, TomTom's saved settings untouched. It checks for `IsCrazyArrowEmpty` and both functions because other add-ons create a `TomTom` table of their own. Routes Context reports both states.
+
+#### Loading
+
+Each TOC lists one line, `Features/Routes/Routes.xml`: after `Quest-Map-Reveal.lua`; before `Classic-ElvUI.lua` (Classic Era, TBC) or `Mists-Quest-Portrait.lua` (Mists); last Features line on WoW Forever; before Diagnostics and Options.
 
 Leaving that line out removes the feature cleanly:
 
 - `ns.routes` is nil.
-- Core's `EVENTS` rows owned by `routes`, `routesMap` and `routesArrow` find no handler, so they add no registration.
-- `ns:ApplyProfile` skips `ns.routes.ApplySettings`.
-- `ns.RegisterOptionsPanels` registers neither Routes panel.
-- `ns.OptionsRoutesToggle` hides the General panel's two Routes switches.
-- `Diagnostics/Manifests.lua` adds no Routes API rows.
-- Routes Context reports the feature as not loaded.
+- Core's `EVENTS` rows owned by `routes`, `routesMap`, `routesArrow` and `routesItems` find no handler, so register nothing.
+- `ns:ApplyProfile` skips `ns.routes.ApplySettings`; `ns.RegisterOptionsPanels` registers neither Routes panel; `ns.OptionsRoutesToggle` hides the General panel's two Routes switches.
+- `Diagnostics/Manifests.lua` adds no Routes API rows; Routes Context reports it not loaded.
+- `Options/Options-Routes-Map.lua` and `Options/Options-Quest-Arrow.lua` are separate TOC lines that only define builders, so they load harmlessly.
 
-`Options/Options-Routes-Map.lua` and `Options/Options-Quest-Arrow.lua` are listed separately in each TOC and only define builders, so they load harmlessly either way.
+`Routes.xml` order: Core, Planner, Ignore, Solver, Party, Geography, Questie, Blobs, Nodes, Pinning, Overlaps, Stops, Stop-Lines, Camps, Map-Size, Map-Line, Map-Questie-Icons, Map-Blizzard-Quests, Map-Tooltip, Map, the two pin templates, Arrow-Survey, Arrow, Arrow-List, Arrow-Item-Choice, Arrow-Items, Arrow-Menu, TomTom. Most files capture what they need by value at load, so each must follow what it reads:
 
-Inside `Routes.xml` the order is: Core, Ignore, Solver, Party, Geography, Questie, Blobs, Nodes, Pinning, Overlaps, Stops, Stop-Lines, Camps, Map-Size, Map-Line, Map-Questie-Icons, Map, the two pin templates, then Arrow-Survey, Arrow, Arrow-List and Arrow-Menu. Most files capture the functions and numbers they need by value as they load, so each must follow what it reads:
+- `Routes-Planner.lua`: `routes.Notify` (Core). Its `routes.OnLogin(UpdateWatcher)` must be the first login handler, so it stays right after Core.
+- `Routes-Geography.lua`, `Routes-Questie.lua`, `Routes-Blobs.lua`: `routes.HereBeDragons` (Core).
+- `Routes-Blobs.lua`: `IsInZone`, `IsInstanceMap` (Geography).
+- `Routes-Nodes.lua`: `IsInstanceQuest`, `QuestLog`, `QuestState`, `IsEscort`, `ForEachObjective`, `HasSpawns` (Questie); `NewPoints`, `AddSpawns`, `Cluster`, `Candidates` (Blobs).
+- `Routes-Pinning.lua`: `QuestLog`, `ForEachObjective` (Questie); `BlobKey` (Nodes).
+- `Routes-Overlaps.lua`: `Unworked` (Nodes); `RIDE_REACH`/`RIDE_RADIUS` computed at load from `routes.AREA_REACH` (Core) and `routes.MIN_STOP_RADIUS` (Blobs).
+- `Routes-Stops.lua`: `routes.MIN_STOP_RADIUS`, `routes.NAME_LIMIT` (Blobs).
+- `Routes-Stop-Lines.lua`: `routes.IsArea` (Stops).
+- `Routes-Camps.lua`: the five quest log helpers (Questie), `Cluster` (Blobs), `IsArea` (Stops).
+- `Routes-Map.lua`: `KeepFullSize` (Map-Size), line mixin and update (Map-Line), icon functions (Map-Questie-Icons), `ApplyBlizzardQuests`/`HookBlizzardQuests` (Map-Blizzard-Quests), `routes.CORPSE_ICON` (Stop-Lines). It defines the global `PrettyWideQuestLogRoutePinMixin` that both XML templates name in `mixin=`, so it precedes them. `routes.AddStopTooltip` (Map-Tooltip) is looked up at call time.
+- `Routes-Arrow.lua`: `routes.ArrowSurvey`, `routes.ArrowNearestPlace` (Arrow-Survey). `Routes-Arrow-List.lua`: `routes.arrowParts`, `routes.ARROW_LAYOUT` (Arrow).
+- `Routes-Arrow-Item-Choice.lua` and `Routes-Arrow-Items.lua`: `routes.arrowFrame`, `routes.ARROW_LAYOUT` (Arrow), `routes.arrowTitleRows` (Arrow-List).
+- `Routes-TomTom.lua`: hooks `routes.arrowFrame` (Arrow) at load.
 
-- `Routes-Geography.lua` and `Routes-Questie.lua` take `routes.HereBeDragons` from `Routes-Core.lua`.
-- `Routes-Blobs.lua` takes `IsInZone` and `IsInstanceMap` from `Routes-Geography.lua`.
-- `Routes-Nodes.lua` takes `IsInstanceQuest`, `QuestLog`, `QuestState`, `IsEscort`, `ForEachObjective` and `HasSpawns` from `Routes-Questie.lua`, and `NewPoints`, `AddSpawns`, `Cluster` and `Candidates` from `Routes-Blobs.lua`.
-- `Routes-Pinning.lua` takes `QuestLog` and `ForEachObjective` from `Routes-Questie.lua`, and `BlobKey` from `Routes-Nodes.lua`.
-- `Routes-Overlaps.lua` takes `Unworked` from `Routes-Nodes.lua`, and works out its `RIDE_REACH` and `RIDE_RADIUS` at load from `routes.AREA_REACH` (`Routes-Core.lua`) and `routes.MIN_STOP_RADIUS` (`Routes-Blobs.lua`).
-- `Routes-Stops.lua` takes `routes.MIN_STOP_RADIUS` and `routes.NAME_LIMIT` from `Routes-Blobs.lua`.
-- `Routes-Stop-Lines.lua` takes `routes.IsArea` from `Routes-Stops.lua`.
-- `Routes-Camps.lua` takes the same five quest log helpers from `Routes-Questie.lua`, `Cluster` from `Routes-Blobs.lua` and `IsArea` from `Routes-Stops.lua`.
-- `Routes-Map.lua` takes `KeepFullSize` from `Routes-Map-Size.lua`, the line pin's mixin and update from `Routes-Map-Line.lua`, the icon functions from `Routes-Map-Questie-Icons.lua` and `routes.CORPSE_ICON` from `Routes-Stop-Lines.lua`. It defines the global `PrettyWideQuestLogRoutePinMixin`, which both XML templates name in `mixin=`, so it is listed before them.
-- `Routes-Arrow.lua` takes `routes.ArrowSurvey` and `routes.ArrowNearestPlace` from `Routes-Arrow-Survey.lua`, and `Routes-Arrow-List.lua` takes `routes.arrowParts` and `routes.ARROW_LAYOUT` from `Routes-Arrow.lua`.
+Frames build at file load (planner, watcher, `PrettyWideQuestLogRouteArrow`). Anything needing saved settings or the world map registers via `routes.OnLogin(handler)`; `routes:OnPlayerLogin` runs the migrations, then the handlers in order: `UpdateWatcher` (Planner), Map's, Arrow's.
 
-Everything builds at file load: the planner and watcher frames, and the arrow frame (`PrettyWideQuestLogRouteArrow`). Things that need the saved settings or the world map wait for `PLAYER_LOGIN`. They register through `routes.OnLogin(handler)`, and `routes:OnPlayerLogin` runs them after the settings migrations. `Routes-Map.lua`'s handler is registered first, then `Routes-Arrow.lua`'s.
+#### Settings
 
-### Settings
+- Profile table `ns.db.profile.routes` (so Reset Profile restores it); keys and defaults in `ns.DATABASE_DEFAULTS.profile.routes` (`Data/Default-Settings.lua`), each commented. `routes.Settings()` returns the defaults table until `ns.db` exists.
+- **Feature switches** `showMap`, `showArrow`: on the General panel and atop each own panel, whose other controls hide while it's off. `routes.IsWanted()` = either on; nothing plans and the watcher doesn't run otherwise.
+- **Shared by both views:** `partyQuests` sits on Routes on Zone Map under Party, shown while either switch is on. `showUpcomingTurnIns` sits on the Quest Arrow panel but changes what both show. The arrow menu also toggles `partyQuests`, `showNextObjective`, `showUpcomingTurnIns`.
+- **Choice lists:** Marker Size `MARKER_SIZES`/`MARKER_ORDER`, Line Speed `LINE_SPEEDS`/`LINE_SPEED_ORDER` (`Options-Routes-Map.lua`); Line Opacity, Arrow Size and Quests Listed ranges inline in the panel builders. `showItemButtons` hides with `showQuests`.
+- **Writes** go through `routes.SetSetting(key, value)`: stores, `UpdateWatcher`, then while wanted notifies every listener (map, arrow `Refresh`, item buttons, `RefreshArrowMenu`) and plans at once when `showMap`/`showArrow` comes back with no route (`PlanIfShownAgain`); with neither on, `routes.Clear` (which calls `routes.CancelPlan` first, so a plan finishing later can't put the route back).
+- **Trap: `partyQuests` and `showUpcomingTurnIns` change what's planned, but `SetSetting` doesn't plan.** The arrow menu plans right after (`routes.SetPartyQuests` in `Routes-Ignore.lua`); an Options switch waits for the signature (which includes both) to change and settle.
+- `ns:ApplyProfile` → `routes.ApplySettings`: redraw and plan when wanted, else clear.
+- **Arrow position** is presentation, account-wide so no profile change moves it: `ns.db.global.routesArrowPoint`, no default, saved as `{ "TOP", "BOTTOMLEFT", x, y }` so the list grows downward from the arrow's top middle. Offsets are screen units (frame offset × scale) and `PlaceFrame` divides by scale, so Arrow Size never moves it. Unsaved: `PlaceFrame`'s default spot above `UIParent`'s center. Reset: `routes.ResetArrowPosition` (behind a confirmation).
+- **Migrations at `PLAYER_LOGIN`:** `MigrateSettings` (`Routes-Core.lua`, remove after 2026-12-06) moves old account-wide `global.routes` onto the profile, `arrowPoint` to `routesArrowPoint`, dropping keys with no default; Routes Context flags old settings still waiting. `DropRetiredSettings` (`Routes-Core.lua`, remove after 2026-12-07) drops `cycleSeconds` and `enabled`. `PlaceFrame` (`Routes-Arrow.lua`, remove after 2026-12-07) re-saves a spot stored by any point other than `TOP`.
 
-Routes keeps its settings in a table of its own on the profile, `ns.db.profile.routes`, so Reset Profile restores them. Defaults:
+#### Geography
 
-- **Switches:** `showMap` true, `showArrow` true.
-- **Zone map:** `hideQuestieIcons` true, `fullSizeMap` true, `markerScale` 1, `showLine` true, `lineSpeed` 1.5, `lineOpacity` 0.8.
-- **Quest Arrow:** `arrowScale` 1, `lockArrow` false, `showDistance` true, `showQuests` true, `questsListed` 4, `showNextObjective` false, `showUpcomingTurnIns` false, `hideInRaids` true, `hideInInstances` true.
-- **Party:** `partyQuests` true.
+`Routes-Geography.lua`; positions are world yards from HereBeDragons.
 
-How the switches work:
+- **Zone.** `routes.PlayerZone` climbs from `C_Map.GetBestMapForUnit("player")` out of any `Enum.UIMapType.Micro` map, so a cave still routes the zone around it. `routes.IsUnitOutOfZone(unit)` compares the same way; false where the client can't place either unit (a member in a dungeon the player isn't in) or keeps the map secret (WoW Forever in combat, `ns.IsReadable`).
+- **Origin.** `routes.Origin`: the player (`routes.PlayerPosition`) or a ghost's corpse (`routes.CorpsePosition`), with a flag (see Ghosts). The corpse is asked of the ghost's map, then each parent, since the graveyard can be a zone away.
+- **`routes.IsInZone(mapID, zone)`** accepts a map whose parents (up to the continent) reach the zone, or whose (0,0) and (1,1) corners both fall on the zone's map. The second covers a city filed under the continent but drawn on a zone (the Exodar on Azuremyst Isle), whose NPCs Questie draws on the zone map, so their turn-ins belong on the route. Cached per zone (asked for every spawn).
+- **`routes.IsInstanceMap(mapID)`**: the map or any parent up to the continent is `Enum.UIMapType.Dungeon`. Needed because the game can file a dungeon's map under its entrance zone, which `IsInZone` alone passes. Cached per map.
 
-- `showMap` and `showArrow` are the two feature switches. Each sits on the General panel (orders 15 and 16) and at the top of its own panel, whose other controls hide while it's off.
-- `routes.IsWanted()` is `showMap or showArrow`. Nothing plans, and the watcher doesn't run, unless that holds.
-- `partyQuests` is on the Routes on Zone Map panel under Party, shown while either switch is on, since both views follow the one route. The Quest Arrow's menu switches it too, as it does `showNextObjective` and `showUpcomingTurnIns`; the last sits on the Quest Arrow panel, though it changes what both views show.
-- The choices are fixed lists: Marker Size 0.75, 1, 1.25 or 1.5; Line Speed 0, 0.75, 1.5 or 3 dots a second; Line Opacity 20% to 100% in steps of 10; Arrow Size 50% to 200% in steps of 5; Quests Listed 1 to 8. Open the Zone Map Full Size hides while an add-on that sizes the map itself is loaded (`routes.MapSizedElsewhere`, see The Zone Map).
+#### Nodes: Quests Into Route Points
 
-How settings are read and written:
+`routes.BuildNodes(yield)` (`Routes-Nodes.lua`) returns nodes, the origin `{ x, y, instance, zone, corpse }` and the pins; nil while Questie isn't ready (`routes.IsQuestieReady`: `Questie.started` and HereBeDragons) or there's no position.
 
-- `routes.Settings()` returns the profile table, or `ns.DATABASE_DEFAULTS.profile.routes` until `ns.db` exists.
-- The panels write through `routes.SetSetting(key, value)`. It stores the value, starts or stops the watcher, and then, while the route is wanted, notifies every listener (the map's, the arrow's `Refresh` and the arrow menu's `RefreshArrowMenu`) and plans at once when `showMap` or `showArrow` comes back on with no route. With neither on, it clears the route (`routes.Clear`).
-- `partyQuests` and `showUpcomingTurnIns` change what's planned. The arrow menu plans at once after setting either (`partyQuests` through `routes.SetPartyQuests` in `Routes-Ignore.lua`). The Options switches write through `SetSetting` alone, so the plan waits for the signature, which includes the party's quests and `showUpcomingTurnIns`, to change and settle, 2 to 4 seconds later.
-- `ns:ApplyProfile` calls `routes.ApplySettings`, which redraws and plans when the route is wanted, and otherwise clears it.
+- **Log source.** `routes.QuestLog()` (`Routes-Questie.lua`) maps quest ID → Questie quest from `ns.QuestieLogEntries` (see Questie): on Questie 12.6.3+ a fresh table of each acceptance's `.quest`, skipping quests Questie's database lacks; before, Questie's own table.
+- **Trap: never `pairs` the log across a yield.** Before 12.6.3 it's Questie's live table, which can change while a yield waits. `BuildNodes` and `routes.BuildCamps` walk `routes.LoggedQuestIDs(log)` (`Routes-Planner.lua`); `routes.PartyQuests` lists the party's quest IDs first the same way.
 
-Where the Quest Arrow sits is presentation, kept for the whole account so a profile change never moves it:
+What each quest contributes, by `routes.QuestState` (`quest:IsComplete()` in a `pcall`: 1 done, -1 failed, 0 not yet):
 
-- It is stored in `ns.db.global.routesArrowPoint`, with no default.
-- It is saved as `{ "TOP", "BOTTOMLEFT", x, y }`: the arrow is held by its top middle, so its list grows and shrinks below it. The offsets are in screen units (the frame's offset times its scale), and `PlaceFrame` divides by the scale again, so changing Arrow Size never moves the arrow.
-- With nothing saved, the arrow's `TOP` sits a quarter of the screen's height above `UIParent`'s center.
-- The Reset button (`routes.ResetArrowPosition`, behind a confirmation) clears the saved spot and places the arrow again.
+- **0:** each objective not `Completed` → `"objective"` node keyed `questID:o<index>`; Questie's `SpecialObjectives` → `questID:s<index>`. No node for an objective with no spawns yet or on the ignore list (Routes Context counts those waiting on spawns).
+  - With `showUpcomingTurnIns`: a `"turnIn"` node not `ready`, `requires` = its objective nodes, so the solver places it after them. None when any objective left has no node (the route couldn't finish the quest), nor for an instance quest. Never pinned (`IsPinnable`), so standing at its NPC doesn't put it first. Marker uses Questie's `ICON_TYPE_INCOMPLETE`.
+- **1:** `"turnIn"` node `questID:turnIn`, `ready`, no requirements. Places: every spawn of every NPC/object in `Finisher` (`routes.ForEachFinisher`, `QueryNPCSingle`/`QueryObjectSingle`).
+- **-1:** nothing, so a failed escort or timed quest drops off.
+- **Turn-ins need the game's own log** (`routes.IsOnQuest`: `C_QuestLog.IsOnQuest`, else `GetQuestLogIndexByID`, else Questie's word): Questie can still list a quest a moment after turn-in or abandon, and only the player can hand in.
 
-Three migrations run at `PLAYER_LOGIN`:
+Quest kinds, cached until the quest log settles (`routes.ForgetQuestTags`, from the planner's `QUEST_LOG_DELAY` timer) because the client learns a tag only once it has loaded the quest:
 
-- `MIGRATION (remove after 2026-12-06)`, in `Routes-Core.lua`, moves an old account-wide `global.routes` table onto the profile. Its `arrowPoint` goes to `routesArrowPoint`, and keys with no default (`planTurnIns`) are dropped. Routes Context says when old settings are still waiting to move.
-- `MIGRATION (remove after 2026-12-07)`, in `Routes-Core.lua`, drops `cycleSeconds` and `enabled` from the profile.
-- `MIGRATION (remove after 2026-12-07)`, in `Routes-Arrow.lua`'s `PlaceFrame`, saves a spot stored by any point other than `TOP` again by its top.
+- **Dungeon/raid** (`routes.IsInstanceQuest`): tag is `DUNGEON` or `RAID` in `ns.QUEST_TAG_SUFFIXES`, Questie's `QuestieDB.GetQuestTagInfo` first (its corrections), then `ns.GetQuestTagByID`. Questie gives up on a tag after one retry and caches "none", so the client's answer catches late loads; a quest with no tag from either isn't cached, so the signature replans once it loads. Objectives left off (inside the instance; Questie's icons for them stay). Its turn-in is a node only at places out in the world: `AddSpawns` with `outdoors` drops spawns on `routes.IsInstanceMap` maps. Outdoor turn-in blobs cache under their own version so a tag that loads late doesn't keep the old blobs.
+- **Escort** (`routes.IsEscort`): Questie's `questTagIds.ESCORT`, or the `PARTY_ACCEPT` bit of `questFlags`, because most Classic escorts carry no tag.
+- **Timed** (`routes.TimedQuests`): from the client, never cached (a timer starts/ends with no change Questie sees). WoW Forever: `C_QuestLog.GetQuestTimers`. Elsewhere: `GetQuestTimers` + `GetQuestIndexForTimer` + `GetQuestLogTitle`'s quest ID, so the log's selection is never touched.
+- A timed or escort quest not failed marks its nodes `urgent` with `turnInDistance` (yards to its nearest turn-in blob in the zone, `math.huge` if none).
+- **Party quests** (`routes.PartyQuests(ownLog, yield)`): `"objective"` nodes `questID:p<index>`, `party`, same blobs/candidates; never `urgent`, no turn-in, none for an instance quest.
 
-### Geography
+Which spawns count (`Routes-Blobs.lua`'s `AddSpawns`):
 
-`Routes-Geography.lua` answers where the player is and what lies in a zone. Positions are world yards from HereBeDragons.
+- Questie's `{ [areaID] = { { x, y, phase }, ... } }`, 0–100 scale; negative coordinates (Questie's -1,-1 for unmapped) skipped.
+- Counts only where `ZoneDB:GetUiMapIdByAreaId` lands inside the zone (`routes.IsInZone`), on the origin's continent, and `Phasing.IsSpawnVisible` shows it. So the zone a quest is filed under doesn't matter.
+- An `"event"` objective's or event-icon spawn's names are dropped (`routes.SpawnName`): they only repeat the objective text.
 
-- **The zone.** `routes.PlayerZone` takes `C_Map.GetBestMapForUnit("player")` and climbs out of any `Enum.UIMapType.Micro` map (a cave, a building) to its parent, so standing in a cave still routes the zone around it. `routes.IsUnitOutOfZone(unit)` compares a party member's zone the same way, and is false where the client can't place either one, as for a member in a dungeon the player isn't in.
-- **The origin.** `routes.Origin` is where the route sets out from: the player (`routes.PlayerPosition`), or a ghost's corpse (`routes.CorpsePosition`), with a flag saying which (see Ghosts). The corpse is asked of the map the ghost is on, then each map above it, since the graveyard can be a zone away.
-- **Inside a zone.** `routes.IsInZone(mapID, zone)` accepts a map whose parents, followed up to the continent, reach the zone: a cave or a building. It also accepts a map whose two corners, (0, 0) and (1, 1), both fall on the zone's map. That covers a city the game files under the continent though it's drawn on a zone, as the Exodar is on Azuremyst Isle; Questie draws such a city's NPCs on the zone's map, so their turn-ins belong on the route. Answers are cached per zone, since the question is asked for every spawn.
-- **Instance maps.** `routes.IsInstanceMap(mapID)` says whether a map, or any map above it up to the continent, is `Enum.UIMapType.Dungeon`: a dungeon's or raid's map, or a floor of one. It exists because the game can file a dungeon's map under the zone its entrance is in, which `IsInZone` alone passes. Answers are cached per map.
+Caching and order:
 
-### Nodes: Quests Into Route Points
+- Blobs cache in a weak-keyed table per Questie objective table (per quest for turn-ins), with zone, continent and a version (`routes.CountEntries` of `spawnList`), since spawns don't move. An objective's blobs carry its raw spawns (`blobs.spawns`) for "is the player among them".
+- **Trap: nodes are sorted by `key` before anything else**, because Questie's log is a hash and the same quests must give the same route. Then `routes.LinkOverlaps`, then `routes.PinEngaged`, in that order.
 
-`routes.BuildNodes(yield)` (`Routes-Nodes.lua`) turns Questie's quest log (`routes.QuestLog`, which is `ns.QuestieQuestLog`; see Questie) into nodes. It returns nil while Questie isn't ready (`routes.IsQuestieReady`: `Questie.started` and HereBeDragons loaded) or the client won't give a position. It also returns the origin, `{ x, y, instance, zone, corpse }`, and the pins (see Finishing What's Under Way).
+#### Blobs and Candidates
 
-A dungeon or raid quest contributes only its turn-in (see below). Each quest's Questie state (`routes.QuestState`: `quest:IsComplete()` in a `pcall`, 1 done, -1 failed, 0 not yet) decides what it contributes:
+`routes.Cluster` (`Routes-Blobs.lua`):
 
-- **Not yet done (0).** Every objective not `Completed` becomes an `"objective"` node, keyed `questID:o<index>`. Questie's extra `SpecialObjectives` become nodes too, keyed `questID:s<index>`. An objective with no spawns yet, or one on the ignore list, has no node. Routes Context counts how many objectives are waiting on spawns.
-  - With Show Upcoming Turn-Ins on (`showUpcomingTurnIns`, off by default), its turn-in is planned ahead too: a `"turnIn"` node not `ready`, whose `requires` are its objective nodes, so the solver puts it after all of them and the route and the Quest Arrow's Next Objective show where it falls. None is planned ahead when any objective left has no node, since the route couldn't finish the quest, nor for a dungeon or raid quest. It is never pinned (`IsPinnable`), so standing at its NPC doesn't put it first, and nearby-turn-in pinning takes only `ready` ones. Its marker shows Questie's gray question mark (`ICON_TYPE_INCOMPLETE`).
-- **Done (1).** Its turn-in becomes a `"turnIn"` node keyed `questID:turnIn`, marked `ready`, with no requirements. Its places are every spawn of every NPC and object in the quest's `Finisher` (`routes.ForEachFinisher`), looked up with `QueryNPCSingle` or `QueryObjectSingle` for `"spawns"` and `"name"`.
-- **Failed (-1).** Contributes nothing, so a failed escort or timed quest drops off.
+- Points live in flat arrays plus a count (`routes.NewPoints`), not a table each: an objective can have hundreds of spawns and per-spawn tables would dominate a plan's memory.
+- Grid of `CLUSTER_RADIUS` squares keyed by number; densest first (ties by position); each untaken square absorbs squares whose middle is within `CLUSTER_RADIUS` of the blob's moving center.
+- Last pass sets `radius` (at least `MIN_STOP_RADIUS`) and up to `NAME_LIMIT` sorted names. Returned densest first. Yields every `SPAWNS_PER_YIELD` spawns and after each blob.
 
-A turn-in, ready or ahead, is built only while the game's own quest log has the quest (`routes.IsOnQuest`: `C_QuestLog.IsOnQuest`, else `GetQuestLogIndexByID`, else Questie's word). Questie can still list a quest for a moment after it's turned in or abandoned, and only the player can hand one in.
+`routes.Candidates(blobs, start, penalize)`:
 
-Two kinds of quest are recognized from Questie's database and the client. Both answers are cached until the quest log next settles (`routes.ForgetQuestTags`), because the client learns a quest's tag only once it has loaded the quest.
+- Up to `MAX_CANDIDATES` densest, the nearest to the origin swapped in for the last if absent.
+- Objectives get a `penalty` up to `SPARSE_PENALTY` yards scaled by sparseness vs the densest, added to route length, so a thin camp loses unless on the way. Turn-ins: none.
+- `routes.Unworked` (`Routes-Nodes.lua`) first drops camps on `routes.worked` unless none would remain; the node's `blobs` keep every blob so standing in a worked camp is still noticed.
+- **Trap: a candidate is the cached blob table itself**, so `penalty` is per-plan state written onto shared data: `Candidates` resets it each plan, then `LinkOverlaps` and `PinEngaged` change it in place.
 
-- **Dungeon or raid quests** (`routes.IsInstanceQuest`). The game's tag reads `DUNGEON` or `RAID` in the flavor's `ns.QUEST_TAG_SUFFIXES`: Questie's `QuestieDB.GetQuestTagInfo` first, for its corrections, then the client's `ns.GetQuestTagByID`. Questie asks the client once, retries once a second later, then keeps "no tag" for good, so a quest whose tag loads later shows a D in the quest list and on the route's lines but has none from Questie; the client's answer catches it. A quest neither has a tag for yet isn't cached, so it's asked again on the next check and the signature replans once the tag loads. Its objectives are left off the route, as they're inside the instance; Questie's icons for them stay on the map, as the route doesn't stand in for them. Once it's done, its turn-in is a node like any other's, but only at places out in the world: `AddSpawns` is passed `outdoors`, which leaves out any spawn on an instance map (`routes.IsInstanceMap`), so a quest turned in at the end of the instance gets no node. Those turn-in blobs are cached under their own version (2, against 1), so a quest whose tag loads late doesn't keep the blobs worked out before.
-- **Escorts** (`routes.IsEscort`). Questie's `questTagIds.ESCORT` tag counts, and so does the `PARTY_ACCEPT` (2) bit of `questFlags`, because most Classic escorts carry no tag.
+#### Two Objectives at Once
 
-Timed quests (`routes.TimedQuests`) come from the client, not Questie, and aren't cached, since a timer starts and stops without a quest log change Questie sees. On WoW Forever `C_QuestLog.GetQuestTimers` names each timer's quest. Elsewhere `GetQuestTimers` counts the timers, `GetQuestIndexForTimer` gives each one's quest log entry, and the eighth return of `GetQuestLogTitle` gives its quest ID, so the quest log's selection is never changed. The signature marks each timed quest, so a timer starting or ending replans.
+`routes.LinkOverlaps` (`Routes-Overlaps.lua`), after the sort and before `PinEngaged`, sends the player where one trip does two objectives. Only objective nodes with spawns and a blob.
 
-A timed quest, or an escort, that hasn't failed, done or not, marks its nodes `urgent` and records `turnInDistance`: yards from the origin to the nearest of its turn-in blobs in the zone, or `math.huge` when none is here.
+- **Anchors and riders.** An objective with one blob in the zone can be done in one place only, so it anchors. Another with more than one blob, not `urgent` and not already riding, rides along when it has a spawn within `RIDE_REACH` of the anchor's blob or its blobs name a mob/object the anchor's names. Its only candidate becomes a new point at the anchor's place: no penalty, radius at least `RIDE_RADIUS` and count at least 2 so it's an area (`routes.IsArea`), names from its own nearest blob so the waypoint lists its mobs. `node.rider` = the anchor. The solver puts both at one place and `MakeStops` joins them. (Stolen Silver drops in one Sunscale camp, so Raptor Horns is done there.)
+  - Key order decides: a rider follows the first anchor that claims it. A rider can't anchor (one blob vs many).
+  - The rider keeps its own `blobs`/`spawns`, so area and pinning checks measure its own mobs; once the anchor is done, the rider plans from its own blobs again.
+- **Shared camps.** For every other multi-blob objective, each `Unworked` blob counts other objectives with a blob within `RIDE_REACH`. The most shared joins the candidates (with the sparse penalty it would have had), then every candidate's penalty grows by `SHARED_CREDIT` per objective fewer than that blob serves.
 
-The party's quests the player doesn't have (`routes.PartyQuests(ownLog, yield)`) add `"objective"` nodes keyed `questID:p<index>`, marked `party`, through the same blobs and candidates. They are never `urgent` and have no turn-in, and a party dungeon or raid quest adds nothing.
+#### Finishing What's Under Way
 
-Which spawns count:
+The shortest trip alone would walk the player out of a half-done camp. `routes.PinEngaged` (`Routes-Pinning.lua`) gives each node that goes first one candidate (penalty zeroed) and makes the rest wait via `node.requires` (`WaitOn`). Distances are from the origin (the corpse for a ghost).
 
-- Spawns come from Questie as `{ [areaID] = { { x, y, phase }, ... } }`, with x and y on a 0 to 100 scale. A negative coordinate (Questie's -1, -1 for a spawn no map shows) is skipped.
-- A spawn counts only where `ZoneDB:GetUiMapIdByAreaId` puts its area inside the player's zone (`routes.IsInZone`), on the origin's continent, and where `Phasing.IsSpawnVisible` shows it.
-- So the zone a quest is filed under doesn't matter. A quest from elsewhere with mobs here is on the route, and a quest of this zone's whose mobs are all elsewhere isn't.
-- For an `"event"` objective, or a spawn with Questie's event icon, the spawn names are dropped (`routes.SpawnName`), because they only repeat the objective text.
-
-Blobs are cached per Questie objective table (or per quest, for turn-ins) in a weak-keyed table, with the zone, continent and a version. They are worked out again only when the zone or continent changes, or when Questie's `spawnList` changes its entry count (`routes.CountEntries`), since spawns don't move. An objective's blobs carry its raw spawns too (`blobs.spawns`), for telling whether the player is among them. Nodes are sorted by `key` before anything else runs on them, because Questie's log is a hash, and the same quests must always give the same route. Then `routes.LinkOverlaps` and `routes.PinEngaged` run, in that order.
-
-### Blobs and Candidates
-
-`routes.Cluster` (`Routes-Blobs.lua`) gathers points into blobs:
-
-- Points are kept as three flat arrays plus a count (`routes.NewPoints`), not a table each, because an objective can have hundreds of spawns and per-spawn tables would be most of a plan's memory.
-- Spawns go into a grid of `CLUSTER_RADIUS` (180 yards) squares, each keyed by a number rather than a string.
-- The squares are sorted densest first, with ties broken by position.
-- Each square not yet taken absorbs every other square whose middle lies within 180 yards of the blob's moving center.
-- A last pass over the spawns sets each blob's `radius` (at least `MIN_STOP_RADIUS`, 30 yards) and up to `NAME_LIMIT` (4) NPC or object names, sorted.
-- Blobs are returned densest first.
-- Planning yields every `SPAWNS_PER_YIELD` (64) spawns and after each blob.
-
-`routes.Candidates` offers the solver up to `MAX_CANDIDATES` (6) of a node's blobs:
-
-- They are the densest, with the blob nearest the origin swapped in for the last if it isn't already one of them.
-- For objectives, each candidate carries a `penalty` of up to `SPARSE_PENALTY` (300 yards), scaled by how much sparser it is than the densest blob. The solver adds that to the route's length, so a thin camp loses to a dense one unless it's on the way.
-- Turn-ins carry no penalty.
-- `routes.Unworked` (`Routes-Nodes.lua`) first leaves out any camp on `routes.worked` (see Finishing What's Under Way), unless that would leave none. The node's `blobs` keep every blob, so the player standing in a worked camp is still noticed.
-
-A candidate is the cached blob table itself, so `penalty` is per-plan state written onto it: `Candidates` sets it afresh each plan, and `LinkOverlaps` and `PinEngaged` change it in place after that.
-
-### Two Objectives at Once
-
-`routes.LinkOverlaps` (`Routes-Overlaps.lua`) runs after the nodes are built and sorted and before `PinEngaged`, so the route sends the player where one trip does two objectives. It looks only at objective nodes with spawns and at least one blob.
-
-- **Anchors and riders.** An objective whose spawns in the zone form one blob can be done in one place only, so it anchors. Another objective with more than one blob, not `urgent` and not riding already, rides along when it has a spawn within `RIDE_REACH` (`AREA_REACH` plus 100, 300 yards) of the anchor's blob, or when its blobs name a mob or object the anchor's blob names. Its only candidate becomes a new point at the anchor's place, with no penalty, a radius of at least `RIDE_RADIUS` (twice `MIN_STOP_RADIUS`, 60 yards) and a count of at least 2, so it counts as an area (`routes.IsArea`), and with the names of its own nearest blob, so the waypoint lists its mobs. It gets `node.rider`, the anchor. The solver then puts both at one place, and `MakeStops` joins them into one waypoint. Stolen Silver drops in one camp of Sunscale Scytheclaws, so Raptor Horns, from raptors all over the Barrens, is done there.
-  - Nodes are in key order, so a rider follows the first anchor that claims it. A rider can't anchor, since anchors have one blob and riders more.
-  - The rider keeps its own `blobs` and `spawns`, so area and pinning checks still measure its own mobs, and once the anchor is done it has no node and the rider plans from its own blobs again.
-- **Shared camps.** For every other objective with more than one blob, each of its `Unworked` blobs counts how many other objectives have a blob within `RIDE_REACH` of it. The most shared blob joins the candidates if it isn't one already, with the sparse penalty it would have had against the densest unworked blob. Then every candidate's penalty grows by `SHARED_CREDIT` (300 yards) for each objective fewer than that blob it serves, so a camp that serves two beats a slightly denser one that serves one.
-
-### Finishing What's Under Way
-
-The shortest trip alone would happily walk the player out of a camp half done. `routes.PinEngaged` (`Routes-Pinning.lua`) decides what goes first, giving each such node one candidate, with its penalty zeroed, and making everything else wait on it through `node.requires` (`WaitOn`). Every distance here is from the origin, which is the corpse for a ghost.
-
-1. **Timed and escort quests.** Every `urgent` node goes first: the quest's objectives and then its turn-in, or once it's done, its turn-in. With more than one such quest, the one whose turn-in is nearest goes first, then the next, each waiting on the one before (ties by quest ID; one turned in outside the zone goes last). While any is on the route, only their own nodes can be pinned, and nothing else is pinned or put ahead. A timer won't wait, and neither will an escorted NPC, while the route tours the zone. Since the route replans every `REPLAN_INTERVAL` once the player moves `REPLAN_DISTANCE`, the order follows the player.
-2. **What the player is working.** Otherwise, every node whose blob the player is in, and that may be pinned (`IsPinnable`), is pinned to that blob. `IsPinnable` turns down a turn-in planned ahead. It takes a node whenever the player is in it when the node is `urgent`, when it's one place (an objective of one spawn, or any turn-in, which has no spawn list), or when this is the first plan in a zone (`routes.start` nil, as after entering the world, changing zones or landing). An objective spread over an area is taken only when it's at the last plan's waypoint (`DestinationKeys`: the tasks of its first waypoint with anything left), was pinned already, or is being worked; a rider only the first two, since what drops on the way isn't working it. So riding through an area planned for later doesn't take over the route, and the Quest Arrow lists it under While You're Here. The player counts as in a blob (`EngagedBlob`) in three cases:
-   - **In the objective's area** (`routes.InArea`): within `AREA_REACH` (200 yards) of any of its spawns, and once in, until `AREA_GRACE` (20 yards) further. It measures spawns, not blobs, so a zone-wide spread of mobs has no gaps. It needs more than one spawn, because a lone chest or NPC is a place, not an area. The nearest of the node's blobs is the one pinned.
+1. **Timed and escort quests.** Every `urgent` node goes first: objectives then turn-in. Several: nearest turn-in first, each waiting on the one before (ties by quest ID; out-of-zone turn-in last). While any is on the route only their nodes can be pinned, and nothing else goes ahead: a timer or escorted NPC won't wait while the route tours the zone. Replanning on movement keeps the order following the player.
+2. **What the player is working.** Otherwise every node whose blob the player is in and `IsPinnable` allows is pinned there. `IsPinnable` refuses a turn-in planned ahead; accepts whenever the node is `urgent`, is one place (one spawn, or any turn-in), or this is the first plan in a zone (`routes.start` nil). A spread-out objective is taken only when it's at the last plan's destination (`DestinationKeys`), was pinned already, or is being worked (`IsWorkingOn`); a rider only the first two, since what drops on the way isn't working it. So riding through an area planned for later doesn't take over the route (the arrow lists it under While You're Here). In a blob (`EngagedBlob`) means:
+   - **In the objective's area** (`routes.InArea`): within `routes.AREA_REACH` of any spawn, plus `routes.AREA_GRACE` once in. Measures spawns, not blobs, so a zone-wide spread has no gaps; needs more than one spawn (a lone chest is a place). The nearest blob is pinned.
    - **Inside a blob's radius**, plus `AREA_GRACE` once engaged.
-   - **Working on the objective**: within `WORKING_REACH` (400 yards) of the blob's edge while its count went up in the last `WORKING_WINDOW` (180 seconds). `routes.NoteProgress`, run at every check, records when each `Collected` count rises, and a first look doesn't count as progress. Being in a camp says the player is working it only while they stand in it; objects to loot and wandering mobs spread wider than that, so progress says it too.
-3. **Nearby turn-ins.** Then, unless a timed or escort quest is on the route, every ready turn-in not already pinned with a blob within `TURN_IN_REACH` (400 yards) is pinned to its nearest place, after what's pinned in step 2 and before everything else, because a turn-in usually opens the next quest in its chain. One across the zone still waits until the route passes it.
+   - **Working it:** within `WORKING_REACH` of the blob's edge while its count rose in the last `WORKING_WINDOW`. `routes.NoteProgress` (each watcher check) records rises of `Collected`; a first look isn't progress. Standing in a camp only says "working" while there; loot objects and wandering mobs spread wider, so progress says it too.
+3. **Nearby turn-ins.** Unless an urgent quest is on the route, every ready turn-in not pinned with a blob within `TURN_IN_REACH` is pinned to its nearest place, after step 2 and before the rest: a turn-in usually opens the next quest in its chain.
 
-A node pinned in step 2 also gets `node.inArea` when the player stands in its area (not just working it from further off), which lets `MakeStops` join every such area into one waypoint.
+- A step-2 node also gets `node.inArea` when standing in its area (not just working from afar), which lets `MakeStops` join all such areas into one waypoint.
+- Pins become `routes.engaged`, by key, `{ blob, collected }` (count when first pinned, kept while pinned): the "was in" state for the next plan's grace. `routes.EngagedSignature(nodes)` lists nodes the player is in now by the same rules, `IsPinnable` included, so walking through a later area doesn't replan; `routes.PinnedSignature()` lists what the plan pinned.
+- **Worked camps.** At each plan start `BuildNodes` calls `routes.NoteLeftCamps`: a spread-out objective (more than one blob) not done, whose count rose since pinned and whose camp the player has left (past `EngagedBlob`'s reach with grace, `WORKING_REACH` while working), goes on `routes.worked` by `routes.BlobKey` for `WORKED_MEMORY` (`Routes-Nodes.lua`). Leaving a camp early moves on instead of pointing back. One-place objectives never go on it (nowhere else to do them). `routes.ResetObjectives` (`Routes-Ignore.lua`) clears it with `routes.engaged`, and cancels any plan underway first so one finishing with the old pins can't put them back (see Ignoring and Resetting).
 
-The nodes pinned to the player's blob become `routes.engaged`, by key, each `{ blob, collected }` (the objective's count when first pinned, kept while it stays pinned): the "was in" state for the next plan's grace. `routes.EngagedSignature(nodes)` lists the nodes the player is in now by the same rules, `IsPinnable` included, so walking through an area planned for later doesn't replan; `routes.PinnedSignature()` lists what the plan pinned.
+#### Solving the Order
 
-At the start of each plan, `BuildNodes` calls `routes.NoteLeftCamps`, which looks at the last plan's pins. A spread-out objective (more than one blob) not yet done, whose count went up since it was pinned, and whose camp the player is now out of (past `EngagedBlob`'s reach with grace, which is `WORKING_REACH` while working), goes on `routes.worked` by the blob's place (`routes.BlobKey`, its whole-yard x and y), for `WORKED_MEMORY` (600 seconds, `Routes-Nodes.lua`). So leaving a spread-out camp early moves on instead of pointing back, and what's left is picked up at another camp or on the way. An objective with one place never goes on it, as there's nowhere else to do it. `routes.ResetObjectives` (`Routes-Ignore.lua`) clears it along with `routes.engaged` (see Ignoring and Resetting).
+`ns.routesSolver.Solve(start, nodes, yield)` (`Routes-Solver.lua`): open path from the origin; each node picks one candidate (`node.choice`) and comes after everything in its `requires`. Nodes without candidates, and requirements on them, are dropped first.
 
-### Solving the Order
+1. **Cheapest insertion** (`Construct`): over every node whose requirements are placed, every candidate and every slot after its last placed requirement, add the cheapest.
+2. **Local search** (`LocalSearch`), up to `MAX_PASSES`, until no move saves more than `EPSILON`. Per pass: `ImproveChoices` (best candidate between neighbors), `TryOrOpt` (move a run of up to `MAX_SEGMENT`, either way round; a single node may switch candidates), `TryTwoOpt` (reverse a stretch). Or-opt and 2-opt take the first improving move, so at most one each per pass.
+   - **Trap: moves are weighed and validated (`IsValidMove` via `OrOptIndex`/`TwoOptIndex`) without building the route they'd make.** A large route weighs hundreds of thousands of moves; building each would make over 100 MB of garbage per plan.
+3. **Shaking** (`Shake`), for three nodes or more: `min(SHAKES, max(MIN_SHAKES, floor(SHAKE_WORK / count)))` shakes, so longer routes get fewer. Each throws `THROWS` nodes to a random slot their requirements and dependents allow, on a random candidate, searches again, keeps the cheapest. The LCG uses a fixed seed inside `Shake`, so the same quests always give the same route and it never flickers between equal answers.
 
-`ns.routesSolver.Solve(start, nodes, yield)` (`Routes-Solver.lua`) treats the route as an open path that starts at the origin. Each node chooses one of its candidates (`node.choice`), and a node may come only after every node in its `requires`. `BuildNodes` gives a turn-in planned ahead its quest's objective nodes, and `PinEngaged` adds the rest. Before solving, nodes without candidates are dropped, along with any requirement on one.
+Cost = path length + each chosen candidate's penalty (`Solver.Cost`).
 
-The steps:
+#### Waypoints
 
-1. **Cheapest insertion** (`Construct`) builds a first route. Of every node whose requirements are placed, every candidate and every slot after its last placed requirement, it adds the one that lengthens the route least.
-2. **Local search** (`LocalSearch`) improves it, up to `MAX_PASSES` (300) passes, until no move saves more than `EPSILON` (0.01 yards). Each pass runs three moves:
-   - `ImproveChoices` gives each node the candidate that fits best between its neighbors.
-   - `TryOrOpt` moves a run of one to `MAX_SEGMENT` (3) nodes elsewhere, either way round. A single node may also switch candidates where it lands.
-   - `TryTwoOpt` reverses a stretch.
-   Or-opt and 2-opt each take the first improving move they find, so a pass makes at most one of each. Moves are weighed and checked against the requirements (`IsValidMove`, through `OrOptIndex` or `TwoOptIndex`) without building the route they would make. A 90-node route weighs hundreds of thousands of moves, and building each would make over 100 MB of garbage per plan.
-3. **Shaking** (`Shake`) gets out of the local optimum the search stops at, for a route of three nodes or more:
-   - The route is shaken `min(SHAKES, max(MIN_SHAKES, floor(SHAKE_WORK / count)))` times, which is 16, 4 and 800, so a longer route gets fewer shakes.
-   - Each shake throws `THROWS` (2) nodes to a random slot their requirements and dependents allow, on a random candidate, then searches again, keeping whichever route is cheapest.
-   - The randomness is a linear congruential generator from the fixed seed `20261105`, so the same quests always give the same route and it never flickers between equally good answers.
+`routes.MakeStops(order, start)` (`Routes-Stops.lua`) folds ordered nodes into `routes.stops`:
 
-Cost is the path length plus each chosen candidate's penalty (`Solver.Cost`).
+- An objective joins the previous waypoint within `MERGE_RADIUS` of its first node's place, or when both are areas the player stands in (`node.inArea`), worked at once however far apart their middles.
+- Turn-ins join only other turn-ins within `SAME_PLACE` (the same NPC), so the route hands in one giver's quests at a time; nothing else joins them.
+- A ghost's route begins with the corpse, a waypoint of its own (`CORPSE_RADIUS`, inside the client's resurrect reach) nothing joins.
+- A waypoint is an `area` when any place is (`routes.IsArea`: count over one and radius over `MIN_STOP_RADIUS`). Radius = largest of its places'; names gather up to `NAME_LIMIT` in a list of its own.
+- Shape: `{ x, y, instance, radius, mapID, names, area, turnIns, inArea, corpse, tasks = { node, ... } }`; each node `key, kind ("objective"|"turnIn"|"corpse"), questID, questName, quest, objective, candidates, choice, blobs, spawns, ready, requires, urgent, party, rider, inArea`.
+- **Trap: `routes.stops`, `routes.start`, `routes.nodes`, `routes.engaged` and `routes.camps` (see The Zone Map) are assigned together when a plan lands**, so the watcher never compares a new plan's pins with the old plan's nodes.
 
-### Waypoints
+#### Planning and When to Plan Again
 
-`routes.MakeStops(order, start)` (`Routes-Stops.lua`) folds the ordered nodes into waypoints, `routes.stops`:
+All in `Routes-Planner.lua`.
 
-- A node joins the waypoint before it when it's an objective within `MERGE_RADIUS` (100 yards) of that waypoint's position (its first node's place), or when both it and the waypoint's first node are areas the player is standing in (`node.inArea`), which the player works at once however far apart their middles are.
-- Turn-ins join only other turn-ins within `SAME_PLACE` (1 yard), the same NPC, so the route hands in one quest giver's quests at a time. Nothing else joins them.
-- A ghost's route begins with the corpse, a waypoint of its own with radius `CORPSE_RADIUS` (30 yards, inside the client's reach to resurrect), which nothing joins.
-- A waypoint is an `area` when any of its places is one (`routes.IsArea`: a count over one and a radius over `MIN_STOP_RADIUS`). Anywhere else it's a point. Its radius is the largest of its places', and its names gather up to `NAME_LIMIT` from them, in a list of its own.
+- **Planner.** A coroutine on a hidden frame: `routes.BuildNodes`, `ns.routesSolver.Solve`, `routes.MakeStops`, `routes.BuildCamps` (`Routes-Camps.lua`). `BuildNodes` returning nil keeps the route already drawn. Each frame the `Yield` passed to every stage yields once the slice passes the budget: `FRAME_SHARE` of the last frame's length, clamped to `MIN_BUDGET`..`MAX_BUDGET` ms (`debugprofilestop`). A share, not a fixed time, because a fixed budget would halve a high-refresh screen's frame rate while planning.
+- `routes.RequestPlan` records the signature as it starts. While a plan runs, a request sets `replanQueued` (one more plan after). On a flight path it's dropped (landing plans anyway); in combat it waits (see Combat). Errors go to `geterrorhandler()`; each listener runs in its own `pcall` (`routes.Notify`, `Routes-Core.lua`).
+- **Flights.** The watcher reads `UnitOnTaxi("player")` and `InCombatLockdown()` every frame, because no event says reliably when a flight starts (`PLAYER_CONTROL_LOST` precedes `UnitOnTaxi`, and also fires for fears and stuns). Taking off drops any plan (it would set out from the takeoff) and notifies (the arrow hides). Landing counts as a new area. On a flight with no camps yet (logging in mid-flight), a check builds the camps alone (`RequestCamps`/`PlanCamps`), so the map has markers in place of Questie's icons; the route stays undrawn until landing.
+- **Watcher.** Runs only while wanted (`UpdateWatcher`, from login). Every `CHECK_INTERVAL`, with Questie ready, out of combat and off a flight, it runs `routes.NoteProgress` and plans when:
+  - **The signature changed and settled.** `routes.Signature()` (`Routes-Questie.lua`): each quest's state and instance/timed flags, each objective's done flag and has-spawns, party objective done flags (`routes.PartyProgress`), ignored keys and members, online members in another zone, `showUpcomingTurnIns`, the zone, ghost or alive. Counts and position aren't in it. Questie's data arrives in pieces, so a change plans only when two checks in a row see the same one (`settling`); for `GROUP_SETTLE_DELAY` after the group size changes (`routes:OnGroupRosterUpdate`) it waits regardless, while the new log arrives.
+    - **Trap: the signature must never ask Questie's database for spawns.** `PartyProgress` reads only the shared logs; party spawn lists, the slow part of joining a group, are worked out only inside the coroutine (`routes.PartyQuests(ownLog, yield)`), yielding after each.
+  - **The player walked into or out of a camp:** `routes.EngagedSignature(routes.nodes)` ≠ `routes.PinnedSignature()` (urgent quests' nodes only, while any).
+  - **The player moved far:** `REPLAN_INTERVAL` since the last plan and beyond `REPLAN_DISTANCE` from `routes.start`, or another continent, or no `routes.start`. A corpse start never counts as moved.
+- **Events** (Core's dispatcher, owner `routes`):
+  - `QUEST_LOG_UPDATE` restarts a `QUEST_LOG_DELAY` timer that, on firing, calls `routes.ForgetQuestTags` and forces the next check, giving Questie time to catch up.
+  - `PLAYER_ENTERING_WORLD`, `ZONE_CHANGED_NEW_AREA` → `OnNewArea` (landing too): `routes.CancelPlan` (a finishing plan would restore the old `routes.start`), clear `routes.start`, force a check counted as past `REPLAN_INTERVAL`.
+  - `PLAYER_DEAD`, `PLAYER_ALIVE`, `PLAYER_UNGHOST` force a check.
+  - `GROUP_ROSTER_UPDATE` starts the group hold on a size change. `GROUP_JOINED`/`GROUP_LEFT` clear the ignore list (`Routes-Ignore.lua`) and plan if anything was on it.
+  - `PLAYER_LOGIN` (`Routes-Core.lua`) runs migrations and login handlers.
+  - `routesMap:OnAddonLoaded` adds the data provider when `Blizzard_WorldMap` loads after login; `routesArrow`'s `GROUP_ROSTER_UPDATE`/`PLAYER_ENTERING_WORLD`/`ZONE_CHANGED_NEW_AREA` re-check hiding; `routesItems` rows belong to the item buttons.
+- **Registration.** Core registers an event at `ADDON_LOADED` when any row has a handler by then (before the quest log parts run, and after). Routes' handlers are all file-scope, so with the TOC line they register on every client regardless of the Wide Quest Log switch. `PLAYER_DEAD`, `PLAYER_ALIVE`, `PLAYER_UNGHOST`, `BAG_UPDATE_DELAYED`, `BAG_UPDATE_COOLDOWN` and `PLAYER_TARGET_CHANGED` are Routes' alone, and on Classic Era and TBC so is `QUEST_LOG_UPDATE`. `Classic-Quest-Log.lua` defines `ns:OnZoneChangedNewArea` inside its wide quest log part, so there the second pass registers `ZONE_CHANGED_NEW_AREA` with the switch on even without Routes.
+- **View paces** (constants in each file): map line `UPDATE_INTERVAL` while the map shows (`Routes-Map-Line.lua`); arrow `TURN_INTERVAL`, `TEXT_INTERVAL`, `LIST_INTERVAL` (`Routes-Arrow.lua`); arrow menu `REFRESH_INTERVAL` while open; item buttons `CHECK_INTERVAL`, `RANGE_INTERVAL` (`Routes-Arrow-Items.lua`); hiding Questie's icons after Questie redraws coalesces to the next frame (`RequestApplyQuestieIcons`).
 
-```lua
--- One waypoint in routes.stops (x, y, radius in world yards)
-{ x, y, instance, radius, mapID, names = { "Boar", ... }, area = true, turnIns = nil, inArea = nil, corpse = nil,
-  tasks = { node, ... } } -- each node: key, kind ("objective" | "turnIn" | "corpse"), questID, questName, quest,
-  -- objective, candidates, choice, blobs, spawns, ready, requires, urgent, party, rider, inArea
-```
+#### Combat
 
-`routes.start` is where the plan set out from, `routes.nodes` and `routes.engaged` are the plan's nodes and pins, and `routes.camps` the camps every map shows (see The Zone Map), which are shaped as waypoints of one task each. The planner assigns all five together, so the watcher never compares a new plan's pins with the old plan's nodes.
+- **The route freezes.** The watcher's `SetInCombat` (every frame) drops any plan as a fight starts (it would set out from where the fight began) and checks nothing until it ends. `routes.RequestPlan` in combat (a skip, reset, setting) only sets `planAfterCombat`. After the fight it checks at once and plans if a plan was dropped or asked for. Nothing is printed. The planner's `OnUpdate` also returns in combat, covering the frame before the watcher notices. An objective ignored in combat stays at its waypoint until that plan; the arrow menu hides it meanwhile (`routes.skipped`).
+- **Full-size map waits.** `KeepFullSize` (`Routes-Map-Size.lua`) never writes `miniWorldMap` in combat.
+- **Pins don't pass clicks through.** The map canvas calls `SetPassThroughButtons` on every acquired pin, which WoW blocks in combat, so opening the map in combat would blame the add-on. `PrettyWideQuestLogRoutePinMixin` replaces it with a no-op (as HereBeDragons-Pins does for Questie's pins); safe because waypoint pins handle their own clicks and the line pin takes no mouse.
+- **Secret values.** WoW Forever can keep unit maps and connection state secret in combat; `routes.IsUnitOutOfZone` and the party checks (`Routes-Party.lua`) test `ns.IsReadable` first and treat unreadable as in-zone or offline.
+- **The arrow keeps working.** An ordinary unprotected frame: it turns, updates and drags in combat toward the frozen route's waypoint.
+- **Use Item buttons hold still.** Secure, so in combat they keep item and place; one whose quest moved, or whose arrow moved or hid, fades until `PLAYER_REGEN_ENABLED` (see The Quest Arrow's Item Buttons). Nothing secure is ever anchored to the arrow, so it stays unprotected.
 
-### Planning and When to Plan Again
+#### The Zone Map
 
-Planning runs as a coroutine on a hidden frame (`planner`, `Routes-Core.lua`). A plan is four stages: `routes.BuildNodes`, `ns.routesSolver.Solve`, `routes.MakeStops`, then `routes.BuildCamps` (`Routes-Camps.lua`). When `BuildNodes` returns nil, the route already drawn stays.
+`Routes-Map.lua`: a `MapCanvasDataProviderMixin` provider on `WorldMapFrame`, added at login or on `ADDON_LOADED` for `Blizzard_WorldMap` (loads on demand on some clients). Helpers in their own files, loaded first by `Routes.xml` and captured by value at load: `Routes-Map-Line.lua` (line), `Routes-Map-Questie-Icons.lua`, `Routes-Map-Blizzard-Quests.lua`, `Routes-Map-Tooltip.lua`, `Routes-Map-Size.lua`.
 
-- Each frame it resumes the plan, and the `Yield` passed down to every stage yields once the slice passes `FRAME_BUDGET` (4 ms, measured with `debugprofilestop`).
-- `routes.RequestPlan` takes the signature as it starts a plan. A request made while a plan is underway sets `replanQueued`, and one more plan runs when the current one finishes. A request on a flight path is dropped, as landing plans anyway, and one in combat waits (see Combat).
-- An error inside the plan goes to `geterrorhandler()` rather than breaking the frame.
-- Each listener runs in its own `pcall` (`Notify`), so a broken view can't stop the others.
+- Nothing draws with `showMap` off (`routes.IsMapShown`).
+- The route (line + waypoints) draws only on its zone's map or a cave/building/city inside it (`IsRouteMap`, `routes.IsInZone`), and never on a flight path (`routes.IsOnTaxi`): the route is replanned from where the player lands, so mid-flight every map shows camp markers alone.
+- Every map, continent's included, shows the camps.
+- Positions come from `GetZoneCoordinatesFromWorldInstance` with positions past the map allowed: a waypoint off the map shown gets no marker, but the line still runs to it.
 
-A watcher frame runs only while the route is wanted (`UpdateWatcher`, from login on). Every frame it reads `UnitOnTaxi("player")` and `InCombatLockdown()`, because no event says reliably when a flight starts: `PLAYER_CONTROL_LOST` comes before `UnitOnTaxi` turns true, and comes for fears and stuns too. Taking off drops any plan underway, which would set out from where the flight began, and notifies the listeners (the arrow hides while flying). Landing counts as a new area (below), so the route plans from where the player came down.
+Camps (`Routes-Camps.lua`, `routes.camps`):
 
-Every `CHECK_INTERVAL` (2 seconds), while Questie is ready and the player is out of combat and off a flight path, it runs `routes.NoteProgress`, then plans again when any of these holds:
+- `routes.BuildCamps` runs at the end of every plan, inside its coroutine, and its result is set along with the waypoints. Quest IDs are listed first (`routes.LoggedQuestIDs`), since Questie's log can change while a yield waits.
+- A camp is a blob of one objective's spawns across the whole continent (`routes.AddWorldSpawns`, by world instance), shaped as a waypoint with `camp = true` and one task whose only candidate is the camp. So marker, tooltip and Questie hiding treat it as a waypoint.
+- Dungeon/raid spawns (no world map shows them; Questie keeps most at -1, -1) go at the instance's entrances (`ZoneDB:GetDungeonLocation`), one count per spawn per entrance, so the camp keeps the spawns' weight. Other spawns on an instance map (`routes.IsInstanceMap`) are left out.
+- Blobs cached in a weak-keyed table: by objective (versioned by `routes.CountEntries` of its spawn list) and by quest for a turn-in. A quest left behind lets go of its camps.
+- Covers: each objective not done of the player's quests; each done quest's turn-in while `routes.IsOnQuest` agrees; with `partyQuests`, objectives of party quests from members not left out. A dungeon/raid quest's objectives get camps at the entrance marked `untracked` (the route never goes in); a party member's dungeon/raid quest gets none.
+- An ignored objective keeps its camps: ignoring takes it off the route, not off the map.
+- One marker per objective or turn-in per map, never one per camp. `Gathered` takes the camp with most spawns within `GATHER_REACH` and places the marker at the spawn-weighted middle of those camps, naming up to `routes.NAME_LIMIT`. If that middle falls just off the map, the objective's first camp on the map is used. Why: an objective spread thin reads as one marker in the thick of it.
+- On the route's map, an objective with a waypoint gets no camp marker (the waypoint stands for it); one without (ignored, or route running to the corpse) draws at `CAMP_ALPHA` behind the waypoints. Untracked markers aren't dimmed; their ring says so. Other maps: full strength.
+- Right-click on a camp (`RightClick`) ignores its objective (`routes.IgnoreTask`) or puts an ignored one back (`routes.UnignoreTask`); none for an `untracked` one.
 
-- **The signature changed and settled.** `routes.Signature()` (`Routes-Questie.lua`) is a text of what moves the route: each quest's state and whether it's an instance quest or timed, each objective's done flag and whether it has spawns, the party's quests' objective done flags (`routes.PartyProgress`), the ignored keys and party members, the online party members in another zone (`routes.IsUnitOutOfZone`), whether `showUpcomingTurnIns` is on, the player's zone, and ghost or alive. Counts and position aren't in it. Questie's data comes in pieces, so a changed signature plans only once two checks in a row see the same one (`settling`), 2 to 4 seconds after the last change. For `GROUP_SETTLE_DELAY` (5 seconds) after the group's size changes (`routes:OnGroupRosterUpdate`), it waits regardless, while the new member's quest log arrives.
-  - The signature never asks Questie's database for spawns. `routes.PartyProgress` reads only the shared logs; the party objectives' spawn lists, the slow part of joining a group, are worked out only inside the plan's coroutine (`routes.PartyQuests(ownLog, yield)`), which yields after each.
-- **The player walked into or out of a camp.** `routes.EngagedSignature(routes.nodes)` differs from `routes.PinnedSignature()`. During a timed or escort quest, only those quests' own nodes count.
-- **The player moved far.** At least `REPLAN_INTERVAL` (30 seconds) has passed since the last plan and the player is more than `REPLAN_DISTANCE` (400 yards) from where the plan set out, or on another continent, or there is no `routes.start`. A corpse start never counts as moved.
+Frame levels (`AddFrameLevels`):
 
-Events speed this up. They arrive through Core's dispatcher with owner `routes`:
+- `PIN_FRAME_LEVEL_PWQL_ROUTE_LINE` below `PIN_FRAME_LEVEL_AREA_POI` (where HereBeDragons-Pins puts Questie's icons), `PIN_FRAME_LEVEL_PWQL_ROUTE_STOP` above it, `PIN_FRAME_LEVEL_PWQL_ROUTE_CAMP` just below the waypoints.
+- Each insert in a `pcall`, falling back to `AddFrameLevel` on a map without that level.
 
-- `QUEST_LOG_UPDATE` restarts a `QUEST_LOG_DELAY` (1 second) timer. When it fires, it forgets the cached escort and instance answers and forces the next check, giving Questie time to catch up.
-- `PLAYER_ENTERING_WORLD` and `ZONE_CHANGED_NEW_AREA` clear `routes.start` and force a check that counts as past `REPLAN_INTERVAL` (`OnNewArea`, which landing runs too).
-- `PLAYER_DEAD`, `PLAYER_ALIVE` and `PLAYER_UNGHOST` force a check.
-- `GROUP_ROSTER_UPDATE` starts the `GROUP_SETTLE_DELAY` hold when the group's size changed.
-- `GROUP_JOINED` and `GROUP_LEFT` clear the ignore list (`Routes-Ignore.lua`, see Ignoring and Resetting) and plan when anything was on it.
-- `PLAYER_LOGIN` runs the migrations, starts the watcher and runs the login handlers.
+The line (`PrettyWideQuestLogRouteLinePinTemplate`, `routes.RouteLinePinMixin` in `Routes-Map-Line.lua`):
 
-`routesMap:OnAddonLoaded` (`ADDON_LOADED`) adds the data provider when `Blizzard_WorldMap` loads after login. `routesArrow`'s handlers for `GROUP_ROSTER_UPDATE`, `PLAYER_ENTERING_WORLD` and `ZONE_CHANGED_NEW_AREA` re-check whether the arrow hides.
+- One canvas-sized pin that takes no mouse, so map drags and icon hovers pass through.
+- Each leg is a `Line` with `Route-Dot` repeated, colored `ROUTE_LINE` at `lineOpacity`. A leg with an end on another continent hides.
+- `LINE_WIDTH` and `DOT_SPACING` are divided by canvas scale on every zoom (`OnCanvasScaleChanged`) so they hold on screen.
+- Dots march by sliding tex coords by `GetTime() * lineSpeed`: `lineSpeed` is dots per second, 0 holds still.
+- First leg runs from the player's live position, moved every `UPDATE_INTERVAL` by the pin's `OnUpdate`, reusing one table (hot path while the map is open).
+- `showLine` off: the pin gets no positions; markers only, nothing follows the player.
 
-Core registers an event at `ADDON_LOADED` when any of its rows has a handler by then (before the quest log parts run, and again after). Every Routes handler is defined at file scope, so with the TOC line these events register on every client, whatever the Wide Quest Log switch says. `PLAYER_DEAD`, `PLAYER_ALIVE` and `PLAYER_UNGHOST` are Routes' alone, and on Classic Era and TBC so is `QUEST_LOG_UPDATE`. `Classic-Quest-Log.lua` defines `ns:OnZoneChangedNewArea` inside its wide quest log part, so on Classic Era and TBC the second pass would register `ZONE_CHANGED_NEW_AREA` with the switch on even without Routes' rows.
+Markers (`PrettyWideQuestLogRouteStopPinTemplate`; `STOP_SIZE`/`STOP_ICON_SIZE` must match `Routes.xml`):
 
-The views keep their own pace:
+- `Route-Stop` disc tinted by the first task (`routes.TaskColor`).
+- Icon: Questie's own for that objective/turn-in, taken from Questie's pin on the map shown (`routes.QuestieTextures`). If Questie hasn't drawn yet (it draws a while after a quest changes), `QuestieIcon` picks from `Questie.usedIcons` by icon type in the player's theme: the objective's `Icon`, else the first spawn's. Turn-in: `ICON_TYPE_INCOMPLETE` when planned ahead of being done (`showUpcomingTurnIns`), else `ICON_TYPE_COMPLETE`. Camps never hold an upcoming turn-in. Corpse: `routes.CORPSE_ICON`/`CORPSE_ICON_COORDS` (`Routes-Stop-Lines.lua`), the game's own gravestone cell.
+- Ring, checked in order, swaps the disc for `Route-Stop-Fill` under a tinted `Route-Stop-Ring`: `IsUntracked` (every task `untracked` or on the ignore list) gets `ROUTE_ALERT_RING`; else `IsPartyStop` (every task a party member's) gets `ROUTE_PARTY_RING`; any of the player's own routed tasks keeps the disc's black ring.
+- Size: `markerScale * UIParent:GetEffectiveScale() / map:GetEffectiveScale()`, times `WIDE_MAP_SCALE` on continent-or-wider maps (`IsWideMap`). `SetScalingLimits` only sets how fast a pin grows with zoom, so `markerScale` must go into the size. The effective-scale ratio is why markers look the same on every client (Classic Era/TBC draw the full-size map at a larger scale).
+- Pins are recycled: every acquire sets alpha, frame level, textures, tex coords and ring, never only what differs from default.
 
-| What | How often |
-|---|---|
-| Map line's player end and marching dots (`Routes-Map-Line.lua`) | Every `UPDATE_INTERVAL` (0.05 s) while the map shows |
-| Arrow turning | Every `TURN_INTERVAL` (0.03 s) |
-| Arrow distance text | Every `TEXT_INTERVAL` (0.25 s) |
-| Arrow survey of surroundings and quest list | Every `LIST_INTERVAL` (1 s) |
-| Arrow menu's rows | Every `REFRESH_INTERVAL` (0.5 s) while it's open |
-| Hiding Questie's icons after Questie redraws | Coalesced to the next frame (`RequestApplyQuestieIcons`) |
+Hovering a marker (`OnStopEnter`):
 
-### Combat
+- Tooltip body: `routes.AddStopTooltip` (`Routes-Map-Tooltip.lua`), built from `routes.QuestsAt`/`routes.QuestObjectives` (`Routes-Stop-Lines.lua`). Each quest title nearest first, a blank line between quests, then its objectives at that waypoint, done or not, in log order: `ROW_INDENT`, `ns.CheckIcon` (or a same-size blank so names align), name, count on the right; done ones in `HELP`.
+- With `routes.ShowsParty`: each quest split by player: the player first where it's their quest, then each sharing member (`routes.MemberProgress`, `routes.MemberObjective`), each under their name in class color (`routes.ClassColor`, white for a secret class), blank line between. Alone or with `partyQuests` off, no names.
+- Only a turn-in left: one gold `ROUTES_TURN_IN_QUEST` line.
+- Then blob names under a gold `ROUTES_LOOK_FOR` heading, one per line (grows down, not wide), then click hints (`routes.AddClickHints`).
+- Sets `routes.hoveredStop`, which brings back Questie's icons for its tasks. `RemoveAllData` clears it: a pin can vanish under a mouse that never leaves it.
 
-- **The route freezes.** The watcher sees `InCombatLockdown()` every frame (`SetInCombat`). As a fight starts it drops any plan underway, which would set out from where the fight began, and it checks nothing until the fight ends. `routes.RequestPlan` in combat (a skip, a reset, a setting) only sets `planAfterCombat`. Once the fight ends the watcher checks at once, and plans if a plan was dropped or asked for. Nothing is printed either way. The planner's `OnUpdate` also returns in combat, for the frame before the watcher notices.
-- **The full-size map waits.** `KeepFullSize` (`Routes-Map-Size.lua`) never writes the `miniWorldMap` CVar in combat.
-- **Pins don't pass clicks through.** The map canvas calls `SetPassThroughButtons` on every pin it acquires, which WoW blocks in combat, so opening the map in combat would blame the add-on. `PrettyWideQuestLogRoutePinMixin` replaces it with an empty function, as HereBeDragons-Pins does for Questie's pins. That's safe because the waypoint pins handle their own right and middle clicks and the line pin takes no mouse.
-- **The arrow keeps working.** It is an ordinary unprotected frame, so it turns, updates, switches between arrow and eye, and drags in combat, all toward the waypoint the frozen route has.
-
-### The Zone Map
-
-`Routes-Map.lua` adds a `MapCanvasDataProviderMixin` provider to `WorldMapFrame`. It is added at login, or on `ADDON_LOADED` for `Blizzard_WorldMap`, which loads on demand on some clients. Nothing draws with `showMap` off (`routes.IsMapShown`). The route, its line and waypoints, is drawn only on a map of the zone it was planned in, or a cave, building or city inside it (`IsRouteMap`, `routes.IsInZone`). Every map, that one, other zones' and the continent's, also shows the camps (below). Each marker is placed with `GetZoneCoordinatesFromWorldInstance`, which allows positions outside the map, so a waypoint off the map shown gets no marker but the line still runs to it.
-
-Three helpers live in their own files and are wired in by `Routes-Map.lua`: the line (`Routes-Map-Line.lua`), Questie's icons (`Routes-Map-Questie-Icons.lua`) and the full-size map (`Routes-Map-Size.lua`). `Routes.xml` loads all three before `Routes-Map.lua`, which picks up what they leave on `routes`.
-
-The camps (`Routes-Camps.lua`, `routes.camps`):
-
-- `routes.BuildCamps` runs at the end of every plan, in its coroutine, and its result is set along with the waypoints. A camp is a blob of an objective's spawns gathered across the whole continent (`routes.AddWorldSpawns`, by world instance), shaped as a waypoint with `camp = true` and one task, whose only candidate is the camp, so the marker, tooltip and Questie hiding treat it as a waypoint.
-- A dungeon's or raid's spawns, which no world map shows (Questie keeps most at -1, -1), go at its entrances (`ZoneDB:GetDungeonLocation`), where Questie draws their icons. Each spawn counts once at each entrance, so the camp keeps the spawns' weight. Any other spawn on a dungeon's or raid's map (`routes.IsInstanceMap`) is left out.
-- Blobs are cached by objective, keyed by its spawn list's entry count, and by quest for a turn-in, in a weak-keyed table, so a quest left behind lets go of its camps.
-- Camps cover each objective not yet done of the player's quests, each done quest's turn-in (while `routes.IsOnQuest` agrees) and, with `partyQuests`, the objectives of the party's quests from members not left out. A dungeon or raid quest's objectives get camps at the entrance, marked `untracked`, since the route never goes in; a party member's dungeon or raid quest gets none. An ignored objective keeps its camps: ignoring leaves it off the route, not off the map.
-- Each map shows one marker per objective or turn-in, never one per camp. Of its camps on that map, `Gathered` finds the one with the most of its spawns within `GATHER_REACH` (800 yards), and puts the marker at the middle of those camps weighted by their spawns, naming what they name (up to `routes.NAME_LIMIT`, 4). If that middle falls just off the map, it uses the objective's first camp on the map. So an objective spread thin, objects scattered across a zone, is one marker in the thick of them. Hovering it brings back Questie's icons for every spawn.
-- On the route's zone an objective the route has a waypoint for gets no camp marker, as the waypoint stands for it; one it doesn't (an ignored one, say) draws at `CAMP_ALPHA` (0.5) behind the waypoints. On any other map every marker is full strength. Camps sit on `PIN_FRAME_LEVEL_PWQL_ROUTE_CAMP`, under the waypoints and over Questie's icons.
-- A camp's tooltip is a waypoint's. Right-click (`RightClick`) ignores its objective ("Ignore This Objective", `routes.IgnoreTask`), or puts an ignored one back ("Back on the Route", `routes.UnignoreTask`); a dungeon or raid quest's has no right-click, as the route never takes it.
-
-Frame levels:
-
-- `AddFrameLevels` inserts `PIN_FRAME_LEVEL_PWQL_ROUTE_LINE` below `PIN_FRAME_LEVEL_AREA_POI`, where HereBeDragons-Pins puts Questie's icons, and `PIN_FRAME_LEVEL_PWQL_ROUTE_STOP` above it, then `PIN_FRAME_LEVEL_PWQL_ROUTE_CAMP` just below the waypoints.
-- Each insert is in a `pcall`, falling back to `AddFrameLevel` on a map without that level.
-
-The line (`PrettyWideQuestLogRouteLinePinTemplate`, drawn by `Routes-Map-Line.lua`'s `routes.RouteLinePinMixin`):
-
-- It is one pin as large as the canvas, which takes no mouse, so dragging the map and hovering the icons above it pass straight through.
-- Each leg is a `Line` textured with `Route-Dot` repeated along its length, in `ROUTE_LINE` (`333333`) at the `lineOpacity` alpha (default 0.8). A leg whose end is on another continent is hidden.
-- Thickness is `LINE_WIDTH` (`SPACE.NEAR`, 8px) and each dot plus its gap is `DOT_SPACING` (`SPACE.GROUP`, 16px). Both are worked out against the canvas scale on every zoom (`OnCanvasScaleChanged`), so they hold on screen.
-- The dots march by sliding the texture coordinates by `GetTime() * lineSpeed`, so `lineSpeed` (default 1.5) is dots per second and 0 holds them still.
-- The first leg runs from the player's live position, moved with the dots every `UPDATE_INTERVAL` (0.05 seconds) by the pin's `OnUpdate`. It reuses one table, because it runs 20 times a second while the map is open.
-- With `showLine` off the pin gets no positions: only the markers draw, and nothing follows the player.
-
-Markers (`PrettyWideQuestLogRouteStopPinTemplate`, 42px with a 24px icon):
-
-- A marker is the `Route-Stop` disc tinted in the first task's color (`routes.TaskColor`): Questie's color for the objective, `TITLE` gold for a turn-in, `TEXT` white for the corpse.
-- On it sits Questie's icon for that objective or turn-in, taken from Questie's own pin on the map shown (`routes.QuestieTextures`). If Questie hasn't drawn yet, it comes from `Questie.usedIcons` by icon type, in the player's Questie theme: the objective's `Icon`, or the first spawn's. A turn-in planned ahead of its quest being done, which the route plans only with `showUpcomingTurnIns` on (default off), gets Questie's gray question mark (`ICON_TYPE_INCOMPLETE`), a done one `ICON_TYPE_COMPLETE`. Camps never hold an upcoming turn-in: only a done quest's turn-in is a camp. The corpse shows the gravestone the game marks it with on the world map and mini-map (`routes.CORPSE_ICON`, a cell of `Interface\Minimap\POIIcons`, in `Routes-Stop-Lines.lua`), which also leads its "Run Back to Your Corpse" line on the Quest Arrow and the map's tooltip.
-- Three kinds of marker swap the disc for `Route-Stop-Fill` with a tinted `Route-Stop-Ring` over it in place of the disc's black ring (`ringColor`), checked in this order. One whose every task is a dungeon or raid quest's objective (`IsDungeonStop`, every task `untracked`) gets `ROUTE_ALERT_RING` red (`FF3333`), to stand out. Otherwise one the route won't take at all (`IsUntracked`: every task untracked or on the ignore list) gets `HELP` silver (`CCCCCC`). Otherwise one whose every task is a party member's (`IsPartyStop`) gets `ROUTE_ALERT_RING` red too. A waypoint with any of the player's own tasks the route takes keeps the black ring. A marker the route won't take is never dimmed; its ring says so instead.
-- Size is `markerScale` times `UIParent:GetEffectiveScale() / map:GetEffectiveScale()`, with `SetScalingLimits(1, 1.0, 1.2)`, so markers keep their size on screen as the map zooms; `SetScalingLimits` only sets how fast a pin grows with zoom, so `markerScale` has to go into the size. On a continent's, the world's or the cosmos' map (`IsWideMap`: `mapType` Continent or wider) they draw at `WIDE_MAP_SCALE` (60%), as those hold many zones' worth. They look the same size on every client, even though Classic Era and TBC draw the full-size map at about 1.8 times the UI's scale.
-- Pins are handed out again, so every acquire sets alpha, frame level, textures and ring, never only the ones that differ from the default.
-
-Hovering a marker:
-
-- The tooltip is `routes.AddStopTooltip` (`Routes-Stop-Lines.lua`): each quest's title, nearest first, a blank line between quests, then its objectives at that waypoint, done or not, in the quest log's order. Each objective line has a one-space indent, the quest log's check (`ns.CheckIcon`, or a same-size blank so the names line up), the name, and "4 / 12" on the right; a done one is silver.
-- With party objectives shown (`routes.ShowsParty`: `partyQuests` on, in a party), each quest is split by player: the player first where it's their quest, then each member Questie shares a quest log for, each under their name in class color (`routes.ClassColor`, white where `ns.IsReadable` says the class is a secret value), a blank line between them. Alone, or with `partyQuests` off, no names show.
-- A quest with nothing left at that waypoint but its turn-in is one gold line, "Turn in [2] Wayward Weapons".
-- The blob's NPC or object names follow under a gold "Look For" heading, one per line a space in, so a long list grows down instead of wide. Then the click hints (`routes.AddClickHints`, in `INFO` blue, a blank line between each).
-- Hovering sets `routes.hoveredStop`, which brings back Questie's icons for that marker's tasks. `RemoveAllData` clears it, since a pin can vanish under a mouse that never leaves it.
-
-Clicking a marker: right-click on a waypoint ignores it whole ("Ignore This Waypoint", `routes.SkipStop`); on a camp it works one objective, as above; on the corpse it does nothing. Middle-click on any marker resets all routes (`routes.ResetObjectives`). The pins use `OnMouseUp`, since they aren't buttons.
+Clicking (`OnMouseUp`; pins aren't buttons): right-click on a waypoint ignores it whole (`routes.SkipStop`), on a camp works one objective (above), on the corpse nothing. Middle-click on any marker: `routes.ResetObjectives`.
 
 Questie's icons (`Routes-Map-Questie-Icons.lua`):
 
-- With `showMap` and `hideQuestieIcons` on, `ApplyQuestieIcons` hides the HereBeDragons pins (`HereBeDragonsPinsTemplateQuestie`) whose icon is for something on the route or a camp, on every map, except the hovered marker's, and shows again the ones it hid that no longer are (`pin.hiddenByRoute`). An objective matches by its Questie objective table, a party member's also by `routes.PartyObjectiveKey(questID, index)` (Questie's party icons hold an objective of its own making), and a turn-in by quest ID (`data.Type == "complete"`). Icons for available quests are never touched.
-- Questie never shows or hides those pins itself, so its own icon state is untouched and a recycled pin shows on its own.
-- Questie draws in batches, a pin at a time, so the add-on post-hooks its pin library's `worldmapProvider.RefreshAllData` and `HandlePin`, and `RequestApplyQuestieIcons` coalesces those calls to one re-apply on the next frame.
-- Every redraw of the provider re-applies first, before it checks `showMap`, and a listener call re-applies even with the map closed, so turning the route off brings the icons back.
+- With `showMap` and `hideQuestieIcons`, `ApplyQuestieIcons` hides HereBeDragons pins (`HereBeDragonsPinsTemplateQuestie`) on every map whose icon is for something on the route or a camp, except the hovered marker's, plus every party member's objective icon (`IsPartyIcon`, `ObjectiveData.IsPartyObjective`): the route draws the ones it plans and leaves the rest out on purpose. Shows again what it hid (`pin.hiddenByRoute`). Available-quest icons are never touched.
+- Matching: objective by Questie's objective table; party objective also by `routes.PartyObjectiveKey(questID, index)` (Questie's party icons hold an objective of its own making); turn-in by quest ID (`data.Type == "complete"`).
+- Questie never shows/hides those pins itself, so its icon state is untouched and a recycled pin shows on its own.
+- Re-apply triggers: post-hooks on the pin library's `worldmapProvider.RefreshAllData` and `HandlePin`, coalesced to one next-frame pass (`RequestApplyQuestieIcons`). `HandlePin` also checks the just-placed pin at once (`routes.ApplyToPlacedQuestieIcon`, pin found as `icon:GetParent()` with `pin.icon == icon`): Questie redraws party icons whenever progress arrives, and a frame's delay flashes them. The route/hover sets are rebuilt at most once a frame (`Sets`, keyed by `GetTime()`), since Questie places a batch at a time.
+- Every provider redraw re-applies before it checks `showMap`, and a listener call re-applies with the map closed, so turning the route off brings icons back.
+
+Blizzard's quest markers and objective areas (`Routes-Map-Blizzard-Quests.lua`):
+
+- Why: WoW Forever's world map draws its own quest markers (`QuestDataProviderMixin`) and objective areas (`QuestBlobDataProviderMixin`) while the `questPOI` CVar is on; Questie flips that CVar per objective style, so the same objective could show two or three times under the route.
+- `HookBlizzardQuests`, once from `AddToWorldMap`, finds those providers in `WorldMapFrame.dataProviders` by `IsFromMixin` (most of the mixin's functions are the provider's own, so one another add-on post-hooked still counts) and `hooksecurefunc`s each `RefreshAllData`. Clients without the mixins find none.
+- `ApplyBlizzardQuests`, with `showMap` and `hideQuestieIcons` and anything on route/camps: hides marker pins (`GetPinTemplate()`) whose `questID` is a route/camp quest, objectives and turn-ins alike, and the objective layer's single `provider.pin` (draws every quest's area at once). Otherwise shows what it hid. Hover brings back Questie's icons only.
+- Only `Hide`/`Show`; no Blizzard function or field written; hidden pins kept in its own weak table. So the map stays untainted, a pooled marker shows on its own, and it works in combat.
+- `questPOI` itself is never touched: tracker, minimap and Questie's objective style (`QuestieOptionsUtils.DetermineTheme` reads it) stay as the player set them, and nothing needs restoring after a crash.
+- Hooks coalesce to next frame (`RequestApplyBlizzardQuests`); the route's own redraw and listener call apply at once.
+- The add-on's own quest map (`Forever-Quest-Map.lua`) keeps its own objective-area layer, unaffected.
+- `routes.BlizzardQuestLayers` feeds Routes Context (with the `questPOI` CVar).
 
 Full-size map (`Routes-Map-Size.lua`):
 
-- With `fullSizeMap` and `showMap` on, `routes.KeepFullSize` sets the map's own `miniWorldMap` CVar to `"0"` when it reads true, which every client's world map reads as it opens to maximize itself. It prints nothing, never writes in combat, and goes through `ns.TrackerTaintStep` so the tracker taint watch logs it (see Diagnostics).
-- It stands aside entirely while an add-on that sizes the map itself is loaded (`routes.MapSizedElsewhere`, checking `ns.MAP_SIZE_ADDONS`: `Leatrix_Maps`, `Mapster`), and the Routes on Zone Map panel hides the option then. Leatrix Maps keeps the map windowed and scales it up, so a maximized map under it overflows the screen.
-- It runs at login, on the world map's `OnHide` (so a map the player shrank opens full size next time), and on every listener call.
-- It never calls the map's `Maximize`, which would run Blizzard's panel layout (`SetUIPanelAttribute`, `MaximizeUIPanel`) as add-on code.
+- With `fullSizeMap` and `showMap`, `routes.KeepFullSize` writes the map's own `miniWorldMap` CVar to `"0"` when it reads true; every client's map reads it on open to maximize. Silent, never in combat, through `ns.TrackerTaintStep` (logged by the tracker taint watch).
+- Never calls the map's `Maximize`: that runs Blizzard's panel layout (`SetUIPanelAttribute`, `MaximizeUIPanel`) as add-on code.
+- Map add-ons don't block it: Leatrix Maps and Mapster never read `miniWorldMap` and keep a scale/position per size, applied on `SynchronizeDisplayState`.
+- Runs at login, on the world map's `OnHide` (a map the player shrank opens full next time), and on every listener call.
 
-### The Quest Arrow
+#### The Quest Arrow
 
-`Routes-Arrow.lua` builds `PrettyWideQuestLogRouteArrow`, a 512px-wide button (`WIDTH`) at `MEDIUM` strata, clamped to the screen. On it are the 64px arrow (`Route-Arrow`, drawn pixel for pixel, anchored by its middle so the eye breathes in place), a distance line `SPACE.LINE` under it, and a block of quest lines (see The Quest Arrow's List). The distance reads "279 Yards" ("1 Yard" at 1, `routes.YardsText`) in silver (`HELP`), like the list's counts. What the eye says ("Current Objective Area", "You're There") takes its place, in the eye's `INFO` blue. The arrow's art leaves 10px clear under it pointing ahead, but turned, a corner reaches within 2px of its square, so the line keeps 4px below the square, not 2.
+Files: `Routes-Arrow-Survey.lua` looks around (`routes.ArrowSurvey`, `routes.ArrowNearestPlace`); `Routes-Arrow.lua` builds `PrettyWideQuestLogRouteArrow`, points it and decides when it shows; `Routes-Arrow-List.lua` lays out lines on pieces handed over in `routes.arrowParts`/`routes.ARROW_LAYOUT`; `Routes-Arrow-Item-Choice.lua` + `Routes-Arrow-Items.lua` add Use Item buttons; `Routes-Arrow-Menu.lua` the hover menu; `Routes-TomTom.lua` stands TomTom's arrow down.
 
-The work is split three ways: `Routes-Arrow-Survey.lua` looks around (`routes.ArrowSurvey`, `routes.ArrowNearestPlace`), `Routes-Arrow.lua` builds the frame, turns the arrow and decides when it shows, and `Routes-Arrow-List.lua` lays out the lines under it (`routes.ListArrowQuests`) on the frame's pieces, handed over in `routes.arrowParts` and `routes.ARROW_LAYOUT`.
+- Frame: a `WIDTH`-wide button at `MEDIUM` strata, clamped. Arrow texture `ARROW_SIZE`, drawn pixel for pixel, anchored by its middle so the eye breathes in place. Distance line `SPACE.LINE` under the arrow's square (not under the art: turned, a corner reaches nearly to the square's edge). Distance via `routes.YardsText` in `HELP`; what the eye says replaces it, in `INFO`.
 
 When it shows (`Refresh`):
 
-- Only with `showArrow` and a route.
-- Not on a flight path (`routes.IsOnTaxi`, as the watcher last saw), not in a raid group with `hideInRaids`, and not in an instance with `hideInInstances` (`IsInInstance()`). Both default on: there it isn't questing that's under way.
-- `Refresh` runs on every listener call and on the group and zone events, after login. It also applies `arrowScale` when it changes and places the frame again, since the saved spot is in screen units. Shown, it zeroes its timers so the new waypoint draws at once; hidden, it clears `routes.arrowTarget` and `routes.arrowNext`.
+- `showArrow` and a route; not on a flight path (`routes.IsOnTaxi`), not in a raid with `hideInRaids`, not in an instance with `hideInInstances` (`IsAway`): there it isn't questing.
+- Runs on every listener call and on `GROUP_ROSTER_UPDATE`, `PLAYER_ENTERING_WORLD`, `ZONE_CHANGED_NEW_AREA` after login. Applies `arrowScale` when it changes (tracked in `appliedScale`: `GetScale()` returns a rounded value) and re-places the frame, since the saved spot is in screen units. Shown: zeroes timers so the new waypoint draws at once. Hidden: clears `routes.arrowTarget`/`routes.arrowNext`.
 
-What it points at. Once a second (`LIST_INTERVAL`), while the player has a position and facing on the route's continent, `Survey` looks around:
+What it points at (`Survey`, every `LIST_INTERVAL`, while the player has position and facing on the route's continent):
 
-- The waypoint the route sends the player to is the first with a task left.
-- Every task left whose area the player is in (`routes.InArea`, with `routes.AREA_GRACE` once in, held in `hereKeys` between surveys) is either work (`here`), at that waypoint or pinned (`routes.engaged`), or on the way (`passing`), planned for a later waypoint. Only an objective of more than one spawn has an area, so a turn-in or a lone chest is never work.
-- The first waypoint with tasks left that aren't work becomes the next one to point at (the code's `destination`), and the one after it with tasks left is `afterDestination`.
-- While the route starts at the corpse, nothing is work or on the way, the corpse is the destination, and nothing comes after it.
-- Without a survey answer, the destination is the route's first waypoint.
+- The route's target waypoint is the first with a task left.
+- Every task left whose area the player is in (`routes.InArea`, held by `routes.AREA_GRACE` via `hereKeys`) is work (`here`) if at that waypoint or pinned (`routes.engaged`), else on the way (`passing`). Only an objective of more than one spawn has an area; a turn-in or lone chest is never work.
+- `destination`: first waypoint with tasks left that aren't work; `afterDestination`: the next one with tasks left.
+- Route starting at the corpse: nothing is work or passing; corpse is destination; nothing after.
+- No survey answer: destination is the route's first waypoint.
 
-Working an area, it shows the eye: `Route-Eye`, upright, in the add-on's `INFO` blue, breathing up to `BREATH_GROWTH` (30%) bigger over `BREATH_PERIOD` (2.5 seconds). It says "Current Objective Area" and lists the work. Under that, `SPACE.LINE` down, in silver at the list's size (`AreaNote`):
+Working an area: the eye (`Route-Eye`, upright, `INFO`, breathing by `BREATH_GROWTH` over `BREATH_PERIOD`), "Current Objective Area", the work listed, and a note (`AreaNote`) `SPACE.LINE` under, silver:
 
-- "Finish Here Before Moving On" when any of it has only one blob in the zone, so nowhere else will do.
-- "More Along the Route" when, for every one, the route passes more of its spawns later: within `routes.AREA_REACH` (200 yards) of a leg after the waypoint, leaving out those within the waypoint's radius plus `AREA_REACH` of it (`MoreAhead`, cached per plan by the `routes.stops` table it was worked out for).
-- Nothing otherwise.
+- "Finish Here Before Moving On": any of the work has only one blob in the zone.
+- "More Along the Route": for every one, the route passes more of its spawns later, within `routes.AREA_REACH` of a later leg, excluding those within the waypoint's radius plus `AREA_REACH` (`MoreAhead`, cached per plan by the `routes.stops` table).
+- Else nothing.
 
-With `showNextObjective` (default off) the list ends with the Next Objective: in an area, the destination; heading to a waypoint, `afterDestination`. Its own 32px arrow (`NEXT_ARROW_SIZE`) turns toward it and takes the big one's colors, aimed at the corpse itself or the nearest place left there. With it off there is no Next Objective, and `routes.arrowNext` stays nil.
+Otherwise the arrow points at the destination. Either way, passing objectives list dimmed under "While You're Here".
 
-Anywhere else the arrow points at the destination. Either way, objectives on the way are listed dimmed under "While You're Here", to tag without stopping.
+With `showNextObjective`, the list ends with the Next Objective: in an area, the destination; else `afterDestination`. Its own `NEXT_ARROW_SIZE` arrow aims at the corpse itself or the nearest place left there. Off: `routes.arrowNext` stays nil.
 
 How it points (`Point`, the frame's `OnUpdate`):
 
-- It turns every `TURN_INTERVAL` (0.03 seconds) and rewrites the distance every `TEXT_INTERVAL` (0.25 seconds).
-- Toward a waypoint, it aims at the nearest place still to do there, or at the nearest edge of an area (`NearestPlace`, `Routes-Arrow-Survey.lua`), using `HBD:GetWorldVector` minus `GetPlayerFacing()`.
-- Its color says which way to turn, by how far it points from straight ahead (`Shade`): green (`ARROW_ON_COURSE`, `00FF00`) within `ON_COURSE` (36 degrees either side, a fifth of the circle), yellow (`ARROW_TURN`, `FFFF00`) out to `OFF_COURSE` (108 degrees), and red (`ARROW_WRONG_WAY`, `FF3333`) beyond, behind the player. Each line blends from one color to the next over `BLEND` (20 degrees, 10 either side of it), so the middle of each band stays solid and the color doesn't snap.
-- Within `SPOT_REACH` (10 yards) of a single place, the eye says "You're There".
-- At the corpse it keeps pointing and says "You're There", in blue, within the corpse waypoint's 30 yards (`CORPSE_RADIUS`, `Routes-Stops.lua`), inside the client's reach to resurrect.
-- Without a position on that continent, or a facing, the arrow texture hides and the distance is blank, but the list stays. With the waypoint on another continent, "Waypoint on Another Map" (`ROUTES_OTHER_MAP`) sits in silver where the arrow would be, so it isn't an empty square.
-- With `showDistance` off the yards are blank, the Next Objective's too, but "Current Objective Area" and "You're There" still show.
-- It is an ordinary unprotected frame, so all of this carries on in combat, toward the waypoint the frozen route has (see Combat).
+- Turns every `TURN_INTERVAL`; distance rewritten every `TEXT_INTERVAL`.
+- Aims at the nearest place still to do at the waypoint, or the nearest edge of an area (`NearestPlace`), `HBD:GetWorldVector` minus `GetPlayerFacing()`.
+- Color by angle (`Shade`): `ARROW_ON_COURSE` within `ON_COURSE`, `ARROW_TURN` out to `OFF_COURSE`, `ARROW_WRONG_WAY` beyond; each boundary blends over `BLEND` so band middles stay solid and nothing snaps.
+- Color is measured from `ColorHeading`, not always facing: the facing, unless the player's travel direction (`TravelHeading`, over `HEADING_WINDOW` from samples every `SAMPLE_INTERVAL`) differs by more than `FACING_TRUST`, then the travel direction. Why: backing up or strafing toward the target shouldn't read red; facing is kept otherwise because it answers a turn at once while travel lags. Movement under `MIN_TRAVEL` is standing; over `MAX_TRAVEL` is a teleport/load. Samples reset on an instance change. Rotation always uses facing. `routes.arrowColoredBy` reports which (Routes Context).
+- The Next Objective's arrow turns and colors the same way.
+- Within `SPOT_REACH` of a single place: eye, "You're There". At the corpse it keeps pointing and says "You're There" within the corpse waypoint's radius (`CORPSE_RADIUS`, `Routes-Stops.lua`).
+- No position on that continent or no facing: arrow hides, distance blank, list stays. Waypoint on another continent: `ROUTES_OTHER_MAP` sits where the arrow would be.
+- `showDistance` off: yards blank (Next Objective's too); eye labels still show.
+- Ordinary unprotected frame: all of this keeps running in combat, toward the frozen route's waypoint.
 
 Interaction:
 
-- Drag moves it, unless `lockArrow`, and closes its menu. On drop it is held by its top middle (`"TOP"` to `UIParent`'s `"BOTTOMLEFT"`), so the list grows and shrinks below a still arrow; `StopMovingOrSizing` alone would anchor by the nearest corner and move the arrow each time the list changed height. The spot is saved in screen units (offsets times the frame's scale) to `ns.db.global.routesArrowPoint`, account-wide, so no profile change moves it. A spot saved by another point is converted the first time it is placed. With none saved it sits a quarter of the screen's height above the middle.
-- The mouse over it opens its menu (below), unless it is being dragged.
-- Middle-click clears the ignore list (`routes.ClearIgnored`).
+- Drag moves it unless `lockArrow`, and closes the menu. On drop `HoldByTop` anchors `"TOP"` to `UIParent`'s `"BOTTOMLEFT"` so the list grows below a still arrow (`StopMovingOrSizing` alone anchors by the nearest corner and would move the arrow whenever the list changes height). Saved in screen units (offsets times scale) via `routes.SetArrowPoint` to `ns.db.global.routesArrowPoint`, account-wide, so profile changes never move it. `PlaceFrame` re-saves a spot saved by another point (migration). No spot: above screen center.
+- Mouse over opens the menu unless dragging. Middle-click: `routes.ClearIgnored`.
 
-### The Quest Arrow's List
+TomTom (`Routes-TomTom.lua`):
 
-`ListQuests` (`Routes-Arrow-List.lua`) lays the lines out on the arrow's frame. The lines for one waypoint come from `routes.ForEachStopLine` (`Routes-Stop-Lines.lua`); the map's tooltip has its own builder in the same file (`routes.AddStopTooltip`).
+- While the arrow shows (its `OnShow`/`OnHide` hooks), TomTom's own quest-objective waypoint feature (`"poi"`) is suppressed through TomTom's public `SuppressFeature`/`ReleaseFeature`, owner `L["ADDON_TITLE"]`. Why: two arrows pointing at different places. Suppression lasts the session only and leaves TomTom's saved settings alone.
+- Only a real TomTom (has `IsCrazyArrowEmpty`, `SuppressFeature`, `ReleaseFeature`); other add-ons make a `TomTom` table of their own. `TomTom` is in every TOC's `OptionalDeps`.
 
-- With `showQuests`, it holds each quest at the waypoint, nearest first: its "[13] Name" title (`routes.QuestTitle`: the letter from `ns.GetQuestTagByID` and `ns.QuestSuffix`, falling back to Questie's tag ID) in difficulty color and `GameFontNormal`, then indented by `SPACE.NEAR` its objectives still to do there, nearest first, in `GameFontHighlight` white, each with its count ("0 / 1", `routes.CountText`) on the right in silver. A quest with no level shows its name alone in gold.
-- With party objectives shown (`routes.ShowsParty`), every objective lists who still needs it under it, indented a further `SPACE.NEAR`: the player first where it's their quest, then each member Questie shares a log for (`routes.MemberProgress`) by name, each in their class color (`routes.ClassColor`, `RAID_CLASS_COLORS`) with their own count. Anyone done with it is left off, and the objective has no count of its own then.
-- A quest only turned in there is one gold "Turn in [2] Name" line. The corpse is one white line: the gravestone, sized to `GameFontNormal`, then "Run Back to Your Corpse".
-- Past `questsListed` (default 4) quests, a silver "+%d More Here" line counts the rest, flush with the titles, since it stands for whole quests.
-- Objectives on the way follow under a "While You're Here" heading in silver led by a 16px blue eye (`ICON_SIZE`), all at `DIM_ALPHA` (72%). They show only with `showQuests`.
-- The Next Objective comes last, also at `DIM_ALPHA`: a silver "Next Objective" heading, then only its first quest as the list writes one, with its objectives, counts and, in a party, who needs each. Its lines sit right of a column holding its arrow, level with the heading, and its distance `SPACE.LINE` under the arrow, in silver and dimmed; the arrow itself keeps full color. The column is as wide as "9999 Yards" (or 32px, whichever is wider), plus `SPACE.GROUP`, so the block holds still as the distance counts down.
-- Spacing is 16px (`SPACE.GROUP`) above each quest, heading and the "+%d More Here" line, 8px (`SPACE.NEAR`) under a heading, as the quest page leaves under its headings, and 4px (`SPACE.LINE`) between a quest's lines. Titles are `GameFontNormal` and the rest `GameFontHighlight`, the same size; color, dimming and space carry the hierarchy.
-- The block is left-aligned, as wide as its widest line rounded up to a whole pixel, and centered under the arrow; lines are cut short past 512px. The counts line up on the block's right edge, at least `SPACE.GROUP` from the text left of them. The distance line keeps its room while blank, so the list doesn't jump on arrival.
-- The layout is keyed by every line's kind, text, colors, count, dimming, icon and column, plus the note, so a second with nothing changed lays nothing out.
-- The hit rect is inset to the arrow and the block (`frame.hitInset`), so the empty width either side passes the mouse through.
+#### The Quest Arrow's List
 
-### The Quest Arrow's Menu
+`ListQuests` (`Routes-Arrow-List.lua`, exported as `routes.ListArrowQuests`). Lines for one waypoint come from `routes.ForEachStopLine` (`Routes-Stop-Lines.lua`); the map tooltip has its own builder (`Routes-Map-Tooltip.lua`).
 
-`Routes-Arrow-Menu.lua` builds `PrettyWideQuestLogRouteMenu` at `DIALOG` strata, laid out like WIM's whisper list. Its plate is the add-on's own `Route-Menu.tga`: a dark plate with angled corners and a soft shadow, 128px (`PLATE_SIZE`) drawn at half size (`PLATE_SCALE`) so the edges stay sharp, cut into nine pieces with 32px corners (`PLATE_CORNER`) so the corners never stretch. The plate reaches past the menu's edges by `PLATE_MARGIN` (12, 12, 10, 14 texture pixels), which is its shadow.
+- `showQuests`: each quest at the waypoint, nearest first: title (`routes.QuestTitle`: tag letter from `ns.GetQuestTagByID`/`ns.QuestSuffix`, falling back to Questie's tag) in difficulty color, `GameFontNormal`; then, indented `SPACE.NEAR`, its objectives still to do there, nearest first, `GameFontHighlight`, count (`routes.CountText`) on the right in silver. No level: name alone in gold.
+- `routes.ShowsParty`: each objective lists who still needs it, indented a further `SPACE.NEAR`: the player first where it's their quest, then each member (`routes.MemberProgress`) in class color with their own count. Anyone done is left off; the objective then has no count of its own.
+- Turn-in only: one gold "Turn in [n] Name" line. Corpse: one line, gravestone sized to `GameFontNormal` + `ROUTES_CORPSE`.
+- Past `questsListed` quests, a silver `ROUTES_MORE_TASKS` line, flush with titles (it stands for whole quests).
+- Passing objectives: under a silver "While You're Here" heading led by an `ICON_SIZE` blue eye, at `DIM_ALPHA`; only with `showQuests`.
+- Next Objective last, at `DIM_ALPHA`: silver heading, then only its first quest with objectives/counts/party names. Lines sit right of a column holding its arrow (level with the heading, full color) and its dimmed distance. Column width is that of `routes.YardsText(9999)` (or `NEXT_ARROW_SIZE`) plus `SPACE.GROUP`, so the block holds still as distance counts down.
+- Spacing: `SPACE.GROUP` above each quest, heading and more-line; `SPACE.NEAR` under a heading (as the quest page); `SPACE.LINE` between a quest's lines. Titles and the rest are the same size: color, dimming and space carry hierarchy.
+- Block left-aligned, width of the widest line rounded up to a whole pixel, centered under the arrow, lines cut past `WIDTH`. Counts align on the block's right edge, at least `SPACE.GROUP` from the text. The distance line keeps its room while blank, so the list doesn't jump on arrival.
+- Layout keyed by every line's kind, text, colors, count, dim, icon, column, quest ID, plus the note: an unchanged second lays nothing out.
+- Records each quest title's place for the item buttons (`routes.arrowTitleRows`, below); `ForEachStopLine` passes the quest ID as a title line's seventh value for this.
+- Hit rect inset to arrow and block (`frame.hitInset`, also read by `routes.IsMouseOverArrow`), so the empty width passes the mouse through.
 
-- It opens under the arrow's list, or above the arrow when the arrow's middle sits in the lower half of the screen, `SPACE.NEAR` away either way.
-- It stays open while the mouse is over the arrow (inside its hit rect, `routes.IsMouseOverArrow`) or the menu, and closes `CLOSE_DELAY` (0.25 seconds) after it leaves both, or at once when the arrow hides. Escape closes it (`UISpecialFrames`).
-- Rows, groups split by separators (a 1px `SEPARATOR` line at 35% alpha in a `SPACE.NEAR` gap):
-  - The header: "Quest Arrow" in gold, "PWQL" muted on the right.
-  - "Ignore <objective>" (`ROUTES_MENU_IGNORE`, the label from `routes.TaskLabel`: the objective's text, or "Wayward Weapons Turn-In") for each objective or turn-in still to do at what the arrow shows (`routes.arrowTarget`), in the list's quest order, each quest's objectives in log order, then its turn-in. Then, after a separator, the same for its Next Objective (`routes.arrowNext`), so the next waypoint can be ignored ahead of time; a task in both is offered once. Nothing for the corpse.
-  - Show Next Objective, On in `ON` green or Off in `OFF` red (`showNextObjective`, the same setting as Options, through `routes.SetSetting`). With it off, the arrow lists no Next Objective, and its Ignore rows go too.
-  - Show Upcoming Turn-Ins (`showUpcomingTurnIns`, the same setting as the Quest Arrow panel's), which puts each quest's turn-in on the route before its objectives are done. The row calls `routes.SetSetting` and then `routes.RequestPlan`, so the route changes at once; the setting is in the signature too.
-  - Under them, in a party only (not a raid group): Show Party Objectives (`partyQuests`, the same setting as Options, through `routes.SetPartyQuests`). With it off, nothing follows it. With it on, a separator, then "Objectives from <name>" for each member, offline ones included (`routes.PartyMembers(true)`, sorted by name), the name in class color, On or Off (`routes.SetMemberIgnored`). A member whose objectives can't be on the route gets a row that can't be clicked, its reason muted on the right, checked in this order: "Offline"; "No Questie" (`routes.MemberHasQuestie`); "Out of Zone" (`routes.IsUnitOutOfZone`), left out until they're back. The row keeps its place for when that changes.
-  - The ignore list (`routes.IgnoredTasks`), in the order they were ignored: each label, "Ignored" in `OFF` red on the right. A click puts that one back on the route (`routes.UnignoreTask`). Only those whose quest the player or party still has are listed; nothing shows when it's empty.
-  - The click hints, in `INFO` blue: Drag, Move Quest Arrow (only while it isn't locked), and Middle-Click, Clear Ignore List.
-- Each row is a line's height plus `SPACE.LINE` above and below, and the menu is at least 128px wide (`MIN_WIDTH`). Only rows that do something take the mouse, and they highlight in gold at 16% (`HIGHLIGHT_ALPHA`).
-- It refreshes every `REFRESH_INTERVAL` (0.5 seconds) while open, on every listener call, and after a row's click. The layout is keyed by each row's kind and text and rebuilt only when that changes. The actions are rebound on every refresh, since a new plan makes new task tables.
+#### The Quest Arrow's Item Buttons
 
-### Party Members' Quests
+Use Item buttons beside the quests listed where the player is (the waypoint and "While You're Here"), as Questie's tracker has them, so the tracker isn't needed. Gated by `showItemButtons` (Quest Arrow panel, hidden with `showQuests` off). `Routes-Arrow-Item-Choice.lua` says which and where (`routes.WantedItemButtons`); `Routes-Arrow-Items.lua` owns the buttons.
 
-With `partyQuests` on (the default), in a party but not a raid group (a raid's every quest would swamp the route), `routes.PartyQuests` (`Routes-Party.lua`) reads Questie's shared logs, `QuestieComms.remoteQuestLogs` (by quest, then by member, then each objective's `fulfilled`, `required` and `finished`).
+Which items (per quest, up to `ITEMS_PER_QUEST`, in Questie's tracker order):
 
-- A quest some sharing member has and the player doesn't becomes a quest shaped like Questie's own (`party = true`, its name and level from `QuestieDB.GetQuest`). The quest IDs are listed before any work, as Questie can add to its logs while a yield waits.
-- A member counts (`IsSharing`) while online (`UnitIsConnected`), in the player's zone (`routes.IsMemberOutOfZone`, which counts a member as in zone where the client won't say where either one is, as in a dungeon), not left out from the menu (`routes.ignoredMembers`), and not hiding the quest from the party (`CommsVisibility.ShouldShowPartyObjective`, in a `pcall`).
-- Its objectives are built once per index from `QuestieDB.GetQuest(questID).ObjectiveData`, with a yield after each, since the spawn list builder is the slow part:
-  - The description is the objective text, or its target's name by query (`QueryNPCSingle` for monster and kill credit, `QueryObjectSingle`, `QueryItemSingle`).
-  - The color comes from `QuestieLib:ColorWheel()`.
-  - The `spawnList` comes from Questie's own builder for a party member's objectives, `QuestieQuest.private.objectiveSpawnListCallTable[Type]`.
-- `routes.MemberHasQuestie(name)` says whether a member has shared anything over Questie: an entry under their name, or their short name, in `QuestieComms.remotePlayerClasses` or any quest of `remoteQuestLogs`. The game tells nothing of another player's quests the player doesn't have, so a member without Questie adds nothing. A member with Questie but no quests, or one whose first share hasn't arrived yet, reads as without it too.
-- Each objective's count is the fewest any member who still needs it has, and it is done when no member needs it. `members` holds the names that still need it, sorted.
-- These quests are kept while any member has them, so their objective tables, and the blobs cached on them, last between plans.
-- `routes.PartyProgress` works out the same progress without touching Questie's database, cheap enough for every check: the signature and the ignore list's filter use it, never `routes.PartyQuests`.
-- Members are matched by name as Questie keys its shared logs (`routes.UnitFullName`): the first name, without the realm, except on WoW Forever, where every character has a surname that `UnitName` returns in the realm's place, so the name is both ("Cyralene Black"). A name that is a secret value (`ns.IsReadable`) gives nil. The Quest Arrow's name lines, its menu's switches and the ignore list all use it, and Questie's keys lose only a realm after a hyphen (`Ambiguate(name, "short")`).
-- Their nodes and camps are keyed `questID:p<index>` and marked `party`. Dungeon and raid quests are left out, as the player's own objectives are. Their turn-ins are never routed, since only the player can turn in, and their progress is not noted for "working on it" (`routes.NoteProgress` reads only the player's log).
+- The client's quest item, `GetQuestLogSpecialItemInfo(logIndex)` (feature-tested; Classic Era and TBC lack it), while in the bags. Once the quest is done, only if its `showItemWhenComplete` return says so.
+- Then, while not done, items Questie's database names (`QuestieDB.GetQuest`): `sourceItemId`, `requiredSourceItems`, `ObjectiveData` entries of `Type` `"item"`. Each only while owned (`GetItemCount`, which counts equipped) and usable (`GetItemSpell`) or wearable (`IsEquippableItem`). The database list is cached per quest.
+- Player's own quests only (`routes.IsOnQuest`, not `quest.party`): only the player's bags count. One item shared by two quests shows once.
 
-### Ghosts
+Where:
 
-While the player is a ghost, `routes.Origin` (`Routes-Geography.lua`) sets out from the corpse (`routes.CorpsePosition`):
+- `routes.arrowTitleRows`: `rows` of `{ questID, top, room, dim }`, block `right` edge, `version` bumped per layout. The Next Objective's quest gets no row: the player isn't there.
+- Button at `SPACE.NEAR` past the block's right edge, level with the title less `SPACE.TIGHT`; a second `SPACE.LINE` further. `BUTTON_SIZE` when the quest's lines leave room, else `SMALL_BUTTON_SIZE`, so a one-line quest's button clears the next quest's. Dimmed rows dim their buttons (`DIM_ALPHA`).
+- `SecureActionButtonTemplate` (`type1` `"item"`, `item1` `"item:<id>"`), parented and anchored to `UIParent`, never to the arrow: a protected frame under or anchored to the arrow makes the arrow protected, and it couldn't move or hide in combat. Placed by the arrow's `GetLeft`/`GetTop` at the arrow's scale. A hook on the arrow's `OnUpdate` re-picks every `CHECK_INTERVAL` or when `version` changes, and re-places on any frame the arrow moved or rescaled (follows a drag). Arrow `OnHide` clears them. Clamped to screen.
 
-- `C_DeathInfo.GetCorpseMapPosition` is asked of the ghost's map and then each parent, since the graveyard can be a zone away. A position outside 0 to 1, or at 0, 0, is no answer.
-- The zone comes from the deepest map at the corpse (`C_Map.GetMapInfoAtPosition`), raised from a cave or building to its zone.
-- The route covers the corpse's zone and starts with the corpse waypoint (`routes.MakeStops`, radius `CORPSE_RADIUS`, 30 yards), and `PlayerMovedFar` never replans for moving, since the corpse stays put.
-- Where the client won't say (a corpse in a dungeon), the route sets out from the player.
-- The signature ends in "ghost" or "alive", and `PLAYER_DEAD`, `PLAYER_ALIVE` and `PLAYER_UNGHOST` bring the next check forward, so releasing and resurrecting both replan.
-- The corpse can't be ignored: `routes.SkipStop` passes over it and prints nothing when it's all a waypoint holds, `routes.IgnoreTask` refuses it, its marker has no right-click, and the menu offers no row for it.
+Combat:
 
-### Ignoring and Resetting
+- Out of combat everything is set (`SetUp`, `Clear`). In combat item, size, place and visibility can't change, so `Sync` only compares: a mismatched button (item, place, or arrow moved/hid) fades to `STALE_ALPHA` and still uses its item. `routesItems:OnPlayerRegenEnabled` catches up if anything waited.
+- Count (shown above 1), cooldown (`CooldownFrameTemplate`, `BAG_UPDATE_COOLDOWN`) and range tint are plain regions, so they update in combat. Used up in combat: desaturated until it can hide.
+- Range: icon tinted `ARROW_WRONG_WAY` while `IsItemInRange(item, "target")` is false, every `RANGE_INTERVAL` and on `PLAYER_TARGET_CHANGED`. Not asked for a friendly target in combat (client won't answer). Secret values on WoW Forever (cooldown, range, friendliness) leave the display as it was: nothing may test them.
 
-`Routes-Ignore.lua` holds the ignore list. `routes.skipped` maps a task key to `{ label, questID, order }`: its `routes.TaskLabel`, its quest, and when it was ignored, so the menu keeps that order. Every way in goes through one `Ignore`, which leaves an entry already there alone.
+Clicking and the key:
 
-- `routes.SkipStop(stop)`, the waypoint marker's right-click, ignores each task at the waypoint but the corpse, prints `ROUTES_SKIPPED` with each quest's Questie link (`routes.QuestLink`, `Routes-Core.lua`, through `QuestieLink.GetQuestHyperLink` in a `pcall`, else the quest name), and plans again.
-- `routes.IgnoreTask(task)`, from the menu or a camp's right-click, ignores one task and prints `ROUTES_IGNORED` (`routes.BuildIgnoredMessage`, which the Quest Arrow panel's Example draws too).
-- `routes.UnignoreTask(key)`, from the menu or a camp's right-click, takes one back off and prints `ROUTES_UNIGNORED`.
-- `routes.IgnoredTasks()` is the list as the menu shows it, sorted by `order`, with only those whose quest the player still has (or, for a `:p<index>` key, the party per `routes.PartyProgress`). One whose quest is gone stays in `routes.skipped`, unlisted.
-- `routes.ClearIgnored()`, the arrow's middle-click, empties `routes.skipped`, prints `ROUTES_IGNORE_CLEARED` and plans again. Ignored members, `routes.engaged` and `routes.worked` stay.
-- `routes.SetMemberIgnored(name, ignored)` leaves out every quest a party member shares (`routes.ignoredMembers`, checked in `IsSharing`), printing `ROUTES_MEMBER_IGNORED` or `ROUTES_MEMBER_INCLUDED`. Quests the player also has stay, without that member's name under them.
-- `routes.SetPartyQuests(on)` switches `partyQuests` and plans again at once.
-- Ignored keys and members are in the signature and last until cleared, a reset, a reload, or the player joins or leaves a group. They are never saved.
-- Joining or leaving a group (`GROUP_JOINED`, `GROUP_LEFT`, party or raid) empties both `routes.skipped` and `routes.ignoredMembers` (`routes:OnGroupJoined` / `routes:OnGroupLeft`), since the party they were ignored in is gone. Only when something was ignored does it print `ROUTES_GROUP_JOINED_CLEARED` or `ROUTES_GROUP_LEFT_CLEARED` and plan again, so a login in a group, with nothing ignored yet, says nothing. `routes.engaged` stays.
+- Left-click uses the item. Acts on the up half regardless of `ActionButtonUseKeyDown` (`RegisterForClicks("AnyUp", "AnyDown")`, `useOnKeyDown` false), so a macro's `/click` (up only) works too.
+- `Bindings.xml` (loaded by the client itself, never in the TOCs) declares `CLICK PrettyWideQuestLogQuestItem1:LeftButton` (`routes.USE_ITEM_COMMAND`). `BINDING_HEADER_PRETTYWIDEQUESTLOG` and its `BINDING_NAME_` global are set in `Routes-Arrow-Items.lua`. Button 1 is created at load so the binding always finds it; others are made out of combat as needed and kept.
+- Tooltip: item (`SetHyperlink`), then click hints, plus the bound key on button 1.
+- `routes.ItemButtonsState` feeds Routes Context.
 
-Every call here plans through `routes.RequestPlan`, so one made in combat takes effect once the fight ends (see Combat).
+#### The Quest Arrow's Menu
 
-`routes.ResetObjectives`, the middle-click on any map marker ("Reset All Routes"), clears `routes.skipped`, `routes.ignoredMembers`, `routes.engaged` and `routes.worked` (camps worked and left lately), so only a camp the player stands in now goes first again. It prints `ROUTES_RESET` and plans again.
+`Routes-Arrow-Menu.lua` builds `PrettyWideQuestLogRouteMenu` at `DIALOG` strata. Plate: `Route-Menu.tga` drawn at `PLATE_SCALE` (sharp edges), nine-sliced with `PLATE_CORNER` corners so they never stretch, reaching past the menu by `PLATE_MARGIN` (its shadow).
 
-### Client Differences
+- Opens under the list, or above the arrow when the arrow sits in the lower half of the screen, `SPACE.NEAR` away.
+- Stays open while the mouse is over the arrow (`routes.IsMouseOverArrow`) or menu; closes `CLOSE_DELAY` after leaving both, at once when the arrow hides, and on Escape (`UISpecialFrames`).
+- Rows, groups split by `SEPARATOR` lines:
+  - Header: `TAB_QUEST_ARROW`, `ADDON_SHORT_NAME` muted.
+  - `ROUTES_MENU_IGNORE` (label from `routes.TaskLabel`) for each task left at `routes.arrowTarget` and not already ignored, in the list's quest order, objectives in log order then turn-in; then the same for `routes.arrowNext`. A task in both offered once. None for the corpse. Ignored ones are filtered here because an ignored task stays at the waypoint until the next plan, which in combat waits for the fight to end.
+  - Show Next Objective (`showNextObjective`, `routes.SetSetting`); off removes the Next Objective and its Ignore rows.
+  - Show Upcoming Turn-Ins (`showUpcomingTurnIns`): `routes.SetSetting` then `routes.RequestPlan`, since it changes the route (it's in the signature).
+  - Party only (`routes.IsInParty`, not raid): Show Party Objectives (`partyQuests`, `routes.SetPartyQuests`). On: each member (`routes.PartyMembers(true)`, offline included) as `ROUTES_MENU_MEMBER_OBJECTIVES` in class color, On/Off (`routes.SetMemberIgnored`). Unclickable status row instead, checked in order: Offline; No Questie (`routes.MemberHasQuestie`); Out of Zone (`routes.IsUnitOutOfZone`). The row keeps its place for when that changes.
+  - Ignore list (`routes.IgnoredTasks`, ignore order), "Ignored" in `OFF`; click puts it back (`routes.UnignoreTask`).
+  - Hints: Drag (only unlocked), Middle-Click clear ignore list.
+- Rows are a line plus `SPACE.LINE` above/below; min `MIN_WIDTH`. Only actionable rows take the mouse; highlight at `HIGHLIGHT_ALPHA`.
+- Refreshes every `REFRESH_INTERVAL` while open, on listener calls, after a click. Layout keyed by each row's kind and text. Actions rebound every refresh: a new plan makes new task tables.
 
-Routes runs on all four clients from the same files. It reads `ns.FLAVOR` in one place, `routes.UnitFullName`, to join WoW Forever's surname to the name. Everything else is a feature test or a measure:
+#### Party Members' Quests
 
-- A turn-in is routed only for a quest the game's log has (`routes.IsOnQuest`): `C_QuestLog.IsOnQuest`, else `GetQuestLogIndexByID`, else Questie's log stands.
-- Timed quests (`routes.TimedQuests`) come from WoW Forever's `C_QuestLog.GetQuestTimers`, else `GetQuestTimers` and `GetQuestIndexForTimer` with `GetQuestLogTitle`'s quest ID, so the quest log's selection is never touched.
-- Names and classes that may be secret values on WoW Forever go through `ns.IsReadable` (`routes.UnitFullName`, `routes.ClassColor`).
-- The markers' size is divided by the map's effective scale, so Classic Era and TBC's larger full-size map doesn't draw them bigger.
-- The world map may load on demand, which the `ADDON_LOADED` row covers.
-- Instance quests go by each flavor's own `ns.QUEST_TAG_SUFFIXES`, since tag IDs differ by flavor.
+With `partyQuests`, in a party but not a raid (a raid's quests would swamp the route), `routes.PartyQuests` (`Routes-Party.lua`) reads `QuestieComms.remoteQuestLogs` (quest → member → objective `fulfilled`/`required`/`finished`).
 
-### Questie
+- A quest some sharing member has and the player doesn't becomes a Questie-shaped quest (`party = true`, name/level from `QuestieDB.GetQuest`). Quest IDs listed before any work: Questie can add to its logs while a yield waits.
+- A member counts (`IsSharing`) while not left out (`routes.ignoredMembers`), present (`IsPresent`: online and in the player's zone, cached once a frame since the arrow asks per quest and objective), and not hiding the quest (`CommsVisibility.ShouldShowPartyObjective`, `pcall`). A connection WoW Forever keeps secret in combat counts as offline. `routes.IsMemberOutOfZone`/`IsUnitOutOfZone` count a member as in zone when either map is unknown (dungeon) or secret.
+- Objectives built once per index from `ObjectiveData`, yield after each (spawn list builder is the slow part): description from text or target name (`QueryNPCSingle` for monster/killcredit, `QueryObjectSingle`, `QueryItemSingle`); color from `QuestieLib:ColorWheel()`; `spawnList` from `QuestieQuest.private.objectiveSpawnListCallTable[Type]`.
+- Count: fewest any still-needing member has; done when none needs it. `members`: sorted names still needing it.
+- Quests kept while any member has them, so objective tables and their cached blobs last between plans.
+- `routes.PartyProgress`: same progress without touching Questie's database, cheap enough for every check. The signature and ignore-list filter use it, never `routes.PartyQuests`.
+- `routes.MemberHasQuestie(name)`: an entry under their name or short name in `remotePlayerClasses` or any `remoteQuestLogs` quest. The game tells nothing of others' quests, so a member without Questie adds nothing; one with no quests or no share yet reads the same.
+- `routes.QuestieHasUnitOnQuest(unit, questID)`: for the quest list's party count (`Forever-Quest-List.lua`), independent of `partyQuests`; Questie's shares reach any distance, the game's only in range.
+- Names (`routes.UnitFullName`): first name without realm, except WoW Forever (`ns.FLAVOR`), where `UnitName`'s second return is a surname and Questie keys "First Surname". Secret name gives nil. Questie keys compared after `Ambiguate(name, "short")`.
+- Nodes and camps keyed `questID:p<index>`, marked `party`. Dungeon/raid quests left out. Turn-ins never routed (only the player can turn in); progress not noted for "working on it" (`routes.NoteProgress` reads only the player's log).
+- Map: Questie's icons for every party objective are hidden with the route (see The Zone Map); marker ring `ROUTE_PARTY_RING`.
+
+#### Ghosts
+
+While a ghost, `routes.Origin` (`Routes-Geography.lua`) starts from the corpse (`routes.CorpsePosition`):
+
+- `C_DeathInfo.GetCorpseMapPosition` asked of the ghost's map then each parent (graveyard can be a zone away). Outside 0-1, or 0,0, is no answer.
+- Zone: deepest map at the corpse (`C_Map.GetMapInfoAtPosition`), raised from cave/building to zone.
+- Route covers the corpse's zone, first waypoint the corpse (`routes.MakeStops`, radius `CORPSE_RADIUS`). `PlayerMovedFar` (`Routes-Planner.lua`) never replans for moving: the corpse stays put.
+- Client won't say (corpse in a dungeon): route starts from the player.
+- Signature ends "ghost"/"alive"; `PLAYER_DEAD`, `PLAYER_ALIVE`, `PLAYER_UNGHOST` bring the next check forward (`routes.OnPlayerDead` etc.), so release and resurrect both replan.
+- Corpse can't be ignored: `routes.SkipStop` passes over it (silent when it's all a waypoint holds), `routes.IgnoreTask` refuses it, no right-click, no menu row.
+
+#### Ignoring and Resetting
+
+`Routes-Ignore.lua`. `routes.skipped`: task key → `{ label, questID, order }` (`routes.TaskLabel`, quest, ignore order for the menu). Every path goes through `Ignore`, which leaves an existing entry alone.
+
+- `routes.SkipStop(stop)` (waypoint right-click): ignores each non-corpse task, prints `ROUTES_SKIPPED` with Questie links (`routes.QuestLink`, `Routes-Core.lua`, `QuestieLink` in a `pcall`, else the name).
+- `routes.IgnoreTask(task)` (menu, camp right-click): one task, prints via `routes.BuildIgnoredMessage` (also drawn by the Quest Arrow panel's Example).
+- `routes.UnignoreTask(key)`: prints `ROUTES_UNIGNORED`.
+- `routes.IgnoredTasks()`: menu list sorted by `order`, only where the player still has the quest (for a `:p<index>` key, the party per `routes.PartyProgress`). Gone quests stay in `routes.skipped`, unlisted.
+- `routes.ClearIgnored()` (arrow middle-click): empties `routes.skipped`, prints `ROUTES_IGNORE_CLEARED`. Ignored members, `routes.engaged`, `routes.worked` stay.
+- `routes.SetMemberIgnored(name, ignored)`: leaves out every quest a member shares (`routes.ignoredMembers`, checked in `IsSharing`). Quests the player also has stay, minus that member's name.
+- `routes.SetPartyQuests(on)`: switches `partyQuests` and replans.
+- Ignored keys and members are in the signature, never saved; they last until cleared, reset, reload, or a group change.
+- `GROUP_JOINED`/`GROUP_LEFT` (`routes:OnGroupJoined`/`OnGroupLeft`) empty both lists (the party they were ignored in is gone). Prints `ROUTES_GROUP_JOINED_CLEARED`/`..._LEFT_CLEARED` and replans only when something was ignored, so a login in a group says nothing. `routes.engaged` stays.
+- Every call plans through `routes.RequestPlan`, so in combat it takes effect after the fight (see Combat).
+
+`routes.ResetObjectives` (middle-click on any map marker): clears `routes.skipped`, `routes.ignoredMembers`, `routes.engaged` and `routes.worked`, so only a camp the player stands in now goes first. Prints `ROUTES_RESET`, then `routes.CancelPlan` (a plan underway was made with the old lists and would put them back) and replans.
+
+#### Client Differences
+
+Same files on all four clients. `ns.FLAVOR` is read in one place (`routes.UnitFullName`, WoW Forever surnames); everything else is a feature test or a measure:
+
+- Turn-ins only for quests the game's log has (`routes.IsOnQuest`): `C_QuestLog.IsOnQuest`, else `GetQuestLogIndexByID`, else Questie's log stands.
+- Timed quests (`routes.TimedQuests`): WoW Forever's `C_QuestLog.GetQuestTimers`, else `GetQuestTimers` + `GetQuestIndexForTimer` + `GetQuestLogTitle`'s quest ID, so the log selection is never touched.
+- Secret values (WoW Forever) go through `ns.IsReadable`: names, classes, party connection, unit maps, item cooldown/range/friendliness.
+- Marker size divided by the map's effective scale (Classic Era/TBC's larger full-size map).
+- World map may load on demand (`ADDON_LOADED` row).
+- Instance quests by each flavor's `ns.QUEST_TAG_SUFFIXES` (tag IDs differ by flavor).
+- Blizzard quest layers hidden only where the mixins exist (WoW Forever); quest item from `GetQuestLogSpecialItemInfo` only where it exists; TomTom's `"poi"` only where TomTom offers `SuppressFeature`.
+
+#### Questie
 
 Without Questie there is no route:
 
-- `routes.IsQuestieReady()` (`Routes-Questie.lua`) needs `Questie.started` and Questie's copy of HereBeDragons, `HereBeDragonsQuestie-2.0` (found through `LibStub`'s silent flag, `routes.HereBeDragons`).
-- Until then nothing plans, no camps are built, the arrow has nothing to show, and the Options panels still show.
+- `routes.IsQuestieReady()` (`Routes-Questie.lua`) needs `Questie.started` and Questie's `HereBeDragonsQuestie-2.0` (via `LibStub` silent, `routes.HereBeDragons`).
+- Until then nothing plans, no camps, the arrow has nothing; Options panels still show.
 
-Every Questie module comes through `ns.ImportQuestieModule` (`Features/Utilities.lua`), which returns nil without `QuestieLoader` or for anything but a table. Database queries, quest methods, comms visibility and the link builder are called in a `pcall`; ZoneDB's and Phasing's lookups are called directly once found. What Routes uses:
+Modules come through `ns.ImportQuestieModule` (`Utilities.lua`), nil without `QuestieLoader` or for a non-table. Database queries, quest methods, comms visibility and the link builder are `pcall`ed; ZoneDB and Phasing lookups called directly once found. What Routes uses:
 
-- Questie's quest log through `ns.QuestieQuestLog` (`Features/Utilities.lua`): `ActiveQuests.GetAll` (Questie 12.6.3 on, each entry's `.quest`, an entry without one being a quest Questie's database lacks), or `QuestiePlayer.currentQuestlog` before it. `ImportModule` hands back an empty table for a module it lacks, so `GetAll` is the test. From each quest: `IsComplete`, `Objectives`, `SpecialObjectives`, `Finisher`, `name` and `level`.
-- `QuestieDB.QueryNPCSingle`, `QueryObjectSingle`, `QueryItemSingle`, `QueryQuestSingle` (`questFlags`, for escorts), `GetQuest`, `GetQuestTagInfo` and `questTagIds`.
-- `ZoneDB:GetUiMapIdByAreaId`, `ZoneDB:GetDungeonLocation` and `Phasing.IsSpawnVisible`.
-- `QuestieComms.remoteQuestLogs`, `QuestieComms.remotePlayerClasses` and `CommsVisibility`.
-- `QuestieLib:ColorWheel`, `QuestieLink:GetQuestHyperLink` and `QuestieQuest.private.objectiveSpawnListCallTable`.
-- `Questie.usedIcons`, `Questie.ICON_TYPE_COMPLETE`, `ICON_TYPE_INCOMPLETE` and `ICON_TYPE_EVENT`.
-- HereBeDragons' world positions, zone coordinates and `GetWorldVector`, and the pin library `HereBeDragonsQuestie-Pins-2.0`'s `worldmapProvider` and its `HereBeDragonsPinsTemplateQuestie` pins (`pin.icon.data`, `pin.icon.texture`).
+- Quest log: `routes.QuestLog` over `ns.QuestieLogEntries` (`Utilities.lua`): `ActiveQuests.GetAll` (Questie 12.6.3 on; each entry's `.quest`, an entry without one is a quest Questie's database lacks and is skipped), else `QuestiePlayer.currentQuestlog`. `ImportModule` returns an empty table for a missing module, so `GetAll` is the test. From each quest: `IsComplete`, `Objectives`, `SpecialObjectives`, `Finisher`, `name`, `level`.
+- `QuestieDB.QueryNPCSingle`, `QueryObjectSingle`, `QueryItemSingle`, `QueryQuestSingle` (`questFlags`, escorts), `GetQuest` (party quests, item buttons), `GetQuestTagInfo`, `questTagIds`.
+- `ZoneDB:GetUiMapIdByAreaId`, `ZoneDB:GetDungeonLocation`, `Phasing.IsSpawnVisible`.
+- `QuestieComms.remoteQuestLogs`, `remotePlayerClasses`, `CommsVisibility`.
+- `QuestieLib:ColorWheel`, `QuestieLink:GetQuestHyperLink`, `QuestieQuest.private.objectiveSpawnListCallTable`.
+- `Questie.usedIcons`, `ICON_TYPE_COMPLETE`, `ICON_TYPE_INCOMPLETE`, `ICON_TYPE_EVENT`.
+- HereBeDragons world positions, zone coordinates, `GetWorldVector`; `HereBeDragonsQuestie-Pins-2.0`'s `worldmapProvider` (`RefreshAllData`, `HandlePin(_, icon)`) and its `HereBeDragonsPinsTemplateQuestie` pins (`pin.icon`, `pin.icon.data`, `pin.icon.texture`, `ObjectiveData.IsPartyObjective`).
 
-Without `ZoneDB` no objective has a place. Without `Phasing` every spawn counts. Routes Context shows each of these, along with whether the `QuestiePlayer` module exists, which only a Questie older than 12.6.3 needs.
+Without `ZoneDB` no objective has a place; without `Phasing` every spawn counts. Routes Context reports each, plus whether `QuestiePlayer` exists (needed only before 12.6.3).
 
-## Resizing and Scale
+### Resizing and Scale
 
-The grip in the bottom-right corner (`ns.CreateResizeGrip`, `Features/Window.lua`) drags the window taller. It sits `GRIP_INSET` (4px) inside the drawn border, or with ElvUI's skin on Classic Era and TBC, `SPACE.TIGHT` inside the skin's backdrop (`AnchorGrip`, `Classic-Quest-Log.lua`). `ns.ClampHeight` snaps the height to whole list rows, never below the default (`LAYOUT.BASE_HEIGHT`, 513) and never closer than `MINIMUM_BOTTOM_CLAMP` (16px) to the bottom of the screen, measured down from the window's top, so a window dragged lower has less room to grow. Heights are in the window's own units, so the screen's measures are divided by the window's scale. Both panes take the window's height less `LAYOUT.PANE_INSET` (151px); the own window's details pane gets 4px more. The height is saved to `global.height` when the drag ends, when the mouse is let go anywhere else (the grip's `OnUpdate` sees the button up), or when the grip hides mid-drag, and `ns.OnWindowResizeStopped` then runs for whatever waits on the final size (the Mists portrait refits). The saved height is applied every time the window opens, not at load, because the screen size and UI scale aren't settled at load and the clamp would cut it short. The value clamped as the window opens is never written back, so a smaller screen shrinks the window, not the setting. Only the plain lower half of each upper art piece stretches (`ns.CreateWindowArt`, `TOP_SPLIT`); the top half carries the border and keeps its proportions.
+- Grip: `ns.CreateResizeGrip` (`Window.lua`), bottom-right, `LAYOUT.GRIP_INSET` inside the border; under ElvUI's skin on Classic Era and TBC anchored inside `QuestLogFrame.backdrop` (`AnchorGrip`, `Classic-Quest-Log.lua`), since the frame's corner sits outside the visible window.
+- `ns.ClampHeight`: whole list rows (`ns.GetQuestRowHeight` on Classic Era and TBC, `LAYOUT.QUEST_ROW_HEIGHT` on the window), at least `LAYOUT.BASE_HEIGHT`, no closer than `LAYOUT.MINIMUM_BOTTOM_CLAMP` to the screen bottom measured from the window's top (a lower window grows less). Window units: screen measures divided by scale.
+- Panes get height less `LAYOUT.PANE_INSET` (window's details slightly more, `ApplyHeight`). On Classic Era and TBC that sets row capacity (`ns.SetQuestRowCount`) and reruns `QuestLog_Update` on change.
+- `global.height` saves when the drag ends: mouse-up, button released elsewhere (grip `OnUpdate`), or grip hidden mid-drag; then `ns.OnWindowResizeStopped` (hooked by `Mists-Quest-Portrait.lua`).
+- Saved height applies on every open, not at load: screen size and UI scale aren't settled at load, so the clamp would cut it. The clamped value is never saved, so a smaller screen shrinks the window, not the setting.
+- Art: only the plain lower half of each upper piece stretches (`ns.CreateWindowArt`, `TOP_SPLIT`); the top half holds the border.
+- Window Scale (`global.scale`, slider in `Options-Quest-Log.lua`): on open, in `ns:OnDatabaseReady` on the window clients, and via `ns.ApplyWindowScale` on slider move (re-clamping height while open).
+- Map Scale (`global.mapScale`): the map holder's scale on top of the window's (the map is its child); `ns.ApplyMapScale` (`Quest-Map.lua`) on window show and slider move.
+- Reset Window (`ns.ResetWindow`, confirmed): clears height (and `point` on the window clients), writes `scale` / `mapScale` from `ns.DATABASE_DEFAULTS` rather than clearing (AceDB fills plain defaults only at load). `mapHidden` stays.
+- Classic Era and TBC: Blizzard's panel manager keeps `BOTTOM_CLAMP` below the window for the action bars; `BottomClamp` trades it a pixel per pixel of extra height down to `MINIMUM_BOTTOM_CLAMP`, the only room to grow at normal UI scale. Each height change sets the `height` and `bottomClampOverride` panel attributes, or the manager scales the window down to fit what it thinks it needs.
+- WoW Forever and Mists: dragging within the top `LAYOUT.PANE_TOP` moves the window and saves `global.point`; none saved means `DEFAULT_POINT` (`Forever-Quest-Log.lua`).
 
-Window Scale (`global.scale`, 70% to 130% in 5% steps, default 100%) is applied as the window opens, on WoW Forever and Mists also as the saved settings load (`ns:OnDatabaseReady`, along with the saved position), and through `ns.ApplyWindowScale` the moment the slider moves, which, while the window is open, clamps the height to the screen again. Map Scale (`global.mapScale`, same range) scales the docked map on top of the window's scale, since the map is the window's child: `ns.ApplyMapScale` (`Quest-Map.lua`) sets it on the map's holder whenever the window shows and when the slider moves. The Quest Log panel's Reset Window button (`ns.ResetWindow`, confirmed) clears the height and, on WoW Forever and Mists, the position, and writes Window Scale and Map Scale back from `ns.DATABASE_DEFAULTS` rather than clearing them (see Saved Variables). It leaves `mapHidden` alone.
+### Moving from Wide Quest Log Plus
 
-On Classic Era and TBC the window belongs to Blizzard's panel manager, which keeps a 152px clamp below it (`BOTTOM_CLAMP`, 140 + 12) to clear the action bars. `ApplyHeight` trades that clamp away a pixel for every pixel of extra height, down to `MINIMUM_BOTTOM_CLAMP`, because at a normal UI scale there's no other room to grow. Whenever the height changes it tells the panel manager the new height and clamp (the `height` and `bottomClampOverride` panel attributes), or the manager scales the whole window down to fit the space it thinks the window needs.
+- This add-on continues Wide Quest Log Plus (folder `WideQuestLogPlus`) under a new name, folder and SavedVariables table. Both reshape the same Blizzard quest log, so they must never run together.
+- While `ns.PREDECESSOR_ADDON_NAME` (`Data/Data.lua`) is loaded, `ns:WarnIfPredecessorLoaded()` (`Features/Core.lua`) prints `CHAT_PREDECESSOR_LOADED` on every login, whatever the welcome toggle: it's a conflict, not a greeting. It disables neither add-on.
+- The old name lives only in that constant, that string's locale entries and one Quest Log Context line (`Diagnostics/Manifests.lua`). Don't carry it anywhere else, the old `/wqlp` and `/widequestlogplus` commands included. Its settings are in its own SavedVariables file and aren't carried over.
 
-On WoW Forever and Mists the window is the add-on's own, so it also moves: dragging its title bar (the top `PANE_TOP` pixels, 75) saves its position to `global.point`. With none saved it sits at `DEFAULT_POINT`, top left, 104px down.
+### Game Names
 
-## Moving from Wide Quest Log Plus
+What the game names comes from the client, never `Locales/`; this add-on's lookups:
 
-This add-on is the continuation of Wide Quest Log Plus (folder `WideQuestLogPlus`), rehosted under a new name, folder and SavedVariables table. Both hook and reshape the same Blizzard quest log, so they must never run together. While `ns.PREDECESSOR_ADDON_NAME` (`Data/Data.lua`) is loaded, `ns:WarnIfPredecessorLoaded()` (`Features/Core.lua`) prints `CHAT_PREDECESSOR_LOADED` on every login and reload, whatever the welcome toggle says: it's a conflict, not a greeting. It doesn't disable either add-on itself. Outside comments, the old name appears in the code only in that constant, that string's locale entries, and one line in the Quest Log Context report (`Diagnostics/Manifests.lua`) saying whether it's loaded. Don't carry it anywhere else, the old `/wqlp` and `/widequestlogplus` commands included.
+- **Quest tags**: `ns.QUEST_TAG_SUFFIXES` (`Data/{Game}/Quest-Tags-{Game}.lua`) maps tag IDs to the add-on's own letters (locale keys, `ns.QuestSuffix`). The tag comes from `ns.GetQuestTagByID` (`Quest-Log-API.lua`), or Questie's corrected tag first in the quest chain and Routes. A tag's localized name is never compared.
+- **Sample quests and areas** (`ns.SAMPLE_QUEST_IDS`, `ns.SAMPLE_DUNGEON_AREA_ID`, `ns.SAMPLE_ZONE_AREA_ID`): `ns.GetQuestTitleByID` (requesting loads until they arrive) and `C_Map.GetAreaInfo`. Each has a Game Names row.
+- **Maps**: the client's `uiMapID`, named by `C_Map.GetMapInfo` in the map's zone dropdown. Map art and texture file IDs name nothing a player reads.
+- **Items, spells, classes**: the add-on stores no item or spell ID of its own; reward names and icons come from the quest log calls, Use Item buttons' items from the client or Questie's database. `ns.CLASS_COLORS` is keyed by class token, colors only.
+- **Zone names** are the quest log's headers. The current-zone mark compares header text with `GetRealZoneText()` (`ns.IsCurrentZone`, `Quest-Sort.lua`), a name match, because neither quest log gives headers a map ID; dungeon quests also match the instance name and `C_Map.GetAreaInfo` of Questie's zone IDs (`Dungeon-Quest-Lookup.lua`).
+- **Quest, NPC, object names** in tooltips, the chain, the turn-in line, the route and the Quest Arrow come from the client or Questie's data.
+- **Blizzard's GlobalStrings** the add-on shows or matches (row tags, `QUEST_LOG`, the own window's buttons and headings, `ERR_QUEST_PUSH_*`) each have a Game Names row (`SHARED_LABELS`, `OWN_WINDOW_LABELS`, `OWN_WINDOW_STRINGS`, `QUEST_ID_LABELS` in `Diagnostics/Manifests.lua`). README-Notes lists the few labels deliberately kept as the add-on's own strings.
+
+## Files That Change Together
+
+- **New setting**: key in `ns.DATABASE_DEFAULTS.profile` (`global` only for reset-proof presentation, see Saved Variables) → control and locale keys on its feature's panel (`Options-Quest-Log.lua` builders `QuestLogToggle` / `SortSelect` / `SortSubOption` take `Hidden` and `Inactive`, map settings `MapHidden`; else `Options-Quality-of-Life.lua`) → read live at use (`ns.RefreshQuestLog()` or `ns.questMap.RequestRefresh()` from `set`; Quality of Life toggles already call `ns.ApplyQualityOfLifeSettings()`) → its context report line in `Diagnostics/Manifests.lua` (window size and scales: Display Context, `Settings-Reports.lua`). A Quality of Life setting read outside its panel also checks `enableQualityOfLife`.
+- **New Routes setting**: key in `ns.DATABASE_DEFAULTS.profile.routes` → control in `Options-Routes-Map.lua` or `Options-Quest-Arrow.lua` via the panel's `Toggle` (wraps `ns.OptionsRoutesToggle`, description from `<KEY>_DESCRIPTION`) or `ns.OptionsRoutesControl`, with the panel's hidden gate → read via `routes.Settings()`, written only via `routes.SetSetting` → if it changes what's planned, `routes.Signature()` (`Routes-Questie.lua`) or `routes.RequestPlan()` → a `RouteSetting` line in Routes Context (`ArrowLines`, `ZoneMapLines`, `PartyLines`).
+- **New event**: a row in `EVENTS` (`Features/Core.lua`), which the dispatcher and `ns.EVENT_NAMES` both read → handler at file scope or inside a Classic part; a second feature on the same event uses an owner table created at file scope and named in the row's third field. Never `RegisterEvent` in a feature file; an event one client lacks goes only in that client's files.
+- **New API call**: the list in `Diagnostics/Manifests.lua` for the clients that call it (`SHARED_`, `GIVER_PAGE_`, `LOG_INDEX_`, `CLASSIC_`, `OWN_WINDOW_`, `QUEST_ID_`, `INDEX_WINDOW_`, `ROUTES_`, `ITEM_BUTTON_FUNCTIONS`, the map lists; Blizzard frames and mixins in the matching `_TABLES`; a call taken one of two ways gets its own `_ROUTE` row; a read one data kind makes in `KIND_API_CHECKS`, `Validate-Data.lua`) → the global in `.luacheckrc` `read_globals` (or `globals` if written). A function only hooked by name needs no entry.
+- **New Routes file**: its place in `Features/Routes/Routes.xml`, after everything it captures by value → its file in the File Map. Nothing in the TOCs.
+- **New Features or Options file**: every TOC that loads it, in dependency order.
+- **New key binding**: `Bindings.xml` → `BINDING_HEADER_` / `BINDING_NAME_` globals set in the owning Lua file → those names in `.luacheckrc` `globals`. Renaming a binding loses players' keys.
+- **New share result**: `FIXABLE_RESULTS` (`Share-Reminders.lua`) → `SHARED_LABELS` and `SHARE_RESULTS` (`Manifests.lua`) → `.luacheckrc` `read_globals`. A new whisper key also goes in `SHARE_WHISPER_KEYS` (`Localization-Reports.lua`); check Message Length in ruRU.
+- **New quest tag kind**: its ID in each flavor's `Quest-Tags` file → `QUEST_SUFFIX_<KIND>` and `QUEST_TYPE_<KIND>` in `enUS.lua` → `LEGEND_ORDER` (`Quest-Display.lua`). Routes treats only `INSTANCE_KINDS` (`Routes-Questie.lua`) as instance quests.
+- **Sample quests**: `Data/{Game}/Sample-Quests-{Game}.lua` in every folder, Vanilla and Discovery both; with quests listed both area IDs are required. An empty list hides the Example lines (`ns.NoSampleQuests`).
+- **New data table**: `Data/{Game}/{Label}-{Game}.lua` in every folder (Vanilla/Discovery copies guarded by `ns.IS_DISCOVERY`) → every TOC, before `Data/Default-Settings.lua` → a row in `ns.DIAGNOSTIC_DATA_SOURCES` whose `label` matches the file name (`ns.DataSourceFileName`) and `kind` its ID kind (`kind = "value"` for a single setting).
+- **New flavor**: TOC with `X-Flavor` → `ns.EXPANSION` in `Data/Flavor.lua` → its four data files (out of `.pkgmeta`'s ignore list) → its quest log file set by which API it has (Classic rows, or the own window with its own tracking and takeover, zone actions by quest-ID support) → `Routes.xml` after `Quest-Map-Reveal.lua`, before Diagnostics, plus the two Routes panels → check `OWN_WINDOW` and `QUEST_ID_API` rows separately.
+- **Chat output change**: `Locales/enUS.lua` (one `%s` for the quest reference, no closing period) → Message Length report in ruRU against `ns.CHAT_MESSAGE_MAX_LENGTH`.
+- **A string an options file formats at load** (`MARK_UNTRACKED_DESCRIPTION`, `SHOW_DISTANCE_DESCRIPTION`, `SHOW_NEXT_OBJECTIVE_DESCRIPTION`, `QUESTS_LISTED_DESCRIPTION`): keep its `-- TRANSLATORS:` comment and placeholders in step, since a mismatch breaks the whole panel.
 
 ## Saved Variables
 
-`PrettyWideQuestLogDB` (`ns.SAVED_VARIABLES_NAME`), managed by AceDB-3.0, is the only SavedVariables table and holds every setting and every remembered window spot. The add-on uses the **Simple** model: `Features/Core.lua` calls `AceDB:New(ns.SAVED_VARIABLES_NAME, ns.DATABASE_DEFAULTS, true)`, so every character shares one "Default" profile, because nothing it stores differs from character to character. Reset Profile therefore clears everything on that shared profile back to the install defaults, Routes' settings included, and leaves `global` alone. The stock profiles panel (`Options/Options-Profiles.lua`, AceDBOptions) still lets a player make others, and `OnProfileChanged`, `OnProfileReset` and `OnProfileCopied` all call `ns:ApplyProfile`, which re-applies the quest giver cleanup, redraws the list and the map while the wide quest log runs, re-applies Routes (`routes.ApplySettings`), rechecks the dungeon quests and refreshes every open options panel.
-
-- **The profile** holds the settings: the welcome toggle, the Quality of Life switch and its options, the Quest Log switch and its sorting, row and window options, and Routes' own subtable, `routes`: its two switches, the zone map's and the Quest Arrow's options, and party quests.
-- **`global`** holds only how things sit on screen: Window Scale and Map Scale (`scale` and `mapScale`, default 1, set on the Quest Log panel but stored here), the window's saved `height`, whether the map is hidden (`mapHidden`), on WoW Forever and Mists the window's position (`point`), and where the Quest Arrow was dragged (`routesArrowPoint`). The last four have no defaults. They are kept out of the profile's reach so a profile reset or switch never moves, resizes, rescales or hides anything: Reset Window returns the height, position and both scales to their defaults, and the Quest Arrow panel's Reset Arrow clears the arrow's spot. Classic Era and TBC save no window position, since Blizzard's panel manager places that window.
-- **AceDB's own keys** (`profileKeys`, and any `char` section) are keyed by character. AceDB names a character "Name - Realm" on realm clients and "First Last" on WoW Forever, so a key shaped the other way came from a WTF folder copied between game versions; `PruneOtherClientCharacters` drops those keys at load, and their profiles unless a character of this client still uses one.
-
-AceDB applies `ns.DATABASE_DEFAULTS` (`Data/Default-Settings.lua`) when a scope (`profile`, `global`) is first accessed, filling only keys that are nil, so an explicit `false` survives, and strips values equal to their defaults at logout. Nothing hand-merges defaults. A key set to nil after that reads nil until the next reload, so code that resets a key with a default writes the default, as `ns.ResetWindow` does for `scale` and `mapScale`. No default lists are seeded. The Diagnostic Tools' Saved Variables report dumps the whole table.
+- `PrettyWideQuestLogDB` (`ns.SAVED_VARIABLES_NAME`), AceDB-3.0, the only SavedVariables table: every setting and every remembered window spot.
+- **Simple model** (`AceDB:New(..., true)`): nothing stored differs per character. Reset Profile returns the shared profile to install defaults, Routes' `routes` subtable included, and leaves `global` alone.
+  - **Profile**: every setting, Routes' in its own `routes` subtable.
+  - **`global`**: only presentation, kept from a profile reset or switch: the window's and map's scales, height, `mapHidden`, the own window's position (WoW Forever and Mists; Blizzard places Classic's) and the Quest Arrow's spot. Reset Window (`ns.ResetWindow`) and the Quest Arrow panel's Reset Arrow are the confirmed resets for those.
+- `ns:ApplyProfile` (all three profile callbacks) re-applies the quest giver cleanup, the list and map while the wide quest log runs, Routes (`routes.ApplySettings`), the dungeon quests, and open panels.
+- `PruneOtherClientCharacters` runs right after `AceDB:New` (standing cleanup, not a migration).
+- No default lists are seeded.
+- Diagnostic Tools' Saved Variables report dumps the whole table.
 
 ### Migration Chain
 
-Each migration runs from Routes' `PLAYER_LOGIN` handler or as the arrow is placed, and is tagged with its removal date:
+Run from Routes' `PLAYER_LOGIN` handler or as the arrow is placed; each tagged with its removal date in the code:
 
-1. `MigrateSettings` (`Features/Routes/Routes-Core.lua`), remove after 2026-12-06: moves an account-wide `global.routes` table onto the profile's `routes`, keeping only keys that have a default, moves its `arrowPoint` to `global.routesArrowPoint` unless a spot is already saved there, and clears `global.routes`; Routes Context (`Diagnostics/Manifests.lua`, same tag) says when old settings are still waiting to move.
-2. `DropRetiredSettings` (`Features/Routes/Routes-Core.lua`), remove after 2026-12-07: drops `cycleSeconds` and `enabled` from the profile's `routes`.
-3. `PlaceFrame` (`Features/Routes/Routes-Arrow.lua`), remove after 2026-12-07: an arrow spot saved by an anchor point other than `TOP` is saved again by its top (`HoldByTop`).
+1. `MigrateSettings` (`Routes-Core.lua`): an account-wide `global.routes` table onto the profile's `routes` (keys with a default only), its `arrowPoint` to `global.routesArrowPoint` unless one is saved; Routes Context reports old settings still waiting.
+2. `DropRetiredSettings` (`Routes-Core.lua`): drops retired keys from the profile's `routes`.
+3. `PlaceFrame` (`Routes-Arrow.lua`): an arrow spot saved by a point other than `TOP` is re-saved by its top (`HoldByTop`).
 
-Nothing else migrates. `PruneOtherClientCharacters` is standing cleanup, not a migration. Wide Quest Log Plus's settings live in its own SavedVariables file, which this add-on can't read, so they aren't carried over.
-
-## Adding a New Setting
-
-1. Add the key and its default to `ns.DATABASE_DEFAULTS.profile` in `Data/Default-Settings.lua`. Only how something sits on screen, which a profile reset must not touch, goes in `global`. A Routes setting goes in the `routes` table instead (see Adding a New Routes Setting).
-2. Add its control to the panel of the feature it belongs to, with its label and description in `Locales/enUS.lua`. For the quest log that's `Options/Options-Quest-Log.lua`, in its section (Sorting, Quest Rows, Window & Map; each has its own band of `order` numbers, and Handy Clicks, built by `AddHandyClicks`, takes 50 and up). Its `QuestLogToggle`, `SortSelect` and `SortSubOption` builders take the panel's `Hidden` and `Inactive` gates, so the control hides with the switch off and grays out while a reload is pending; a control built without `Inactive` can call a part's function that doesn't exist. A map setting uses `MapHidden`, which also hides it on a client with no map (`ns.hasQuestMap`). Otherwise it goes in `Options/Options-Quality-of-Life.lua`, whose controls hide with that switch off.
-3. Read it live where it applies. A Quest Log setting that changes the list calls `ns.RefreshQuestLog()` from its `set`; one that changes only the map calls `ns.questMap.RequestRefresh()` instead, as Show Objective Areas does; every Quality of Life toggle's `set` already calls `ns.ApplyQualityOfLifeSettings()` (the quest giver cleanup and the dungeon quests' watch). `ns:ApplyProfile` covers profile changes. A Quality of Life setting read outside its panel also checks `enableQualityOfLife`, as `ns.IsQuestGiverCleanupOn` and `ns.GetShareInterval` do, so the switch turns the whole feature off.
-4. Add it to the context report it explains: in `Diagnostics/Manifests.lua`, Quest Log Context for the list, the window, the feature switches, the welcome toggle and the quest giver window; Tracking Context for tracking; Sharing Context for Share Quests, the whispers and the dungeon quests; Quest Map Context for the map; Routes Context for Routes. The window's saved size, scales and position go in Display Context (`Diagnostics/Settings-Reports.lua`).
-5. If it changes chat output, check the Message Length report (see Adding a New Share Result, step 5).
-
-## Adding a New Routes Setting
-
-1. Add the key and its default to `ns.DATABASE_DEFAULTS.profile.routes` in `Data/Default-Settings.lua`. Only where something sits on screen goes in `global`, as `routesArrowPoint` does.
-2. Add its control to `Options/Options-Routes-Map.lua` or `Options/Options-Quest-Arrow.lua`, in that panel's section and `order` band. Build a switch with the panel's local `Toggle`, which wraps `ns.OptionsRoutesToggle` and takes the description from `<KEY>_DESCRIPTION`, or a slider, choice or button with `ns.OptionsRoutesControl` (pass the key, or nil for a button). Give it the panel's hidden gate (`MapHidden`, `FullSizeHidden`, `RouteHidden`, `LineHidden`; `ArrowHidden`, `QuestsHidden`). Put the label and description in `Locales/enUS.lua`, under the panel's section.
-3. Read it at use through `routes.Settings()`. Every writer goes through `routes.SetSetting`, the panels' builders and the Quest Arrow's menu (`Routes-Arrow-Menu.lua`) alike, which notifies every listener while the route is wanted and clears the route otherwise, so a setting that only changes how the route looks is redrawn by `Routes-Map.lua`'s listener (`provider:RefreshAllData`), the arrow's `Refresh` or the menu's `RefreshArrowMenu`.
-4. If it changes what's planned, add it to `routes.Signature()` in `Routes-Questie.lua`, as `showUpcomingTurnIns` is, so the watcher plans again, or call `routes.RequestPlan()`.
-5. A new view of the route registers with `routes.AddListener(fn)` for changes and `routes.OnLogin(fn)` for setup that needs the saved settings.
-6. Add a `RouteSetting(lines, label, key)` line to the matching part of Routes Context in `Diagnostics/Manifests.lua`: `ArrowLines`, `ZoneMapLines`, `PartyLines`, or the switches at the top of `ns:BuildRoutesContextReport`.
-
-## Adding a New Event
-
-1. Add `{ "EVENT_NAME", "OnEventName" }` to the `EVENTS` table in `Features/Core.lua`, so the dispatcher and Diagnostics (`ns.EVENT_NAMES`, which lists what was actually registered) pick it up together. Never call `RegisterEvent` in a feature file.
-2. Define `ns:OnEventName` in the feature file that needs it, at file scope or, for the Classic quest log, inside its `ns.AddWideQuestLogPart` function. Core registers an event in `ADDON_LOADED` only if one of its handlers is defined by then: one pass runs before `StartWideQuestLog`, so a feature that errors as it sets up can't stop the others' events, and a second runs after it, for the handlers the Classic Era and TBC parts define as they run. A handler defined later than that never registers its event unless another handler did. The dispatcher looks each handler up as the event fires.
-3. A handler in a shared file is defined, and its event registered, on every client, so an event one client lacks belongs only in that client's files.
-4. A further feature handling the same event keeps the same handler name on a table of its own and gets an `EVENTS` row naming that table's `ns` key as its third field, after the rows already there, since rows run in table order. The table must exist by the second registration pass. The owners so far are `ns.dungeonQuests`, `ns.shareReminders`, `ns.questMap`, `ns.questLogApi`, `ns.questLogWindow`, and Routes' `ns.routes`, `ns.routesMap` and `ns.routesArrow`. Routes' handlers are all at file scope, so their events register on every client whose TOC lists `Routes.xml`, whatever the Quest Log switch says.
-
-## Adding a New API Call
-
-1. Confirm the client has it: its branch of [wow-ui-source](https://github.com/Gethe/wow-ui-source), or an existing Diagnostics row. Don't gate on a client difference nobody has shown.
-2. Add its path to the list in `Diagnostics/Manifests.lua` for the clients that call it:
-   - `SHARED_FUNCTIONS`: every client.
-   - `GIVER_PAGE_FUNCTIONS`: the quest giver and gossip pages Quest Giver Window Cleanup restyles.
-   - `LOG_INDEX_FUNCTIONS`: the clients with no `C_QuestLog.GetInfo` (Classic Era, TBC and Mists).
-   - `CLASSIC_FUNCTIONS`: Classic Era and TBC.
-   - `OWN_WINDOW_FUNCTIONS`: WoW Forever and Mists.
-   - `QUEST_ID_FUNCTIONS`: WoW Forever.
-   - `INDEX_WINDOW_FUNCTIONS`: Mists.
-   - `ROUTES_FUNCTIONS`: Routes, whose rows are added only when `ns.routes` exists.
-   - For the map: `OWN_WINDOW_MAP_FUNCTIONS` (WoW Forever and Mists) or `FOREVER_MAP_FUNCTIONS` (WoW Forever).
-
-   A Blizzard frame, mixin or table a file reaches for at load goes in the matching `_TABLES` list (`SHARED_TABLES`, `GIVER_PAGE_TABLES`, `CLASSIC_TABLES`, `OWN_WINDOW_TABLES`, `QUEST_ID_TABLES`, `INDEX_WINDOW_TABLES`, `ROUTES_TABLES`, or `OWN_WINDOW_MAP_TABLES`). Blizzard strings the own window draws go in `OWN_WINDOW_STRINGS`, which also feeds Game Names; other numbers and strings have their own `Rows` lines, Routes' in `ROUTES_NUMBERS`. A call the add-on takes one of two ways, whichever the client has, gets a row with its own test, as in `REWARDS_HEADING_ROUTE`, `TIMED_QUESTS_ROUTE`, `OWN_WINDOW_ROUTES` and `QUEST_LOOKUP_ROUTES`. A read only one data kind makes goes in `KIND_API_CHECKS` (`Diagnostics/Validate-Data.lua`).
-3. Add the global to `read_globals` in `.luacheckrc`, or to `globals` if the add-on writes it (`QUESTS_DISPLAYED`, the `StaticPopupDialogs` and `SlashCmdList` fields, `PrettyWideQuestLogPinMixin`, `PrettyWideQuestLogRoutePinMixin`). A function only hooked by name (`hooksecurefunc("QuestLog_UpdateQuestDetails", ...)`) is never read as a global and needs no entry.
-
-## Adding a New Share Result
-
-1. Add the client's result string to `FIXABLE_RESULTS` in `Features/Share-Reminders.lua`. Its pattern is built from the string itself (`NamePattern`), and it gets the same two whispers as the others, so it needs no new locale key.
-2. Add the result string to `SHARED_LABELS` and `SHARE_RESULTS` in `Diagnostics/Manifests.lua`.
-3. Add it to `read_globals` in `.luacheckrc`, beside the other three.
-4. A change to a whisper's body goes in `Locales/enUS.lua`, with one `%s` for the quest reference and no closing period, for the Localization Review to carry to the other locales; a new whisper key goes in `SHARE_WHISPER_KEYS` in `Diagnostics/Localization-Reports.lua` too.
-5. Check the Localization tab's Message Length report in ruRU, the widest-encoding locale. `SendChatMessage` rejects anything over 255 bytes (`ns.CHAT_MESSAGE_MAX_LENGTH`, `Data/Data.lua`), counted on the whole message: the marker, the body and the ` // PWQL` tail `ns:BuildAnnounceMessage` adds. `ns.FittingQuestReference` only ever shortens the quest's reference, so the body itself must leave room for one.
-
-## Adding a New Quest Tag or Sample Quest
-
-**A quest tag:**
-
-1. Add its ID to `ns.QUEST_TAG_SUFFIXES` in each flavor's `Data/{Game}/Quest-Tags-{Game}.lua` that has it, mapped to its kind (`"DUNGEON"`, `"RAID"`, `"GROUP"`, `"ELITE"` or `"PVP"`). Tag IDs aren't the same across flavors: tag 1 is Elite on Classic Era, Season of Discovery and WoW Forever, and Group from TBC on.
-2. A new kind of tag also needs `L["QUEST_SUFFIX_<KIND>"]` and `L["QUEST_TYPE_<KIND>"]` in `Locales/enUS.lua`, and an entry in `LEGEND_ORDER` in `Features/Quest-Display.lua`. The quest chain's badge width (`BADGE_SUFFIXES`, `Quest-Chain.lua`) picks it up on its own. Routes treats only `DUNGEON` and `RAID` as instance quests (`INSTANCE_KINDS` in `Features/Routes/Routes-Questie.lua`).
-3. The Data tab's report only counts these, so the IDs themselves aren't checked in game.
-
-**A sample quest:**
-
-1. Edit `ns.SAMPLE_QUEST_IDS`, `ns.SAMPLE_DUNGEON_AREA_ID` or `ns.SAMPLE_ZONE_AREA_ID` in each flavor's `Data/{Game}/Sample-Quests-{Game}.lua`, Vanilla and Discovery both. With quests listed, both area IDs are required: the dungeon and zone Example lines each name one through `C_Map.GetAreaInfo`. An empty list hides the Example lines (`ns.NoSampleQuests`).
-2. Validate Data and Game Names rows follow on their own. Run the Data tab on that client.
-
-## Adding a New Data Table
-
-1. Add `Data/{Game}/{Label}-{Game}.lua` in every flavor folder, and list it in each TOC with the other data files, before `Data/Default-Settings.lua` and the Features. The Vanilla and Discovery copies each open with an `ns.IS_DISCOVERY` guard, so the later file doesn't overwrite the earlier.
-2. Add a row to `ns.DIAGNOSTIC_DATA_SOURCES` in `Diagnostics/Manifests.lua`. The Data tab's report follows from it, and its `label` must match the file name, since Validate Data looks for `{DATA_FOLDER}/{label}-{DATA_FOLDER}.lua` (`ns.DataSourceFileName`). Give each source the kind of ID it holds (`mapArt`, `area`, `quest` or `other`); a file holding one setting rather than a table, as the Wowhead files do, takes `kind = "value"`, which prints the value.
-
-## Adding a New Flavor
-
-1. Add `Pretty-Wide-Quest-Log_{Flavor}.toc` with its `X-Flavor`, and an `ns.EXPANSION` entry in `Data/Flavor.lua`.
-2. List its four data files in the TOC (`Map-Reveal`, `Quest-Tags`, `Sample-Quests` and `Wowhead`), with the other data files, before the Features: `Quest-Display.lua` and `Quest-Chain.lua` read the tags at load. If its folder is in `.pkgmeta`'s ignore list (`Data/Wrath` and `Data/Mainline` are), take it out.
-3. Pick its quest log by which files the TOC lists: the `Classic-*.lua` files if it has the `QuestLogTitle{N}` rows; otherwise `Quest-Details-Data.lua`, the `Forever-*.lua` window files and `Quest-Log-Key.lua`, with tracking and takeover files of its own, as Mists has, and `Forever-Zone-Actions.lua` or `Classic-Zone-Actions.lua` by whether it has the quest ID calls. The `ns` accessors in `Features/Quest-Log-API.lua` cover whichever quest log calls it has.
-4. List `Features/Routes/Routes.xml` after `Quest-Map-Reveal.lua` and before the Diagnostics files, and the two Routes options files with the other panels. Routes tests for features rather than flavors, so it needs nothing else.
-5. Check the new client's Diagnostics rows, because a Mists-style split shows up there: `OWN_WINDOW` and `QUEST_ID_API` in `Diagnostics/Manifests.lua` are tested separately, since the window doesn't imply the API.
-
-## Localization
-
-- **`Locales/enUS.lua` is the source of truth** and the only locale passing AceLocale's default flag (`NewLocale(..., "enUS", true)`), so a key missing elsewhere shows the English. Add and change keys there only. The other locale files belong to the Localization Review (`07 - Localization Review.md`); never hand-edit them in ordinary work.
-- **Placeholders** (`%s`, `%d`) must match `enUS` per key in count, type and order in every locale, or the string errors at runtime. Every key with placeholders carries a `-- TRANSLATORS:` comment above it in `enUS.lua` saying what each one is; keep it current. A few are formatted as their options file loads, so a mismatch there breaks the whole panel, not one line: `MARK_UNTRACKED_DESCRIPTION` (two `%s`, `Options-Quest-Log.lua`), and `SHOW_DISTANCE_DESCRIPTION`, `SHOW_NEXT_OBJECTIVE_DESCRIPTION` (two `%s` each) and `QUESTS_LISTED_DESCRIPTION` (one `%s`, itself filled with `ROUTES_MORE_TASKS`'s `%d`) in `Options-Quest-Arrow.lua`. The lines sent to other players (`WHISPER_SHARE_FAILED*`, `DUNGEON_QUESTS_ANNOUNCE*`) also stay under the 255-byte chat limit with no closing period.
-- **Game names never go in `Locales/`.** Anything the game names comes from the client, so it reads in the player's language. The add-on's own ID constants and the lookup each uses:
-  - **Quest tag IDs** (`ns.QUEST_TAG_SUFFIXES`, `Data/{Game}/Quest-Tags-{Game}.lua`) pick the D, R, G, E and P letters, which are the add-on's own words and so locale keys (`ns.QuestSuffix`, `Features/Quest-Display.lua`). The tag comes from `ns.GetQuestTagByID` (`Features/Quest-Log-API.lua`: `C_QuestLog.GetQuestTagInfo` with `C_QuestLog.IsEliteQuest` where the client has them, else `GetQuestTagInfo`, which reports no elite flag), or from Questie's corrected tag first in the quest chain and Routes. A tag's localized name is never compared.
-  - **Sample quest IDs** (`ns.SAMPLE_QUEST_IDS`) are named through `ns.GetQuestTitleByID` (`C_QuestLog.GetTitleForQuestID`, else `C_QuestLog.GetQuestInfo`), asked for with `C_QuestLog.RequestLoadQuestByID` until they load. **Sample area IDs** (`ns.SAMPLE_DUNGEON_AREA_ID`, `ns.SAMPLE_ZONE_AREA_ID`) go through `C_Map.GetAreaInfo`. Each has a Game Names row.
-  - **Map IDs** are the client's (`uiMapID`), named with `C_Map.GetMapInfo(mapID).name` in the map's zone dropdown. The map art IDs keying `ns.MAP_REVEAL_OVERLAYS` (checked with `C_Map.GetMapArtID`) and the texture file IDs for reveal tiles and Blizzard's art name nothing a player reads.
-  - **Items, spells and classes**: the add-on stores no item, spell or skill ID. Reward names, icons and qualities come from the quest log calls (`Quest-Details-Data.lua`), loaded through `Item:CreateFromItemID` when missing. `ns.CLASS_COLORS` is keyed by the client's class token and holds colors only.
-  - **Zone names** in the list are the quest log headers the client supplies. The current zone's mark compares the header text with `GetRealZoneText()` (`ns.IsCurrentZone`, `Features/Quest-Sort.lua`), a name match, because neither quest log gives its headers a map ID; the dungeon quests also match the instance name and `C_Map.GetAreaInfo` of the dungeon's Questie zone IDs (`Dungeon-Quest-Lookup.lua`).
-  - **Quest, NPC and object names** in the map's pin tooltips, the quest chain, the turn-in tooltip, the route's waypoint tooltips and the Quest Arrow's list come from the client or Questie's own data.
-  - **Blizzard's strings**: the row tag (the client's tag name, or Blizzard's `FAILED`, `COMPLETE`, `ELITE`, `DAILY`), the window title's `QUEST_LOG`, the own window's buttons and detail headings, and the client's `ERR_QUEST_PUSH_*` strings the share whispers match are Blizzard's GlobalStrings. Every one the add-on shows or matches is a Game Names row in `Diagnostics/Manifests.lua` (`SHARED_LABELS`, `OWN_WINDOW_LABELS`, `OWN_WINDOW_STRINGS`, `QUEST_ID_LABELS`), so a new one gets a row there.
-
-## Common Pitfalls
+## Pitfalls & Why
 
 - **Hooking or reshaping Blizzard's quest log outside `ns.AddWideQuestLogPart` on Classic Era or TBC**: it runs with the Quest Log switch off, and can't be taken back. Every file that hooks `QuestLogFrame` or its functions wraps its body in a part; the only exceptions are the share whispers' `QuestLogPushQuest` post-hook and `Classic-Zone-Actions.lua`'s calls when invoked.
 - **Calling a part's function from outside a part on Classic Era or TBC**: with the switch off it is nil. Check `ns.wideQuestLogActive`, or gate the control with `Inactive`.
@@ -1188,18 +1227,21 @@ Nothing else migrates. `PruneOtherClientCharacters` is standing cleanup, not a m
 - **Registering an event a client lacks**: throws. Add events through `EVENTS` in Core, never `RegisterEvent` in a feature file, and define the handler only in that client's files.
 - **Resetting a setting that has a default by setting it to nil**: AceDB fills defaults only when the scope is first read, so the key reads nil until the next reload. `ns.ResetWindow` writes `scale` and `mapScale` from `ns.DATABASE_DEFAULTS` and clears only `height` and `point`, which have no default.
 - **Restyling every `QuestFrameItems_Update`**: the quest giver window lays out its rewards through it too. The hook in `Classic-Quest-Details.lua` acts only when `questState` is `"QuestLog"`.
-- **Forgetting to re-anchor Classic rows**: `PositionRows` moved them for the row spacing, and `QuestLog_Update` doesn't put them back. Every pass re-anchors every row below the first, which anchors the rest.
-- **Re-entering `QuestLog_Update`**: widening the scroll range can scroll the list, which runs `QuestLog_Update` again. `extendingScroll` guards `ExtendScrollRange`.
+- **Forgetting to re-anchor Classic rows**: `PositionRows` (`Classic-Quest-Rows.lua`) moved them for the row spacing, and `QuestLog_Update` doesn't put them back. Every pass re-anchors every row below the first.
+- **Widening the Classic list's scroll range with `FauxScrollFrame_Update`**: `QuestLog_Update` resets the range on every update, so the list jumps back. `Classic-Quest-Rows.lua` shows fewer rows instead (`RowsThatFit`).
+- **Reading `QUESTS_DISPLAYED` as what the Classic window holds**: there are two counts, capacity (`ns.SetQuestRowCount`, from the height) and shown (`QUESTS_DISPLAYED`, at most capacity).
+- **Adding work before `UpdateList`'s early return after a row-count change**: a changed shown count reruns `QuestLog_Update` from inside the list's own hook, which returns right after; it settles because the rerun's `RowsThatFit` gives the same count. Work there would run twice.
+- **Routing VoiceOver's `Update` hook to the full Classic list update**: it would rerun the sort and row-count pass, which can itself call `QuestLog_Update`. It restyles only (`ns.RestyleClassicQuestRows`).
 - **Resizing Classic's window without telling the panel manager**: it scales the whole window down. `ApplyHeight` sets the `height` and `bottomClampOverride` panel attributes whenever the height changes.
 - **Applying the saved height at load**: the screen isn't settled, so the clamp cuts it short. Apply it in `OnShow`, and never save the clamped value.
 - **Matching Blizzard's art by file path**: current clients return nil from `GetTextureFilePath` for XML textures. `IdentifyBlizzardArt` checks the file ID first.
 - **Leaving sort ties to `table.sort`**: it isn't stable, so equal rows swap between repaints. `ns.SortQuests` and `ns.SortZones` (`Quest-Sort.lua`) end on `sortIndex`, the quest log index.
 - **Loading `Classic-Quest-Log.lua` before `Classic-Quest-List.lua`**: the log's part calls `ns.GetQuestRowHeight()` as it builds, and the list's part defines it. The Vanilla and TBC TOCs list the list file first.
-- **Leaving extra Classic rows shown when the window shrinks**: `QuestLog_Update` fills only up to `QUESTS_DISPLAYED`, so rows made for a taller window keep drawing past the bottom edge. `SetQuestRowCount` hides every made row past the new count.
+- **Leaving extra Classic rows shown when the window shrinks**: `QuestLog_Update` fills only up to `QUESTS_DISPLAYED`, so rows made for a taller window keep drawing past the bottom edge. `ShowRowCount` (`Classic-Quest-Rows.lua`) hides every made row past the count.
 - **Measuring a Classic row's title as Blizzard left it**: Blizzard sized it for its old position and cut it short there. `StyleQuestRows` sets the width to 0, measures the whole title, then shortens it to clear the tag.
 - **Testing `GetQuestLogTitle`'s `isComplete` for truth**: a failed quest's is -1, which Lua counts as true. Compare its sign, as the Classic row styling (`isComplete > 0`, `< 0`) and `ns.GetQuestLogEntry` (`isComplete`, `isFailed`) do.
-- **Styling Classic's rows before VoiceOver's buttons**: VoiceOver's button functions rewrite the title and move the check. `UpdateList` runs `StyleQuestRows` last, after `ns.MatchVoiceOverButtons`, and again after VoiceOver's own `Update`.
-- **Dragging Classic's window taller without re-hanging its bottom buttons**: some are anchored to the window's top edge, so they stay behind. `Classic-Quest-Log.lua` re-hangs off the bottom edge any child anchored to the top more than 60% of `BASE_HEIGHT` down.
+- **Styling Classic's rows before VoiceOver's buttons**: VoiceOver's button functions rewrite the title and move the check. `UpdateList` runs `StyleQuestRows` last, after `ns.MatchVoiceOverButtons`, and VoiceOver's own `Update` is followed by `ns.RestyleClassicQuestRows` (last built order).
+- **Dragging Classic's window taller without re-hanging its bottom buttons**: some are anchored to the window's top edge, so they stay behind. `Classic-Quest-Log.lua` re-hangs off the bottom edge any child anchored to the top near the bottom (`nearTheBottom`).
 - **Measuring a button label's width at load**: the font may not be loaded yet. `ns.CreateListButtons` fits the list buttons the first time they show.
 - **Counting Blizzard's watches to find tracked quests on Classic Era or TBC**: with Questie's tracker on, Blizzard's watch count stays at 0. Untrack All asks `IsQuestWatched` of each listed quest, which Questie replaces with its own state.
 - **Placing the turn-in line when it's made**: on Classic Era and TBC, `Classic-Quest-List.lua` makes the line before `Classic-Quest-Log.lua` records `ns.abandonButton` and `ns.shareButton`. `PlaceTurnInLine` waits for the first update that shows the line.
@@ -1236,15 +1278,19 @@ Nothing else migrates. `PruneOtherClientCharacters` is standing cleanup, not a m
 - **Stripping pipes from a message for other players**: the bodies carry quest links, which stripping breaks. `ns:BuildAnnounceMessage` keeps pipes.
 - **Leading a message with a raid-marker token on WoW Forever**: the client blocks `{rtN}` tokens in chat there. `ns:BuildAnnounceMessage` leaves `ns.TARGET_MARKER` off on `"Camelot"`.
 - **Drawing a chat line in an options panel as chat draws it**: after a link's `|r` a panel falls back to white, where chat falls back to the channel color. The Example lines' `Tint` (`Options-Utilities.lua`) reopens the color after every `|r`.
-- **Treating every `QuestInfo_Display` call as a quest giver page's**: Blizzard's own quest details (the world map's on WoW Forever, the quest log's on Mists) call it too, so a hook that styles for one restyles both. Each hook checks `ns.IsQuestGiverPage(parentFrame)` and `ns.IsQuestGiverCleanupOn()`, and `ns.LayOutQuestGiverPage` puts the gold and experience back anywhere else.
+- **Treating every `QuestInfo_Display` call as a quest giver page's**: Blizzard's own quest details (the world map's on WoW Forever, the quest log's on Mists) call it too, so a hook that styles for one restyles both. Each hook checks `ns.IsQuestGiverPage(parentFrame)` and `ns.IsQuestGiverCleanupOn()`, and `ns.LayOutQuestGiverPage` puts the gold and experience back anywhere else it moved them (`rewardNumbersMoved`).
 - **Styling Blizzard's quest text after it has been laid out**: Blizzard's measurements no longer match what's drawn. Style shared text as the saved settings load, as `ns.ApplyQuestGiverCleanup` does.
 - **Moving a quest giver piece without keeping Blizzard's offset**: Blizzard anchors some pieces afresh on each show but others only once (the greeting page's greeting text, the progress page's title, text, items and heading), so those would keep the cleanup's offsets after it goes off. `Quest-Giver-Pages.lua` keeps each offset the first time it moves (`greetingBlizzardY`, `blizzardY`) and puts it back with the cleanup off.
 - **Resizing or moving the gossip window's lines**: the gossip list measures its rows itself, so frames the add-on resized would overlap. `Gossip.lua` changes only the greeting's font and line spacing, and tags the quest lines through each button's own `Resize`.
+- **Styling only the gossip greeting that shows**: the list places its rows by a hidden copy of the greeting (`greetingTextFrame`) whose `Setup` never runs, so a long styled greeting overlaps the first option. `Gossip.lua` styles that copy after each `GossipFrame.Update` and calls the ScrollBox's `FullUpdate` when its height changes.
+- **Loading the quest text files out of order**: several capture another's functions at load. `Quest-Giver-Pages.lua` follows `Quest-Giver.lua` (`ns.TagQuestLine`); `Forever-Quest-Details-Rewards.lua` and `Quest-Chain.lua` precede `Forever-Quest-Details.lua` (`ns.CreateRewardButtons`, `ns.CreateQuestChainSection`); `Quest-Giver-Skins.lua` follows `Quest-Giver.lua` so its `QuestInfo_Display` pass runs after the page is spaced.
+- **Defining `ns.LayOutQuestGiverPage` on another client**: `SpaceQuestGiverPage` (`Quest-Giver.lua`) adds `REWARDS_HEADING_RISE` only when that function exists, so the quest giver page's spacing would change.
+- **Showing Questie's quest tooltip before Questie has started**: it only prints a wait message to chat. `ShowQuestieTooltip` (`Quest-Chain.lua`) checks `Questie.started`.
 - **Hanging the quest giver page's quest ID under any shown `QuestInfo` piece**: a piece left showing from Blizzard's quest details belongs to that window, not the quest giver page. `LastShown` in `Forever-Quest-Giver.lua` counts only pieces on that page.
 - **Tagging a quest giver's quest line every time Blizzard sets it up**: Blizzard may run the setup again on text already tagged. `levelTaggedText` skips a line already done.
 - **Changing a coin button's font without laying the coins out again**: Blizzard sizes each coin to its text when it lays the coins out, so the amounts no longer fit. `StyleRewardMoney` (`Quest-Rewards.lua`) calls `MoneyFrame_Update` with the frame's `staticMoney` after any font change.
 - **Regrouping the whole experience text**: ElvUI appends the share of a level in a hook that may run before or after the add-on's, and regrouping it would mangle the share. `Quest-Rewards.lua` regroups only the number at the front.
-- **Styling for ElvUI at load**: ElvUI skins the quest log and the quest giver window after this add-on loads, so there's no backdrop yet. `Classic-ElvUI.lua` checks on each `QuestLogFrame` `OnShow` until it can act, and `Quest-Giver.lua` checks the quest giver window's backdrop on each `QuestFrame` `OnShow`.
+- **Styling for ElvUI at load**: ElvUI skins the quest log and the quest giver window after this add-on loads, so there's no backdrop yet. `Classic-ElvUI.lua` checks on each `QuestLogFrame` `OnShow` until it can act, and `Quest-Giver-Skins.lua` checks the quest giver window's backdrop on each `QuestFrame` `OnShow`.
 - **Reading a skin's shadow from the font object**: ElvUI sets shadows on the FontStrings themselves, so a copy loses the Description's look. `CopyFont` in `Quest-Chain.lua` reads font, color and shadow off the FontString.
 - **Caching a quest chain miss**: before Questie's database is ready every quest looks like it's in no chain, and the miss would stick for the session. `ns.GetQuestChain` keeps only a chain found (`lastChain`).
 - **Calling Questie's modules directly, or taking an import as proof**: Questie may be missing, still loading, or have renamed a function, and `ImportModule` hands back an empty table for a module it doesn't have. Modules come through `ns.ImportQuestieModule`, which imports in a `pcall`; callers check each function exists before calling it, and wrap calls that can throw in a `pcall`.
@@ -1254,8 +1300,9 @@ Nothing else migrates. `PruneOtherClientCharacters` is standing cleanup, not a m
 - **Making the turn-in tooltip opaque once**: every `Show` restores the see-through style. `MakeOpaque` runs after each `Show`.
 - **Reusing a quest tag ID across flavors**: tag 1 means Elite on some and Group on others. Keep them in each flavor's `Quest-Tags` file.
 - **Loading Vanilla and Discovery data without the guard**: the Vanilla TOC lists both, so the later would overwrite the earlier. Each Vanilla file returns early when `ns.IS_DISCOVERY` is set, and each Discovery file when it isn't.
-- **Loading the map files out of order**: several files read another's output as they build. `Quest-Map.lua` reads `ns.questLogFrame` and `ns.listButtons`, and defines the `PrettyWideQuestLogPinMixin` that `Questie-Map.xml` names; `Classic-Quest-Map.lua` takes `questMap.RequestRefresh` (`Questie-Map.lua`) by value for its `QuestLog_UpdateQuestDetails` hook; `Forever-Quest-Map.lua` reads `ns.questMap` at load; and `Quest-Map-Reveal.lua` hooks the exploration pin the client's map file makes. Each TOC lists the quest log and list files, then `Quest-Map.xml`, `Quest-Map.lua`, `Questie-Map.xml`, `Questie-Map.lua`, `Questie-Map-Quest-Giver.lua`, `Questie-Map-Areas.lua`, `Questie-Map-Area-Layer.lua`, the client's map file, and `Quest-Map-Reveal.lua`, with `Routes/Routes.xml` after them.
+- **Loading the map files out of order**: several files read another's output as they build. `Quest-Map.lua` reads `ns.questLogFrame` and `ns.listButtons`, and defines the `PrettyWideQuestLogPinMixin` that `Questie-Map.xml` names; `Classic-Quest-Map.lua` takes `questMap.RequestRefresh` (`Questie-Map.lua`) by value for its `QuestLog_UpdateQuestDetails` hook; `Forever-Quest-Map.lua` reads `ns.questMap` at load; and `Quest-Map-Reveal.lua` hooks the exploration pin the client's map file makes. `Questie-Map-Tooltip.lua` reads `questMap.QUESTIE_PIN_TEMPLATE`, which `Questie-Map.lua` sets. Each TOC lists the quest log and list files, then `Quest-Map.xml`, `Quest-Map.lua`, `Questie-Map.xml`, `Questie-Map.lua`, `Questie-Map-Tooltip.lua`, `Questie-Map-Quest-Giver.lua`, `Questie-Map-Areas.lua`, `Questie-Map-Area-Layer.lua`, the client's map file, and `Quest-Map-Reveal.lua`, with `Routes/Routes.xml` after them.
 - **Building the map canvas in Lua**: `MapCanvasFrameTemplate`'s `OnLoad` runs before Lua could add the `ScrollContainer` and `BorderFrame` it needs. The frame stays in `Quest-Map.xml`.
+- **Trusting Blizzard's objective area to draw on the docked map**: Questie turns `questPOI` off for some objective styles, and Blizzard's blob pin then draws nothing. `Forever-Quest-Map.lua` replaces `Refresh` on its own copy of the pin, less that check; never touch the CVar or the world map's provider.
 - **Drawing Questie's quest twice on WoW Forever or Mists**: Blizzard's objective area and marker would sit under Questie's icons. They're drawn only for a quest Questie has no icons for (`BlizzardQuestID`, against `questMap.questieQuestID`, which `FollowQuestieQuest` sets first).
 - **Showing a map the client has no art for**: the canvas can't draw it. `questMap.ShowMap` climbs to the nearest parent map that passes `questMap.CanShowMap`, and the quest giver's map (`AreaMapID`, `Questie-Map-Quest-Giver.lua`) skips such maps.
 - **Disabling the mouse wheel on the map to stop zooming**: the wheel then zooms the camera behind it. `SetMouseWheelZoomMode` with `MAP_CANVAS_MOUSE_WHEEL_ZOOM_BEHAVIOR_NONE` keeps it enabled.
@@ -1264,18 +1311,33 @@ Nothing else migrates. `PruneOtherClientCharacters` is standing cleanup, not a m
 - **Asking the canvas for its map with `canvas:GetMapID()`**: until a map is set it answers the player's map, so it can't tell whether the canvas has one. The quest map reads the canvas's `mapID` field (`CanvasMap`).
 - **Building objective areas from Questie's icons**: Questie thins its icons out where they crowd, so the areas would miss spawns. `Questie-Map-Areas.lua` reads every spawn from the objective's `spawnList`.
 - **Reading the glow from Questie's glow texture**: Questie shows that texture only once the world map has been opened. `SetGlow` (`Questie-Map.lua`) takes the color from the icon's `ObjectiveData.Color` and only the texture file from `icon.glowTexture`.
-- **Capturing a Routes function before the file that defines it loads**: the local is nil and the first plan throws. `Routes.xml` lists Core, Ignore, Solver, Party, Geography, Questie, Blobs, Nodes, Pinning, Overlaps, Stops, Stop-Lines, Camps, Map-Size, Map-Line, Map-Questie-Icons, Map, the pin templates, then Arrow-Survey, Arrow, Arrow-List and Arrow-Menu. Keep a new file after everything it captures by value.
+- **Capturing a Routes function before the file that defines it loads**: the local is nil and the first plan throws. Keep a new file in `Routes.xml` after everything it captures by value (see Loading under Routes).
+- **Parenting or anchoring a secure button to the Quest Arrow**: the arrow becomes protected, and in combat it can no longer move, hide or resize with its list. The Use Item buttons sit on `UIParent`, placed by the arrow's coordinates out of combat (`Routes-Arrow-Items.lua`).
+- **Renaming the Use Item button or its binding**: the client saves players' keys against the binding name, so a rename silently drops them. Keep `BUTTON_PREFIX` (`Routes-Arrow-Items.lua`, `routes.USE_ITEM_COMMAND`) and `Bindings.xml` in step.
+- **Creating the first Use Item button lazily**: a key pressed before any item shows would find no frame. `Routes-Arrow-Items.lua` makes button 1 at load.
+- **Acting on key-down for the Use Item button**: a macro's `/click` sends only the up half. The buttons register up and down with `useOnKeyDown` false, so every path acts on up.
+- **Branching on a WoW Forever secret value**: comparing or testing it errors. Item cooldown, range, friendliness, party connection and unit maps go through `ns.IsReadable` first and leave the display or answer as it was.
+- **Coloring the Quest Arrow by facing alone**: backing up or strafing toward the target turns it red. `ColorHeading` (`Routes-Arrow.lua`) switches to the direction of travel past `FACING_TRUST`; turning the arrow still uses facing.
+- **Drawing the route mid-flight**: it's replanned from where the player lands. The map provider's `RefreshAllData` skips the route while `routes.IsOnTaxi()`.
+- **Hiding Questie's party icons a frame late**: Questie redraws them as party progress arrives, and they flash. The `HandlePin` hook hides the placed pin at once (`routes.ApplyToPlacedQuestieIcon`), relying on HereBeDragons parenting the icon to its pin.
+- **Suppressing TomTom through its saved settings**: it would outlive the session and show in TomTom's options as the player's choice. `Routes-TomTom.lua` uses `SuppressFeature` / `ReleaseFeature` only.
 - **Moving the pin templates above `Routes-Map.lua`**: `mixin="PrettyWideQuestLogRoutePinMixin"` names a global that doesn't exist yet. The mixin is defined in `Routes-Map.lua`, listed before the `<Frame>` templates, and declared in `.luacheckrc`'s `globals`.
 - **Listing `Routes.xml` after the Diagnostics files**: `Manifests.lua` checks `ns.routes` at file load to add the Routes API rows, and would add none. Each TOC lists it among the Features, before Diagnostics.
 - **Reaching for `ns.routes` without checking it**: Routes is one TOC line a release can leave out. `ns:ApplyProfile`, `ns.RegisterOptionsPanels`, `ns.OptionsRoutesToggle` and Routes Context all check `ns.routes` first.
 - **Treating `routes.Settings()` as the saved table before `ADDON_LOADED`**: it returns `ns.DATABASE_DEFAULTS.profile.routes` itself, and a write there changes the defaults. Write only once `ns.db` exists, as the panels do.
 - **Yielding inside a `pcall` or a `table.sort` comparator**: Lua 5.1 can't yield across a C call, so the planning coroutine dies. `ForEachFinisher` (`Routes-Nodes.lua`) runs its Questie queries in a `pcall`, then calls `AddSpawns` (which yields) outside it.
-- **Writing a plan's results one at a time**: the watcher could compare a new plan's pins with the old plan's nodes and replan in a loop. The planner assigns `routes.stops`, `start`, `nodes` and `engaged` in one statement.
+- **Writing a plan's results one at a time**: the watcher could compare a new plan's pins with the old plan's nodes and replan in a loop. The planner's `OnUpdate` (`Routes-Planner.lua`) assigns `routes.stops`, `start`, `nodes`, `engaged` and `camps` together.
+- **Walking Questie's log with `pairs` across a yield**: before Questie 12.6.3 the log is Questie's live table, and `next` breaks if it changes mid-walk. Walk `routes.LoggedQuestIDs(log)` (`Routes-Planner.lua`), as `BuildNodes`, `BuildCamps` and `PartyQuests` do.
+- **A fixed per-frame planning budget**: halves the frame rate on a fast screen. The planner takes `FRAME_SHARE` of the last frame, clamped to `MIN_BUDGET`..`MAX_BUDGET` (`Routes-Planner.lua`).
+- **Resetting or changing zones while a plan runs**: finishing, it would put back the old pins and `routes.start`. `routes.ResetObjectives` and the zone handlers call `routes.CancelPlan()` first.
+- **Reading a party member's map or connection in combat on WoW Forever**: the answer can be secret. `routes.IsUnitOutOfZone` and `Routes-Party.lua` test it with `ns.IsReadable` first (unreadable counts as present / offline).
+- **Detecting TomTom by its global alone**: other add-ons make a `TomTom` table of their own. `Routes-TomTom.lua` requires `IsCrazyArrowEmpty`, `SuppressFeature` and `ReleaseFeature`.
 - **Building a moved route to weigh each move**: a 90-node route weighs hundreds of thousands of moves, over 100 MB of garbage a plan. `IsValidMove` and the searches work through index maps (`OrOptIndex`, `TwoOptIndex`), building only the move taken.
 - **Using `math.random` in the solver**: equally good routes would flicker between plans. `Shake` uses its own generator from a fixed seed.
 - **Leaving node order to Questie's log**: it's a hash, so the same quests would give different routes. `BuildNodes` sorts nodes by `key`.
 - **Trusting a cached blob's `penalty`**: blobs are cached and shared between plans, and `PinEngaged` zeroes the pinned one's. `routes.Candidates` (`Routes-Blobs.lua`) rewrites every candidate's penalty each plan.
-- **Calling the world map's `Maximize` for the full-size map**: it runs Blizzard's panel layout as add-on code. `KeepFullSize` (`Routes-Map-Size.lua`) sets the `miniWorldMap` CVar instead, never in combat, and not at all while an add-on in `ns.MAP_SIZE_ADDONS` sizes the map.
+- **Calling the world map's `Maximize` for the full-size map**: it runs Blizzard's panel layout as add-on code. `KeepFullSize` (`Routes-Map-Size.lua`) sets the `miniWorldMap` CVar instead, never in combat.
+- **Turning the `questPOI` CVar off for Blizzard's quest markers**: it also takes them off the tracker and the minimap, changes the objective style Questie's options read back, has to be put back after a crash, and Questie notes that `questPOI` off makes the map open at login. `ApplyBlizzardQuests` (`Routes-Map-Blizzard-Quests.lua`) hides the world map's pins instead.
 - **Hiding Questie's icons through Questie**: its own icon state would change on its other maps. `ApplyQuestieIcons` (`Routes-Map-Questie-Icons.lua`) hides HereBeDragons' pins, marks them `hiddenByRoute`, shows them again itself, and re-applies after Questie's provider `RefreshAllData` and `HandlePin`.
 - **Sizing markers by the canvas alone**: Classic Era and TBC draw the full-size map at about 1.8 times the UI's scale, so markers come out that much bigger. The size is multiplied by `UIParent:GetEffectiveScale() / map:GetEffectiveScale()`.
 - **Saving the arrow's spot in its own scale, or by any point but its top**: changing Arrow Size would move it, and so would the list under it changing height. `HoldByTop` re-anchors the arrow by its `TOP` and saves the offsets times the scale, and `PlaceFrame` divides by it.
@@ -1283,11 +1345,3 @@ Nothing else migrates. `PruneOtherClientCharacters` is standing cleanup, not a m
 - **Answering escort or instance questions once per session**: the client learns a quest's tag only once it has loaded the quest. Both caches are wiped a second after the quest log settles (`routes.ForgetQuestTags`).
 - **Trusting Questie's tag alone for instance quests**: Questie keeps "no tag" for good once its one retry finds none, so a dungeon quest whose tag loads late would be routed. `IsInstanceQuest` falls back to the client's `ns.GetQuestTagByID`, and doesn't cache a quest neither has a tag for.
 - **Formatting a locale string with the wrong placeholders at file load**: a mismatched translation of a string an options file formats as it loads breaks the whole panel file (see Localization).
-
-## Contributing
-
-- **Issues**: [GitHub Issues](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/issues).
-- **Bug reports**: game version and locale, the character's class and level, steps to reproduce, and the relevant chat output: any error or line the add-on printed, plus the Diagnostic Tools' Settings tab output from Run All. For a whisper or dungeon announcement problem, add the message as the party received it and the Localization tab's Message Length report; for a route or Quest Arrow problem, Routes Context taken where the route went wrong.
-- **Discord**: [Pretty Wide Quest Log on Discord](https://discord.gg/eh8hKq992Q).
-- **PR guidelines**: keep each PR to one change. Format with StyLua's defaults and keep `luacheck .` clean (CI runs the shared checks on every PR). Any change to the shape of saved data ships its own migration, tagged `MIGRATION (remove after YYYY-MM-DD)` 30 days past its release, and is listed in the Migration Chain. Any change to chat output (a whisper, the dungeon announcement or their bodies) is measured in bytes against the 255-byte chat limit in ruRU with the Message Length report. Update this document if the architecture or the file map changes.
-- **PR descriptions say what a player will notice**, in plain language, the way release notes do; commit messages carry the developer detail.

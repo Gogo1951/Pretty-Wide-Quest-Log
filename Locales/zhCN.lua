@@ -159,9 +159,9 @@ L["ROUTES_MAP_DESCRIPTION"] = "区域地图显示路线时的打开方式。"
 L["FULL_SIZE_MAP"] = "以最大尺寸打开区域地图"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"像地图自带的最大化按钮一样，以最大化状态打开区域地图，让路线有足够空间。即使你把地图缩小，下次也会再次以最大尺寸打开。"
-L["HIDE_QUESTIE_ICONS"] = "隐藏路线上的 Questie 图标"
+L["HIDE_QUESTIE_ICONS"] = "隐藏路线上的任务图标"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
-	"隐藏路线上目标的 Questie 地图图标，由标记代替显示。将鼠标悬停在标记上可查看其图标。"
+	"隐藏路线上目标的 Questie 地图图标，以及暴雪自带的任务标识和目标区域，由路线标记代替显示。队友目标的 Questie 半透明图标也会隐藏。将鼠标悬停在标记上可查看 Questie 图标。"
 L["ROUTES_MARKERS_HEADER"] = "标记"
 L["ROUTES_MARKERS_DESCRIPTION"] = "路线上每个路径点的标记。"
 L["MARKER_SIZE"] = "标记大小"
@@ -219,11 +219,15 @@ L["QUESTS_LISTED"] = "最多列出任务数"
 -- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
 L["QUESTS_LISTED_DESCRIPTION"] =
 	'任务箭头在一个路径点下方最多列出的任务数。其余的任务会在单独一行中计数，例如"%s"。'
+L["SHOW_ITEM_BUTTONS"] = "显示任务物品按钮"
+L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
+	"在任务箭头列出的每个有可用物品的任务旁放一个按钮，例如需要投掷、种下或对目标使用的物品。点击按钮即可使用该物品，也可以在游戏的按键设置中为使用任务物品设置按键，以使用第一个物品。战斗中按钮会保持原位，直到战斗结束。"
 -- TRANSLATORS: also a switch on the Quest Arrow's menu
 L["SHOW_NEXT_OBJECTIVE"] = "显示下一个目标"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'在"%s"时，于其下方以暗色列出"%s"：一个指向再下一个路径点的小箭头，以及在那里要做的事。'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
 L["SHOW_UPCOMING_TURN_INS"] = "显示即将交付的任务"
 L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
 	"在任务目标完成之前就把交任务的地点加入路线，并以 Questie 的灰色问号标出，让你看到将在哪里交付。关闭后，任务完成时才会把交付地点加入路线。"
@@ -276,12 +280,14 @@ L["QUEST_TYPE_RAID"] = "团队副本"
 L["QUEST_TYPE_GROUP"] = "组队"
 L["QUEST_TYPE_ELITE"] = "精英"
 L["QUEST_TYPE_PVP"] = "PvP"
+-- TRANSLATORS: %s is the QUEST_LEVEL_LEGEND_ENTRY pairs, joined by LIST_SEPARATOR
 L["QUEST_LEVEL_LEGEND"] = "等级后的字：%s。"
 -- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s（%s）"
 L["QUEST_ID"] = "任务ID %d"
 -- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "任务链（%d/%d）"
+-- TRANSLATORS: %s is the time left as the game writes it, such as "3 Hr 12 Min"
 L["DAILY_RESET"] = "日常任务将在 %s 后重置。"
 L["WOWHEAD_LINK_TOOLTIP"] = "点击获取 Wowhead 链接。"
 L["WOWHEAD_LINK_COPY"] = "按 Ctrl+C（Mac 上为 Cmd+C）复制 Wowhead 链接。"
@@ -290,8 +296,10 @@ L["COLLAPSE_ALL"] = "全部折叠"
 L["TRACK_ALL"] = "全部追踪"
 L["UNTRACK_ALL"] = "全部取消追踪"
 L["HIDE_MAP"] = "隐藏地图"
+-- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "%s 经验"
 L["TURN_IN_SEPARATOR"] = " / "
+-- TRANSLATORS: %s is TURN_IN_XP and the money, joined by TURN_IN_SEPARATOR, such as "12,345 XP / 5g 12s"
 L["TURN_IN_SUMMARY"] = "交付：%s"
 L["TURN_IN_TOOLTIP"] = "可以交付"
 L["RESIZE_TOOLTIP"] = "拖动以调整任务日志大小。"
@@ -304,9 +312,11 @@ L["SHARE_QUESTS"] = "分享任务"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] = "把本区域中游戏允许分享的任务分享给队伍，每 %d 秒一个。"
 -- TRANSLATORS: %s is a quest's name
 L["CHAT_SHARING_AFTER_COMBAT"] = "战斗结束后分享 %s。"
+-- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_ONE"] = "正在分享 %s 的 1 个任务。"
 -- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "正在分享 %d 个任务，来自 %s，每 %d 秒一个。"
+-- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_NONE"] = "%s 中没有可以分享的任务。"
 
 --------------------------------------------------------------------------------
@@ -340,6 +350,11 @@ L["ROUTES_LOOK_FOR"] = "寻找"
 L["ROUTES_CLICK_DRAG"] = "拖动"
 L["ROUTES_CLICK_RIGHT"] = "右键点击"
 L["ROUTES_CLICK_MIDDLE"] = "中键点击"
+L["ROUTES_CLICK"] = "点击"
+-- TRANSLATORS: beside ROUTES_CLICK, or the bound key, on a Quest Arrow item button's tooltip
+L["ROUTES_CLICK_USE_ITEM"] = "使用物品"
+-- TRANSLATORS: the key binding's name in the game's Key Bindings list, under the add-on's name
+L["BINDING_USE_QUEST_ITEM"] = "使用任务物品"
 L["ROUTES_DRAG_MOVE"] = "移动任务箭头"
 L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "忽略此路径点"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
@@ -380,8 +395,10 @@ L["ROUTES_MEMBER_INCLUDED"] = "%s 的目标已回到路线上。"
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
--- TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
--- each %s is a quest link or a list of them, and each %d is how many quests
+--[[
+	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
+	each %s is a quest link or a list of them, and each %d is how many quests
+]]
 L["WHISPER_SHARE_FAILED"] =
 	"我刚才想把 %s 分享给你，但没成功。如果需要，等你准备好时喊我一声，我再分享一次"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 也一样"
@@ -393,5 +410,6 @@ L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "我在这里还有更多任务要做�
 -- Questie Tracking
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: %s is a quest link, or the quest's name or ID when there's no link
 L["QUESTIE_CANNOT_SHOW"] = "Questie 追踪器无法显示 %s，因为 Questie 数据库中缺少该任务。"
 L["QUESTIE_CANNOT_TRACK"] = "Questie 暂时无法追踪此任务。"

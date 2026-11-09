@@ -7,7 +7,9 @@ local _, ns = ...
 	objectives with their counts or "Turn In Quest" (routes.ForEachStopLine).
 
 	The arrow is green while it points within ON_COURSE degrees of straight ahead, yellow out to
-	OFF_COURSE either side, and red beyond, behind the player: which way to turn, at a glance. It points
+	OFF_COURSE either side, and red beyond, behind the player: which way to turn, at a glance. It turns
+	with the player's facing, and its color follows where they're going: their facing, or while they back
+	up or strafe, the way they're moving (ColorHeading), so closing in backwards isn't red. It points
 	to the next stop, all the way to one that's one place (an NPC, an object, the corpse), and becomes a
 	blue eye that breathes within 10 yards of it, "You're There".
 
@@ -53,10 +55,17 @@ local LIST_INTERVAL = 1 -- Seconds between rewrites of the quests, whose counts 
 local ON_COURSE = 36
 local OFF_COURSE = 108
 local BLEND = 20
+local SAMPLE_INTERVAL = 0.1 -- Seconds between notes of where the player is, for the way they're moving
+local HEADING_WINDOW = 0.5 -- Seconds of movement the way they're moving is measured over
+local SAMPLES = HEADING_WINDOW / SAMPLE_INTERVAL + 1 -- Notes kept, to span the window
+local MIN_TRAVEL = 1.5 -- Yards moved over the window that count as moving: under a walk's pace is standing
+local MAX_TRAVEL = 50 -- Yards over the window past which it was a teleport or a load, not moving
+local FACING_TRUST = math.rad(60) -- Moving within this of their facing, the facing colors it, as it answers at once
 local SPOT_REACH = 10 -- Yards from one place (a chest, an NPC) that count as there: the eye instead of the arrow
 local BREATH_PERIOD = 2.5 -- Seconds for the eye to grow and shrink again
 local BREATH_GROWTH = 0.3 -- How much bigger the eye gets at the top of a breath
 local NEXT_ARROW_SIZE = 32 -- The Next Objective's arrow, left of its lines: half the big one
+local DIM_ALPHA = 0.72 -- What's on the way and what's next, behind what to do here
 local SPACE = ns.LAYOUT.SPACE
 
 local Survey = routes.ArrowSurvey
@@ -128,6 +137,7 @@ routes.ARROW_LAYOUT = {
 	ARROW_SIZE = ARROW_SIZE,
 	NEXT_ARROW_SIZE = NEXT_ARROW_SIZE,
 	EYE_TEXTURE = EYE_TEXTURE,
+	DIM_ALPHA = DIM_ALPHA,
 }
 
 --------------------------------------------------------------------------------
@@ -227,8 +237,8 @@ local function Mix(fromKey, toKey, share)
 end
 
 --[[
-	By how far the arrow turns from straight ahead (radians, either way): solid colors through the middle
-	of each band, easy to read at a glance, and a short blend at the lines so it doesn't snap
+	By how far the target is from where the player is going (radians, either way): solid colors through
+	the middle of each band, easy to read at a glance, and a short blend at the lines so it doesn't snap
 ]]
 local function Shade(turn)
 	local degrees = math.abs(math.deg((turn + math.pi) % (2 * math.pi) - math.pi))
@@ -236,6 +246,55 @@ local function Shade(turn)
 		return Mix("ARROW_ON_COURSE", "ARROW_TURN", Across(degrees, ON_COURSE))
 	end
 	return Mix("ARROW_TURN", "ARROW_WRONG_WAY", Across(degrees, OFF_COURSE))
+end
+
+-- Where the player was, the last SAMPLES notes, a ring with sampleHead the newest
+local sampleTimes, sampleX, sampleY = {}, {}, {}
+local sampleHead, sampleInstance, lastSample = 0, nil, 0
+
+local function NoteMovement(now, x, y, instance)
+	if instance ~= sampleInstance then
+		sampleInstance = instance
+		wipe(sampleTimes)
+	end
+	if now - lastSample < SAMPLE_INTERVAL then
+		return
+	end
+	lastSample = now
+	sampleHead = sampleHead % SAMPLES + 1
+	sampleTimes[sampleHead], sampleX[sampleHead], sampleY[sampleHead] = now, x, y
+end
+
+-- The way the player has moved over the last HEADING_WINDOW, as an angle like the arrow's, or nil standing still
+local function TravelHeading(hereBeDragons, now, x, y, instance)
+	local oldest
+	for i = 1, SAMPLES do
+		local t = sampleTimes[i]
+		if t and now - t <= HEADING_WINDOW + SAMPLE_INTERVAL / 2 and (not oldest or t < sampleTimes[oldest]) then
+			oldest = i
+		end
+	end
+	if not oldest then
+		return nil
+	end
+	local angle, yards = hereBeDragons:GetWorldVector(instance, sampleX[oldest], sampleY[oldest], x, y)
+	if angle and yards >= MIN_TRAVEL and yards <= MAX_TRAVEL then
+		return angle
+	end
+end
+
+--[[
+	What the arrow's color is measured from: the facing, unless the player is moving well away from it,
+	backing up or strafing, when it's the way they're moving. Facing answers a turn at once, where the way
+	they're moving lags half a second behind, so it's kept whenever the two roughly agree
+]]
+local function ColorHeading(heading, facing)
+	if heading and math.abs((heading - facing + math.pi) % (2 * math.pi) - math.pi) > FACING_TRUST then
+		routes.arrowColoredBy = "travel"
+		return heading
+	end
+	routes.arrowColoredBy = "facing"
+	return facing
 end
 
 local sinceTurn, sinceText, sinceList = 0, 0, 0
@@ -265,10 +324,10 @@ local function Point(self, elapsed)
 	if not stop then
 		return
 	end
-	local HBD = routes.HereBeDragons()
+	local hereBeDragons = routes.HereBeDragons()
 	local x, y, instance = routes.PlayerPosition()
 	local facing = GetPlayerFacing()
-	local located = HBD and x and facing and instance == stop.instance
+	local located = hereBeDragons and x and facing and instance == stop.instance
 	-- Once a second: what's around, where next, and the counts, which change only as the player works
 	local survey = sinceList >= LIST_INTERVAL
 	if survey then
@@ -305,14 +364,17 @@ local function Point(self, elapsed)
 	end
 	away:Hide()
 	arrow:Show()
+	local now = GetTime()
+	NoteMovement(now, x, y, instance)
+	local heading = ColorHeading(TravelHeading(hereBeDragons, now, x, y, instance), facing)
 
 	-- The Next Objective's arrow, turned and colored as the big one would be, and its distance
 	if nextShown and listedNext then
 		local place = listedNext.corpse and listedNext or NearestPlace(listedNext, x, y) or listedNext
-		local nextAngle, nextYards = HBD:GetWorldVector(instance, x, y, place.x, place.y)
+		local nextAngle, nextYards = hereBeDragons:GetWorldVector(instance, x, y, place.x, place.y)
 		if nextAngle then
 			nextArrow:SetRotation(nextAngle - facing)
-			nextArrow:SetVertexColor(Shade(nextAngle - facing))
+			nextArrow:SetVertexColor(Shade(nextAngle - heading))
 			if rewrite then
 				local text = routes.Settings().showDistance and routes.YardsText(nextYards) or ""
 				if text ~= nextDistance:GetText() then
@@ -327,7 +389,7 @@ local function Point(self, elapsed)
 		if not view.corpse then
 			target = NearestPlace(view, x, y) or view
 		end
-		angle, yards = HBD:GetWorldVector(instance, x, y, target.x, target.y)
+		angle, yards = hereBeDragons:GetWorldVector(instance, x, y, target.x, target.y)
 		local isArea = target ~= view and routes.IsAreaPoint(target)
 		-- At one place: the eye too, there's nowhere left to point
 		if not (isArea or view.corpse) and yards <= SPOT_REACH then
@@ -362,7 +424,7 @@ local function Point(self, elapsed)
 	-- Pointing, at an area from outside it, or to a place; a corpse is reached from within its radius
 	local arrived = view.corpse and yards <= view.radius
 	arrow:SetRotation(angle - facing)
-	arrow:SetVertexColor(Shade(angle - facing))
+	arrow:SetVertexColor(Shade(angle - heading))
 	if rewrite then
 		local yardsText = routes.Settings().showDistance and routes.YardsText(yards) or ""
 		distance:SetText(arrived and L["ROUTES_ARRIVED"] or yardsText)

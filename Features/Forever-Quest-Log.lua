@@ -128,6 +128,25 @@ trackButton:SetScript("OnEnter", function(self)
 end)
 trackButton:SetScript("OnLeave", GameTooltip_Hide)
 
+--[[
+	What can be done with a quest right now, for the buttons below and the list's right-click menu
+	(Forever-Quest-List.lua): whether it's tracked and trackable, and whether Track, Share and Abandon are
+	enabled. A quest the game has disabled for the session can't be shared, abandoned or newly tracked
+]]
+function ns.QuestActions(questID)
+	local disabled = ns.IsQuestDisabledForSession(questID)
+	local tracked, trackable = ns.IsTracked(questID), ns.CanTrack(questID)
+	return {
+		tracked = tracked,
+		trackable = trackable,
+		canTrack = not InCombatLockdown()
+			and trackable
+			and ((tracked and ns.CanRemoveQuestWatch()) or (not tracked and not disabled)),
+		canShare = not disabled and ns.IsPushableQuest(questID) and IsInGroup(),
+		canAbandon = not disabled and ns.CanAbandonQuest(questID),
+	}
+end
+
 local function UpdateButtons()
 	local questID = state.selectedQuestID
 	if not questID then
@@ -137,18 +156,12 @@ local function UpdateButtons()
 		return
 	end
 
-	local disabled = ns.IsQuestDisabledForSession(questID)
-	abandonButton:SetEnabled(not disabled and ns.CanAbandonQuest(questID))
-	shareButton:SetEnabled(not disabled and ns.IsPushableQuest(questID) and IsInGroup())
-
-	local tracked, trackable = ns.IsTracked(questID), ns.CanTrack(questID)
-	trackButton:SetText(tracked and UNTRACK_QUEST_ABBREV or TRACK_QUEST_ABBREV)
-	trackButton:SetEnabled(
-		not InCombatLockdown()
-			and trackable
-			and ((tracked and ns.CanRemoveQuestWatch()) or (not tracked and not disabled))
-	)
-	trackButton.untrackable = not trackable
+	local actions = ns.QuestActions(questID)
+	abandonButton:SetEnabled(actions.canAbandon)
+	shareButton:SetEnabled(actions.canShare)
+	trackButton:SetText(actions.tracked and UNTRACK_QUEST_ABBREV or TRACK_QUEST_ABBREV)
+	trackButton:SetEnabled(actions.canTrack)
+	trackButton.untrackable = not actions.trackable
 end
 
 --------------------------------------------------------------------------------

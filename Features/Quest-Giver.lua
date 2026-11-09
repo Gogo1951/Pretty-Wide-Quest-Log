@@ -2,7 +2,8 @@ local _, ns = ...
 
 --[[
 	Every client: the quest giver window's own pages, styled like the quest details, and the quest log's
-	level tags in a quest giver's list of quests. The gossip window's greeting and quest lines are in
+	level tags in a quest giver's list of quests. What skins change is put right in Quest-Giver-Skins.lua.
+	The gossip window's greeting and quest lines are in
 	Gossip.lua, and the greeting and progress pages, with the quest ID under the progress page, in
 	Quest-Giver-Pages.lua
 ]]
@@ -56,76 +57,6 @@ local function StyleQuestGiverPages(on)
 					ns.RestoreBlizzardStyle(region)
 				end
 			end
-		end
-	end
-end
-
---------------------------------------------------------------------------------
--- Skins on the quest giver window
---------------------------------------------------------------------------------
-
---[[
-	Skins (ElvUI) keep the parchment but draw the window around it see-through, so whatever sits behind
-	the window, Questie's tracker or a nameplate, shows through above and below the page. With the cleanup
-	on the skin's backdrop is opaque in its own color, and with it off it goes back to the skin's. ElvUI
-	puts the backdrop on the window itself on WoW Forever and Mists, and on a frame of its own on Classic
-	Era and TBC. A window no skin has touched has neither, and is left alone
-]]
-local skinAlpha -- The skin's own backdrop alpha, from before this add-on changed it
-
-local function UpdateWindowBackdrop()
-	local frame = QuestFrame and (QuestFrame.backdrop or (QuestFrame.template and QuestFrame))
-	if not (frame and frame.GetBackdropColor and frame.SetBackdropColor) then
-		return
-	end
-	local r, g, b, a = frame:GetBackdropColor()
-	if not r then
-		return
-	end
-	if skinAlpha == nil then
-		skinAlpha = a or 1
-	end
-	if ns.IsQuestGiverCleanupOn() then
-		frame.customBackdropAlpha = 1 -- ElvUI keeps it through its color updates
-		frame:SetBackdropColor(r, g, b, 1)
-	elseif frame.customBackdropAlpha == 1 then
-		frame.customBackdropAlpha = nil
-		frame:SetBackdropColor(r, g, b, skinAlpha)
-	end
-end
-
-if QuestFrame then
-	-- Skins style the window after this file loads, so it's checked each time the window opens
-	QuestFrame:HookScript("OnShow", UpdateWindowBackdrop)
-end
-
---[[
-	Reward names, wherever QuestInfo shows rewards while the cleanup is on: the quest giver window, and
-	Blizzard's own quest details, which share its buttons. Blizzard draws them white on a dark name plate,
-	and skins (ElvUI) that hide the plate leave them white, with a shadow, on the bare parchment. With the
-	plate hidden they take the description's color, without the shadow, as the rest of the parchment's
-	text does. The buttons are shared, so every display restyles every button it shows. Skins restyle them
-	in hooks that may run after this one, so it runs again a frame later. With the cleanup off they go back
-	to the color and shadow they had
-]]
-local namesBefore = {} -- Each name's color and shadow from before this add-on changed them
-
-local function StyleRewardNames(on)
-	local rewards = QuestInfoRewardsFrame
-	local r, g, b = QuestInfoDescriptionText:GetTextColor()
-	for _, button in ipairs(rewards and rewards.RewardButtons or {}) do
-		local name = button.Name
-		local plateHidden = button.NameFrame and ((not button.NameFrame:IsShown()) or button.NameFrame:GetAlpha() == 0)
-		if name and on and plateHidden then
-			if not namesBefore[name] then
-				namesBefore[name] = { color = { name:GetTextColor() }, shadow = { name:GetShadowColor() } }
-			end
-			name:SetTextColor(r, g, b)
-			name:SetShadowColor(0, 0, 0, 0)
-		elseif name and namesBefore[name] then
-			name:SetTextColor(unpack(namesBefore[name].color))
-			name:SetShadowColor(unpack(namesBefore[name].shadow))
-			namesBefore[name] = nil
 		end
 	end
 end
@@ -201,18 +132,10 @@ local function SpaceQuestGiverPage(template, parentFrame)
 end
 
 if QuestInfo_Display then
-	local namesStyled -- Whether the last display's reward names are styled, for the pass a frame later
-	local function StyleRewardNamesLater()
-		StyleRewardNames(namesStyled)
-	end
 	hooksecurefunc("QuestInfo_Display", function(template, parentFrame)
-		local onQuestGiverPage = ns.IsQuestGiverPage(parentFrame)
-		if onQuestGiverPage and ns.IsQuestGiverCleanupOn() then
+		if ns.IsQuestGiverPage(parentFrame) and ns.IsQuestGiverCleanupOn() then
 			SpaceQuestGiverPage(template, parentFrame)
 		end
-		namesStyled = ns.IsQuestGiverCleanupOn()
-		StyleRewardNames(namesStyled)
-		C_Timer.After(0, StyleRewardNamesLater)
 	end)
 end
 
@@ -225,7 +148,7 @@ end
 function ns.ApplyQuestGiverCleanup()
 	local on = ns.IsQuestGiverCleanupOn()
 	StyleQuestGiverPages(on)
-	UpdateWindowBackdrop()
+	ns.UpdateQuestGiverBackdrop()
 	if on then
 		ns.StyleQuestInfo()
 	else

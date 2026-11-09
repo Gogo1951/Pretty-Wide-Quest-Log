@@ -115,6 +115,8 @@ function ns.BuildQuestArrowOptions()
 				max = 8,
 				step = 1,
 			}, 26, QuestsHidden),
+			spaceItemButtons = ns.OptionsSpacer(26.2, QuestsHidden),
+			showItemButtons = Toggle("showItemButtons", "SHOW_ITEM_BUTTONS", 26.3, QuestsHidden),
 			spaceShowNext = ns.OptionsSpacer(26.5, ArrowHidden),
 			showNextObjective = ShowNextToggle(),
 			spaceUpcomingTurnIns = ns.OptionsSpacer(27.5, ArrowHidden),

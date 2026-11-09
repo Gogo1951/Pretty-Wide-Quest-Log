@@ -3,8 +3,9 @@ local _, ns = ...
 --[[
 	Every client: the selected quest's icons from Questie's world map, its objectives and turn-in, drawn
 	again on the map (Quest-Map.lua) larger, with a dropdown for a quest whose icons span several zones.
-	An objective's icons give way to its areas where it has them (Questie-Map-Areas.lua). Each client's
-	own map file decides what the map shows when Questie has no icons for the quest
+	An objective's icons give way to its areas where it has them (Questie-Map-Areas.lua), and hovering
+	one shows its tooltip (Questie-Map-Tooltip.lua). Each client's own map file decides what the map
+	shows when Questie has no icons for the quest
 ]]
 
 ns.AddWideQuestLogPart(function()
@@ -12,12 +13,12 @@ ns.AddWideQuestLogPart(function()
 	local canvas = questMap.canvas
 
 	-- Questie's own copies of HereBeDragons, which hold every icon it has placed on the world map
-	local HBD = LibStub("HereBeDragonsQuestie-2.0", true)
-	local HBDPins = LibStub("HereBeDragonsQuestie-Pins-2.0", true)
+	local hereBeDragons = LibStub("HereBeDragonsQuestie-2.0", true)
+	local hereBeDragonsPins = LibStub("HereBeDragonsQuestie-Pins-2.0", true)
 
 	local PIN_TEMPLATE = "PrettyWideQuestLogQuestiePinTemplate"
+	questMap.QUESTIE_PIN_TEMPLATE = PIN_TEMPLATE -- For the pins' tooltip (Questie-Map-Tooltip.lua)
 	local ICON_SIZE = 24 -- Near the size of Blizzard's quest markers, before Questie's scale for the icon's kind
-	local CLUSTER_DISTANCE = 0.015 -- Icons this close, as a share of the map, share one tooltip
 	local REFRESH_DELAY = 0.2 -- Questie draws in batches over several frames
 	local ZONE_DROPDOWN_WIDTH = 180
 
@@ -28,11 +29,12 @@ ns.AddWideQuestLogPart(function()
 	--------------------------------------------------------------------------------
 
 	--[[
-		Leaves out route lines, and icons faded out entirely. Icons Questie's settings hide on its own maps
+		Leaves out route lines, Questie's manual icons (townsfolk, Show on Map), whose Id is an NPC's or
+		object's rather than a quest's, and icons faded out entirely. Icons Questie's settings hide on its own maps
 		are kept: this map shows the quest picked in the quest log, whatever Questie shows elsewhere
 	]]
 	local function IsShownIcon(icon)
-		if icon.type == "line" or not (icon.data and icon.texture) then
+		if icon.isManualIcon or icon.type == "line" or not (icon.data and icon.texture) then
 			return false
 		end
 		local _, _, _, alpha = icon.texture:GetVertexColor()
@@ -41,13 +43,17 @@ ns.AddWideQuestLogPart(function()
 
 	-- Calls back with each shown icon Questie has placed on a map for a quest, and where it sits on it (0-1)
 	local function ForEachIcon(mapID, questID, callback)
-		if not (HBD and HBDPins and mapID and questID) then
+		if not (hereBeDragons and hereBeDragonsPins and mapID and questID) then
 			return
 		end
-		for icon, placement in pairs(HBDPins.worldmapPins) do
+		for icon, placement in pairs(hereBeDragonsPins.worldmapPins) do
 			if placement.uiMapID == mapID and icon.data and icon.data.Id == questID and IsShownIcon(icon) then
-				local x, y =
-					HBD:GetZoneCoordinatesFromWorldInstance(placement.x, placement.y, placement.instanceID, mapID)
+				local x, y = hereBeDragons:GetZoneCoordinatesFromWorldInstance(
+					placement.x,
+					placement.y,
+					placement.instanceID,
+					mapID
+				)
 				if x and y then
 					callback(icon, x, y)
 				end
@@ -58,8 +64,8 @@ ns.AddWideQuestLogPart(function()
 	-- The zones a quest has icons in, most icons first
 	local function QuestZones(questID)
 		local counts = {}
-		if HBDPins and questID then
-			for icon, placement in pairs(HBDPins.worldmapPins) do
+		if hereBeDragonsPins and questID then
+			for icon, placement in pairs(hereBeDragonsPins.worldmapPins) do
 				if placement.uiMapID and icon.data and icon.data.Id == questID and IsShownIcon(icon) then
 					counts[placement.uiMapID] = (counts[placement.uiMapID] or 0) + 1
 				end
@@ -78,82 +84,6 @@ ns.AddWideQuestLogPart(function()
 			return a < b
 		end)
 		return zones
-	end
-
-	--------------------------------------------------------------------------------
-	-- Tooltip
-	--------------------------------------------------------------------------------
-
-	-- One space a row, as every list under a heading in the add-on's tooltips is indented
-	local ROW_INDENT = " "
-
-	-- An icon's objective: its description, its progress where it counts something, and whether it's done
-	local function ObjectiveRow(data)
-		local objective = data.ObjectiveData
-		if not (objective and objective.Description) then
-			return nil
-		end
-		local have, need = objective.Collected or 0, objective.Needed
-		return {
-			description = objective.Description,
-			count = need and string.format("%s / %s", tostring(have), tostring(need)) or nil,
-			done = objective.Completed or (need ~= nil and have >= need) or false,
-		}
-	end
-
-	local function HasObjective(objectives, row)
-		for _, other in ipairs(objectives) do
-			if other.description == row.description then
-				return true
-			end
-		end
-		return false
-	end
-
-	--[[
-		The quest, then every NPC or object around the hovered icon with its objectives, as Questie's world
-		map groups them. An area's marker stands for every NPC or object in the area
-	]]
-	local function ShowPinTooltip(pin)
-		local x, y = pin:GetPosition()
-		local entries, byName = {}, {}
-		for other in canvas:EnumeratePinsByTemplate(PIN_TEMPLATE) do
-			local otherX, otherY = other:GetPosition()
-			if math.abs(otherX - x) < CLUSTER_DISTANCE and math.abs(otherY - y) < CLUSTER_DISTANCE then
-				local objective = ObjectiveRow(other.data)
-				for _, name in ipairs(other.area and other.area.names or { other.data.Name or "" }) do
-					local entry = byName[name]
-					if not entry then
-						entry = { name = name, objectives = {} }
-						byName[name] = entry
-						entries[#entries + 1] = entry
-					end
-					if objective and not HasObjective(entry.objectives, objective) then
-						entry.objectives[#entry.objectives + 1] = objective
-					end
-				end
-			end
-		end
-
-		GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
-		local quest = pin.data.QuestData
-		if quest and quest.name then
-			GameTooltip:AddLine(quest.name)
-		end
-		for _, entry in ipairs(entries) do
-			GameTooltip:AddLine(entry.name, ns.GetColorRGB("TEXT"))
-			-- Each objective leads with the quest log's check once it's done, and its count sits on the right
-			for _, objective in ipairs(entry.objectives) do
-				local left = ROW_INDENT .. ns.CheckIcon(GameTooltipText, objective.done) .. " " .. objective.description
-				local red, green, blue = ns.GetColorRGB(objective.done and "HELP" or "TEXT")
-				if objective.count then
-					GameTooltip:AddDoubleLine(left, objective.count, red, green, blue, red, green, blue)
-				else
-					GameTooltip:AddLine(left, red, green, blue)
-				end
-			end
-		end
-		GameTooltip:Show()
 	end
 
 	--------------------------------------------------------------------------------
@@ -208,7 +138,7 @@ ns.AddWideQuestLogPart(function()
 		pin.Texture:SetTexCoord(icon.texture:GetTexCoord())
 		pin.Texture:SetVertexColor(icon.texture:GetVertexColor())
 		SetGlow(pin, icon, size)
-		pin:SetScript("OnEnter", ShowPinTooltip)
+		pin:SetScript("OnEnter", questMap.ShowPinTooltip)
 		pin:SetScript("OnLeave", GameTooltip_Hide)
 		pin:UseFrameLevelType("PIN_FRAME_LEVEL_ACTIVE_QUEST")
 		pin:ApplyFrameLevel()
@@ -399,15 +329,15 @@ ns.AddWideQuestLogPart(function()
 	-- The circles around icons are sized for the map's size on screen, so a resized map draws them again
 	canvas.ScrollContainer:HookScript("OnSizeChanged", questMap.RequestRefresh)
 
-	if HBDPins then
+	if hereBeDragonsPins then
 		for _, name in ipairs({
 			"AddWorldMapIconMap",
 			"AddWorldMapIconWorld",
 			"RemoveWorldMapIcon",
 			"RemoveAllWorldMapIcons",
 		}) do
-			if HBDPins[name] then
-				hooksecurefunc(HBDPins, name, questMap.RequestRefresh)
+			if hereBeDragonsPins[name] then
+				hooksecurefunc(hereBeDragonsPins, name, questMap.RequestRefresh)
 			end
 		end
 	end

@@ -8,13 +8,13 @@ local _, ns = ...
 
 local routes = ns.routes
 
-local HereBeDragons = routes.HereBeDragons
+local GetHereBeDragons = routes.HereBeDragons
 
 -- The player's world position in yards, and continent, or nothing where the client won't say
 function routes.PlayerPosition()
-	local hbd = HereBeDragons()
-	if hbd then
-		return hbd:GetPlayerWorldPosition()
+	local hereBeDragons = GetHereBeDragons()
+	if hereBeDragons then
+		return hereBeDragons:GetPlayerWorldPosition()
 	end
 end
 
@@ -35,11 +35,14 @@ end
 
 --[[
 	Whether a party member is in another zone than the player. Not where the client won't say where either
-	one is, as for a member in a dungeon the player isn't in
+	one is, as for a member in a dungeon the player isn't in, or keeps secret, as WoW Forever can in combat
 ]]
 function routes.IsUnitOutOfZone(unit)
-	local mine = routes.PlayerZone()
-	local theirs = ZoneOf(C_Map.GetBestMapForUnit(unit))
+	local myMap, theirMap = C_Map.GetBestMapForUnit("player"), C_Map.GetBestMapForUnit(unit)
+	if not ns.IsReadable(myMap, theirMap) then
+		return false
+	end
+	local mine, theirs = ZoneOf(myMap), ZoneOf(theirMap)
 	return mine ~= nil and theirs ~= nil and mine ~= theirs
 end
 
@@ -52,13 +55,13 @@ function routes.CorpsePosition()
 	if not UnitIsGhost("player") then
 		return nil
 	end
-	local hbd = HereBeDragons()
+	local hereBeDragons = GetHereBeDragons()
 	local mapID = C_Map.GetBestMapForUnit("player")
-	while hbd and mapID and mapID > 0 do
+	while hereBeDragons and mapID and mapID > 0 do
 		local position = C_DeathInfo.GetCorpseMapPosition(mapID)
 		local x, y = position and position.x, position and position.y
 		if x and x >= 0 and x <= 1 and y >= 0 and y <= 1 and (x > 0 or y > 0) then
-			local worldX, worldY, instance = hbd:GetWorldCoordinatesFromZone(x, y, mapID)
+			local worldX, worldY, instance = hereBeDragons:GetWorldCoordinatesFromZone(x, y, mapID)
 			if worldX then
 				-- The deepest map at the corpse, as a zone
 				local info = C_Map.GetMapInfoAtPosition(mapID, x, y)
@@ -107,16 +110,16 @@ end
 	zone, so its parents don't say
 ]]
 local function IsWithinByPlace(mapID, zone)
-	local hbd = HereBeDragons()
-	if not hbd then
+	local hereBeDragons = GetHereBeDragons()
+	if not hereBeDragons then
 		return false
 	end
 	for _, corner in ipairs({ 0, 1 }) do
-		local worldX, worldY, instance = hbd:GetWorldCoordinatesFromZone(corner, corner, mapID)
+		local worldX, worldY, instance = hereBeDragons:GetWorldCoordinatesFromZone(corner, corner, mapID)
 		if not worldX then
 			return false
 		end
-		local x, y = hbd:GetZoneCoordinatesFromWorldInstance(worldX, worldY, instance, zone, true)
+		local x, y = hereBeDragons:GetZoneCoordinatesFromWorldInstance(worldX, worldY, instance, zone, true)
 		if not (x and x >= 0 and x <= 1 and y >= 0 and y <= 1) then
 			return false
 		end
