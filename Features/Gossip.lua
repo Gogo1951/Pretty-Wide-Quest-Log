@@ -35,8 +35,10 @@ end
 	the greeting's list entry): Blizzard only sets that copy's text and reads its height, never runs its
 	Setup, so the hook above misses it. Left in Blizzard's spacing, it measures a long greeting shorter
 	than the styled row draws, and the first option lands inside the text. So the copy takes the same
-	style after each list update, and when that changes its height the list lays its rows out again. The
-	copy lasts for the session, so from the next update on it's measured in the right style first time
+	style after each list update, and when that changes its height the list is rebuilt. A FullUpdate isn't
+	enough: it recalculates the row heights but leaves the rows already shown at their old size and place.
+	Blizzard only creates the copy inside the first update, so that first update is the one that needs the
+	rebuild. The copy lasts for the session, so from the next update on it's measured in the right style first time
 ]]
 local function StyleGossipMeasuringGreeting()
 	local scrollBox = GossipFrame.GreetingPanel and GossipFrame.GreetingPanel.ScrollBox
@@ -53,7 +55,12 @@ local function StyleGossipMeasuringGreeting()
 	end
 	local measuredHeight = measuringText:GetHeight()
 	StyleGossipGreeting(measuringText)
-	if measuringText:GetHeight() ~= measuredHeight and scrollBox.FullUpdate then
+	if measuringText:GetHeight() == measuredHeight then
+		return
+	end
+	if scrollBox.Rebuild then
+		scrollBox:Rebuild(ScrollBoxConstants.RetainScrollPosition)
+	elseif scrollBox.FullUpdate then
 		scrollBox:FullUpdate(ScrollBoxConstants.UpdateImmediately)
 	end
 end
