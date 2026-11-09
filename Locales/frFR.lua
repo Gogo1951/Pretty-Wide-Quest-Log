@@ -43,9 +43,6 @@ L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
 L["ENABLE_QUEST_ARROW"] = "Activer la Flèche de quête"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Affiche à l'écran une flèche, la Flèche de quête, qui pointe vers le prochain point de passage de l'itinéraire, avec les quêtes et objectifs à y accomplir. Par défaut, elle se masque en groupe de raid et en instance."
-L["ENABLE_PLAYER_ICON"] = "Activer l'icône du joueur sur les cartes"
-L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
-	"Vous affiche sous forme de flèche à la couleur de votre classe sur la minicarte et la carte de zone, et les membres de votre groupe sous forme de disques à la couleur de la leur, à la place de la flèche du joueur et des points de groupe de Blizzard."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activer le journal de quêtes large prend effet après un rechargement, proposé à la fermeture de l'interface des options."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log change de journal de quêtes après un rechargement. Recharger maintenant ?"
@@ -258,18 +255,6 @@ L["HIDE_IN_RAIDS_DESCRIPTION"] = "Masque la Flèche de quête quand vous êtes d
 L["HIDE_IN_INSTANCES"] = "Masquer en instance"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] =
 	"Masque la Flèche de quête dans les donjons, les raids et les champs de bataille."
-
---------------------------------------------------------------------------------
--- Options: Player Icon on Maps Panel
---------------------------------------------------------------------------------
-
-L["TAB_PLAYER_ICON"] = "Icône du joueur sur les cartes"
-L["TAB_PLAYER_ICON_DESCRIPTION"] = "Vous et votre groupe sur la minicarte et les cartes, aux couleurs de vos classes."
-L["PLAYER_ICON_HEADER"] = "Icônes"
-L["PLAYER_ICON_DESCRIPTION"] = "Votre flèche et les disques des membres de votre groupe."
-L["PLAYER_ICON_SIZE"] = "Taille de l'icône"
-L["PLAYER_ICON_SIZE_DESCRIPTION"] =
-	"La taille de votre flèche et des disques des membres de votre groupe sur la minicarte et les cartes, y compris la carte du journal de quêtes."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel

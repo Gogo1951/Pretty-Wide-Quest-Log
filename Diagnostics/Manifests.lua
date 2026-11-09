@@ -229,8 +229,7 @@ local TURN_IN_MONEY_ROUTE = {
 local ROUTES_FUNCTIONS = {
 	"C_Map.GetBestMapForUnit",
 	"GetPlayerFacing",
-	-- The player's marker on the maps: its class color, and where they are without Questie (Player-Map-Pin.lua)
-	"UnitClass",
+	-- Where the player is on the quest log's map without Questie (Player-Map-Pin.lua)
 	"C_Map.GetPlayerMapPosition",
 	"UnitIsGhost",
 	"UnitOnTaxi",
@@ -1269,8 +1268,6 @@ function ns:BuildQuestLogContextReport()
 	Setting(lines, "Completed quests first", "completedFirst")
 	Setting(lines, "Close when combat starts", "closeInCombat")
 	Setting(lines, "Welcome message", "showWelcome")
-	-- The class-colored player arrow and party discs on the minimap and world map (Player-Map-Pin.lua)
-	Setting(lines, "Player Icon on Maps switch", "enablePlayerIcon")
 	Setting(lines, "Quality of Life switch", "enableQualityOfLife")
 	Setting(lines, "Quest giver window cleanup", "giverCleanup")
 	Setting(lines, "Quest levels at quest givers", "giverLevels")

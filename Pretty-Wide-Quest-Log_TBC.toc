@@ -124,7 +124,6 @@ Options/Options-Quest-Log.lua
 Options/Options-Quality-of-Life.lua
 Options/Options-Routes-Map.lua
 Options/Options-Quest-Arrow.lua
-Options/Options-Player-Icon.lua
 Options/Options-Profiles.lua
 Options/Options-Feedback-Support.lua
 Diagnostics/Options-Diagnostics.lua

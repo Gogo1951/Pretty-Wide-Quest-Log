@@ -487,10 +487,6 @@ local function AddToWorldMap()
 	end
 	WorldMapFrame:HookScript("OnHide", KeepFullSize)
 	AddFrameLevels(WorldMapFrame)
-	-- The player and their party (Player-Map-Pin.lua), on levels added last, over the route and everything else, in place of Blizzard's while Player Icon on Maps is on
-	ns.AddGroupPinLevels(WorldMapFrame)
-	ns.AddPlayerPin(WorldMapFrame, true)
-	ns.HideBlizzardGroupPins(WorldMapFrame)
 	provider = CreateFromMixins(providerMixin)
 	WorldMapFrame:AddDataProvider(provider)
 	HookBlizzardQuests(WorldMapFrame) -- Blizzard's quest markers and objective areas, hidden for the route too

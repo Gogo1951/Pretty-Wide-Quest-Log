@@ -44,9 +44,6 @@ L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
 L["ENABLE_QUEST_ARROW"] = "Activar Flecha de misiones"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Muestra en pantalla una flecha, la Flecha de misiones, que apunta al siguiente punto de ruta, con las misiones y objetivos que hacer ahí. De forma predeterminada se oculta en grupos de banda y en instancias."
-L["ENABLE_PLAYER_ICON"] = "Activar ícono del jugador en los mapas"
-L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
-	"Te muestra como una flecha del color de tu clase en el minimapa y el mapa de zona, y a los miembros de tu grupo como discos del suyo, en lugar de la flecha del jugador y los puntos de grupo de Blizzard."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Activar registro de misiones ancho se aplica después de recargar, algo que se te ofrecerá al cerrar la interfaz de opciones."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia de registro de misiones después de recargar. ¿Recargar ahora?"
@@ -258,18 +255,6 @@ L["HIDE_IN_RAIDS"] = "Ocultar en grupos de banda"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "Oculta la Flecha de misiones mientras estás en un grupo de banda."
 L["HIDE_IN_INSTANCES"] = "Ocultar en instancias"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "Oculta la Flecha de misiones en calabozos, bandas y campos de batalla."
-
---------------------------------------------------------------------------------
--- Options: Player Icon on Maps Panel
---------------------------------------------------------------------------------
-
-L["TAB_PLAYER_ICON"] = "Ícono del jugador en los mapas"
-L["TAB_PLAYER_ICON_DESCRIPTION"] = "Tú y tu grupo en el minimapa y los mapas, con los colores de sus clases."
-L["PLAYER_ICON_HEADER"] = "Íconos"
-L["PLAYER_ICON_DESCRIPTION"] = "Tu flecha y los discos de los miembros de tu grupo."
-L["PLAYER_ICON_SIZE"] = "Tamaño del ícono"
-L["PLAYER_ICON_SIZE_DESCRIPTION"] =
-	"Lo grandes que son tu flecha y los discos de los miembros de tu grupo en el minimapa y los mapas, incluido el mapa del registro de misiones."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel

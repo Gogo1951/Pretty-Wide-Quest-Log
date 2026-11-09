@@ -152,7 +152,7 @@ levels:AddFrameLevel("PIN_FRAME_LEVEL_DUNGEON_ENTRANCE")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_FLIGHT_POINT")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_ACTIVE_QUEST")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_QUEST_MARKER")
-ns.AddGroupPinLevels(canvas) -- The player and their party (Player-Map-Pin.lua)
+ns.AddPlayerPinLevel(canvas) -- The player (Player-Map-Pin.lua)
 
 --------------------------------------------------------------------------------
 -- Following the selected quest

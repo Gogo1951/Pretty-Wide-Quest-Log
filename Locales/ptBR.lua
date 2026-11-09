@@ -43,9 +43,6 @@ L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
 L["ENABLE_QUEST_ARROW"] = "Ativar Seta de missões"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Mostra uma seta na tela, a Seta de missões, apontando para o próximo ponto de passagem da rota, com as missões e objetivos a fazer lá. Por padrão, ela fica oculta em grupos de raide e instâncias."
-L["ENABLE_PLAYER_ICON"] = "Ativar ícone do jogador nos mapas"
-L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
-	"Mostra você como uma seta na cor da sua classe no minimapa e no mapa da zona, e os membros do seu grupo como discos na cor da deles, no lugar da seta do jogador e dos pontos de grupo da Blizzard."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Ativar registro de missões largo entra em vigor após recarregar, o que será oferecido quando você fechar a interface de opções."
 L["RELOAD_PROMPT"] = "O Pretty Wide Quest Log troca de registro de missões após recarregar. Recarregar agora?"
@@ -257,18 +254,6 @@ L["HIDE_IN_RAIDS"] = "Ocultar em grupos de raide"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "Oculta a Seta de missões enquanto você está em um grupo de raide."
 L["HIDE_IN_INSTANCES"] = "Ocultar em instâncias"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "Oculta a Seta de missões em masmorras, raides e campos de batalha."
-
---------------------------------------------------------------------------------
--- Options: Player Icon on Maps Panel
---------------------------------------------------------------------------------
-
-L["TAB_PLAYER_ICON"] = "Ícone do jogador nos mapas"
-L["TAB_PLAYER_ICON_DESCRIPTION"] = "Você e seu grupo no minimapa e nos mapas, nas cores das suas classes."
-L["PLAYER_ICON_HEADER"] = "Ícones"
-L["PLAYER_ICON_DESCRIPTION"] = "Sua seta e os discos dos membros do seu grupo."
-L["PLAYER_ICON_SIZE"] = "Tamanho do ícone"
-L["PLAYER_ICON_SIZE_DESCRIPTION"] =
-	"O tamanho da sua seta e dos discos dos membros do seu grupo no minimapa e nos mapas, incluindo o mapa do registro de missões."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel

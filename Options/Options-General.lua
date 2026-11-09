@@ -74,14 +74,6 @@ function ns.BuildGeneralOptions()
 			17,
 			FEATURE_WIDTH
 		),
-		enablePlayerIcon = ns.OptionsFeatureToggle(
-			"enablePlayerIcon",
-			"ENABLE_PLAYER_ICON",
-			"FEATURE_PLAYER_ICON_DESCRIPTION",
-			18,
-			FEATURE_WIDTH,
-			ns.ApplyPlayerIcon
-		),
 		questLogReloadPending = ns.OptionsStatusLine(ns.QuestLogReloadPendingText, 19),
 	}
 

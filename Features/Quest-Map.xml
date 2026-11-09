@@ -31,27 +31,14 @@
 		</Layers>
 	</Frame>
 	<!--
-		Where the player is, on the world map and the quest map (Player-Map-Pin.lua): the Quest Arrow's
-		arrow at half its size, as the Next Objective's is, in their class color. It takes no mouse either
+		Where the player is on the quest map (Player-Map-Pin.lua): Blizzard's own world map arrow, at the
+		size Blizzard draws it. It takes no mouse either
 	-->
 	<Frame name="PrettyWideQuestLogPlayerPinTemplate" mixin="PrettyWideQuestLogPinMixin" virtual="true">
-		<Size x="32" y="32"/>
+		<Size x="27" y="27"/>
 		<Layers>
 			<Layer level="OVERLAY">
-				<Texture parentKey="Arrow" file="Interface\AddOns\Pretty-Wide-Quest-Log\Includes\Images\Route-Arrow" setAllPoints="true"/>
-			</Layer>
-		</Layers>
-	</Frame>
-	<!--
-		A party member, on the world map and the quest map (Player-Map-Pin.lua): the disc the route's
-		waypoints are drawn on, black ring and all, in their class color, a step smaller than the arrow so
-		the player stands out. It takes the mouse's motion only, set in Lua
-	-->
-	<Frame name="PrettyWideQuestLogPartyPinTemplate" mixin="PrettyWideQuestLogPinMixin" virtual="true">
-		<Size x="16" y="16"/>
-		<Layers>
-			<Layer level="OVERLAY">
-				<Texture parentKey="Disc" file="Interface\AddOns\Pretty-Wide-Quest-Log\Includes\Images\Route-Stop" setAllPoints="true"/>
+				<Texture parentKey="Arrow" file="Interface\WorldMap\WorldMapArrow" setAllPoints="true"/>
 			</Layer>
 		</Layers>
 	</Frame>
