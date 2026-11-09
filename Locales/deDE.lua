@@ -34,12 +34,18 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Komfortfunktionen aktivieren"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Räumt das Questgeberfenster auf und hilft deiner Gruppe, deine Quests zu bekommen: Tempo beim Teilen, Flüsternachrichten, wenn ein Teilen jemanden verfehlt, sowie Ansage und Teilen von Dungeonquests. Die Schaltfläche Quests teilen einer Zone im Questlog funktioniert auch, wenn dies ausgeschaltet ist."
-L["ENABLE_ROUTES_MAP"] = "Routen auf der Zonenkarte aktivieren"
-L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
-	"Zeichnet auf der Zonenkarte eine Route durch deine Questziele und Abgaben, das Nächste zuerst, als wandernde Punkte zwischen Markierungen."
+L["ENABLE_WAYPOINT_MARKERS"] = "Wegpunkt-Markierungen aktivieren"
+L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"Fasst die Questsymbole jedes Questziels auf der Zonenkarte zu einer Markierung zusammen, einem Wegpunkt, dort, wo die meisten seiner Gegner oder Objekte sind, dazu eine für jede Abgabe. Fahre mit der Maus über eine Markierung, um die Symbole zu sehen, für die sie steht."
+L["ENABLE_QUEST_ROUTE"] = "Questroute aktivieren"
+L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
+	"Zeichnet auf der Zonenkarte eine Route durch deine Wegpunkt-Markierungen, das Nächste zuerst, als wandernde Punkte von dir zu jeder Markierung, eine nach der anderen. Benötigt Wegpunkt-Markierungen."
 L["ENABLE_QUEST_ARROW"] = "Questpfeil aktivieren"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Zeigt einen Pfeil auf dem Bildschirm, den Questpfeil, der zum nächsten Wegpunkt der Route zeigt, mit den Quests und Zielen, die dort zu erledigen sind. Standardmäßig wird er in Schlachtzugsgruppen und Instanzen ausgeblendet."
+L["ENABLE_PLAYER_ICON"] = "Spielersymbol auf Karten aktivieren"
+L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
+	"Zeigt dich auf der Minikarte und der Zonenkarte als Pfeil in deiner Klassenfarbe und deine Gruppenmitglieder als Scheiben in ihrer, anstelle von Blizzards Spielerpfeil und Gruppenpunkten."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Breites Questlog aktivieren wird nach einem Neuladen wirksam, das dir beim Schließen des Optionsmenüs angeboten wird."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log wechselt das Questlog erst nach einem Neuladen. Jetzt neu laden?"
@@ -152,12 +158,12 @@ L["DUNGEON_SHARE_DESCRIPTION"] =
 	"Teilt jede Quest für den Dungeon, die das Spiel teilen lässt, im unter Quests teilen eingestellten Tempo, sobald alle in Reichweite sind (oder nach einer Minute; auf WoW Forever sofort). Jedes Gruppenmitglied erhält sie einmal pro Dungeon, also auch, wer später beitritt, und Raus- und wieder Reinzonen teilt nichts. Ist Bei fehlgeschlagenem Teilen anflüstern aktiviert, wird jeder angeflüstert, den ein Teilen verfehlt, damit er noch einmal fragen kann."
 
 --------------------------------------------------------------------------------
--- Options: Routes on Zone Map Panel
+-- Options: Waypoint Markers Panel
 --------------------------------------------------------------------------------
 
-L["TAB_ROUTES_MAP"] = "Routen auf der Zonenkarte"
-L["TAB_ROUTES_MAP_DESCRIPTION"] =
-	"Eine Route durch deine Questziele und Abgaben auf der Zonenkarte, in der Reihenfolge, in der du sie erledigst, ausgehend von deinem Standort."
+L["TAB_WAYPOINT_MARKERS"] = "Wegpunkt-Markierungen"
+L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"Eine Markierung auf der Zonenkarte für jedes Questziel und jede Abgabe, anstelle eines Haufens von Questsymbolen."
 L["ROUTES_MAP_HEADER"] = "Zonenkarte"
 L["ROUTES_MAP_DESCRIPTION"] = "Wie sich die Zonenkarte öffnet, während sie die Route zeigt."
 L["FULL_SIZE_MAP"] = "Zonenkarte in voller Größe öffnen"
@@ -174,11 +180,18 @@ L["MARKER_SIZE_SMALL"] = "Klein"
 L["MARKER_SIZE_MEDIUM"] = "Mittel"
 L["MARKER_SIZE_LARGE"] = "Groß"
 L["MARKER_SIZE_HUGE"] = "Riesig"
+
+--------------------------------------------------------------------------------
+-- Options: Quest Route Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ROUTE"] = "Questroute"
+L["TAB_QUEST_ROUTE_DESCRIPTION"] =
+	"Eine Route auf der Zonenkarte durch deine Wegpunkt-Markierungen, in der Reihenfolge, in der du sie erledigst, ausgehend von deinem Standort."
+L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
+	"Die Questroute verläuft zwischen den Wegpunkt-Markierungen und erscheint daher nur, solange Wegpunkt-Markierungen aktivieren eingeschaltet ist."
 L["ROUTES_LINE_HEADER"] = "Routenlinie"
 L["ROUTES_LINE_DESCRIPTION"] = "Die wandernden Punkte, die von dir zu jeder Markierung führen."
-L["SHOW_ROUTE_LINE"] = "Routenlinie anzeigen"
-L["SHOW_ROUTE_LINE_DESCRIPTION"] =
-	"Zeichnet wandernde Punkte von dir zu jeder Markierung, eine nach der anderen. Ausgeschaltet sind nur die Markierungen zu sehen."
 L["LINE_SPEED"] = "Geschwindigkeit der Linie"
 L["LINE_SPEED_DESCRIPTION"] = "Wie schnell die Punkte zur nächsten Markierung wandern."
 L["LINE_SPEED_STILL"] = "Stillstehend"
@@ -242,6 +255,18 @@ L["HIDE_IN_RAIDS"] = "In Schlachtzugsgruppen ausblenden"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "Blendet den Questpfeil aus, solange du in einer Schlachtzugsgruppe bist."
 L["HIDE_IN_INSTANCES"] = "In Instanzen ausblenden"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "Blendet den Questpfeil in Dungeons, Schlachtzügen und auf Schlachtfeldern aus."
+
+--------------------------------------------------------------------------------
+-- Options: Player Icon on Maps Panel
+--------------------------------------------------------------------------------
+
+L["TAB_PLAYER_ICON"] = "Spielersymbol auf Karten"
+L["TAB_PLAYER_ICON_DESCRIPTION"] = "Du und deine Gruppe auf der Minikarte und den Karten, in euren Klassenfarben."
+L["PLAYER_ICON_HEADER"] = "Symbole"
+L["PLAYER_ICON_DESCRIPTION"] = "Dein Pfeil und die Scheiben deiner Gruppenmitglieder."
+L["PLAYER_ICON_SIZE"] = "Symbolgröße"
+L["PLAYER_ICON_SIZE_DESCRIPTION"] =
+	"Wie groß dein Pfeil und die Scheiben deiner Gruppenmitglieder auf der Minikarte und den Karten sind, die Karte des Questlogs eingeschlossen."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -326,7 +351,7 @@ L["CHAT_SHARING_ZONE"] = "Teile %d Quests aus %s, eine alle %d Sekunden."
 L["CHAT_SHARING_ZONE_NONE"] = "Keine deiner Quests aus %s kann geteilt werden."
 
 --------------------------------------------------------------------------------
--- Routes on Zone Map and the Quest Arrow
+-- Waypoint Markers, Quest Route and the Quest Arrow
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "Du bist da"

@@ -61,9 +61,9 @@ end
 
 --[[
 	A Routes setting's switch. Routes is one line to leave out of the TOC (Features/Routes), so the switch
-	hides without it. hidden, if given, hides it too
+	hides without it. hidden, if given, hides it too; disabled, if given, grays it out
 ]]
-function ns.OptionsRoutesToggle(key, nameKey, descKey, order, width, hidden)
+function ns.OptionsRoutesToggle(key, nameKey, descKey, order, width, hidden, disabled)
 	return {
 		type = "toggle",
 		name = ns.L[nameKey],
@@ -73,6 +73,7 @@ function ns.OptionsRoutesToggle(key, nameKey, descKey, order, width, hidden)
 		hidden = function()
 			return ns.routes == nil or (hidden ~= nil and hidden())
 		end,
+		disabled = disabled,
 		get = function()
 			return ns.routes.Settings()[key]
 		end,
@@ -100,6 +101,44 @@ function ns.OptionsRoutesControl(key, control, order, hidden)
 		end
 	end
 	return control
+end
+
+--[[
+	The four sizes a Waypoint Marker or the Player Icon comes in, each times its size at Medium, for a select
+	control's values and sorting
+]]
+local SIZE_NAMES = {
+	[0.75] = "MARKER_SIZE_SMALL",
+	[1] = "MARKER_SIZE_MEDIUM",
+	[1.25] = "MARKER_SIZE_LARGE",
+	[1.5] = "MARKER_SIZE_HUGE",
+}
+ns.OPTIONS_SIZE_ORDER = { 0.75, 1, 1.25, 1.5 }
+
+function ns.OptionsSizeValues()
+	local values = {}
+	for value, nameKey in pairs(SIZE_NAMES) do
+		values[value] = L[nameKey]
+	end
+	return values
+end
+
+--[[
+	The Quest Route switch, on the root panel's Features section and the Quest Route panel: the route is
+	drawn between the Waypoint Markers, so it's grayed out while they're off
+]]
+function ns.OptionsQuestRouteToggle(order, width)
+	return ns.OptionsRoutesToggle(
+		"showLine",
+		"ENABLE_QUEST_ROUTE",
+		"FEATURE_QUEST_ROUTE_DESCRIPTION",
+		order,
+		width,
+		nil,
+		function()
+			return ns.routes ~= nil and not ns.routes.Settings().showMap
+		end
+	)
 end
 
 -- A Quality of Life setting takes effect at once: the quest giver window, and the dungeon quests' checks

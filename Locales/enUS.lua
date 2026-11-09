@@ -34,12 +34,18 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Enable Quality of Life"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Tidies the quest giver window and helps your party get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. A zone's Share Quests button in the quest log works with this off too."
-L["ENABLE_ROUTES_MAP"] = "Enable Routes on Zone Map"
-L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
-	"Draws a route through your quest objectives and turn-ins on the zone map, nearest first, as marching dots between markers."
+L["ENABLE_WAYPOINT_MARKERS"] = "Enable Waypoint Markers"
+L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"Gathers each objective's quest icons on the zone map into one marker, a waypoint, where most of its mobs or objects are, with one for each turn-in too. Hover a marker to see the icons it stands in for."
+L["ENABLE_QUEST_ROUTE"] = "Enable Quest Route"
+L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
+	"Draws a route on the zone map through your waypoint markers, nearest first, as marching dots from you to each marker in turn. Needs Waypoint Markers."
 L["ENABLE_QUEST_ARROW"] = "Enable Quest Arrow"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Shows an arrow on screen, the Quest Arrow, pointing to the next waypoint on the route, with the quests and objectives to do there. By default it hides in raid groups and instances."
+L["ENABLE_PLAYER_ICON"] = "Enable Player Icon on Maps"
+L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
+	"Shows you as an arrow in your class color on the minimap and zone map, and your party members as discs in theirs, in place of Blizzard's player arrow and party dots."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Enable Wide Quest Log takes effect after a reload, offered when you close the Options Interface."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
@@ -148,12 +154,12 @@ L["DUNGEON_SHARE_DESCRIPTION"] =
 	"Shares every quest for the dungeon that the game lets you share, at the pace set under Quest Sharing, once everyone is in range (or after a minute; right away on WoW Forever). Each party member gets them once per dungeon, so someone who joins later gets them too, and zoning out and back in shares nothing. With Whisper When a Share Fails on, anyone a share misses is whispered so they can ask again."
 
 --------------------------------------------------------------------------------
--- Options: Routes on Zone Map Panel
+-- Options: Waypoint Markers Panel
 --------------------------------------------------------------------------------
 
-L["TAB_ROUTES_MAP"] = "Routes on Zone Map"
-L["TAB_ROUTES_MAP_DESCRIPTION"] =
-	"A route through your quest objectives and turn-ins on the zone map, in the order to do them, from where you stand."
+L["TAB_WAYPOINT_MARKERS"] = "Waypoint Markers"
+L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"One marker on the zone map for each objective and turn-in, in place of a cluster of quest icons."
 L["ROUTES_MAP_HEADER"] = "Zone Map"
 L["ROUTES_MAP_DESCRIPTION"] = "How the zone map opens while it shows the route."
 L["FULL_SIZE_MAP"] = "Open the Zone Map Full Size"
@@ -170,10 +176,18 @@ L["MARKER_SIZE_SMALL"] = "Small"
 L["MARKER_SIZE_MEDIUM"] = "Medium"
 L["MARKER_SIZE_LARGE"] = "Large"
 L["MARKER_SIZE_HUGE"] = "Huge"
+
+--------------------------------------------------------------------------------
+-- Options: Quest Route Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ROUTE"] = "Quest Route"
+L["TAB_QUEST_ROUTE_DESCRIPTION"] =
+	"A route on the zone map through your waypoint markers, in the order to do them, from where you stand."
+L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
+	"The Quest Route runs between the waypoint markers, so it shows only while Enable Waypoint Markers is on."
 L["ROUTES_LINE_HEADER"] = "Route Line"
 L["ROUTES_LINE_DESCRIPTION"] = "The marching dots that lead from you to each marker."
-L["SHOW_ROUTE_LINE"] = "Show the Route Line"
-L["SHOW_ROUTE_LINE_DESCRIPTION"] = "Draws marching dots from you to each marker in turn. Off shows just the markers."
 L["LINE_SPEED"] = "Line Speed"
 L["LINE_SPEED_DESCRIPTION"] = "How fast the dots march toward the next marker."
 L["LINE_SPEED_STILL"] = "Still"
@@ -234,6 +248,18 @@ L["HIDE_IN_RAIDS"] = "Hide in Raid Groups"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "Hides the Quest Arrow while you're in a raid group."
 L["HIDE_IN_INSTANCES"] = "Hide in Instances"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "Hides the Quest Arrow in dungeons, raids, and battlegrounds."
+
+--------------------------------------------------------------------------------
+-- Options: Player Icon on Maps Panel
+--------------------------------------------------------------------------------
+
+L["TAB_PLAYER_ICON"] = "Player Icon on Maps"
+L["TAB_PLAYER_ICON_DESCRIPTION"] = "You and your party on the minimap and maps, in your class colors."
+L["PLAYER_ICON_HEADER"] = "Icons"
+L["PLAYER_ICON_DESCRIPTION"] = "Your arrow and your party members' discs."
+L["PLAYER_ICON_SIZE"] = "Icon Size"
+L["PLAYER_ICON_SIZE_DESCRIPTION"] =
+	"How big your arrow and your party members' discs are on the minimap and maps, the quest log's map included."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -318,7 +344,7 @@ L["CHAT_SHARING_ZONE"] = "Sharing %d quests from %s, one every %d seconds."
 L["CHAT_SHARING_ZONE_NONE"] = "None of your quests from %s can be shared."
 
 --------------------------------------------------------------------------------
--- Routes on Zone Map and the Quest Arrow
+-- Waypoint Markers, Quest Route and the Quest Arrow
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "You're There"

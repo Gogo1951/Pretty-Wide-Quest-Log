@@ -25,14 +25,17 @@ ns.DATABASE_DEFAULTS = {
 		completedFirst = true,
 		closeInCombat = false,
 		showObjectiveAreas = true,
+		enablePlayerIcon = true, -- The player's class-colored arrow on the minimap and world map, and the party's discs, in place of Blizzard's
+		playerIconScale = 1, -- Their size, times the arrow's 32 pixels and the discs' 16, on the minimap and every map
 		routes = {
-			showArrow = true,
-			showMap = true,
+			showArrow = true, -- The Quest Arrow feature
+			showMap = true, -- The Waypoint Markers feature: the route's markers on the world map, and anything else Routes draws there
 			hideQuestieIcons = true, -- On the world map, Questie's icons and Blizzard's quest markers and objective areas for what's on the route, and Questie's party objective icons
-			-- Routes on Zone Map
-			fullSizeMap = true, -- The map opens maximized while the route is on it
+			-- Waypoint Markers
+			fullSizeMap = true, -- The map opens maximized while the markers are on it
 			markerScale = 1, -- The stop markers' size, times their 42 pixels
-			showLine = true, -- The marching dots between the stops
+			-- Quest Route
+			showLine = true, -- The Quest Route feature: the marching dots between the stops, drawn only with the markers (showMap)
 			lineSpeed = 1.5, -- Dots a second the line marches; 0 holds it still
 			lineOpacity = 0.8,
 			-- Quest Arrow

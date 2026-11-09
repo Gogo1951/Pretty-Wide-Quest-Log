@@ -34,12 +34,18 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "편의 기능 사용"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"퀘스트 NPC 창을 정리하고 파티원이 내 퀘스트를 받도록 돕습니다. 공유 속도 조절, 공유를 놓친 파티원에게 귓속말, 던전 퀘스트 알림과 공유가 포함됩니다. 퀘스트 목록에서 지역마다 있는 퀘스트 공유 버튼은 이 설정을 꺼도 작동합니다."
-L["ENABLE_ROUTES_MAP"] = "지역 지도 경로 사용"
-L["FEATURE_ROUTES_MAP_DESCRIPTION"] =
-	"지역 지도에 퀘스트 목표와 완료 보고 장소를 가까운 곳부터 잇는 경로를 그리며, 표식 사이를 움직이는 점으로 표시합니다."
+L["ENABLE_WAYPOINT_MARKERS"] = "경유지 표식 사용"
+L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"지역 지도에서 각 목표의 퀘스트 아이콘을 몬스터나 물체가 가장 많은 곳의 표식 하나, 즉 경유지로 묶고, 완료 보고 장소마다 표식을 하나씩 둡니다. 표식에 마우스를 올리면 그 표식이 대신하는 아이콘을 볼 수 있습니다."
+L["ENABLE_QUEST_ROUTE"] = "퀘스트 경로 사용"
+L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
+	"지역 지도에 경유지 표식을 가까운 곳부터 잇는 경로를 그리며, 내 위치에서 각 표식까지 차례로 움직이는 점으로 표시합니다. 경유지 표식이 필요합니다."
 L["ENABLE_QUEST_ARROW"] = "퀘스트 화살표 사용"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"경로의 다음 경유지를 가리키는 화살표인 퀘스트 화살표를 화면에 표시하고, 그곳에서 할 퀘스트와 목표를 함께 보여 줍니다. 기본적으로 공격대와 인스턴스에서는 숨겨집니다."
+L["ENABLE_PLAYER_ICON"] = "지도에 플레이어 아이콘 사용"
+L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
+	"미니맵과 지역 지도에서 Blizzard의 플레이어 화살표와 파티원 점 대신, 나를 직업 색상의 화살표로, 파티원을 각자의 직업 색상 원으로 표시합니다."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"넓은 퀘스트 목록 사용은 UI를 다시 불러온 후에 적용되며, 설정 창을 닫을 때 다시 불러오기를 안내합니다."
 L["RELOAD_PROMPT"] =
@@ -157,12 +163,12 @@ L["DUNGEON_SHARE_DESCRIPTION"] =
 	"게임이 공유를 허용하는 그 던전의 퀘스트를 모두 퀘스트 공유에서 정한 속도로, 모두가 거리 안에 들어오면(또는 1분 뒤, WoW Forever에서는 바로) 공유합니다. 파티원마다 던전당 한 번 받으므로 나중에 들어온 사람도 받으며, 나갔다 다시 들어와도 다시 공유하지 않습니다. 공유 실패 시 귓속말이 켜져 있으면 공유를 놓친 파티원에게 귓속말을 보내 다시 요청할 수 있게 합니다."
 
 --------------------------------------------------------------------------------
--- Options: Routes on Zone Map Panel
+-- Options: Waypoint Markers Panel
 --------------------------------------------------------------------------------
 
-L["TAB_ROUTES_MAP"] = "지역 지도 경로"
-L["TAB_ROUTES_MAP_DESCRIPTION"] =
-	"현재 위치에서 시작해 퀘스트 목표와 완료 보고 장소를 할 순서대로 잇는, 지역 지도 위의 경로입니다."
+L["TAB_WAYPOINT_MARKERS"] = "경유지 표식"
+L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
+	"여러 퀘스트 아이콘 대신, 지역 지도에 목표와 완료 보고 장소마다 표식을 하나씩 표시합니다."
 L["ROUTES_MAP_HEADER"] = "지역 지도"
 L["ROUTES_MAP_DESCRIPTION"] = "경로를 표시하는 동안 지역 지도가 열리는 방식입니다."
 L["FULL_SIZE_MAP"] = "지역 지도를 최대 크기로 열기"
@@ -179,11 +185,18 @@ L["MARKER_SIZE_SMALL"] = "작게"
 L["MARKER_SIZE_MEDIUM"] = "보통"
 L["MARKER_SIZE_LARGE"] = "크게"
 L["MARKER_SIZE_HUGE"] = "아주 크게"
+
+--------------------------------------------------------------------------------
+-- Options: Quest Route Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUEST_ROUTE"] = "퀘스트 경로"
+L["TAB_QUEST_ROUTE_DESCRIPTION"] =
+	"현재 위치에서 시작해 경유지 표식을 할 순서대로 잇는, 지역 지도 위의 경로입니다."
+L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
+	"퀘스트 경로는 경유지 표식 사이를 잇기 때문에, 경유지 표식 사용이 켜져 있을 때만 표시됩니다."
 L["ROUTES_LINE_HEADER"] = "경로선"
 L["ROUTES_LINE_DESCRIPTION"] = "내 위치에서 각 표식까지 이어지는 움직이는 점입니다."
-L["SHOW_ROUTE_LINE"] = "경로선 표시"
-L["SHOW_ROUTE_LINE_DESCRIPTION"] =
-	"내 위치에서 각 표식까지 차례로 움직이는 점을 그립니다. 끄면 표식만 표시합니다."
 L["LINE_SPEED"] = "경로선 속도"
 L["LINE_SPEED_DESCRIPTION"] = "점이 다음 표식을 향해 움직이는 속도입니다."
 L["LINE_SPEED_STILL"] = "정지"
@@ -247,6 +260,18 @@ L["HIDE_IN_RAIDS"] = "공격대에서 숨기기"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "공격대에 있는 동안 퀘스트 화살표를 숨깁니다."
 L["HIDE_IN_INSTANCES"] = "인스턴스에서 숨기기"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "던전, 공격대, 전장에서 퀘스트 화살표를 숨깁니다."
+
+--------------------------------------------------------------------------------
+-- Options: Player Icon on Maps Panel
+--------------------------------------------------------------------------------
+
+L["TAB_PLAYER_ICON"] = "지도의 플레이어 아이콘"
+L["TAB_PLAYER_ICON_DESCRIPTION"] = "미니맵과 지도에 직업 색상으로 표시되는 나와 파티원입니다."
+L["PLAYER_ICON_HEADER"] = "아이콘"
+L["PLAYER_ICON_DESCRIPTION"] = "내 화살표와 파티원의 원입니다."
+L["PLAYER_ICON_SIZE"] = "아이콘 크기"
+L["PLAYER_ICON_SIZE_DESCRIPTION"] =
+	"미니맵과 지도(퀘스트 목록의 지도 포함)에서 내 화살표와 파티원의 원이 얼마나 큰지 정합니다."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
@@ -332,7 +357,7 @@ L["CHAT_SHARING_ZONE"] = "퀘스트 %d개를 공유합니다 (%s), %d초마다 �
 L["CHAT_SHARING_ZONE_NONE"] = "%s의 퀘스트 중 공유할 수 있는 퀘스트가 없습니다."
 
 --------------------------------------------------------------------------------
--- Routes on Zone Map and the Quest Arrow
+-- Waypoint Markers, Quest Route and the Quest Arrow
 --------------------------------------------------------------------------------
 
 L["ROUTES_ARRIVED"] = "도착"

@@ -93,7 +93,7 @@ end
 function linePinMixin:Draw(mapID, positions)
 	local settings = routes.Settings()
 	if not settings.showLine then
-		positions = {} -- Markers only: no legs, and nothing to follow the player with
+		positions = {} -- Quest Route off, Waypoint Markers only: no legs, and nothing to follow the player with
 	end
 	self.mapID, self.positions, self.speed = mapID, positions, settings.lineSpeed
 	local needed = #positions
