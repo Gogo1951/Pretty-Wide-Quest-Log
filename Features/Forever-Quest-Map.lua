@@ -143,7 +143,7 @@ end
 
 canvas:AddDataProvider(markerProvider)
 
--- Bottom to top, in the world map's order, the marker over Questie's icons
+-- Bottom to top, in the world map's order, the marker over Questie's icons and the player over everything
 local levels = canvas:GetPinFrameLevelsManager()
 levels:AddFrameLevel("PIN_FRAME_LEVEL_MAP_EXPLORATION")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_FOG_OF_WAR")
@@ -152,6 +152,7 @@ levels:AddFrameLevel("PIN_FRAME_LEVEL_DUNGEON_ENTRANCE")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_FLIGHT_POINT")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_ACTIVE_QUEST")
 levels:AddFrameLevel("PIN_FRAME_LEVEL_QUEST_MARKER")
+ns.AddGroupPinLevels(canvas) -- The player and their party (Player-Map-Pin.lua)
 
 --------------------------------------------------------------------------------
 -- Following the selected quest

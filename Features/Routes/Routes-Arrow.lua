@@ -428,7 +428,7 @@ local function Point(self, elapsed)
 	if rewrite then
 		local yardsText = routes.Settings().showDistance and routes.YardsText(yards) or ""
 		distance:SetText(arrived and L["ROUTES_ARRIVED"] or yardsText)
-		distance:SetTextColor(ns.GetColorRGB(arrived and "INFO" or "HELP"))
+		distance:SetTextColor(ns.GetColorRGB(arrived and "INFO" or view.corpse and "ARROW_GHOST_TEXT" or "HELP"))
 	end
 end
 

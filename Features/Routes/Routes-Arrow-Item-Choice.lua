@@ -110,9 +110,10 @@ end
 
 --[[
 	What the buttons should be now, each { itemID, size, x, top, dim }: x from the arrow frame's left and
-	top down from its top, in its own units. Beside each quest's title, SPACE.NEAR past the block's right
-	edge, a second item SPACE.LINE past the first. A party member's quest has none, as only the player's
-	bags count
+	top down from its top, in its own units. In front of each quest's title, outside the list: the first
+	button's right edge SPACE.GROUP before the block's left edge, a second item SPACE.NEAR further left,
+	tops level with the title's. The block's left edge doesn't move with title or count widths, so the
+	buttons hold still. A party member's quest has none, as only the player's bags count
 ]]
 local function Wanted()
 	local wanted = {}
@@ -132,8 +133,8 @@ local function Wanted()
 					wanted[#wanted + 1] = {
 						itemID = itemID,
 						size = size,
-						x = titleRows.right + SPACE.NEAR + placed * (size + SPACE.LINE),
-						top = row.top - SPACE.TIGHT,
+						x = titleRows.left - SPACE.GROUP - size - placed * (size + SPACE.NEAR),
+						top = row.top,
 						dim = row.dim,
 					}
 					placed = placed + 1

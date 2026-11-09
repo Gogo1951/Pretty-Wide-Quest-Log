@@ -18,7 +18,7 @@ local NO_CHECK_TEXTURE = "Interface\\Common\\spacer"
 	pixels, and CHECK_DROP of its size lower than the game would put it, which is high beside the
 	text, so its foot sits on the line the letters sit on. Left to size itself (":0"), it came out small
 	and riding high beside the text in ElvUI's quest font. The quest chain's turned-in parts use it too
-	(Quest-Chain.lua). ns.InlineIcon does the same for any texture, as the route's corpse line's gravestone
+	(Quest-Chain.lua). ns.InlineIcon does the same for any texture
 ]]
 local CHECK_DROP = 0.25
 

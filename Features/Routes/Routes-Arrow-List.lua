@@ -22,9 +22,9 @@ local ICON_SIZE = 16 -- The small eye beside "While You're Here": a quarter of t
 --------------------------------------------------------------------------------
 
 --[[
-	Lines of the quest list, made as needed and kept: each a quest's title, an objective, the name of
-	someone who still needs it, the count of quests not listed, or a heading ("While You're Here", "Next
-	Objective"). Each has a left side, a count on the right where it has one, and a small icon where it has one
+	Lines of the quest list, made as needed and kept: each a quest's title, a timed quest's time left, an
+	objective, the name of someone who still needs it, the count of quests not listed, or a heading ("While
+	You're Here", "Next Objective"). Each has a left side, a count on the right where it has one, and a small icon where it has one
 ]]
 local lines = {}
 local nextGutter = 0 -- How far the Next Objective's lines sit right of the block's edge, past its arrow and distance
@@ -83,18 +83,20 @@ local nextShown = false -- Whether the Next Objective is laid out, which ListQue
 --[[
 	Where each quest's title sits, for the item buttons beside it (Routes-Arrow-Items.lua): rows, each
 	{ questID, top, room, dim } in the frame's own units from its top, room being how far down the quest's
-	lines reach (16 more is clear before what comes next); right, the block's right edge from the frame's left; and version,
-	counted up on every layout. The Next Objective's quest has none, as it isn't where the player is yet
+	lines reach (16 more is clear before what comes next); left, the block's left edge from the frame's left; and
+	version, counted up on every layout. The Next Objective's quest has none, as it isn't where the player is yet
 ]]
-local titleRows = { rows = {}, right = 0, version = 0 }
+local titleRows = { rows = {}, left = 0, version = 0 }
 routes.arrowTitleRows = titleRows
 
 --[[
 	view is what the list is about; note goes under "Current Objective Area"; passing is a stop's worth of
 	objectives on the way, listed dimmed under "While You're Here"; nextStop is where the route goes after
 	the area: dimmed, its arrow and distance in a column on the left, and on the right "Next Objective",
-	its first quest and what's to do there, as the list writes a quest. Returns whether the Next Objective
-	is laid out, so Point turns its arrow
+	its first quest and what's to do there, as the list writes a quest. A timed quest's time left goes on
+	its own line under its title, wherever it's listed, as the quest log writes it ("28 Min 46 Sec"): blue,
+	red in its last minute. The list is written every second, so it counts down. Returns whether the Next
+	Objective is laid out, so Point turns its arrow
 ]]
 local function ListQuests(view, noteText, passing, nextStop)
 	local settings = routes.Settings()
@@ -121,9 +123,21 @@ local function ListQuests(view, noteText, passing, nextStop)
 			questID or ""
 		)
 	end
+	local timed = routes.TimedQuests()
+	local function AddTimer(questID, dim, isNext)
+		local seconds = questID and timed[questID]
+		if not (seconds and seconds > 0) then
+			return
+		end
+		local red, green, blue = ns.GetColorRGB(seconds < 60 and "QUEST_TIMER_LOW" or "INFO")
+		Add("timer", SecondsToTime(math.floor(seconds)), red, green, blue, nil, dim, nil, isNext)
+	end
 	local function AddStop(stop, dim)
 		routes.ForEachStopLine(stop, settings.questsListed, function(kind, text, red, green, blue, right, questID)
 			Add(kind, text, red, green, blue, right, dim, nil, nil, questID)
+			if kind == "title" then
+				AddTimer(questID, dim)
+			end
 		end)
 	end
 	if settings.showQuests then
@@ -138,9 +152,12 @@ local function ListQuests(view, noteText, passing, nextStop)
 		local red, green, blue = ns.GetColorRGB("HELP")
 		Add("section", L["ROUTES_NEXT_OBJECTIVE"], red, green, blue, nil, true, nil, true)
 		-- Its first quest only, with its objectives and, in a party, who needs each: the rest once there
-		routes.ForEachStopLine(nextStop, 1, function(kind, text, lineRed, lineGreen, lineBlue, right)
+		routes.ForEachStopLine(nextStop, 1, function(kind, text, lineRed, lineGreen, lineBlue, right, questID)
 			if kind ~= "more" then
 				Add(kind, text, lineRed, lineGreen, lineBlue, right, true, nil, true)
+			end
+			if kind == "title" then
+				AddTimer(questID, true, true)
 			end
 		end)
 	end
@@ -274,7 +291,7 @@ local function ListQuests(view, noteText, passing, nextStop)
 			lastRow.room = line.top + LineHeight(line) - lastRow.top
 		end
 	end
-	titleRows.right = left + blockWidth
+	titleRows.left = left
 	titleRows.version = titleRows.version + 1
 
 	frame:SetHeight(y)

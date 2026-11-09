@@ -53,6 +53,7 @@ local EVENTS = {
 	{ "GROUP_JOINED", "OnGroupJoined", "shareReminders" },
 	{ "GROUP_LEFT", "OnGroupLeft", "shareReminders" },
 	{ "PLAYER_LOGIN", "OnPlayerLogin", "routes" },
+	{ "PLAYER_LOGIN", "OnPlayerLogin", "playerMapPin" },
 	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld", "routes" },
 	{ "ZONE_CHANGED_NEW_AREA", "OnZoneChangedNewArea", "routes" },
 	{ "QUEST_LOG_UPDATE", "OnQuestLogUpdate", "routes" },

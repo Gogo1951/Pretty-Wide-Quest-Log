@@ -98,11 +98,11 @@ end
 --[[
 	Adds a stop's quests to the tooltip, a blank line between them: each quest's title, then its objectives
 	at the stop, done or not, in the quest log's order. Where nothing's left but the turn-in, the quest is
-	one line, "Turn in [2] Wayward Weapons". A corpse is one line too, the gravestone then "Run Back to Your Corpse"
+	one line, "Turn in [2] Wayward Weapons". A corpse is one line too, "Run Back to Your Corpse"
 ]]
 function routes.AddStopTooltip(tooltip, stop)
 	if stop.corpse then
-		tooltip:AddLine(routes.CorpseLine(GameTooltipText), ns.GetColorRGB("TEXT"))
+		tooltip:AddLine(L["ROUTES_CORPSE"], ns.GetColorRGB("TEXT"))
 		return
 	end
 	for _, entry in ipairs(routes.QuestsAt(stop, routes.PositionAt(stop))) do

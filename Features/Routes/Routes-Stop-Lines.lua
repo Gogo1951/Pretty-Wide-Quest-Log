@@ -12,17 +12,16 @@ local IsArea = routes.IsArea
 
 --[[
 	The corpse's gravestone, the one the game marks it with on the world map and minimap (Blizzard's
-	CorpsePinTemplate: a cell of the POI icons), on its waypoint on the map (Routes-Map.lua) and in front of
-	its line. The coords are { left, right, top, bottom }
+	CorpsePinTemplate: a cell of the POI icons), on its waypoint on the map (Routes-Map.lua). The coords are
+	{ left, right, top, bottom }. WoW Forever ships the retail sheet, laid out differently from the Classic
+	clients', so it takes the cell its own CorpsePinTemplate does
 ]]
 routes.CORPSE_ICON = "Interface\\Minimap\\POIIcons"
-routes.CORPSE_ICON_COORDS = { 0.875, 1, 0, 0.125 }
-
--- "Run Back to Your Corpse", led by the gravestone sized to the font the line is drawn in
-local function CorpseLine(fontSource)
-	return ns.InlineIcon(fontSource, routes.CORPSE_ICON, routes.CORPSE_ICON_COORDS) .. " " .. L["ROUTES_CORPSE"]
+if ns.FLAVOR == "Camelot" or ns.FLAVOR == "Mainline" then
+	routes.CORPSE_ICON_COORDS = { 0.56640625, 0.6328125, 0.001953125, 0.03515625 }
+else
+	routes.CORPSE_ICON_COORDS = { 0.875, 1, 0, 0.125 }
 end
-routes.CorpseLine = CorpseLine -- For the map's tooltip (Routes-Map-Tooltip.lua)
 
 --------------------------------------------------------------------------------
 -- What a stop holds, for the arrow and the map's tooltip
@@ -214,12 +213,11 @@ end
 	with Show Party Objectives on (routes.ShowsParty), who still needs each objective is listed under it with their own count, the player first, the rest by
 	name, each in their class color; the objective has no count of its own then. Where it's only turned in
 	there, the quest is one line, "Turn in [2] Wayward Weapons". At most maxQuests quests, then a count of
-	the rest. A corpse is one line too, the gravestone then "Run Back to Your Corpse", sized for the arrow's
-	title font (GameFontNormal)
+	the rest. A corpse is one line too, "Run Back to Your Corpse", in black to read on the ghost's pale world
 ]]
 function routes.ForEachStopLine(stop, maxQuests, callback)
 	if stop.corpse then
-		callback("title", CorpseLine(GameFontNormal), ns.GetColorRGB("TEXT"))
+		callback("title", L["ROUTES_CORPSE"], ns.GetColorRGB("ARROW_GHOST_TEXT"))
 		return
 	end
 	local inParty = routes.ShowsParty()

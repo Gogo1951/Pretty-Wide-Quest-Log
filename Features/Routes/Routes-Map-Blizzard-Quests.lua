@@ -13,13 +13,17 @@ local hidden = setmetatable({}, { __mode = "k" }) -- The pins hidden here, to sh
 local questProviders, blobProviders = {}, {}
 
 --[[
-	Whether a provider on the map was made from one of Blizzard's mixins: most of the mixin's functions are
-	its own, so one another add-on post-hooked still counts
+	Whether a provider on the map was made from one of Blizzard's mixins: most of the functions the mixin
+	adds or overrides are the provider's too, so one another add-on post-hooked still counts. What every
+	layer inherits from MapCanvasDataProviderMixin doesn't count, or any layer would pass: the player's
+	own (GroupMembersDataProviderMixin) shares more than half the quest area layer's functions that way,
+	and hiding its pin hid the player's arrow on the world map
 ]]
 local function IsFromMixin(object, mixin)
+	local base = MapCanvasDataProviderMixin or {}
 	local same, total = 0, 0
 	for key, value in pairs(mixin) do
-		if type(value) == "function" then
+		if type(value) == "function" and value ~= base[key] then
 			total = total + 1
 			if object[key] == value then
 				same = same + 1
