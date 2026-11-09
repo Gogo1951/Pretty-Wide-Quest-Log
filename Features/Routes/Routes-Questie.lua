@@ -117,25 +117,27 @@ end
 routes.IsEscort = IsEscort
 
 --[[
-	The quests whose timer is running, as a set of quest IDs. WoW Forever's C_QuestLog.GetQuestTimers names
-	each timer's quest; elsewhere GetQuestTimers counts the timers and GetQuestIndexForTimer finds each one's
-	quest log entry, which says its quest ID, so the quest log's selection is never touched. Asked fresh
-	each time: a timer starts and ends with no change Questie sees
+	The quests whose timer is running, each quest ID to its seconds left. WoW Forever's
+	C_QuestLog.GetQuestTimers names each timer's quest and its seconds; elsewhere GetQuestTimers gives each
+	timer's seconds and GetQuestIndexForTimer finds that timer's quest log entry, which says its quest ID, so
+	the quest log's selection is never touched. Asked fresh each time: a timer starts and ends with no change
+	Questie sees
 ]]
 local function TimedQuests()
 	local timed = {}
 	if C_QuestLog and C_QuestLog.GetQuestTimers then
 		for _, info in ipairs(C_QuestLog.GetQuestTimers() or {}) do
 			if type(info) == "table" and info.questID then
-				timed[info.questID] = true
+				timed[info.questID] = tonumber(info.questTimer) or 0
 			end
 		end
 	elseif GetQuestTimers and GetQuestIndexForTimer and GetQuestLogTitle then
-		for timer = 1, select("#", GetQuestTimers()) do
+		local seconds = { GetQuestTimers() }
+		for timer = 1, #seconds do
 			local index = GetQuestIndexForTimer(timer)
 			local questID = index and select(8, GetQuestLogTitle(index))
 			if questID then
-				timed[questID] = true
+				timed[questID] = tonumber(seconds[timer]) or 0
 			end
 		end
 	end

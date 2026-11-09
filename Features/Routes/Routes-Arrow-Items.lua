@@ -1,15 +1,15 @@
 local _, ns = ...
 
 --[[
-	Routes: Use Item buttons on the Quest Arrow, as Questie's tracker has them. Beside each quest the arrow
-	lists where the player is (the waypoint, or "While You're Here"), a button for each item that quest has
-	to use, up to two, ready to click; which items, and where, is Routes-Arrow-Item-Choice.lua's to say. The
+	Routes: Use Item buttons on the Quest Arrow, as Questie's tracker has them. In front of each quest the
+	arrow lists where the player is (the waypoint, or "While You're Here"), a button for each item that
+	quest has to use, up to two, ready to click; which items, and where, is Routes-Arrow-Item-Choice.lua's to say. The
 	first button is the Use Quest Item key binding (Bindings.xml).
 
 	The buttons are secure (SecureActionButtonTemplate), so in combat nothing about them can change: not
 	the item, not where they sit, not whether they show. So they're never the arrow's children and never
 	anchored to it, which would make the arrow itself protected and stop it moving or hiding in combat.
-	Each sits on UIParent, at the arrow's own scale, placed where its quest's title ends on the arrow,
+	Each sits on UIParent, at the arrow's own scale, placed in front of its quest's title on the arrow,
 	and follows the arrow out of combat as it's dragged or its list changes. In combat a button whose
 	place or item no longer matches the list stays where it was, faded (STALE_ALPHA), still using its
 	item, and everything catches up when combat ends. The count, cooldown and range shading are plain

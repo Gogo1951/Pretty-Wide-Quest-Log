@@ -22,6 +22,7 @@ ns.AddWideQuestLogPart(function()
 	levels:AddFrameLevel("PIN_FRAME_LEVEL_MAP_EXPLORATION")
 	levels:AddFrameLevel("PIN_FRAME_LEVEL_QUEST_BLOB") -- Questie's objective areas (Questie-Map-Area-Layer.lua)
 	levels:AddFrameLevel("PIN_FRAME_LEVEL_ACTIVE_QUEST")
+	ns.AddGroupPinLevels(canvas) -- The player and their party (Player-Map-Pin.lua)
 
 	--------------------------------------------------------------------------------
 	-- Following the selected quest

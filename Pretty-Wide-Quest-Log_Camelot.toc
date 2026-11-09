@@ -96,6 +96,7 @@ Features/Zone-Share.lua
 Features/Share-Reminders.lua
 Features/Dungeon-Quest-Lookup.lua
 Features/Dungeon-Quests.lua
+Features/Player-Map-Pin.lua
 Features/Quest-Map.xml
 Features/Quest-Map.lua
 Features/Questie-Map.xml

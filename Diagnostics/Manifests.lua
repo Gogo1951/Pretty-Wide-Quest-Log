@@ -229,6 +229,9 @@ local TURN_IN_MONEY_ROUTE = {
 local ROUTES_FUNCTIONS = {
 	"C_Map.GetBestMapForUnit",
 	"GetPlayerFacing",
+	-- The player's marker on the maps: its class color, and where they are without Questie (Player-Map-Pin.lua)
+	"UnitClass",
+	"C_Map.GetPlayerMapPosition",
 	"UnitIsGhost",
 	"UnitOnTaxi",
 	"GetCVarBool",
@@ -240,6 +243,8 @@ local ROUTES_FUNCTIONS = {
 	"C_Map.GetMapInfoAtPosition",
 	"Ambiguate",
 	"GetNumGroupMembers",
+	-- A timed quest's time left under its title on the Quest Arrow (Routes-Arrow-List.lua)
+	"SecondsToTime",
 }
 
 -- The fonts a tooltip's click hints are set in (Routes-Core.lua)
