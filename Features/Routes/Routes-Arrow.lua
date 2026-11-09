@@ -454,9 +454,15 @@ local ART_TOP = SPACE.NEAR
 
 -- Each piece: which column and row of the 3 x 3, and the part of the texture it shows
 local SHADE_PIECES = {
-	{ 1, 1, 0, 0.5, 0, 0.5 }, { 2, 1, 0.5, 0.5, 0, 0.5 }, { 3, 1, 0.5, 1, 0, 0.5 },
-	{ 1, 2, 0, 0.5, 0.5, 0.5 }, { 2, 2, 0.5, 0.5, 0.5, 0.5 }, { 3, 2, 0.5, 1, 0.5, 0.5 },
-	{ 1, 3, 0, 0.5, 0.5, 1 }, { 2, 3, 0.5, 0.5, 0.5, 1 }, { 3, 3, 0.5, 1, 0.5, 1 },
+	{ 1, 1, 0, 0.5, 0, 0.5 },
+	{ 2, 1, 0.5, 0.5, 0, 0.5 },
+	{ 3, 1, 0.5, 1, 0, 0.5 },
+	{ 1, 2, 0, 0.5, 0.5, 0.5 },
+	{ 2, 2, 0.5, 0.5, 0.5, 0.5 },
+	{ 3, 2, 0.5, 1, 0.5, 0.5 },
+	{ 1, 3, 0, 0.5, 0.5, 1 },
+	{ 2, 3, 0.5, 0.5, 0.5, 1 },
+	{ 3, 3, 0.5, 1, 0.5, 1 },
 }
 
 local shade = {}
@@ -480,7 +486,8 @@ local function PlaceShade()
 	local inset = frame.hitInset or 0
 	local left, right = inset, WIDTH - inset
 	local top, bottom = ART_TOP, frame:GetHeight()
-	local itemLeft, itemBottom = routes.ArrowItemBounds and routes.ArrowItemBounds()
+	-- Called in full: "routes.ArrowItemBounds and routes.ArrowItemBounds()" would keep only its first value
+	local itemLeft, itemBottom = routes.ArrowItemBounds()
 	if itemLeft then
 		left = math.min(left, itemLeft)
 		bottom = math.max(bottom, itemBottom)
@@ -517,7 +524,9 @@ frame:HookScript("OnUpdate", function(_, elapsed)
 	PlaceShade()
 	if shadeAlpha ~= target then
 		local step = elapsed / SHADE_FADE_SECONDS
-		SetShadeAlpha(target > shadeAlpha and math.min(target, shadeAlpha + step) or math.max(target, shadeAlpha - step))
+		SetShadeAlpha(
+			target > shadeAlpha and math.min(target, shadeAlpha + step) or math.max(target, shadeAlpha - step)
+		)
 	end
 end)
 frame:HookScript("OnHide", function()
