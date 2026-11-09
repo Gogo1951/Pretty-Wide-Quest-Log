@@ -14,12 +14,14 @@ local QUESTIE_TEMPLATE = "HereBeDragonsPinsTemplateQuestie" -- The pins Questie'
 --------------------------------------------------------------------------------
 
 --[[
-	Notes a task's objective or turn-in in the sets: a party objective by its quest and place in it too,
+	Notes a task's objective, turn-in or pick-up in the sets: a party objective by its quest and place in it too,
 	as Questie's map icons for a party member's objective hold an objective of Questie's own making
 ]]
-local function NoteTask(task, objectives, turnIns)
+local function NoteTask(task, objectives, turnIns, pickUps)
 	if task.kind == "turnIn" then
 		turnIns[task.questID] = true
+	elseif task.kind == "pickUp" then
+		pickUps[task.questID] = true
 	elseif task.objective then
 		objectives[task.objective] = true
 		if task.objective.party then
@@ -33,31 +35,33 @@ end
 	Questie's icons for these are hidden on every map, and lend the markers their look
 ]]
 local function RouteTasks()
-	local objectives, turnIns = {}, {}
+	local objectives, turnIns, pickUps = {}, {}, {}
 	for _, list in ipairs({ routes.stops, routes.camps }) do
 		for _, stop in ipairs(list) do
 			for _, task in ipairs(stop.tasks) do
-				NoteTask(task, objectives, turnIns)
+				NoteTask(task, objectives, turnIns, pickUps)
 			end
 		end
 	end
-	return objectives, turnIns
+	return objectives, turnIns, pickUps
 end
 
 -- The stop under the mouse, whose objectives' icons Questie shows again while it's hovered
 routes.hoveredStop = nil -- Set and cleared by the stop pins (Routes-Map.lua)
 
 local function HoveredTasks()
-	local objectives, turnIns = {}, {}
+	local objectives, turnIns, pickUps = {}, {}, {}
 	for _, task in ipairs(routes.hoveredStop and routes.hoveredStop.tasks or {}) do
-		NoteTask(task, objectives, turnIns)
+		NoteTask(task, objectives, turnIns, pickUps)
 	end
-	return objectives, turnIns
+	return objectives, turnIns, pickUps
 end
 
-local function IsRouteIcon(data, objectives, turnIns)
+local function IsRouteIcon(data, objectives, turnIns, pickUps)
 	if data.Type == "complete" then
 		return turnIns[data.Id]
+	elseif data.Type == "available" then
+		return pickUps[data.Id] or false
 	end
 	local objective = data.Type ~= "available" and data.ObjectiveData
 	if not objective then
@@ -91,8 +95,8 @@ local function Sets()
 	if setsTime ~= now then
 		setsTime = now
 		sets.hide = routes.IsMapShown() and routes.Settings().hideQuestieIcons
-		sets.objectives, sets.turnIns = RouteTasks()
-		sets.hoveredObjectives, sets.hoveredTurnIns = HoveredTasks()
+		sets.objectives, sets.turnIns, sets.pickUps = RouteTasks()
+		sets.hoveredObjectives, sets.hoveredTurnIns, sets.hoveredPickUps = HoveredTasks()
 	end
 	return sets
 end
@@ -101,8 +105,8 @@ local function ApplyToPin(pin, current)
 	local data = pin.icon and pin.icon.data
 	local hidden = current.hide
 		and data
-		and (IsRouteIcon(data, current.objectives, current.turnIns) or IsPartyIcon(data))
-		and not IsRouteIcon(data, current.hoveredObjectives, current.hoveredTurnIns)
+		and (IsRouteIcon(data, current.objectives, current.turnIns, current.pickUps) or IsPartyIcon(data))
+		and not IsRouteIcon(data, current.hoveredObjectives, current.hoveredTurnIns, current.hoveredPickUps)
 	if hidden then
 		pin:Hide()
 		pin.hiddenByRoute = true
@@ -148,21 +152,23 @@ local function RequestApplyQuestieIcons()
 	end)
 end
 
--- The texture of Questie's icon for each objective on the route, and for each quest's turn-in, on the map shown
+-- The texture of Questie's icon for each objective on the route, each quest's turn-in and pick-up, on the map shown
 local function QuestieTextures()
-	local byObjective, byTurnIn = {}, {}
+	local byObjective, byTurnIn, byPickUp = {}, {}, {}
 	for pin in WorldMapFrame:EnumeratePinsByTemplate(QUESTIE_TEMPLATE) do
 		local icon = pin.icon
 		local data = icon and icon.data
 		if data and icon.texture then
 			if data.Type == "complete" then
 				byTurnIn[data.Id] = byTurnIn[data.Id] or icon.texture:GetTexture()
+			elseif data.Type == "available" then
+				byPickUp[data.Id] = byPickUp[data.Id] or icon.texture:GetTexture()
 			elseif data.ObjectiveData and not byObjective[data.ObjectiveData] then
 				byObjective[data.ObjectiveData] = icon.texture:GetTexture()
 			end
 		end
 	end
-	return byObjective, byTurnIn
+	return byObjective, byTurnIn, byPickUp
 end
 
 -- The route and its markers call these as they draw (Routes-Map.lua)

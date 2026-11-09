@@ -116,7 +116,10 @@ function routes.AddStopTooltip(tooltip, stop)
 				anyLeft = anyLeft or not objective.Completed
 			end
 		end
-		if entry.turnIn and not anyLeft then
+		if entry.pickUp then
+			local title, red, green, blue = routes.QuestTitle(entry.task)
+			tooltip:AddLine(string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue)
+		elseif entry.turnIn and not anyLeft then
 			local title = routes.QuestTitle(entry.task)
 			tooltip:AddLine(string.format(L["ROUTES_TURN_IN_QUEST"], title), ns.GetColorRGB("TITLE"))
 		else

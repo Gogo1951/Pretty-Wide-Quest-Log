@@ -45,6 +45,7 @@ ns.DATABASE_DEFAULTS = {
 			showItemButtons = true, -- A Use Item button beside each listed quest with an item to use
 			showNextObjective = false, -- In an objective area, the waypoint after it, dimmed under the list
 			showUpcomingTurnIns = false, -- A quest's turn-in planned before it's done, Questie's gray question mark
+			showLocalQuests = false, -- Quests Questie shows as available, whose giver is nearby, as waypoints to pick up
 			hideInRaids = true,
 			hideInInstances = true,
 			partyQuests = true, -- Party members' quests the player doesn't have, as their Questie shares them

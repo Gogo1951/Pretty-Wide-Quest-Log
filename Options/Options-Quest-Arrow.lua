@@ -26,6 +26,14 @@ local QUESTS_LISTED_TEXT = L["QUESTS_LISTED_DESCRIPTION"]:format(L["ROUTES_MORE_
 local SHOW_NEXT_TEXT =
 	L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"]:format(L["ROUTES_OBJECTIVE_AREA"], L["ROUTES_NEXT_OBJECTIVE"])
 
+-- How near a quest giver must be, in the Quest Arrow's own words for a distance (Routes-Pick-Ups.lua)
+local function LocalQuestsToggle()
+	local toggle = Toggle("showLocalQuests", "SHOW_LOCAL_QUESTS", 29, ArrowHidden)
+	local range = ns.routes and ns.routes.LOCAL_QUEST_RANGE or 400
+	toggle.desc = L["SHOW_LOCAL_QUESTS_DESCRIPTION"]:format(L["ROUTES_YARDS"]:format(range))
+	return toggle
+end
+
 local function ShowDistanceToggle()
 	local toggle = Toggle("showDistance", "SHOW_DISTANCE", 23, ArrowHidden)
 	toggle.desc = SHOW_DISTANCE_TEXT
@@ -120,8 +128,11 @@ function ns.BuildQuestArrowOptions()
 			spaceShowNext = ns.OptionsSpacer(26.5, ArrowHidden),
 			showNextObjective = ShowNextToggle(),
 			spaceUpcomingTurnIns = ns.OptionsSpacer(27.5, ArrowHidden),
-			-- The same setting as the Quest Arrow menu's Show Upcoming Turn-Ins
+			-- The same setting as the Quest Arrow menu's Future Turn-Ins
 			showUpcomingTurnIns = Toggle("showUpcomingTurnIns", "SHOW_UPCOMING_TURN_INS", 28, ArrowHidden),
+			spaceLocalQuests = ns.OptionsSpacer(28.5, ArrowHidden),
+			-- The same setting as the Quest Arrow menu's Show Available Local Quests as Objectives
+			showLocalQuests = LocalQuestsToggle(),
 
 			spaceHiding0 = ns.OptionsSpacer(30, ArrowHidden),
 			headerHiding = ns.OptionsHeader(L["QUEST_ARROW_HIDING_HEADER"], 31, ArrowHidden),

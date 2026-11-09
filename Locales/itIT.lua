@@ -247,9 +247,14 @@ L["SHOW_NEXT_OBJECTIVE"] = "Mostra il prossimo obiettivo"
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'In "%s", elenca "%s" sotto, attenuato: una piccola freccia verso il punto di passaggio successivo e cosa c\'è da fare lì.'
 -- TRANSLATORS: also a switch on the Quest Arrow's menu
-L["SHOW_UPCOMING_TURN_INS"] = "Mostra consegne in arrivo"
+L["SHOW_UPCOMING_TURN_INS"] = "Mostra consegne future"
 L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
 	"Mette la consegna di ogni missione sul percorso prima che i suoi obiettivi siano completati, segnata dal punto interrogativo grigio di Questie, così vedi dove la consegnerai. Disattivato, una consegna entra nel percorso quando la missione è completata."
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_LOCAL_QUESTS"] = "Mostra missioni disponibili vicine come obiettivi"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"Mette sul percorso le missioni che puoi accettare, quando Questie le mostra come disponibili e un PNG o un oggetto che le avvia è entro %s, segnate dal punto esclamativo di Questie. Restano fuori le missioni avviate da un oggetto bottino e quelle di spedizione e incursione."
 L["QUEST_ARROW_HIDING_HEADER"] = "Quando nascondere"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Quando la Freccia delle missioni si fa da parte."
 L["HIDE_IN_RAIDS"] = "Nascondi nei gruppi da incursione"
@@ -365,6 +370,9 @@ L["ROUTES_MORE_TASKS"] = "+%d in più qui"
 L["ROUTES_TURN_IN"] = "Consegna la missione"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "Consegna %s"
+L["ROUTES_PICK_UP"] = "Accetta la missione"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
+L["ROUTES_PICK_UP_QUEST"] = "Accetta %s"
 L["ROUTES_CORPSE"] = "Torna di corsa al tuo cadavere"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Cerca"
@@ -392,13 +400,23 @@ L["ROUTES_GROUP_JOINED_CLEARED"] =
 	"Gruppo raggiunto: gli obiettivi e i membri del gruppo ignorati sono di nuovo sul percorso."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"Gruppo lasciato: gli obiettivi e i membri del gruppo ignorati sono di nuovo sul percorso."
--- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
-L["ROUTES_MENU_IGNORE"] = "Ignora %s"
--- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
-L["ROUTES_MENU_IGNORED"] = "Ignorato"
+-- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
+L["ROUTES_MENU_SECTION_IGNORE"] = "Ignora"
+L["ROUTES_MENU_SECTION_SHOWN"] = "Cosa si vede"
+-- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
+L["ROUTES_MENU_NEXT"] = "Successivo"
+-- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
+L["ROUTES_MENU_PUT_BACK"] = "Ripristina"
+-- TRANSLATORS: the Quest Arrow menu's label over its ignore list
+L["ROUTES_MENU_IGNORED"] = "Ignorati"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_TURN_IN"] = "Consegna di %s"
-L["ROUTES_MENU_GROUP_OBJECTIVES"] = "Mostra obiettivi del gruppo"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_PICK_UP"] = "Accettazione di %s"
+-- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_SHOWN; Next Objective is ROUTES_NEXT_OBJECTIVE
+L["ROUTES_MENU_SHOWN_TURN_INS"] = "Consegne future"
+L["ROUTES_MENU_SHOWN_LOCAL"] = "Missioni disponibili vicine"
+L["ROUTES_MENU_SHOWN_PARTY"] = "Obiettivi del gruppo"
 L["ROUTES_MENU_ON"] = "Attivo"
 L["ROUTES_MENU_OFF"] = "Disattivo"
 L["ROUTES_MENU_OUT_OF_ZONE"] = "Fuori zona"

@@ -203,6 +203,9 @@ local function QuestieIcon(task)
 	if not icons then
 		return nil
 	end
+	if task.kind == "pickUp" then
+		return icons[Questie.ICON_TYPE_AVAILABLE]
+	end
 	if task.kind == "turnIn" then
 		-- Questie's gray question mark for a quest not done yet, planned ahead of its objectives being done
 		local incomplete = not task.ready and Questie.ICON_TYPE_INCOMPLETE
@@ -282,6 +285,8 @@ local function AddStopPin(map, stop, position, textures, dim)
 		texture = CORPSE_ICON
 	elseif task.kind == "turnIn" then
 		texture = textures.turnIns[task.questID]
+	elseif task.kind == "pickUp" then
+		texture = textures.pickUps[task.questID]
 	else
 		texture = textures.objectives[task.objective]
 	end
@@ -431,8 +436,8 @@ function providerMixin:RefreshAllData()
 
 	local map = self:GetMap()
 	local mapID = map:GetMapID()
-	local byObjective, byTurnIn = QuestieTextures()
-	local textures = { objectives = byObjective, turnIns = byTurnIn }
+	local byObjective, byTurnIn, byPickUp = QuestieTextures()
+	local textures = { objectives = byObjective, turnIns = byTurnIn, pickUps = byPickUp }
 	local onRoute = IsRouteMap(mapID) and not routes.IsOnTaxi()
 	local routeKeys = onRoute and RouteKeys() or {}
 	if onRoute then

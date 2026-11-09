@@ -50,6 +50,8 @@ end
 function routes.TaskLabel(task)
 	if task.kind == "turnIn" then
 		return string.format(L["ROUTES_MENU_TURN_IN"], task.questName or "")
+	elseif task.kind == "pickUp" then
+		return string.format(L["ROUTES_MENU_PICK_UP"], task.questName or "")
 	end
 	return task.objective and task.objective.Description or ""
 end

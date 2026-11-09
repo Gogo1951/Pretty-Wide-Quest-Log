@@ -34,14 +34,19 @@ routes.IsArea = IsArea
 	works them all at once; a turn-in only with turn-ins at the same NPC, so the route hands in one quest
 	giver's quests at a time
 ]]
+-- A turn-in or a quest to pick up: at one NPC or object, which only others at the same one join
+local function AtQuestGiver(node)
+	return node.kind == "turnIn" or node.kind == "pickUp"
+end
+
 local function JoinsStop(stop, node, point)
 	if not stop or stop.corpse then
 		return false
 	end
 	local dx, dy = point.x - stop.x, point.y - stop.y
 	local distanceSquared = dx * dx + dy * dy
-	if node.kind == "turnIn" or stop.turnIns then
-		return node.kind == "turnIn" and stop.turnIns and distanceSquared <= SAME_PLACE * SAME_PLACE
+	if AtQuestGiver(node) or stop.turnIns then
+		return AtQuestGiver(node) and stop.turnIns and distanceSquared <= SAME_PLACE * SAME_PLACE
 	end
 	return (node.inArea and stop.inArea) or distanceSquared <= MERGE_RADIUS * MERGE_RADIUS
 end
@@ -87,7 +92,7 @@ function routes.MakeStops(order, start)
 				names = { unpack(point.names or {}) }, -- Its own list: names from stops merged in join it
 				mapID = zone,
 				area = IsArea(point),
-				turnIns = node.kind == "turnIn" or nil, -- Turn-ins at one NPC, which nothing else joins
+				turnIns = AtQuestGiver(node) or nil, -- Turn-ins and pick-ups at one NPC, which nothing else joins
 				inArea = node.inArea, -- The areas the player stands in, which all join it
 				tasks = { node },
 			}
@@ -105,10 +110,12 @@ function routes.ObjectiveText(objective)
 	return text
 end
 
--- What a task asks for: its objective, the turn-in, or the way back to the corpse
+-- What a task asks for: its objective, the turn-in, the pick-up, or the way back to the corpse
 function routes.TaskText(task)
 	if task.kind == "turnIn" then
 		return L["ROUTES_TURN_IN"]
+	elseif task.kind == "pickUp" then
+		return L["ROUTES_PICK_UP"]
 	elseif task.kind == "corpse" then
 		return L["ROUTES_CORPSE"]
 	end

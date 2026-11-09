@@ -238,9 +238,14 @@ L["SHOW_NEXT_OBJECTIVE"] = "顯示下一個目標"
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'在"%s"時，於其下方以暗色列出"%s"：一個指向再下一個路徑點的小箭頭，以及在那裡要做的事。'
 -- TRANSLATORS: also a switch on the Quest Arrow's menu
-L["SHOW_UPCOMING_TURN_INS"] = "顯示即將交付的任務"
+L["SHOW_UPCOMING_TURN_INS"] = "顯示將來交付的任務"
 L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
 	"在任務目標完成之前就把交任務的地點加入路線，並以 Questie 的灰色問號標出，讓你看到將在哪裡交付。關閉後，任務完成時才會把交付地點加入路線。"
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_LOCAL_QUESTS"] = "將附近可接任務顯示為目標"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"把你能接的任務加入路線：Questie 顯示為可接，且發布任務的 NPC 或物件在 %s以內，並以 Questie 的驚嘆號標出。由掉落物品開始的任務以及地城和團隊副本任務不會加入。"
 L["QUEST_ARROW_HIDING_HEADER"] = "隱藏"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "任務箭頭何時自動隱藏。"
 L["HIDE_IN_RAIDS"] = "在團隊中隱藏"
@@ -354,6 +359,9 @@ L["ROUTES_MORE_TASKS"] = "此處還有 +%d 個"
 L["ROUTES_TURN_IN"] = "回報任務"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "回報 %s"
+L["ROUTES_PICK_UP"] = "接受任務"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
+L["ROUTES_PICK_UP_QUEST"] = "接受 %s"
 L["ROUTES_CORPSE"] = "跑回你的屍體處"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "尋找"
@@ -378,13 +386,23 @@ L["ROUTES_RESET"] = "所有路線已重設：已忽略的目標和隊友已回�
 L["ROUTES_IGNORE_CLEARED"] = "忽略清單已清空：已忽略的目標已回到路線上。"
 L["ROUTES_GROUP_JOINED_CLEARED"] = "已加入隊伍：已忽略的目標和隊友已回到路線上。"
 L["ROUTES_GROUP_LEFT_CLEARED"] = "已離開隊伍：已忽略的目標和隊友已回到路線上。"
--- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
-L["ROUTES_MENU_IGNORE"] = "忽略 %s"
--- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
+-- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
+L["ROUTES_MENU_SECTION_IGNORE"] = "忽略"
+L["ROUTES_MENU_SECTION_SHOWN"] = "顯示內容"
+-- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
+L["ROUTES_MENU_NEXT"] = "下一個"
+-- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
+L["ROUTES_MENU_PUT_BACK"] = "恢復"
+-- TRANSLATORS: the Quest Arrow menu's label over its ignore list
 L["ROUTES_MENU_IGNORED"] = "已忽略"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_TURN_IN"] = "回報 %s"
-L["ROUTES_MENU_GROUP_OBJECTIVES"] = "顯示隊友目標"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_PICK_UP"] = "接受 %s"
+-- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_SHOWN; Next Objective is ROUTES_NEXT_OBJECTIVE
+L["ROUTES_MENU_SHOWN_TURN_INS"] = "將來交付的任務"
+L["ROUTES_MENU_SHOWN_LOCAL"] = "附近可接任務"
+L["ROUTES_MENU_SHOWN_PARTY"] = "隊友目標"
 L["ROUTES_MENU_ON"] = "開啟"
 L["ROUTES_MENU_OFF"] = "關閉"
 L["ROUTES_MENU_OUT_OF_ZONE"] = "不在本區域"

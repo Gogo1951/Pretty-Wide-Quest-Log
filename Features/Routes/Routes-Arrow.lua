@@ -78,7 +78,7 @@ frame:SetMovable(true)
 frame:SetClampedToScreen(true)
 frame:EnableMouse(true)
 frame:RegisterForDrag("LeftButton")
-frame:RegisterForClicks("MiddleButtonUp")
+frame:RegisterForClicks("RightButtonUp", "MiddleButtonUp")
 frame:Hide()
 
 local arrow = frame:CreateTexture(nil, "ARTWORK")
@@ -190,7 +190,9 @@ function routes.IsMouseOverArrow()
 end
 
 frame:SetScript("OnClick", function(_, button)
-	if button == "MiddleButton" then
+	if button == "RightButton" then
+		routes.IgnoreArrowObjective()
+	elseif button == "MiddleButton" then
 		routes.ClearIgnored()
 	end
 end)

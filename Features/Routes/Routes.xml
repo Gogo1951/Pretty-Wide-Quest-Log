@@ -13,6 +13,7 @@
 	<Script file="Routes-Questie.lua"/>
 	<Script file="Routes-Blobs.lua"/>
 	<Script file="Routes-Nodes.lua"/>
+	<Script file="Routes-Pick-Ups.lua"/>
 	<Script file="Routes-Pinning.lua"/>
 	<Script file="Routes-Overlaps.lua"/>
 	<Script file="Routes-Stops.lua"/>

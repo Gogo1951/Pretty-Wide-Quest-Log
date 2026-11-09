@@ -236,9 +236,14 @@ L["SHOW_NEXT_OBJECTIVE"] = "Show Next Objective"
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'At a "%s", lists "%s" under it, dimmed: a small arrow to the waypoint after, and what\'s to do there.'
 -- TRANSLATORS: also a switch on the Quest Arrow's menu
-L["SHOW_UPCOMING_TURN_INS"] = "Show Upcoming Turn-Ins"
+L["SHOW_UPCOMING_TURN_INS"] = "Show Future Turn-Ins"
 L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
 	"Puts each quest's turn-in on the route before its objectives are done, marked with Questie's gray question mark, so you can see where you'll hand it in. Turned off, a turn-in joins the route once the quest is complete."
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_LOCAL_QUESTS"] = "Show Available Local Quests as Objectives"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"Puts quests you can pick up on the route, where Questie shows them as available and an NPC or object that starts them is within %s of you, marked with Questie's exclamation mark. Quests started by an item that drops, and dungeon and raid quests, are left out."
 L["QUEST_ARROW_HIDING_HEADER"] = "Hiding"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "When the Quest Arrow steps out of the way."
 L["HIDE_IN_RAIDS"] = "Hide in Raid Groups"
@@ -353,6 +358,9 @@ L["ROUTES_MORE_TASKS"] = "+%d More Here"
 L["ROUTES_TURN_IN"] = "Turn in Quest"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "Turn in %s"
+L["ROUTES_PICK_UP"] = "Pick up Quest"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
+L["ROUTES_PICK_UP_QUEST"] = "Pick up %s"
 L["ROUTES_CORPSE"] = "Run Back to Your Corpse"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Look For"
@@ -377,13 +385,23 @@ L["ROUTES_RESET"] = "All routes reset: ignored objectives and party members are 
 L["ROUTES_IGNORE_CLEARED"] = "Ignore list cleared: ignored objectives are back on the route."
 L["ROUTES_GROUP_JOINED_CLEARED"] = "Joined a group: ignored objectives and party members are back on the route."
 L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: ignored objectives and party members are back on the route."
--- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
-L["ROUTES_MENU_IGNORE"] = "Ignore %s"
--- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
+-- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
+L["ROUTES_MENU_SECTION_IGNORE"] = "Ignore"
+L["ROUTES_MENU_SECTION_SHOWN"] = "What is Shown"
+-- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
+L["ROUTES_MENU_NEXT"] = "Next"
+-- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
+L["ROUTES_MENU_PUT_BACK"] = "Put Back"
+-- TRANSLATORS: the Quest Arrow menu's label over its ignore list
 L["ROUTES_MENU_IGNORED"] = "Ignored"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_TURN_IN"] = "%s Turn-In"
-L["ROUTES_MENU_GROUP_OBJECTIVES"] = "Show Party Objectives"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_PICK_UP"] = "%s Pick-Up"
+-- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_SHOWN; Next Objective is ROUTES_NEXT_OBJECTIVE
+L["ROUTES_MENU_SHOWN_TURN_INS"] = "Future Turn-Ins"
+L["ROUTES_MENU_SHOWN_LOCAL"] = "Local Available Quests"
+L["ROUTES_MENU_SHOWN_PARTY"] = "Party Objectives"
 L["ROUTES_MENU_ON"] = "On"
 L["ROUTES_MENU_OFF"] = "Off"
 L["ROUTES_MENU_OUT_OF_ZONE"] = "Out of Zone"

@@ -2216,7 +2216,8 @@ local function ArrowLines(lines)
 		(questieDB and type(questieDB.GetQuest) == "function") and "found" or "not found, so only the client's own"
 	)
 	RouteSetting(lines, "Show next objective", "showNextObjective")
-	RouteSetting(lines, "Show upcoming turn-ins", "showUpcomingTurnIns")
+	RouteSetting(lines, "Show future turn-ins", "showUpcomingTurnIns")
+	RouteSetting(lines, "Show available local quests as objectives", "showLocalQuests")
 end
 
 local function ZoneMapLines(lines)

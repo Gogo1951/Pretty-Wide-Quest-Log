@@ -231,7 +231,7 @@ function routes.BuildNodes(yield)
 			--[[
 				The turn-in: once the quest is done, ready now; before then, planned ahead, waiting on every
 				one of its objectives' nodes (requires), so the route and the Quest Arrow's Next Objective show
-				it where it falls once they're done. None ahead with Show Upcoming Turn-Ins (showUpcomingTurnIns)
+				it where it falls once they're done. None ahead with Show Future Turn-Ins (showUpcomingTurnIns)
 		off, nor for a quest with an objective the route can't
 				do, nor a dungeon or raid quest's until it's done. A dungeon or raid quest's only where it's out
 				in the world, not at the end of the instance
@@ -291,6 +291,9 @@ function routes.BuildNodes(yield)
 		end
 		yield()
 	end
+
+	-- Quests to pick up nearby, with Show Available Local Quests as Objectives on (Routes-Pick-Ups.lua)
+	routes.AddLocalQuestNodes(nodes, start, log, yield)
 
 	-- Questie's log is a hash, so its order changes; the same quests always make the same route
 	table.sort(nodes, ByKey)
