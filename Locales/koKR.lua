@@ -248,9 +248,14 @@ L["SHOW_NEXT_OBJECTIVE"] = "다음 목표 표시"
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'"%s"일 때 그 아래에 "%s" 줄을 흐리게 표시해, 그다음 경유지를 가리키는 작은 화살표와 그곳에서 할 일을 보여 줍니다.'
 -- TRANSLATORS: also a switch on the Quest Arrow's menu
-L["SHOW_UPCOMING_TURN_INS"] = "예정된 퀘스트 완료 표시"
+L["SHOW_UPCOMING_TURN_INS"] = "향후 퀘스트 완료 표시"
 L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
 	"목표를 마치기 전에도 각 퀘스트의 완료 지점을 경로에 넣고 Questie의 회색 물음표로 표시해, 어디서 완료할지 미리 볼 수 있습니다. 끄면 퀘스트를 완료한 뒤에 완료 지점이 경로에 추가됩니다."
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_LOCAL_QUESTS"] = "주변의 받을 수 있는 퀘스트를 목표로 표시"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"Questie가 받을 수 있다고 표시하고, 퀘스트를 주는 NPC나 물체가 %s 이내에 있는 퀘스트를 경로에 넣고 Questie의 느낌표로 표시합니다. 전리품 아이템으로 시작하는 퀘스트와 던전 및 공격대 퀘스트는 제외됩니다."
 L["QUEST_ARROW_HIDING_HEADER"] = "숨기기"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "퀘스트 화살표를 숨기는 경우입니다."
 L["HIDE_IN_RAIDS"] = "공격대에서 숨기기"
@@ -366,6 +371,9 @@ L["ROUTES_MORE_TASKS"] = "여기에 +%d개 더"
 L["ROUTES_TURN_IN"] = "퀘스트 완료 보고"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "%s 완료 보고"
+L["ROUTES_PICK_UP"] = "퀘스트 받기"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
+L["ROUTES_PICK_UP_QUEST"] = "%s 받기"
 L["ROUTES_CORPSE"] = "내 시체로 달려가세요"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "찾을 대상"
@@ -393,13 +401,23 @@ L["ROUTES_GROUP_JOINED_CLEARED"] =
 	"파티에 참가했습니다: 무시한 목표와 파티원이 다시 경로에 포함되었습니다."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"파티를 떠났습니다: 무시한 목표와 파티원이 다시 경로에 포함되었습니다."
--- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
-L["ROUTES_MENU_IGNORE"] = "%s 무시"
--- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
+-- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
+L["ROUTES_MENU_SECTION_IGNORE"] = "무시"
+L["ROUTES_MENU_SECTION_SHOWN"] = "표시 항목"
+-- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
+L["ROUTES_MENU_NEXT"] = "다음"
+-- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
+L["ROUTES_MENU_PUT_BACK"] = "되돌리기"
+-- TRANSLATORS: the Quest Arrow menu's label over its ignore list
 L["ROUTES_MENU_IGNORED"] = "무시됨"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_TURN_IN"] = "%s 완료 보고"
-L["ROUTES_MENU_GROUP_OBJECTIVES"] = "파티 목표 표시"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_PICK_UP"] = "%s 받기"
+-- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_SHOWN; Next Objective is ROUTES_NEXT_OBJECTIVE
+L["ROUTES_MENU_SHOWN_TURN_INS"] = "향후 퀘스트 완료"
+L["ROUTES_MENU_SHOWN_LOCAL"] = "주변의 받을 수 있는 퀘스트"
+L["ROUTES_MENU_SHOWN_PARTY"] = "파티 목표"
 L["ROUTES_MENU_ON"] = "켜짐"
 L["ROUTES_MENU_OFF"] = "꺼짐"
 L["ROUTES_MENU_OUT_OF_ZONE"] = "다른 지역"

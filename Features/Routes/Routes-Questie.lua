@@ -196,7 +196,7 @@ routes.HasSpawns = HasSpawns
 --[[
 	What the route depends on, as text: each quest's state, whether it's in an instance and whether its
 	timer is running, each objective's being done and having spawns, the party's quests' progress
-	(routes.PartyProgress), the ignored objectives and party members, the members in another zone, Show Upcoming Turn-Ins, the player's zone and whether they're a ghost. The route is
+	(routes.PartyProgress), the ignored objectives and party members, the members in another zone, Show Future Turn-Ins, the player's zone and whether they're a ghost. The route is
 	planned again when this changes. Nil until Questie is ready
 ]]
 function routes.Signature()
@@ -251,6 +251,7 @@ function routes.Signature()
 	end
 	table.sort(parts)
 	parts[#parts + 1] = routes.Settings().showUpcomingTurnIns and "upcoming" or "done-only"
+	parts[#parts + 1] = routes.LocalQuestSignature()
 	parts[#parts + 1] = tostring(routes.PlayerZone())
 	parts[#parts + 1] = UnitIsGhost("player") and "ghost" or "alive"
 	return table.concat(parts, ";")

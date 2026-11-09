@@ -91,8 +91,9 @@ end
 routes.PositionAt = PositionAt
 
 --[[
-	The quests at a stop, each { task, here, turnIn, distance }: task the first of its tasks there, here
-	the set of its objectives done at the stop, turnIn whether it's turned in there. Given the player's
+	The quests at a stop, each { task, here, turnIn, pickUp, distance }: task the first of its tasks there,
+	here the set of its objectives done at the stop, turnIn whether it's turned in there, pickUp whether it's
+	picked up there. Given the player's
 	position, nearest first, each with distance[objective] for its objectives' places; else in route order
 ]]
 function routes.QuestsAt(stop, x, y)
@@ -106,6 +107,8 @@ function routes.QuestsAt(stop, x, y)
 		end
 		if task.kind == "turnIn" then
 			entry.turnIn = true
+		elseif task.kind == "pickUp" then
+			entry.pickUp = true
 		elseif task.objective then
 			entry.here[task.objective] = true
 		end
@@ -246,7 +249,14 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 			The turn-in comes after the quest's objectives, so once none are left here it's the one line, in
 			the turn-in's gold (routes.TaskColor) rather than the quest's difficulty color
 		]]
-		if entry.turnIn and #toDo == 0 then
+		--[[
+			A quest to pick up is one line, "Pick up [12] Quest Name", in its difficulty color, so how worth
+			the walk it is shows at a glance
+		]]
+		if entry.pickUp then
+			local title, red, green, blue = routes.QuestTitle(entry.task)
+			callback("title", string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue)
+		elseif entry.turnIn and #toDo == 0 then
 			local text = string.format(L["ROUTES_TURN_IN_QUEST"], routes.QuestTitle(entry.task))
 			local red, green, blue = ns.GetColorRGB("TITLE")
 			callback("title", text, red, green, blue, nil, entry.task.questID)

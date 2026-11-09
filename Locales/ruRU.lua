@@ -260,6 +260,11 @@ L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 L["SHOW_UPCOMING_TURN_INS"] = "Показывать будущие сдачи"
 L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
 	"Добавляет сдачу каждого задания в маршрут ещё до выполнения его целей, с серым вопросительным знаком Questie, чтобы было видно, где вы его сдадите. Если выключено, сдача появляется в маршруте, когда задание выполнено."
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
+L["SHOW_LOCAL_QUESTS"] = "Показывать доступные задания поблизости как цели"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"Добавляет в маршрут задания, которые можно взять, если Questie показывает их как доступные, а НИП или предмет, выдающий их, находится не дальше %s, с восклицательным знаком Questie. Задания, которые начинает добыча, а также задания подземелий и рейдов не добавляются."
 L["QUEST_ARROW_HIDING_HEADER"] = "Скрытие"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] =
 	"Когда Стрелка заданий скрывается, чтобы не мешать."
@@ -382,6 +387,9 @@ L["ROUTES_MORE_TASKS"] = "Ещё +%d здесь"
 L["ROUTES_TURN_IN"] = "Сдать задание"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "Сдать: %s"
+L["ROUTES_PICK_UP"] = "Взять задание"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
+L["ROUTES_PICK_UP_QUEST"] = "Взять: %s"
 L["ROUTES_CORPSE"] = "Вернитесь к своему телу"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Ищите"
@@ -411,13 +419,23 @@ L["ROUTES_GROUP_JOINED_CLEARED"] =
 	"Вы вступили в группу: игнорируемые цели и участники группы снова на маршруте."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"Вы покинули группу: игнорируемые цели и участники группы снова на маршруте."
--- TRANSLATORS: the Quest Arrow's menu. %s is an objective, such as "Kodo Liver", or ROUTES_MENU_TURN_IN
-L["ROUTES_MENU_IGNORE"] = "Игнорировать: %s"
--- TRANSLATORS: beside each objective or turn-in on the Quest Arrow menu's ignore list
-L["ROUTES_MENU_IGNORED"] = "Игнорируется"
+-- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
+L["ROUTES_MENU_SECTION_IGNORE"] = "Игнорировать"
+L["ROUTES_MENU_SECTION_SHOWN"] = "Что показывать"
+-- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
+L["ROUTES_MENU_NEXT"] = "Далее"
+-- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
+L["ROUTES_MENU_PUT_BACK"] = "Вернуть"
+-- TRANSLATORS: the Quest Arrow menu's label over its ignore list
+L["ROUTES_MENU_IGNORED"] = "Игнорируемые"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_TURN_IN"] = "Сдача: %s"
-L["ROUTES_MENU_GROUP_OBJECTIVES"] = "Показывать цели группы"
+-- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
+L["ROUTES_MENU_PICK_UP"] = "Взятие: %s"
+-- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_SHOWN; Next Objective is ROUTES_NEXT_OBJECTIVE
+L["ROUTES_MENU_SHOWN_TURN_INS"] = "Будущие сдачи"
+L["ROUTES_MENU_SHOWN_LOCAL"] = "Доступные задания поблизости"
+L["ROUTES_MENU_SHOWN_PARTY"] = "Цели группы"
 L["ROUTES_MENU_ON"] = "Вкл."
 L["ROUTES_MENU_OFF"] = "Выкл."
 L["ROUTES_MENU_OUT_OF_ZONE"] = "В другой зоне"
