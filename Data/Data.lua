@@ -232,6 +232,12 @@ LAYOUT.QUEST_ID_GAP = SPACE.SECTION
 LAYOUT.QUEST_ID_FONT_SHRINK = 2
 
 --[[
+	The chain link before a linked quest ID is drawn inline, a line tall, which sets it level with the top
+	of the line and so above the letters beside it. It drops this far to sit centered on their capitals
+]]
+LAYOUT.LINK_ICON_DROP = SPACE.LINE
+
+--[[
 	Quest list rows: zone headers have their +/- at the left and their name after it; quest titles have
 	a slot for the tracking mark in the same column as the +/-, there whether the quest is marked or not,
 	and start just after it, level with the zone names. The untracked eye fills its square edge to edge,

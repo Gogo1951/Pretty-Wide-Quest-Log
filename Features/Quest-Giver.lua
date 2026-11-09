@@ -140,6 +140,43 @@ if QuestInfo_Display then
 end
 
 --[[
+	The detail page writes its description in a few letters a frame, unless Instant Quest Text is on.
+	Blizzard moves an alpha gradient along the text and calls the fade done once the font string says the
+	gradient is past its last letter, then shows the objectives and rewards and enables Accept. With the
+	window skinned (ElvUI) and laid out, the font string can say so after only the first few letters, and
+	the rest of the description stays invisible: a few words, then a blank stretch as tall as the text.
+	When the fade ends short of the description's length, the whole description is shown, over a few
+	frames so it takes once the text has settled. A fade that ran to the end, or instant text, is left
+	alone. This puts right Blizzard's own fade, so it runs whatever the cleanup switch says
+]]
+local detailPanel, descriptionText = QuestFrameDetailPanel, QuestInfoDescriptionText
+if detailPanel and descriptionText and descriptionText.SetAlphaGradient then
+	local REVEAL_FRAMES = 3
+	local wasFading, revealFrames, revealTo = false, 0, 0
+	detailPanel:HookScript("OnShow", function()
+		wasFading, revealFrames = false, 0
+	end)
+	detailPanel:HookScript("OnUpdate", function(self)
+		if self.fading then
+			wasFading = true
+			return
+		end
+		if wasFading then
+			wasFading = false
+			local length = strlenutf8(descriptionText:GetText() or "")
+			if (self.fadingProgress or 0) < length then
+				revealFrames = REVEAL_FRAMES
+				revealTo = math.max(1024, length) + (QUEST_DESCRIPTION_GRADIENT_LENGTH or 30)
+			end
+		end
+		if revealFrames > 0 then
+			revealFrames = revealFrames - 1
+			descriptionText:SetAlphaGradient(revealTo, QUEST_DESCRIPTION_GRADIENT_LENGTH or 30)
+		end
+	end)
+end
+
+--[[
 	The window's own pages and the shared QuestInfo text, styled with the cleanup on and put
 	back to Blizzard's with it off. Done as the saved settings load, before Blizzard first lays any of
 	them out, so its measurements match, and again when the switch or the profile changes. A window

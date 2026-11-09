@@ -82,7 +82,15 @@ local function ColorQuestID(text, source)
 	local label = QuestIDText(text.questID)
 	if text.linksToWowhead then
 		label =
-			format("|T%s:0:0:0:0:32:32:0:32:0:32:%d:%d:%d|t %s", ns.WOWHEAD_LINK_ICON, r * 255, g * 255, b * 255, label)
+			format(
+				"|T%s:0:0:0:%d:32:32:0:32:0:32:%d:%d:%d|t %s",
+				ns.WOWHEAD_LINK_ICON,
+				-ns.LAYOUT.LINK_ICON_DROP,
+				r * 255,
+				g * 255,
+				b * 255,
+				label
+			)
 	end
 	text:SetText(label)
 end
