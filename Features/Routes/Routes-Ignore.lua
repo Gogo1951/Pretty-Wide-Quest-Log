@@ -2,7 +2,8 @@ local _, ns = ...
 
 --[[
 	Routes: the ignore list. Objectives, turn-ins and party members left out of the route from the Quest
-	Arrow's menu or a middle-click, cleared on joining or leaving a group, and put back all at once
+	Arrow's menu or a right-click on a map marker, cleared on joining or leaving a group, and put back all
+	at once with a middle-click
 ]]
 
 local routes = ns.routes
@@ -23,7 +24,7 @@ local function Ignore(task)
 	end
 end
 
--- Leaves the stop's tasks out of the route until the ignore list is cleared (a middle-click on the Quest Arrow)
+-- Leaves the stop's tasks out of the route until the ignore list is cleared (a right-click on a world map waypoint)
 function routes.SkipStop(stop)
 	if not stop then
 		return
@@ -157,5 +158,6 @@ function routes.ResetObjectives()
 	routes.engaged = nil
 	routes.worked = {}
 	routes.Print(L["ROUTES_RESET"])
+	routes.CancelPlan()
 	routes.RequestPlan()
 end

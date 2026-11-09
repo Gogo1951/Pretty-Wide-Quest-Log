@@ -217,3 +217,22 @@ end
 
 -- For Dungeon-Quests.lua and the Sharing Context report
 ns.CurrentDungeon = CurrentDungeon
+
+--[[
+	The names the current dungeon's quest log header can carry, nil outside one, for the current-zone mark
+	(Quest-Sort.lua). The quest list asks for every header on every repaint, so the names are kept until
+	the instance, the zone text or whether Questie's zone data is there changes
+]]
+local dungeonNamesKey, dungeonNames
+function ns.CurrentDungeonNames()
+	local _, instanceType, _, _, _, _, _, instanceID = GetInstanceInfo()
+	if not INSTANCE_TYPES[instanceType] then
+		return nil
+	end
+	local key = tostring(instanceID) .. "|" .. GetRealZoneText() .. "|" .. tostring(QuestieZoneDB() ~= nil)
+	if key ~= dungeonNamesKey then
+		local dungeon = CurrentDungeon()
+		dungeonNamesKey, dungeonNames = key, dungeon and dungeon.names
+	end
+	return dungeonNames
+end

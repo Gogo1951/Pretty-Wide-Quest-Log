@@ -28,7 +28,7 @@ ns.DATABASE_DEFAULTS = {
 		routes = {
 			showArrow = true,
 			showMap = true,
-			hideQuestieIcons = true, -- On the world map, Questie's icons for the objectives and turn-ins on the route
+			hideQuestieIcons = true, -- On the world map, Questie's icons and Blizzard's quest markers and objective areas for what's on the route, and Questie's party objective icons
 			-- Routes on Zone Map
 			fullSizeMap = true, -- The map opens maximized while the route is on it
 			markerScale = 1, -- The stop markers' size, times their 42 pixels
@@ -41,6 +41,7 @@ ns.DATABASE_DEFAULTS = {
 			showDistance = true, -- The yards under it; "Current Objective Area" and "You're There" show either way
 			showQuests = true, -- The quests and objectives under it
 			questsListed = 4, -- Quests listed at most; the rest are counted
+			showItemButtons = true, -- A Use Item button beside each listed quest with an item to use
 			showNextObjective = false, -- In an objective area, the waypoint after it, dimmed under the list
 			showUpcomingTurnIns = false, -- A quest's turn-in planned before it's done, Questie's gray question mark
 			hideInRaids = true,

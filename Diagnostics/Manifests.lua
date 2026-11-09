@@ -82,7 +82,6 @@ local SHARED_FUNCTIONS = {
 	"GetAvailableQuestInfo",
 	"GetMaxPlayerLevel",
 	"UnitLevel",
-	"GetMoneyString",
 	"StaticPopup_Show",
 	"StaticPopup_Hide",
 	"MenuUtil.CreateContextMenu",
@@ -94,6 +93,7 @@ local SHARED_FUNCTIONS = {
 	"UnitGUID",
 	"UnitInRange",
 	"UnitIsConnected",
+	"UnitIsVisible",
 	"C_Timer.NewTicker",
 	"GetNumSubgroupMembers",
 	"IsInGroup",
@@ -166,6 +166,8 @@ local GIVER_PAGE_TABLES = {
 	"AvailableQuestsText",
 	"QuestProgressTitleText",
 	"GossipGreetingTextMixin",
+	"GossipFrame.GreetingPanel.ScrollBox",
+	"ScrollBoxConstants",
 	"QuestGreetingScrollChildFrame",
 	"QuestInfoTitleHeader",
 	"QuestInfoObjectivesText",
@@ -181,6 +183,10 @@ local GIVER_PAGE_TABLES = {
 
 local GIVER_PAGE_FUNCTIONS = {
 	"GossipGreetingTextMixin.Setup",
+	-- The gossip list update the greeting's measuring copy is styled after, and the relayout it may need (Gossip.lua)
+	"GossipFrame.Update",
+	"GossipFrame.GreetingPanel.ScrollBox.GetDataProvider",
+	"GossipFrame.GreetingPanel.ScrollBox.FullUpdate",
 	"QuestProgressScrollFrame.UpdateScrollChildRect",
 	"MoneyFrame_Update",
 	-- The template entries the spacing tells each QuestInfo piece apart by (Quest-Giver.lua)
@@ -203,6 +209,15 @@ local REWARDS_HEADING_ROUTE = {
 	"QuestInfoRewardsFrame.Header or QuestInfoRewardsHeader",
 	function()
 		return type(Resolve("QuestInfoRewardsFrame.Header")) == "table" or type(QuestInfoRewardsHeader) == "table"
+	end,
+}
+
+-- The turn-in line's money (Turn-In-Line.lua): the coin icons call, or the global where a client lacks it
+local TURN_IN_MONEY_ROUTE = {
+	"C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString",
+	function()
+		return type(Resolve("C_CurrencyInfo.GetCoinTextureString")) == "function"
+			or type(Resolve("GetCoinTextureString")) == "function"
 	end,
 }
 
@@ -233,10 +248,11 @@ local ROUTES_TABLES = {
 	"GameTooltipHeaderText",
 }
 
--- How a map from Questie's database is matched to the player's zone (Routes-Questie.lua)
+-- How a map from Questie's database is matched to the player's zone (Routes-Questie.lua), and an instance's map told apart (Routes-Geography.lua)
 local ROUTES_NUMBERS = {
 	"Enum.UIMapType.Micro",
 	"Enum.UIMapType.Continent",
+	"Enum.UIMapType.Dungeon",
 }
 
 -- The timed quests that go first: WoW Forever's call by quest ID, or the older timer calls (Routes-Questie.lua)
@@ -245,6 +261,37 @@ local TIMED_QUESTS_ROUTE = {
 	function()
 		return type(Resolve("C_QuestLog.GetQuestTimers")) == "function"
 			or (type(Resolve("GetQuestTimers")) == "function" and type(Resolve("GetQuestIndexForTimer")) == "function")
+	end,
+}
+
+--[[
+	The Quest Arrow's Use Item buttons (Routes-Arrow-Items.lua, Routes-Arrow-Item-Choice.lua): the item calls
+	under C_Item and C_Container, which they make with no fallback, and the key binding's lookups. The
+	client's own quest item (GetQuestLogSpecialItemInfo) is only from Wrath on, so Routes Context reports
+	it rather than a row requiring it
+]]
+local ITEM_BUTTON_FUNCTIONS = {
+	"CreateFrame",
+	"GetBindingKey",
+	"GetBindingText",
+	"UnitIsFriend",
+	"C_Item.GetItemCount",
+	"C_Item.GetItemSpell",
+	"C_Item.GetItemIconByID",
+	"C_Item.IsItemInRange",
+	"C_Item.IsEquippableItem",
+	"C_Container.GetItemCooldown",
+}
+
+--[[
+	Whether the game's own quest log still has a quest Questie lists, for a turn-in (Routes-Questie.lua):
+	either call, and without both Questie's log stands
+]]
+local ON_QUEST_ROUTE = {
+	"C_QuestLog.IsOnQuest or GetQuestLogIndexByID",
+	function()
+		return type(Resolve("C_QuestLog.IsOnQuest")) == "function"
+			or type(Resolve("GetQuestLogIndexByID")) == "function"
 	end,
 }
 
@@ -271,7 +318,6 @@ local CLASSIC_FUNCTIONS = {
 	"SetUIPanelAttribute",
 	"QuestFrameGreetingPanel_OnShow",
 	"GetQuestLogLeaderBoard",
-	"FauxScrollFrame_Update",
 	"FauxScrollFrame_GetOffset",
 	"QuestLog_SetSelection",
 	"IsUnitOnQuest",
@@ -347,7 +393,6 @@ local OWN_WINDOW_FUNCTIONS = {
 	"GetMaterialTextColors",
 	"QuestTextContrast.UseLightText",
 	"Item.CreateFromItemID",
-	"GetCoinTextureString",
 	"SecondsToTime",
 	"IsModifiedClick",
 	"HandleModifiedItemClick",
@@ -405,6 +450,14 @@ local OWN_WINDOW_STRINGS = {
 	has (Quest-Details-Data.lua); without one, the line or the currencies are left out
 ]]
 local OWN_WINDOW_ROUTES = {
+	-- The reward and required money's coin text (Forever-Quest-Details.lua)
+	{
+		"C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString",
+		function()
+			return type(Resolve("C_CurrencyInfo.GetCoinTextureString")) == "function"
+				or type(Resolve("GetCoinTextureString")) == "function"
+		end,
+	},
 	{
 		"C_QuestLog.GetRequiredMoney or GetQuestLogRequiredMoney",
 		function()
@@ -542,13 +595,14 @@ Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "LE_PARTY_CATEGORY_INSTANCE" }
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", { "issecretvalue" }))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", GIVER_PAGE_TABLES))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", GIVER_PAGE_FUNCTIONS))
-Append(ns.DIAGNOSTIC_API_CHECKS, { REWARDS_HEADING_ROUTE })
+Append(ns.DIAGNOSTIC_API_CHECKS, { REWARDS_HEADING_ROUTE, TURN_IN_MONEY_ROUTE })
 -- Routes is one TOC line (Routes.xml), so a release can leave it out
 if ns.routes then
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", ROUTES_FUNCTIONS))
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", ROUTES_TABLES))
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", ROUTES_NUMBERS))
-	Append(ns.DIAGNOSTIC_API_CHECKS, { TIMED_QUESTS_ROUTE })
+	Append(ns.DIAGNOSTIC_API_CHECKS, { TIMED_QUESTS_ROUTE, ON_QUEST_ROUTE })
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", ITEM_BUTTON_FUNCTIONS))
 end
 -- The map's frame, built in Features/Quest-Map.xml, which only a client with the map lists (Quest-Map.lua)
 if ns.hasQuestMap then
@@ -790,6 +844,10 @@ if QUEST_ID_API then
 elseif ns.hasWideQuestLog then
 	-- A full watch list's message (Classic-Tracking.lua, Mists-Tracking.lua)
 	AddLabels({ "QUEST_WATCH_TOO_MANY" })
+end
+-- The name a party member has before the client knows it, which the route's party reads skip (Routes-Party.lua)
+if ns.routes then
+	AddLabels({ "UNKNOWNOBJECT" })
 end
 -- The daily tag, on the client that has daily quests (see LE_QUEST_FREQUENCY_DAILY above)
 if IS_WIDENED_BLIZZARD_LOG and ns.FLAVOR == "TBC" then
@@ -1130,6 +1188,13 @@ function ns:BuildQuestLogContextReport()
 	if QuestFrame and QuestFrame:IsShown() then
 		lines[#lines + 1] = string.format("  Its quest ID: %s", tostring(GetQuestID and GetQuestID()))
 	end
+	--[[
+		The cleanup makes a skin's see-through backdrop opaque, on a frame of the skin's own or on the window
+		itself; a window no skin has touched is left alone (Quest-Giver-Skins.lua)
+	]]
+	local skinned = QuestFrame
+		and (QuestFrame.backdrop and "on a frame of its own" or QuestFrame.template and "on the window")
+	lines[#lines + 1] = string.format("Quest giver window skin backdrop: %s", skinned or "none, so it's left alone")
 
 	if OWN_WINDOW then
 		--[[
@@ -1701,7 +1766,7 @@ local function QuestieIcons(pins, questID)
 		if type(icon) == "table" and type(icon.data) == "table" and type(placement) == "table" then
 			total = total + 1
 			local mapID = placement.uiMapID
-			if questID and icon.data.Id == questID and mapID then
+			if questID and icon.data.Id == questID and mapID and not icon.isManualIcon then
 				local reason = SkipReason(icon)
 				local counts = reason and skipped or drawn
 				counts[mapID] = (counts[mapID] or 0) + 1
@@ -1925,6 +1990,14 @@ function ns:BuildMapContextReport()
 		local blizzardID = questID ~= (questMap and questMap.questieQuestID) and questID or nil
 		lines[#lines + 1] =
 			string.format("Blizzard's objective area and quest marker drawn for: %s", tostring(blizzardID or "(none)"))
+		-- The map adds each of Blizzard's layers only where this client has it (Forever-Quest-Map.lua)
+		lines[#lines + 1] = string.format(
+			"Blizzard's map layers on this client: fog %s, objective areas %s, dungeon entrances %s, flight points %s",
+			YesNo(_G.FogOfWarFrameMixin and _G.FogOfWarDataProviderMixin),
+			YesNo(_G.QuestBlobDataProviderMixin),
+			YesNo(_G.DungeonEntranceDataProviderMixin),
+			YesNo(_G.FlightPointDataProviderMixin)
+		)
 		-- Those layers, the dungeon entrances and the flight points hold their redraws until combat ends
 		lines[#lines + 1] =
 			string.format("In combat, so Blizzard's layers wait to redraw: %s", YesNo(InCombatLockdown()))
@@ -2069,6 +2142,14 @@ local function ArrowLines(lines)
 		string.format("In a raid group / instance type: %s / %s", YesNo(IsInRaid()), tostring(instanceType))
 	-- Without the player's position on this continent or their facing the arrow hides, leaving the text (Routes-Arrow.lua)
 	lines[#lines + 1] = string.format("Your facing: %s", tostring(GetPlayerFacing()))
+	-- Its color follows the facing, or while backing up or strafing the way the player moves (Routes-Arrow.lua)
+	lines[#lines + 1] = string.format("Arrow colored by: %s", tostring(routes.arrowColoredBy or "(not yet)"))
+	-- TomTom's own quest arrow stands down while this one shows (Routes-TomTom.lua)
+	lines[#lines + 1] = string.format(
+		"TomTom loaded / its quest arrow stood down: %s / %s",
+		YesNo(routes.IsTomTomLoaded()),
+		YesNo(routes.IsTomTomQuestArrowSuppressed())
+	)
 	-- Around an objective, the eye lists every objective there, by turns with the arrow to the next destination
 	local target = routes.arrowTarget
 	if type(target) == "table" and type(target.tasks) == "table" then
@@ -2107,6 +2188,29 @@ local function ArrowLines(lines)
 	RouteSetting(lines, "Show distance", "showDistance")
 	RouteSetting(lines, "Show quests under the arrow", "showQuests")
 	RouteSetting(lines, "Quests listed at most", "questsListed")
+	RouteSetting(lines, "Show quest item buttons", "showItemButtons")
+	-- The Use Item buttons beside the listed quests, and whether any wait on combat to move (Routes-Arrow-Items.lua)
+	local itemButtons, waiting = routes.ItemButtonsState()
+	lines[#lines + 1] = string.format(
+		"Quest item buttons: %s%s",
+		#itemButtons > 0 and table.concat(itemButtons, ", ") or "(none)",
+		waiting and ", waiting for combat to end" or ""
+	)
+	local key = GetBindingKey(routes.USE_ITEM_COMMAND)
+	lines[#lines + 1] = string.format("Use Quest Item key: %s", key and tostring(key) or "(not bound)")
+	--[[
+		Where the buttons' items come from (Routes-Arrow-Item-Choice.lua): the client's own quest item, from
+		Wrath on, and the items Questie's database names for the quest
+	]]
+	lines[#lines + 1] = string.format(
+		"Client's own quest items (GetQuestLogSpecialItemInfo): %s",
+		YesNo(type(_G.GetQuestLogSpecialItemInfo) == "function")
+	)
+	local questieDB = ns.ImportQuestieModule("QuestieDB")
+	lines[#lines + 1] = string.format(
+		"Questie quest data for the buttons (QuestieDB.GetQuest): %s",
+		(questieDB and type(questieDB.GetQuest) == "function") and "found" or "not found, so only the client's own"
+	)
 	RouteSetting(lines, "Show next objective", "showNextObjective")
 	RouteSetting(lines, "Show upcoming turn-ins", "showUpcomingTurnIns")
 end
@@ -2125,12 +2229,20 @@ local function ZoneMapLines(lines)
 	end
 	--[[
 		Full Size Map turns the map's own miniWorldMap setting off (0), never in combat, as the map closes
-		and as settings change (Routes-Map.lua), unless an add-on that sizes the map itself is loaded
+		and as settings change (Routes-Map.lua)
 	]]
 	lines[#lines + 1] = string.format("miniWorldMap CVar: %s", tostring(GetCVar("miniWorldMap")))
-	lines[#lines + 1] = string.format("Map sized by: %s", ns.routes.MapSizedElsewhere() or "none")
 	RouteSetting(lines, "Full size map", "fullSizeMap")
-	RouteSetting(lines, "Hide Questie's icons for the route", "hideQuestieIcons")
+	RouteSetting(lines, "Hide quest icons for the route (Questie's, Blizzard's)", "hideQuestieIcons")
+	-- Blizzard's quest markers and objective areas (WoW Forever), hidden for the route on the map alone (Routes-Map-Blizzard-Quests.lua)
+	lines[#lines + 1] = string.format("questPOI CVar: %s", tostring(GetCVar("questPOI")))
+	local layers = ns.routes.BlizzardQuestLayers()
+	lines[#lines + 1] = string.format(
+		"Blizzard's quest layers found: %d marker, %d objective area; pins hidden now: %d",
+		layers.markers,
+		layers.areas,
+		layers.hidden
+	)
 	-- A stop marker shows Questie's icon for its task, from Questie's icon set (Routes-Map.lua)
 	lines[#lines + 1] = string.format(
 		"Questie's icon set for the stop markers: %s",
@@ -2159,6 +2271,45 @@ local function PartyLines(lines)
 	-- A party member's quests come from their Questie, in a party but not a raid group (Routes-Party.lua)
 	RouteSetting(lines, "Party members' quests", "partyQuests")
 	lines[#lines + 1] = string.format("In a party, not a raid group: %s", YesNo(IsInGroup() and not IsInRaid()))
+	--[[
+		What the game tells the quest list's party count (Forever-Quest-List.lua): how many members share a quest
+		with the player, and how many answers it kept secret. Counts only, no names
+	]]
+	if IsInGroup() then
+		local quests = {} -- Quest ID to log index, from the game's own log
+		for index = 1, ns.GetNumQuestLogEntries() do
+			local entry = ns.GetQuestLogEntry(index)
+			if entry and not entry.isHeader and entry.questID then
+				quests[entry.questID] = index
+			end
+		end
+		local members, sharing = GetNumSubgroupMembers(), 0
+		local secretOnQuest, secretName, secretClass = 0, 0, 0
+		for index = 1, members do
+			local unit = "party" .. index
+			local shares, secret = false, false
+			for questID, logIndex in pairs(quests) do
+				local onQuest = ns.IsUnitOnQuest(unit, questID, logIndex)
+				if not ns.IsReadable(onQuest) then
+					secret = true
+				elseif onQuest then
+					shares = true
+				end
+			end
+			sharing = sharing + (shares and 1 or 0)
+			secretOnQuest = secretOnQuest + (secret and 1 or 0)
+			secretName = secretName + (ns.IsReadable(GetUnitName(unit, true)) and 0 or 1)
+			secretClass = secretClass + (ns.IsReadable((select(2, UnitClass(unit)))) and 0 or 1)
+		end
+		lines[#lines + 1] = string.format(
+			"Party members on any of your quests: %d of %d (secret: on-quest %d, name %d, class %d)",
+			sharing,
+			members,
+			secretOnQuest,
+			secretName,
+			secretClass
+		)
+	end
 	local comms = ns.ImportQuestieModule("QuestieComms")
 	local logs = comms and comms.remoteQuestLogs
 	if type(logs) ~= "table" then

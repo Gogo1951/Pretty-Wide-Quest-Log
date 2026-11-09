@@ -23,14 +23,17 @@ local function QuestieXP()
 	end
 end
 
+-- The money as coin icons: the C_CurrencyInfo call, or the global where a client lacks it
+local CoinText = C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
+
 -- "12,345 XP / 5g 12s", leaving out either side that's zero
 local function RewardText(xp, money)
 	local parts = {}
 	if xp > 0 then
 		parts[#parts + 1] = L["TURN_IN_XP"]:format(ns.FormatNumber(xp))
 	end
-	if money > 0 then
-		parts[#parts + 1] = GetMoneyString(money)
+	if money > 0 and CoinText then
+		parts[#parts + 1] = CoinText(money)
 	end
 	return table.concat(parts, L["TURN_IN_SEPARATOR"])
 end

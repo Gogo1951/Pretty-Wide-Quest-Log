@@ -19,12 +19,6 @@ ns.PREDECESSOR_ADDON_NAME = "WideQuestLogPlus"
 ns.QUESTIE_ADDON_NAME = "Questie"
 ns.QUESTIE_NOTICE_DELAY = 20
 
---[[
-	Add-ons that set the zone map's size themselves. Leatrix Maps keeps the map windowed and scales it up,
-	so a full-size map under it overflows the screen; Open the Zone Map Full Size stands aside for them
-]]
-ns.MAP_SIZE_ADDONS = { "Leatrix_Maps", "Mapster" }
-
 -- VoiceOver and Spoken Quests, its fork, which keeps the VoiceOver global (ns.GetVoiceOver)
 ns.VOICEOVER_ADDON_NAMES = { "AI_VoiceOver", "Spoken_Quests" }
 
@@ -60,7 +54,8 @@ ns.PALETTE = {
 	ARROW_TURN = "FFFF00", -- Yellow: The Quest Arrow Pointing to the Side
 	ARROW_WRONG_WAY = "FF3333", -- Red: The Quest Arrow Pointing Behind
 	ROUTE_LINE = "333333", -- Dark Gray: The Route's Line, Plain on the Yellow Maps
-	ROUTE_ALERT_RING = "FF3333", -- Red: A Marker's Ring for a Party Member's or Dungeon Objective
+	ROUTE_ALERT_RING = "FF3333", -- Red: A Marker's Ring for a Dungeon Objective, or One Ignored
+	ROUTE_PARTY_RING = "FFFFFF", -- White: A Marker's Ring for a Party Member's Objective
 	PARCHMENT_GAIN = "1D6B1D", -- Deep Green: A Skin's Experience Share, Read on the Parchment
 }
 

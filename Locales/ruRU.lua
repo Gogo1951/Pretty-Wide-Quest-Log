@@ -173,9 +173,9 @@ L["ROUTES_MAP_DESCRIPTION"] =
 L["FULL_SIZE_MAP"] = "Открывать карту зоны в полном размере"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"Открывает карту зоны развёрнутой, как это делает её собственная кнопка развёртывания, чтобы маршруту хватало места. Если вы уменьшите карту, в следующий раз она снова откроется в полном размере."
-L["HIDE_QUESTIE_ICONS"] = "Скрывать значки Questie на маршруте"
+L["HIDE_QUESTIE_ICONS"] = "Скрывать значки заданий на маршруте"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
-	"Скрывает значки Questie на карте для всего, что есть на маршруте, чтобы их заменили метки. Наведите курсор на метку, чтобы увидеть её значки."
+	"Для всего, что есть на маршруте, скрывает значки Questie на карте, а также маркеры заданий и области целей Blizzard, чтобы их заменили метки маршрута. Также скрывает бледные значки Questie для целей участников группы. Наведите курсор на метку, чтобы увидеть значки Questie."
 L["ROUTES_MARKERS_HEADER"] = "Метки"
 L["ROUTES_MARKERS_DESCRIPTION"] = "Метки для каждой путевой точки маршрута."
 L["MARKER_SIZE"] = "Размер меток"
@@ -238,11 +238,15 @@ L["QUESTS_LISTED"] = "Максимум заданий в списке"
 -- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
 L["QUESTS_LISTED_DESCRIPTION"] =
 	'Сколько заданий самое большее Стрелка заданий перечисляет под собой для одной путевой точки. Остальные считаются отдельной строкой, например "%s".'
+L["SHOW_ITEM_BUTTONS"] = "Показывать кнопки предметов заданий"
+L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
+	"Ставит кнопку рядом с каждым заданием в списке Стрелки заданий, для которого есть предмет, например чтобы его бросить, посадить или использовать на цели. Нажмите кнопку, чтобы использовать предмет, или назначьте клавишу для команды Использовать предмет задания в разделе Назначение клавиш, чтобы использовать первый из них. В бою кнопки остаются на месте, пока бой не закончится."
 -- TRANSLATORS: also a switch on the Quest Arrow's menu
 L["SHOW_NEXT_OBJECTIVE"] = "Показывать следующую цель"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'Когда показана "%s", ниже приглушённо выводится "%s": маленькая стрелка к следующей путевой точке и то, что там нужно сделать.'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
 L["SHOW_UPCOMING_TURN_INS"] = "Показывать будущие сдачи"
 L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
 	"Добавляет сдачу каждого задания в маршрут ещё до выполнения его целей, с серым вопросительным знаком Questie, чтобы было видно, где вы его сдадите. Если выключено, сдача появляется в маршруте, когда задание выполнено."
@@ -300,12 +304,14 @@ L["QUEST_TYPE_RAID"] = "рейд"
 L["QUEST_TYPE_GROUP"] = "группа"
 L["QUEST_TYPE_ELITE"] = "элитное"
 L["QUEST_TYPE_PVP"] = "ПвП"
+-- TRANSLATORS: %s is the QUEST_LEVEL_LEGEND_ENTRY pairs, joined by LIST_SEPARATOR
 L["QUEST_LEVEL_LEGEND"] = "Буквы после уровня: %s."
 -- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s %s"
 L["QUEST_ID"] = "ID задания %d"
 -- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "Цепочка заданий (%d из %d)"
+-- TRANSLATORS: %s is the time left as the game writes it, such as "3 Hr 12 Min"
 L["DAILY_RESET"] = "Ежедневные задания обновятся через %s."
 L["WOWHEAD_LINK_TOOLTIP"] = "Щелкните, чтобы получить ссылку на Wowhead."
 L["WOWHEAD_LINK_COPY"] =
@@ -315,8 +321,10 @@ L["COLLAPSE_ALL"] = "Свернуть все"
 L["TRACK_ALL"] = "Отслеживать все"
 L["UNTRACK_ALL"] = "Снять отслеживание"
 L["HIDE_MAP"] = "Скрыть карту"
+-- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "%s опыта"
 L["TURN_IN_SEPARATOR"] = " / "
+-- TRANSLATORS: %s is TURN_IN_XP and the money, joined by TURN_IN_SEPARATOR, such as "12,345 XP / 5g 12s"
 L["TURN_IN_SUMMARY"] = "Сдача: %s"
 L["TURN_IN_TOOLTIP"] = "Можно сдать"
 L["RESIZE_TOOLTIP"] = "Перетащите, чтобы изменить размер журнала заданий."
@@ -330,10 +338,12 @@ L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"Предлагает группе задания этой зоны, которые игра позволяет передать, по одному каждые %d сек."
 -- TRANSLATORS: %s is a quest's name
 L["CHAT_SHARING_AFTER_COMBAT"] = "Задание %s будет передано после окончания боя."
+-- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_ONE"] = "Передаётся 1 задание из зоны %s."
 -- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] =
 	"Передаётся заданий: %d из зоны %s, по одному каждые %d сек."
+-- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_NONE"] =
 	"Ни одним из ваших заданий из зоны %s нельзя поделиться."
 
@@ -368,6 +378,11 @@ L["ROUTES_LOOK_FOR"] = "Ищите"
 L["ROUTES_CLICK_DRAG"] = "Перетаскивание"
 L["ROUTES_CLICK_RIGHT"] = "Правый щелчок"
 L["ROUTES_CLICK_MIDDLE"] = "Средний щелчок"
+L["ROUTES_CLICK"] = "Щелчок"
+-- TRANSLATORS: beside ROUTES_CLICK, or the bound key, on a Quest Arrow item button's tooltip
+L["ROUTES_CLICK_USE_ITEM"] = "Использовать предмет"
+-- TRANSLATORS: the key binding's name in the game's Key Bindings list, under the add-on's name
+L["BINDING_USE_QUEST_ITEM"] = "Использовать предмет задания"
 L["ROUTES_DRAG_MOVE"] = "Переместить Стрелку заданий"
 L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Игнорировать эту путевую точку"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
@@ -414,8 +429,10 @@ L["ROUTES_MEMBER_INCLUDED"] = "Цели участника %s снова на м
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
--- TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
--- each %s is a quest link or a list of them, and each %d is how many quests
+--[[
+	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
+	each %s is a quest link or a list of them, and each %d is how many quests
+]]
 L["WHISPER_SHARE_FAILED"] =
 	"Не вышло передать %s. Нужно задание? Напиши, как сможешь, передам снова"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "И %s тоже"
@@ -427,6 +444,7 @@ L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Ещё мои задания здес�
 -- Questie Tracking
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: %s is a quest link, or the quest's name or ID when there's no link
 L["QUESTIE_CANNOT_SHOW"] =
 	"Отслеживание Questie не может показать %s, потому что этого задания нет в базе данных Questie."
 L["QUESTIE_CANNOT_TRACK"] = "Questie пока не может отслеживать это задание."

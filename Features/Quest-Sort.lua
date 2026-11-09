@@ -52,11 +52,19 @@ end
 
 --[[
 	Whether a zone header is the zone the player is in. Both quest logs name their zones only by text, so
-	this matches names (GAME NAMES). A class or profession header never matches, and a dungeon's header
-	matches only while the player is inside it (Dungeon-Quest-Lookup.lua relies on that)
+	this matches names (GAME NAMES). A class or profession header never matches. A header is an area's
+	name, and inside a dungeon the zone text is the instance's, which can be spelled differently, so there
+	a header also matches any name the dungeon's quests can be filed under (ns.CurrentDungeonNames)
 ]]
 function ns.IsCurrentZone(title)
-	return title ~= nil and title == GetRealZoneText()
+	if title == nil then
+		return false
+	end
+	if title == GetRealZoneText() then
+		return true
+	end
+	local names = ns.CurrentDungeonNames and ns.CurrentDungeonNames()
+	return names ~= nil and names[title] == true
 end
 
 -- A zone header's text, marked when it's the zone the player is in

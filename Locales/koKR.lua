@@ -168,9 +168,9 @@ L["ROUTES_MAP_DESCRIPTION"] = "경로를 표시하는 동안 지역 지도가 �
 L["FULL_SIZE_MAP"] = "지역 지도를 최대 크기로 열기"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"지도의 최대화 버튼을 누른 것처럼 지역 지도를 최대화해서 열어 경로가 들어갈 공간을 확보합니다. 지도를 줄여도 다음에는 다시 최대 크기로 열립니다."
-L["HIDE_QUESTIE_ICONS"] = "경로의 Questie 아이콘 숨기기"
+L["HIDE_QUESTIE_ICONS"] = "경로의 퀘스트 아이콘 숨기기"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
-	"경로에 있는 대상의 Questie 지도 아이콘을 숨기고 표식이 대신 표시되게 합니다. 표식에 마우스를 올리면 그 아이콘을 볼 수 있습니다."
+	"경로에 있는 대상의 Questie 지도 아이콘과 블리자드 퀘스트 마커 및 목표 지역을 숨기고, 경로의 표식이 대신 표시되게 합니다. 파티원 목표를 나타내는 Questie의 흐린 아이콘도 숨깁니다. 표식에 마우스를 올리면 Questie 아이콘을 볼 수 있습니다."
 L["ROUTES_MARKERS_HEADER"] = "표식"
 L["ROUTES_MARKERS_DESCRIPTION"] = "경로의 각 경유지 표식입니다."
 L["MARKER_SIZE"] = "표식 크기"
@@ -229,11 +229,15 @@ L["QUESTS_LISTED"] = "최대 표시 퀘스트 수"
 -- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
 L["QUESTS_LISTED_DESCRIPTION"] =
 	'퀘스트 화살표가 한 경유지에 대해 아래에 나열하는 최대 퀘스트 수입니다. 나머지는 "%s"처럼 별도의 줄에 개수로 표시됩니다.'
+L["SHOW_ITEM_BUTTONS"] = "퀘스트 아이템 버튼 표시"
+L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
+	"퀘스트 화살표가 나열하는 퀘스트 중 사용할 아이템이 있는 퀘스트 옆에 버튼을 놓습니다. 던지거나, 심거나, 대상에게 사용하는 아이템 등이 해당됩니다. 버튼을 클릭해 아이템을 사용하거나, 게임의 단축키 설정에서 퀘스트 아이템 사용에 키를 지정해 첫 번째 아이템을 사용하세요. 전투 중에는 전투가 끝날 때까지 버튼이 제자리에 있습니다."
 -- TRANSLATORS: also a switch on the Quest Arrow's menu
 L["SHOW_NEXT_OBJECTIVE"] = "다음 목표 표시"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'"%s"일 때 그 아래에 "%s" 줄을 흐리게 표시해, 그다음 경유지를 가리키는 작은 화살표와 그곳에서 할 일을 보여 줍니다.'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
 L["SHOW_UPCOMING_TURN_INS"] = "예정된 퀘스트 완료 표시"
 L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
 	"목표를 마치기 전에도 각 퀘스트의 완료 지점을 경로에 넣고 Questie의 회색 물음표로 표시해, 어디서 완료할지 미리 볼 수 있습니다. 끄면 퀘스트를 완료한 뒤에 완료 지점이 경로에 추가됩니다."
@@ -287,12 +291,14 @@ L["QUEST_TYPE_RAID"] = "공격대"
 L["QUEST_TYPE_GROUP"] = "파티"
 L["QUEST_TYPE_ELITE"] = "정예"
 L["QUEST_TYPE_PVP"] = "PvP"
+-- TRANSLATORS: %s is the QUEST_LEVEL_LEGEND_ENTRY pairs, joined by LIST_SEPARATOR
 L["QUEST_LEVEL_LEGEND"] = "레벨 뒤 글자: %s."
 -- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s(%s)"
 L["QUEST_ID"] = "퀘스트 ID %d"
 -- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "연계 퀘스트 (%d/%d)"
+-- TRANSLATORS: %s is the time left as the game writes it, such as "3 Hr 12 Min"
 L["DAILY_RESET"] = "일일 퀘스트 초기화까지 %s 남았습니다."
 L["WOWHEAD_LINK_TOOLTIP"] = "클릭하면 Wowhead 링크를 받습니다."
 L["WOWHEAD_LINK_COPY"] = "Ctrl+C(Mac에서는 Cmd+C)를 눌러 Wowhead 링크를 복사하세요."
@@ -301,8 +307,10 @@ L["COLLAPSE_ALL"] = "모두 접기"
 L["TRACK_ALL"] = "모두 추적"
 L["UNTRACK_ALL"] = "모두 추적 해제"
 L["HIDE_MAP"] = "지도 숨기기"
+-- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "경험치 %s"
 L["TURN_IN_SEPARATOR"] = " / "
+-- TRANSLATORS: %s is TURN_IN_XP and the money, joined by TURN_IN_SEPARATOR, such as "12,345 XP / 5g 12s"
 L["TURN_IN_SUMMARY"] = "완료 보상: %s"
 L["TURN_IN_TOOLTIP"] = "완료 보고 가능"
 L["RESIZE_TOOLTIP"] = "끌어서 퀘스트 목록 크기를 조절합니다."
@@ -316,9 +324,11 @@ L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"이 지역에서 게임이 공유를 허용하는 퀘스트를 %d초마다 하나씩 파티에 제안합니다."
 -- TRANSLATORS: %s is a quest's name
 L["CHAT_SHARING_AFTER_COMBAT"] = "전투가 끝나면 %s 퀘스트를 공유합니다."
+-- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_ONE"] = "%s의 퀘스트 1개를 공유합니다."
 -- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "퀘스트 %d개를 공유합니다 (%s), %d초마다 하나씩."
+-- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_NONE"] = "%s의 퀘스트 중 공유할 수 있는 퀘스트가 없습니다."
 
 --------------------------------------------------------------------------------
@@ -352,6 +362,11 @@ L["ROUTES_LOOK_FOR"] = "찾을 대상"
 L["ROUTES_CLICK_DRAG"] = "끌기"
 L["ROUTES_CLICK_RIGHT"] = "오른쪽 클릭"
 L["ROUTES_CLICK_MIDDLE"] = "가운데 클릭"
+L["ROUTES_CLICK"] = "클릭"
+-- TRANSLATORS: beside ROUTES_CLICK, or the bound key, on a Quest Arrow item button's tooltip
+L["ROUTES_CLICK_USE_ITEM"] = "아이템 사용"
+-- TRANSLATORS: the key binding's name in the game's Key Bindings list, under the add-on's name
+L["BINDING_USE_QUEST_ITEM"] = "퀘스트 아이템 사용"
 L["ROUTES_DRAG_MOVE"] = "퀘스트 화살표 이동"
 L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "이 경유지 무시"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
@@ -395,8 +410,10 @@ L["ROUTES_MEMBER_INCLUDED"] = "%s 님의 목표가 다시 경로에 포함되었
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
--- TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
--- each %s is a quest link or a list of them, and each %d is how many quests
+--[[
+	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
+	each %s is a quest link or a list of them, and each %d is how many quests
+]]
 L["WHISPER_SHARE_FAILED"] =
 	"%s 퀘스트를 공유하려고 했는데 전달되지 않았어요. 필요하면 준비됐을 때 말해 주세요. 다시 공유해 드릴게요"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 퀘스트도 마찬가지예요"
@@ -408,6 +425,7 @@ L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "여기서 할 퀘스트가 더 있어�
 -- Questie Tracking
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: %s is a quest link, or the quest's name or ID when there's no link
 L["QUESTIE_CANNOT_SHOW"] =
 	"Questie 데이터베이스에 없는 퀘스트라서 Questie 추적기에 %s 퀘스트를 표시할 수 없습니다."
 L["QUESTIE_CANNOT_TRACK"] = "Questie가 아직 이 퀘스트를 추적할 수 없습니다."

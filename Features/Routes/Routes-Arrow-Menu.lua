@@ -99,7 +99,8 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-	The objectives and turn-ins at the waypoint the arrow shows, still to do: the quests as the arrow lists
+	The objectives and turn-ins at the waypoint the arrow shows, still to do and not ignored (an ignored one
+	stays at the waypoint until the next plan, which in combat waits for the fight to end): the quests as the arrow lists
 	them, each one's objectives in the quest log's order, then its turn-in. Nothing for the way back to the corpse
 ]]
 local function MenuTasks(view)
@@ -109,7 +110,7 @@ local function MenuTasks(view)
 	end
 	local byObjective, turnIns = {}, {}
 	for _, task in ipairs(view.tasks) do
-		if task.key and routes.IsTaskLeft(task) then
+		if task.key and routes.IsTaskLeft(task) and not routes.skipped[task.key] then
 			if task.objective then
 				byObjective[task.objective] = task
 			elseif task.kind == "turnIn" then

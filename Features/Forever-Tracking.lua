@@ -9,13 +9,26 @@ local L = ns.L
 local questieTracker
 
 -- A repaint asks for every quest, so Questie's quest log is read once a frame
-local questieLog, questieLogTime
+local questieLog, questieLogAcceptances, questieLogTime
 local function QuestieLog()
 	local now = GetTime()
 	if questieLogTime ~= now then
-		questieLog, questieLogTime = ns.QuestieLogEntries(), now
+		questieLog, questieLogAcceptances = ns.QuestieLogEntries()
+		questieLogTime = now
 	end
-	return questieLog
+	return questieLog, questieLogAcceptances
+end
+
+--[[
+	Whether Questie can show the quest: since Questie 12.6.3 an entry has the quest under .quest only when
+	Questie's database knows it, as routes.QuestLog reads it; before, any entry is a quest
+]]
+local function QuestieKnows(log, acceptances, questID)
+	local entry = log[questID]
+	if acceptances then
+		return type(entry) == "table" and type(entry.quest) == "table"
+	end
+	return entry ~= nil
 end
 
 --[[
@@ -27,11 +40,11 @@ local function TrackerFor(questID)
 		return nil
 	end
 	questieTracker = questieTracker or ns.ImportQuestieModule("QuestieTracker")
-	local log = QuestieLog()
+	local log, acceptances = QuestieLog()
 	if not (questieTracker and type(questieTracker.IsTrackedByQuestie) == "function" and log) then
 		return nil
 	end
-	return log[questID] ~= nil and questieTracker or false
+	return QuestieKnows(log, acceptances, questID) and questieTracker or false
 end
 
 function ns.CanTrack(questID)

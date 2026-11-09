@@ -2,7 +2,7 @@ local _, ns = ...
 local L = ns.L
 local LAYOUT = ns.LAYOUT
 
--- Every client: where the selected quest sits in its chain, from Questie's quest database, in the quest details.
+-- Every client: where the selected quest sits in its chain (Quest-Chain-Data.lua), in the quest details.
 
 -- Behind this quest's line, so it reads as the one you're on: the text's own color, faint, so it shows on any skin
 local CURRENT_PART_BAND_ALPHA = 0.12
@@ -21,45 +21,17 @@ local CIRCLE_MASK = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
 local BADGE_PAD_Y = LAYOUT.SPACE.TIGHT
 
 --------------------------------------------------------------------------------
--- Questie
+-- Questie's Tooltip
 --------------------------------------------------------------------------------
-
-local questieModules = {}
-local function QuestieModule(name)
-	questieModules[name] = questieModules[name] or ns.ImportQuestieModule(name)
-	return questieModules[name]
-end
-
--- One field of a quest's record in Questie's database, or nil while Questie isn't loaded or isn't ready
-local function Query(questID, field)
-	local questieDB = QuestieModule("QuestieDB")
-	if not (questieDB and type(questieDB.QueryQuestSingle) == "function") then
-		return nil
-	end
-	local found, value = pcall(questieDB.QueryQuestSingle, questID, field)
-	return found and value or nil
-end
-
---[[
-	A quest's tag, from Questie's corrected list when it has one, else the client's, and whether it's elite,
-	always the client's: a tag's name is never compared, since it reads differently in every language
-]]
-local function QuestTag(questID)
-	local clientTagID, isElite = ns.GetQuestTagByID(questID)
-	local questieDB = QuestieModule("QuestieDB")
-	if questieDB and type(questieDB.GetQuestTagInfo) == "function" then
-		local found, tagID = pcall(questieDB.GetQuestTagInfo, questID)
-		if found and tagID then
-			return tagID, isElite
-		end
-	end
-	return clientTagID, isElite
-end
 
 -- Questie's own tooltip for a quest, the one its quest links show
 local function ShowQuestieTooltip(row)
-	local questieLink = QuestieModule("QuestieLink")
+	local questieLink = ns.ImportQuestieModule("QuestieLink")
 	if not (row.questID and questieLink and type(questieLink.CreateQuestTooltip) == "function") then
+		return
+	end
+	-- Before Questie has started, its tooltip only prints a wait message to chat
+	if not (Questie and Questie.started) then
 		return
 	end
 	GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
@@ -73,78 +45,8 @@ local function ShowQuestieTooltip(row)
 end
 
 --------------------------------------------------------------------------------
--- The Chain
+-- Badges
 --------------------------------------------------------------------------------
-
-local MAX_PARTS = 25 -- A walk this long has met a loop in the data
-
--- The part before a quest in a straight chain: its only prerequisite, which names it as the next part
-local function PreviousPart(questID)
-	local group = Query(questID, "preQuestGroup")
-	if type(group) == "table" and next(group) then
-		return nil
-	end
-	local single = Query(questID, "preQuestSingle")
-	if type(single) ~= "table" or #single ~= 1 then
-		return nil
-	end
-	if Query(single[1], "nextQuestInChain") == questID then
-		return single[1]
-	end
-end
-
-local function NextPart(questID)
-	local nextID = Query(questID, "nextQuestInChain")
-	if type(nextID) == "number" and nextID ~= 0 then
-		return nextID
-	end
-end
-
---[[
-	The last chain found, as the quest details repaint in bursts and Questie's data doesn't change in a
-	session. Only a chain found is kept: before Questie's database is ready a quest is in none
-]]
-local lastChain = {}
-
---[[
-	The quest IDs of the chain through questID, first part first, and questID's place in it; nil when
-	the quest is in no chain Questie knows. Where a chain branches, only its straight run is followed.
-	Callers only read them: the section shows the parts and counts the position in its heading
-]]
-function ns.GetQuestChain(questID)
-	if lastChain.questID == questID then
-		return lastChain.parts, lastChain.position
-	end
-	local parts, seen = { questID }, { [questID] = true }
-	local previous = PreviousPart(questID)
-	while previous and not seen[previous] and #parts < MAX_PARTS do
-		table.insert(parts, 1, previous)
-		seen[previous] = true
-		previous = PreviousPart(previous)
-	end
-	local position = #parts
-	local nextID = NextPart(questID)
-	while nextID and not seen[nextID] and #parts < MAX_PARTS do
-		parts[#parts + 1] = nextID
-		seen[nextID] = true
-		nextID = NextPart(nextID)
-	end
-	if #parts < 2 then
-		return nil
-	end
-	lastChain.questID, lastChain.parts, lastChain.position = questID, parts, position
-	return parts, position
-end
-
--- A part's level badge ("60D", the quest log's tag without its brackets) and its name ("Agent of Hydraxis"), with Questie's level for it
-local function PartLabel(questID)
-	local title = ns.GetQuestTitleByID(questID) or Query(questID, "name") or tostring(questID)
-	local level = Query(questID, "questLevel")
-	if type(level) ~= "number" or level <= 0 then
-		return nil, title
-	end
-	return format("%d%s", level, ns.QuestSuffix(QuestTag(questID))), title, level
-end
 
 --[[
 	Every badge is as wide as the widest one could be: two of the widest digit and the widest letter, in
@@ -174,25 +76,6 @@ local function BadgeTextWidth(file, size, flags)
 	end
 	badgeWidths[key] = widest
 	return widest
-end
-
---[[
-	The color the quest log gives a part: for a part in the log on WoW Forever, how hard the server rates
-	it for the player, as Forever-Quest-List.lua colors it. The server rates only quests in the log, so any
-	other part, and every part on Classic, goes by its level against the player's. Nil when neither is known
-]]
-local function PartColor(questID, level)
-	local difficulty = C_PlayerInfo
-		and C_PlayerInfo.GetContentDifficultyQuestForPlayer
-		and C_QuestLog.GetLogIndexForQuestID
-		and C_QuestLog.GetLogIndexForQuestID(questID)
-		and C_PlayerInfo.GetContentDifficultyQuestForPlayer(questID)
-	if difficulty and GetDifficultyColor then
-		return GetDifficultyColor(difficulty)
-	end
-	if level then
-		return GetQuestDifficultyColor(level)
-	end
 end
 
 --------------------------------------------------------------------------------
@@ -355,14 +238,14 @@ function ns.UpdateQuestChainSection(section, questID, headingSource, textSource)
 	for index, partID in ipairs(parts) do
 		local row = Row(section, index)
 		local turnedIn = index ~= position and C_QuestLog.IsQuestFlaggedCompleted(partID)
-		local tag, title, level = PartLabel(partID)
+		local tag, title, level = ns.QuestChainPartLabel(partID)
 		CopyFont(row.Check, textSource)
 		row.Check:SetText(ns.CheckIcon(row.Check, turnedIn))
 		local checkWidth = row.Check:GetStringWidth()
 		local lineHeight = row.Check:GetStringHeight()
 
 		-- A part with no level keeps its badge's room, so its name still lines up
-		local color = PartColor(partID, level)
+		local color = ns.QuestChainPartColor(partID, level)
 		if file then
 			row.BadgeText:SetFont(file, badgeSize, flags)
 		end

@@ -165,9 +165,9 @@ L["ROUTES_MAP_DESCRIPTION"] = "Como o mapa da zona abre enquanto mostra a rota."
 L["FULL_SIZE_MAP"] = "Abrir o mapa da zona em tamanho máximo"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"Abre o mapa da zona maximizado, como faz o próprio botão de maximizar dele, para a rota ter espaço. Se você diminuir o mapa, ele abre em tamanho máximo de novo na próxima vez."
-L["HIDE_QUESTIE_ICONS"] = "Ocultar os ícones do Questie na rota"
+L["HIDE_QUESTIE_ICONS"] = "Ocultar os ícones de missão na rota"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
-	"Oculta os ícones de mapa do Questie para o que está na rota, para que os marcadores fiquem no lugar deles. Passe o mouse sobre um marcador para ver os ícones dele."
+	"Para o que está na rota, oculta os ícones de mapa do Questie, e os indicadores de missão e as áreas de objetivo da Blizzard, para que os marcadores da rota fiquem no lugar deles. Também oculta os ícones esmaecidos do Questie para os objetivos dos membros do grupo. Passe o mouse sobre um marcador para ver os ícones do Questie."
 L["ROUTES_MARKERS_HEADER"] = "Marcadores"
 L["ROUTES_MARKERS_DESCRIPTION"] = "Os marcadores de cada ponto de passagem da rota."
 L["MARKER_SIZE"] = "Tamanho dos marcadores"
@@ -226,11 +226,15 @@ L["QUESTS_LISTED"] = "Máximo de missões listadas"
 -- TRANSLATORS: %s is ROUTES_MORE_TASKS for 2 quests, as the Quest Arrow shows it
 L["QUESTS_LISTED_DESCRIPTION"] =
 	'O máximo de missões que a Seta de missões lista embaixo dela para um ponto de passagem. As demais são contadas em uma linha própria, como "%s".'
+L["SHOW_ITEM_BUTTONS"] = "Mostrar botões de itens de missão"
+L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
+	"Coloca um botão ao lado de cada missão listada pela Seta de missões que tenha um item para usar, como um para arremessar, plantar ou usar em um alvo. Clique nele para usar o item, ou defina uma tecla para Usar item de missão nas Teclas de Atalho do jogo para usar o primeiro. Em combate, os botões ficam onde estão até ele terminar."
 -- TRANSLATORS: also a switch on the Quest Arrow's menu
 L["SHOW_NEXT_OBJECTIVE"] = "Mostrar próximo objetivo"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'Em "%s", lista "%s" embaixo, esmaecido: uma setinha até o ponto de passagem seguinte e o que há para fazer lá.'
+-- TRANSLATORS: also a switch on the Quest Arrow's menu
 L["SHOW_UPCOMING_TURN_INS"] = "Mostrar entregas futuras"
 L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
 	"Coloca a entrega de cada missão na rota antes de os objetivos serem concluídos, marcada com o ponto de interrogação cinza do Questie, para você ver onde vai entregá-la. Desligado, uma entrega entra na rota quando a missão estiver concluída."
@@ -283,12 +287,14 @@ L["QUEST_TYPE_RAID"] = "raide"
 L["QUEST_TYPE_GROUP"] = "grupo"
 L["QUEST_TYPE_ELITE"] = "elite"
 L["QUEST_TYPE_PVP"] = "JxJ"
+-- TRANSLATORS: %s is the QUEST_LEVEL_LEGEND_ENTRY pairs, joined by LIST_SEPARATOR
 L["QUEST_LEVEL_LEGEND"] = "Letras após o nível: %s."
 -- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s %s"
 L["QUEST_ID"] = "ID da missão %d"
 -- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "Sequência de missões (%d de %d)"
+-- TRANSLATORS: %s is the time left as the game writes it, such as "3 Hr 12 Min"
 L["DAILY_RESET"] = "As missões diárias são renovadas em %s."
 L["WOWHEAD_LINK_TOOLTIP"] = "Clique para obter um link do Wowhead."
 L["WOWHEAD_LINK_COPY"] = "Pressione Ctrl+C (Cmd+C no Mac) para copiar o link do Wowhead."
@@ -297,8 +303,10 @@ L["COLLAPSE_ALL"] = "Recolher tudo"
 L["TRACK_ALL"] = "Acompanhar todas"
 L["UNTRACK_ALL"] = "Não acompanhar nenhuma"
 L["HIDE_MAP"] = "Ocultar mapa"
+-- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "%s XP"
 L["TURN_IN_SEPARATOR"] = " / "
+-- TRANSLATORS: %s is TURN_IN_XP and the money, joined by TURN_IN_SEPARATOR, such as "12,345 XP / 5g 12s"
 L["TURN_IN_SUMMARY"] = "Entrega: %s"
 L["TURN_IN_TOOLTIP"] = "Pronta para entregar"
 L["RESIZE_TOOLTIP"] = "Arraste para redimensionar o registro de missões."
@@ -312,9 +320,11 @@ L["SHARE_ZONE_QUESTS_TOOLTIP"] =
 	"Oferece ao seu grupo as missões desta zona que o jogo deixa você compartilhar, uma a cada %d segundos."
 -- TRANSLATORS: %s is a quest's name
 L["CHAT_SHARING_AFTER_COMBAT"] = "Compartilhando %s quando o combate terminar."
+-- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_ONE"] = "Compartilhando 1 missão de %s."
 -- TRANSLATORS: %d is how many quests, %s is the zone, and the last %d is the seconds between shares
 L["CHAT_SHARING_ZONE"] = "Compartilhando %d missões de %s, uma a cada %d segundos."
+-- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_NONE"] = "Nenhuma das suas missões de %s pode ser compartilhada."
 
 --------------------------------------------------------------------------------
@@ -348,6 +358,11 @@ L["ROUTES_LOOK_FOR"] = "Procure"
 L["ROUTES_CLICK_DRAG"] = "Arrastar"
 L["ROUTES_CLICK_RIGHT"] = "Clique direito"
 L["ROUTES_CLICK_MIDDLE"] = "Clique do meio"
+L["ROUTES_CLICK"] = "Clique"
+-- TRANSLATORS: beside ROUTES_CLICK, or the bound key, on a Quest Arrow item button's tooltip
+L["ROUTES_CLICK_USE_ITEM"] = "Usar item"
+-- TRANSLATORS: the key binding's name in the game's Key Bindings list, under the add-on's name
+L["BINDING_USE_QUEST_ITEM"] = "Usar item de missão"
 L["ROUTES_DRAG_MOVE"] = "Mover a Seta de missões"
 L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorar este ponto de passagem"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
@@ -389,8 +404,10 @@ L["ROUTES_MEMBER_INCLUDED"] = "Os objetivos de %s voltaram para a rota."
 -- Messages to Other Players
 --------------------------------------------------------------------------------
 
--- TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
--- each %s is a quest link or a list of them, and each %d is how many quests
+--[[
+	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
+	each %s is a quest link or a list of them, and each %d is how many quests
+]]
 L["WHISPER_SHARE_FAILED"] =
 	"Tentei compartilhar %s com você, mas não deu certo. Se quiser a missão, me chama quando puder que eu compartilho de novo"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "O mesmo vale para %s"
@@ -402,6 +419,7 @@ L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Mais missões para fazer aqui: %s"
 -- Questie Tracking
 --------------------------------------------------------------------------------
 
+-- TRANSLATORS: %s is a quest link, or the quest's name or ID when there's no link
 L["QUESTIE_CANNOT_SHOW"] =
 	"O rastreador do Questie não consegue mostrar %s porque a missão não está no banco de dados do Questie."
 L["QUESTIE_CANNOT_TRACK"] = "O Questie ainda não consegue acompanhar esta missão."

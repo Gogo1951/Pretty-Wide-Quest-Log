@@ -95,21 +95,6 @@ function ns.QuestieLogEntries()
 	return type(log) == "table" and log or nil, false
 end
 
--- Each quest in Questie's quest log that its database knows, quest ID to Questie's quest
-function ns.QuestieQuestLog()
-	local log, acceptances = ns.QuestieLogEntries()
-	if not acceptances then
-		return log or {}
-	end
-	local quests = {}
-	for questID, acceptance in pairs(log) do
-		if type(acceptance) == "table" and type(acceptance.quest) == "table" then
-			quests[questID] = acceptance.quest
-		end
-	end
-	return quests
-end
-
 --------------------------------------------------------------------------------
 -- VoiceOver
 --------------------------------------------------------------------------------

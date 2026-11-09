@@ -87,6 +87,9 @@ local function SplitObjective(text)
 	if not have then
 		name, have, need = text:match("^(.-):%s*(%d+)%s*/%s*(%d+)%s*$")
 	end
+	if not have then -- zhCN and zhTW write a full-width colon
+		name, have, need = text:match("^(.-)：%s*(%d+)%s*/%s*(%d+)%s*$")
+	end
 	if have then
 		return name, format("%s / %s", have, need)
 	end

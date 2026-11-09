@@ -182,9 +182,10 @@ local waitKey, waitStart
 --[[
 	After a login or reload, until the next loading screen: the party in the dungeon counts as already
 	served, as it's seen over ns.DUNGEON_LOGIN_GRACE seconds from when the first member shows up, since
-	the roster can fill in late after a login
+	the roster can fill in late after a login. Only a group the player was already in at the login or reload
+	counts: one formed after it is arriving
 ]]
-local adoptPending, adoptUntil
+local adoptPending, adoptUntil, groupedAtLogin
 
 local function StopWatching()
 	if ticker then
@@ -212,7 +213,13 @@ local function Check()
 	local state = DungeonState(dungeon.key)
 	local members = PartyMembers()
 
-	-- A login or reload inside a dungeon isn't arriving there: the group most likely had it already
+	--[[
+		A login or reload inside a dungeon isn't arriving there: the group most likely had it already. A
+		group formed after it never did, so it's served as arriving
+	]]
+	if adoptPending and not groupedAtLogin then
+		adoptPending, adoptUntil = false, nil
+	end
 	if adoptPending then
 		if next(members) then
 			adoptUntil = adoptUntil or GetTime() + ns.DUNGEON_LOGIN_GRACE
@@ -286,10 +293,11 @@ end
 
 function ns:OnPlayerEnteringWorld(isInitialLogin, isReloadingUi)
 	adoptPending, adoptUntil = isInitialLogin or isReloadingUi, nil
+	groupedAtLogin = IsInGroup()
 	Watch()
 end
 
--- A group formed inside the dungeon
+-- A group formed inside the dungeon, which counts as arriving even after a login or reload there
 function ns:OnGroupJoined()
 	Watch()
 end

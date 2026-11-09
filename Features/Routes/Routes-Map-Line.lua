@@ -74,10 +74,10 @@ local playerPosition = {}
 function linePinMixin:PlacePlayerLeg()
 	local leg, first = self.legs[1], self.positions[1]
 	local x, y, instance = routes.PlayerPosition()
-	local hbd = routes.HereBeDragons()
+	local hereBeDragons = routes.HereBeDragons()
 	local mapX, mapY
-	if first and hbd and x then
-		mapX, mapY = hbd:GetZoneCoordinatesFromWorldInstance(x, y, instance, self.mapID, true)
+	if first and hereBeDragons and x then
+		mapX, mapY = hereBeDragons:GetZoneCoordinatesFromWorldInstance(x, y, instance, self.mapID, true)
 	end
 	-- One table, reused: this runs many times a second while the map is open
 	local player = mapX and mapY and playerPosition

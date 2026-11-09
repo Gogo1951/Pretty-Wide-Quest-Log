@@ -2,7 +2,7 @@ local _, ns = ...
 
 --[[
 	Routes: what a stop holds, as the Quest Arrow (Routes-Arrow.lua) and the map's tooltip
-	(Routes-Map.lua) list it
+	(Routes-Map-Tooltip.lua) list it
 ]]
 
 local routes = ns.routes
@@ -22,6 +22,7 @@ routes.CORPSE_ICON_COORDS = { 0.875, 1, 0, 0.125 }
 local function CorpseLine(fontSource)
 	return ns.InlineIcon(fontSource, routes.CORPSE_ICON, routes.CORPSE_ICON_COORDS) .. " " .. L["ROUTES_CORPSE"]
 end
+routes.CorpseLine = CorpseLine -- For the map's tooltip (Routes-Map-Tooltip.lua)
 
 --------------------------------------------------------------------------------
 -- What a stop holds, for the arrow and the map's tooltip
@@ -177,12 +178,14 @@ local function MemberObjective(quest, member, objective)
 		return type(remote) == "table" and remote or nil
 	end
 end
+routes.MemberObjective = MemberObjective -- For the map's tooltip (Routes-Map-Tooltip.lua)
 
 --[[
 	Who still needs an objective, in a party, each { name, unit, have, need }: the player first, where it's
-	their quest, then each member Questie shares a quest log for, by name. Anyone done with it is left off
+	their quest, then each of members (routes.MemberProgress for the quest, worked out once per quest), by
+	name. Anyone done with it is left off
 ]]
-local function StillNeeded(entry, objective)
+local function StillNeeded(entry, objective, members)
 	local quest = entry.task.quest or {}
 	local rows = {}
 	if not quest.party and not objective.Completed then
@@ -193,7 +196,7 @@ local function StillNeeded(entry, objective)
 			need = objective.Needed,
 		}
 	end
-	for _, member in ipairs(routes.MemberProgress(entry.task.questID)) do
+	for _, member in ipairs(members) do
 		local remote = MemberObjective(quest, member, objective)
 		if remote and not remote.finished then
 			rows[#rows + 1] =
@@ -205,7 +208,8 @@ end
 
 --[[
 	Calls back with each line describing the stop's quests: kind ("title", "objective", "name" or "more"),
-	text, r, g, b, then the count on the right, if any. Under each quest, only what's to do at the stop: its
+	text, r, g, b, then the count on the right, if any, and on a quest's title its quest ID, which the
+	Quest Arrow's item buttons go by (Routes-Arrow-Items.lua). Under each quest, only what's to do at the stop: its
 	objectives there not yet done, each with its count, "4 / 12", as the quest log writes it. In a party,
 	with Show Party Objectives on (routes.ShowsParty), who still needs each objective is listed under it with their own count, the player first, the rest by
 	name, each in their class color; the objective has no count of its own then. Where it's only turned in
@@ -245,13 +249,15 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 			the turn-in's gold (routes.TaskColor) rather than the quest's difficulty color
 		]]
 		if entry.turnIn and #toDo == 0 then
-			local title = routes.QuestTitle(entry.task)
-			callback("title", string.format(L["ROUTES_TURN_IN_QUEST"], title), ns.GetColorRGB("TITLE"))
+			local text = string.format(L["ROUTES_TURN_IN_QUEST"], routes.QuestTitle(entry.task))
+			local red, green, blue = ns.GetColorRGB("TITLE")
+			callback("title", text, red, green, blue, nil, entry.task.questID)
 		else
 			local text, red, green, blue = routes.QuestTitle(entry.task)
-			callback("title", text, red, green, blue)
+			callback("title", text, red, green, blue, nil, entry.task.questID)
+			local members = inParty and #toDo > 0 and routes.MemberProgress(entry.task.questID)
 			for _, objective in ipairs(toDo) do
-				local rows = inParty and StillNeeded(entry, objective) or {}
+				local rows = members and StillNeeded(entry, objective, members) or {}
 				local count = #rows == 0
 					and objective.Needed
 					and routes.CountText(objective.Collected, objective.Needed)
@@ -262,129 +268,6 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 					callback("name", row.name, red, green, blue, row.need and routes.CountText(row.have, row.need))
 				end
 			end
-		end
-	end
-end
-
---------------------------------------------------------------------------------
--- The map's tooltip
---------------------------------------------------------------------------------
-
---[[
-	A stop's quests on the map's tooltip, as the other add-ons lay out a tooltip's rows: a space in from the
-	title, the name on the left and its count ("4 / 12") on the right. Each objective leads with the quest
-	log's check once it's done (or a blank the same size, so the names line up), in line with the name of
-	the player it's under. In a party each quest is split by who has it: the player first, where they have
-	it, then each member Questie shares a quest log for, with their own progress. Alone, the player's name
-	is left off and the checks sit where it would
-]]
-local ROW_INDENT = " "
-
--- A name in its class color, where the client says the class
-local function PlayerName(unit, name)
-	local red, green, blue = routes.ClassColor(unit)
-	return string.format("|cff%02x%02x%02x%s|r", red * 255, green * 255, blue * 255, name)
-end
-
--- One objective line: its check, name, and "4 / 12" on the right, where it has a count
-local function AddObjective(tooltip, objective, have, need, done)
-	local left = ROW_INDENT .. ns.CheckIcon(GameTooltipText, done) .. " " .. (objective.Description or "")
-	local red, green, blue = ns.GetColorRGB(done and "HELP" or "TEXT")
-	if need then
-		local count = routes.CountText(have, need)
-		tooltip:AddDoubleLine(left, count, red, green, blue, red, green, blue)
-	else
-		tooltip:AddLine(left, red, green, blue)
-	end
-end
-
---[[
-	A player's name, in a party, then their progress on the objectives here; nothing where they have none of
-	them. A blank line comes before every player's but the quest's first (shown). Returns whether it added any
-]]
-local function AddPlayer(tooltip, name, rows, inParty, shown)
-	if #rows == 0 then
-		return false
-	end
-	if inParty then
-		if shown then
-			tooltip:AddLine(" ")
-		end
-		tooltip:AddLine(ROW_INDENT .. name, ns.GetColorRGB("TEXT"))
-	end
-	for _, row in ipairs(rows) do
-		AddObjective(tooltip, row.objective, row.have, row.need, row.done)
-	end
-	return true
-end
-
--- Under a quest's title: the player's progress on its objectives here, then each party member's
-local function AddProgress(tooltip, entry, objectives)
-	local quest = entry.task.quest or {}
-	local inParty = routes.ShowsParty()
-	local shown = false
-	if not quest.party then
-		local rows = {}
-		for _, objective in ipairs(objectives) do
-			rows[#rows + 1] = {
-				objective = objective,
-				have = objective.Collected,
-				need = objective.Needed,
-				done = objective.Completed,
-			}
-		end
-		shown = AddPlayer(
-			tooltip,
-			PlayerName("player", routes.UnitFullName("player") or UnitName("player")),
-			rows,
-			inParty,
-			shown
-		)
-	end
-	for _, member in ipairs(inParty and routes.MemberProgress(entry.task.questID) or {}) do
-		local rows = {}
-		for _, objective in ipairs(objectives) do
-			local remote = MemberObjective(quest, member, objective)
-			if remote then
-				rows[#rows + 1] = {
-					objective = objective,
-					have = remote.fulfilled,
-					need = remote.required,
-					done = remote.finished,
-				}
-			end
-		end
-		shown = AddPlayer(tooltip, PlayerName(member.name, member.shortName), rows, inParty, shown) or shown
-	end
-end
-
---[[
-	Adds a stop's quests to the tooltip, a blank line between them: each quest's title, then its objectives
-	at the stop, done or not, in the quest log's order. Where nothing's left but the turn-in, the quest is
-	one line, "Turn in [2] Wayward Weapons". A corpse is one line too, the gravestone then "Run Back to Your Corpse"
-]]
-function routes.AddStopTooltip(tooltip, stop)
-	if stop.corpse then
-		tooltip:AddLine(CorpseLine(GameTooltipText), ns.GetColorRGB("TEXT"))
-		return
-	end
-	for _, entry in ipairs(routes.QuestsAt(stop, PositionAt(stop))) do
-		if tooltip:NumLines() > 0 then
-			tooltip:AddLine(" ")
-		end
-		local objectives, anyLeft = {}, false
-		for _, objective in ipairs(routes.QuestObjectives(entry)) do
-			if entry.here[objective] then
-				objectives[#objectives + 1] = objective
-				anyLeft = anyLeft or not objective.Completed
-			end
-		end
-		if entry.turnIn and not anyLeft then
-			local title = routes.QuestTitle(entry.task)
-			tooltip:AddLine(string.format(L["ROUTES_TURN_IN_QUEST"], title), ns.GetColorRGB("TITLE"))
-		else
-			tooltip:AddLine(routes.QuestTitle(entry.task))
-			AddProgress(tooltip, entry, objectives)
 		end
 	end
 end

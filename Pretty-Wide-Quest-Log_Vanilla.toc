@@ -24,7 +24,7 @@
 ## X-Wago-ID: Q6aqkj6W
 
 ## SavedVariables: PrettyWideQuestLogDB
-## OptionalDeps: Questie, ElvUI, AI_VoiceOver, Spoken_Quests
+## OptionalDeps: Questie, ElvUI, AI_VoiceOver, Spoken_Quests, TomTom
 
 # Includes
 Includes/Libraries/LibStub/LibStub.lua
@@ -76,14 +76,17 @@ Features/Quest-Info-Style.lua
 Features/Quest-Rewards.lua
 Features/Tracking-Mark.lua
 Features/Wowhead-Link.lua
+Features/Quest-Chain-Data.lua
 Features/Quest-Chain.lua
 Features/Quest-Giver.lua
+Features/Quest-Giver-Skins.lua
 Features/Gossip.lua
 Features/Quest-Giver-Pages.lua
 Features/Window.lua
 Features/Turn-In-Line.lua
 Features/Classic-Tracking.lua
 Features/Classic-Quest-Sort.lua
+Features/Classic-Quest-Rows.lua
 Features/Classic-Quest-List.lua
 Features/Classic-VoiceOver.lua
 Features/Classic-Quest-Details.lua
@@ -97,6 +100,7 @@ Features/Quest-Map.xml
 Features/Quest-Map.lua
 Features/Questie-Map.xml
 Features/Questie-Map.lua
+Features/Questie-Map-Tooltip.lua
 Features/Questie-Map-Quest-Giver.lua
 Features/Questie-Map-Areas.lua
 Features/Questie-Map-Area-Layer.lua
