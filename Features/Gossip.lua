@@ -1,8 +1,8 @@
 local _, ns = ...
 
 --[[
-	Every client: the gossip window's greeting text and quest level tags, while the quest giver window
-	cleanup is on (Quest-Giver.lua)
+	Every client: the gossip window's greeting text, quest level tags, and the space between its quest
+	lines and options, while the quest giver window cleanup is on (Quest-Giver.lua)
 ]]
 
 --------------------------------------------------------------------------------
@@ -69,17 +69,61 @@ if GossipFrame and GossipFrame.Update then
 end
 
 --------------------------------------------------------------------------------
--- The gossip window's quest lines
+-- The gossip window's quest lines and options
 --------------------------------------------------------------------------------
 
+--[[
+	Blizzard sizes each quest line and option to its text and 2px more, and stacks them with nothing
+	between, so two options read as one block. With the cleanup on each is QUEST_LINE_SPACE taller, which
+	leaves the same space between them as between the quest lines on the quest giver's greeting page. The
+	list measures each line with a hidden copy it sets up the same way, so the list makes room for the
+	extra height. The text is centered in its line, while the icon hangs from the line's top, so a top-hung
+	icon moves down half the extra to stay level with the text. Every Setup sizes the line afresh, so the
+	extra is never added twice, and with the cleanup off the icon goes back where Blizzard hung it
+]]
+local blizzardIconPoints = {} -- Each line's icon anchor as Blizzard set it
+
+local function SpaceGossipLine(button)
+	local icon = button.Icon
+	if icon and blizzardIconPoints[icon] == nil and icon:GetNumPoints() > 0 then
+		blizzardIconPoints[icon] = { icon:GetPoint(1) }
+	end
+	local blizzardPoint = icon and blizzardIconPoints[icon]
+	local point, relativeTo, relativePoint, x, y
+	if blizzardPoint then
+		point, relativeTo, relativePoint, x, y = unpack(blizzardPoint)
+	end
+	if not ns.IsQuestGiverCleanupOn() then
+		if blizzardPoint then
+			icon:ClearAllPoints()
+			icon:SetPoint(point, relativeTo, relativePoint, x, y)
+		end
+		return
+	end
+	local space = ns.LAYOUT.QUEST_LINE_SPACE
+	button:SetHeight(button:GetHeight() + space)
+	if blizzardPoint and point:find("^TOP") then
+		icon:ClearAllPoints()
+		icon:SetPoint(point, relativeTo, relativePoint, x, y - space / 2)
+	end
+end
+
 -- Each quest line is set up from its gossip quest info, then takes the quest log's level tag (Quest-Giver.lua)
-local function TagGossipQuest(button, questInfo)
+local function SetUpGossipQuest(button, questInfo)
 	if ns.TagQuestLine(button, questInfo.questLevel, questInfo.questID) then
 		button:Resize()
 	end
+	SpaceGossipLine(button)
 end
 for _, mixin in ipairs({ GossipSharedAvailableQuestButtonMixin, GossipSharedActiveQuestButtonMixin }) do
 	if mixin and mixin.Setup then
-		hooksecurefunc(mixin, "Setup", TagGossipQuest)
+		hooksecurefunc(mixin, "Setup", SetUpGossipQuest)
 	end
+end
+--[[
+	Options get their methods copied from the mixin as each is made, which is the first time the window
+	opens, after this hook is in place
+]]
+if GossipOptionButtonMixin and GossipOptionButtonMixin.Setup then
+	hooksecurefunc(GossipOptionButtonMixin, "Setup", SpaceGossipLine)
 end
