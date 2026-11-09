@@ -84,6 +84,22 @@ local function AreaNote(work, stops, index)
 	return allAhead and L["ROUTES_AREA_MORE"] or nil
 end
 
+--[[
+	Whether the player is near a quest to pick up (Routes-Pick-Ups.lua): within routes.AREA_REACH of its
+	giver, as near as counts as being in an objective's area, with routes.AREA_GRACE more once they were.
+	A giver is one place, which routes.InArea never counts, so without this one beside an area the player
+	is working would show only as the Next Objective
+]]
+local function NearPickUp(task, x, y, wasNear)
+	local point = task.kind == "pickUp" and routes.TaskPoint(task)
+	if not point then
+		return false
+	end
+	local reach = routes.AREA_REACH + (wasNear and routes.AREA_GRACE or 0)
+	local dx, dy = point.x - x, point.y - y
+	return dx * dx + dy * dy <= reach * reach
+end
+
 local function View(stop, tasks)
 	return {
 		tasks = tasks,
@@ -119,24 +135,24 @@ local function Survey(x, y)
 			break
 		end
 	end
-	local work, onTheWay, workKeys = {}, {}, {}
+	local work, onTheWay, workKeys, nearPickUps = {}, {}, {}, {}
 	if not stops[1].corpse then
 		local engaged = routes.engaged or {}
 		for index, stop in ipairs(stops) do
 			for _, task in ipairs(stop.tasks) do
 				local key = task.key
-				if
-					key
-					and not hereKeys[key]
-					and routes.IsTaskLeft(task)
-					and routes.InArea(task, x, y, wasHere[key])
-				then
-					hereKeys[key] = true
-					if index == sentTo or engaged[key] then
-						work[#work + 1] = task
-						workKeys[key] = true
-					else
-						onTheWay[#onTheWay + 1] = task
+				if key and not hereKeys[key] and routes.IsTaskLeft(task) then
+					if routes.InArea(task, x, y, wasHere[key]) then
+						hereKeys[key] = true
+						if index == sentTo or engaged[key] then
+							work[#work + 1] = task
+							workKeys[key] = true
+						else
+							onTheWay[#onTheWay + 1] = task
+						end
+					elseif NearPickUp(task, x, y, wasHere[key]) then
+						hereKeys[key] = true
+						nearPickUps[#nearPickUps + 1] = { task = task, index = index }
 					end
 				end
 			end
@@ -144,10 +160,9 @@ local function Survey(x, y)
 	end
 	local instance = stops[1].instance
 	local here = #work > 0 and { tasks = work, instance = instance } or nil
-	local passing = #onTheWay > 0 and { tasks = onTheWay, instance = instance } or nil
 	local areaNote = here and AreaNote(work, stops, sentTo) or nil
-	local destination, afterDestination
-	for _, stop in ipairs(stops) do
+	local destination, afterDestination, destinationIndex
+	for index, stop in ipairs(stops) do
 		local rest = {}
 		for _, task in ipairs(stop.tasks) do
 			if not workKeys[task.key] and routes.IsTaskLeft(task) then
@@ -159,12 +174,22 @@ local function Survey(x, y)
 				afterDestination = not stop.corpse and View(stop, rest) or nil
 				break
 			end
-			destination = View(stop, rest)
+			destination, destinationIndex = View(stop, rest), index
 			if stop.corpse then
 				break -- Dead, nothing's next until the corpse is reached
 			end
 		end
 	end
+	--[[
+		A quest to pick up nearby is on the way, listed under "While You're Here": while the player works an
+		area always, as the list shows only the area then; else unless the arrow already points to it
+	]]
+	for _, near in ipairs(nearPickUps) do
+		if here or near.index ~= destinationIndex then
+			onTheWay[#onTheWay + 1] = near.task
+		end
+	end
+	local passing = #onTheWay > 0 and { tasks = onTheWay, instance = instance } or nil
 	return here, passing, areaNote, destination, afterDestination
 end
 

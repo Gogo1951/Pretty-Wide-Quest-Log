@@ -2218,6 +2218,25 @@ local function ArrowLines(lines)
 	RouteSetting(lines, "Show next objective", "showNextObjective")
 	RouteSetting(lines, "Show future turn-ins", "showUpcomingTurnIns")
 	RouteSetting(lines, "Show available local quests as objectives", "showLocalQuests")
+	-- How many quests Questie offers, and how many the route picks up nearby (Routes-Pick-Ups.lua)
+	local availableQuests = ns.ImportQuestieModule("AvailableQuests")
+	local available = availableQuests and availableQuests.__availableQuests
+	local offered = 0
+	for _ in pairs(type(available) == "table" and available or {}) do
+		offered = offered + 1
+	end
+	local pickUps = 0
+	for _, node in ipairs(ns.routes and ns.routes.nodes or {}) do
+		if node.kind == "pickUp" then
+			pickUps = pickUps + 1
+		end
+	end
+	lines[#lines + 1] = string.format(
+		"Quests Questie shows as available: %s; on the route to pick up, within %d yards: %d",
+		type(available) == "table" and tostring(offered) or "not found",
+		ns.routes and ns.routes.LOCAL_QUEST_RANGE or 0,
+		pickUps
+	)
 end
 
 local function ZoneMapLines(lines)
