@@ -228,6 +228,22 @@ local function Sync()
 	end
 end
 
+--[[
+	The left and bottom edges of the buttons showing, in the arrow's own units from its left and top, or
+	nil with none: the arrow's hover shade (Routes-Arrow.lua) reaches round them
+]]
+function routes.ArrowItemBounds()
+	local left, bottom
+	for _, button in ipairs(buttons) do
+		local spec = button.spec
+		if spec and button:IsShown() then
+			left = math.min(left or spec.x, spec.x)
+			bottom = math.max(bottom or 0, spec.top + spec.size)
+		end
+	end
+	return left, bottom
+end
+
 -- Looks at the bags and quests again, then places the buttons
 local function Refresh()
 	wanted = routes.WantedItemButtons()
