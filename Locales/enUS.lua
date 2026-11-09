@@ -43,9 +43,6 @@ L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
 L["ENABLE_QUEST_ARROW"] = "Enable Quest Arrow"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Shows an arrow on screen, the Quest Arrow, pointing to the next waypoint on the route, with the quests and objectives to do there. By default it hides in raid groups and instances."
-L["ENABLE_PLAYER_ICON"] = "Enable Player Icon on Maps"
-L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
-	"Shows you as an arrow in your class color on the minimap and zone map, and your party members as discs in theirs, in place of Blizzard's player arrow and party dots."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Enable Wide Quest Log takes effect after a reload, offered when you close the Options Interface."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
@@ -248,18 +245,6 @@ L["HIDE_IN_RAIDS"] = "Hide in Raid Groups"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "Hides the Quest Arrow while you're in a raid group."
 L["HIDE_IN_INSTANCES"] = "Hide in Instances"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "Hides the Quest Arrow in dungeons, raids, and battlegrounds."
-
---------------------------------------------------------------------------------
--- Options: Player Icon on Maps Panel
---------------------------------------------------------------------------------
-
-L["TAB_PLAYER_ICON"] = "Player Icon on Maps"
-L["TAB_PLAYER_ICON_DESCRIPTION"] = "You and your party on the minimap and maps, in your class colors."
-L["PLAYER_ICON_HEADER"] = "Icons"
-L["PLAYER_ICON_DESCRIPTION"] = "Your arrow and your party members' discs."
-L["PLAYER_ICON_SIZE"] = "Icon Size"
-L["PLAYER_ICON_SIZE_DESCRIPTION"] =
-	"How big your arrow and your party members' discs are on the minimap and maps, the quest log's map included."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel

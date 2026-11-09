@@ -178,7 +178,7 @@ ns.AddWideQuestLogPart(function()
 	-- The player
 	--------------------------------------------------------------------------------
 
-	-- The player and their party (Player-Map-Pin.lua), over every other layer: each client's file adds their levels last
+	-- The player (Player-Map-Pin.lua), over every other layer: each client's file adds its level last
 	ns.AddPlayerPin(canvas)
 
 	--------------------------------------------------------------------------------

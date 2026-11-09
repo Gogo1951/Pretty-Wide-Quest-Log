@@ -86,7 +86,6 @@ ns.OPTIONS_REGISTRY = {
 	WaypointMarkers = ADDON_NAME .. "_WaypointMarkers",
 	QuestRoute = ADDON_NAME .. "_QuestRoute",
 	QuestArrow = ADDON_NAME .. "_QuestArrow",
-	PlayerIcon = ADDON_NAME .. "_PlayerIcon",
 	Profiles = ADDON_NAME .. "_Profiles",
 	FeedbackSupport = ADDON_NAME .. "_FeedbackSupport",
 	Diagnostics = ADDON_NAME .. "_Diagnostics",

@@ -43,9 +43,6 @@ L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
 L["ENABLE_QUEST_ARROW"] = "Questpfeil aktivieren"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Zeigt einen Pfeil auf dem Bildschirm, den Questpfeil, der zum nächsten Wegpunkt der Route zeigt, mit den Quests und Zielen, die dort zu erledigen sind. Standardmäßig wird er in Schlachtzugsgruppen und Instanzen ausgeblendet."
-L["ENABLE_PLAYER_ICON"] = "Spielersymbol auf Karten aktivieren"
-L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
-	"Zeigt dich auf der Minikarte und der Zonenkarte als Pfeil in deiner Klassenfarbe und deine Gruppenmitglieder als Scheiben in ihrer, anstelle von Blizzards Spielerpfeil und Gruppenpunkten."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Breites Questlog aktivieren wird nach einem Neuladen wirksam, das dir beim Schließen des Optionsmenüs angeboten wird."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log wechselt das Questlog erst nach einem Neuladen. Jetzt neu laden?"
@@ -255,18 +252,6 @@ L["HIDE_IN_RAIDS"] = "In Schlachtzugsgruppen ausblenden"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "Blendet den Questpfeil aus, solange du in einer Schlachtzugsgruppe bist."
 L["HIDE_IN_INSTANCES"] = "In Instanzen ausblenden"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "Blendet den Questpfeil in Dungeons, Schlachtzügen und auf Schlachtfeldern aus."
-
---------------------------------------------------------------------------------
--- Options: Player Icon on Maps Panel
---------------------------------------------------------------------------------
-
-L["TAB_PLAYER_ICON"] = "Spielersymbol auf Karten"
-L["TAB_PLAYER_ICON_DESCRIPTION"] = "Du und deine Gruppe auf der Minikarte und den Karten, in euren Klassenfarben."
-L["PLAYER_ICON_HEADER"] = "Symbole"
-L["PLAYER_ICON_DESCRIPTION"] = "Dein Pfeil und die Scheiben deiner Gruppenmitglieder."
-L["PLAYER_ICON_SIZE"] = "Symbolgröße"
-L["PLAYER_ICON_SIZE_DESCRIPTION"] =
-	"Wie groß dein Pfeil und die Scheiben deiner Gruppenmitglieder auf der Minikarte und den Karten sind, die Karte des Questlogs eingeschlossen."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel

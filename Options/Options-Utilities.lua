@@ -104,7 +104,7 @@ function ns.OptionsRoutesControl(key, control, order, hidden)
 end
 
 --[[
-	The four sizes a Waypoint Marker or the Player Icon comes in, each times its size at Medium, for a select
+	The four sizes a Waypoint Marker comes in, each times its size at Medium, for a select
 	control's values and sorting
 ]]
 local SIZE_NAMES = {

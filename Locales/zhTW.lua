@@ -43,9 +43,6 @@ L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
 L["ENABLE_QUEST_ARROW"] = "啟用任務箭頭"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"在畫面上顯示一個箭頭，即任務箭頭，指向路線上的下一個路徑點，並列出要在那裡完成的任務和目標。預設在團隊和副本中隱藏。"
-L["ENABLE_PLAYER_ICON"] = "啟用地圖玩家圖示"
-L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
-	"在小地圖和區域地圖上，以你職業顏色的箭頭顯示你，以各自職業顏色的圓點顯示隊友，取代暴雪的玩家箭頭和隊伍圓點。"
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"啟用寬版任務日誌需要重新載入介面才會生效，關閉設定介面時會提示你重新載入。"
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log 需要重新載入介面才能切換任務日誌。現在重新載入嗎？"
@@ -250,18 +247,6 @@ L["HIDE_IN_RAIDS"] = "在團隊中隱藏"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "當你在團隊中時隱藏任務箭頭。"
 L["HIDE_IN_INSTANCES"] = "在副本中隱藏"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "在地城、團隊副本和戰場中隱藏任務箭頭。"
-
---------------------------------------------------------------------------------
--- Options: Player Icon on Maps Panel
---------------------------------------------------------------------------------
-
-L["TAB_PLAYER_ICON"] = "地圖玩家圖示"
-L["TAB_PLAYER_ICON_DESCRIPTION"] = "以職業顏色在小地圖和地圖上顯示你和你的隊友。"
-L["PLAYER_ICON_HEADER"] = "圖示"
-L["PLAYER_ICON_DESCRIPTION"] = "你的箭頭和隊友的圓點。"
-L["PLAYER_ICON_SIZE"] = "圖示大小"
-L["PLAYER_ICON_SIZE_DESCRIPTION"] =
-	"你的箭頭和隊友的圓點在小地圖和地圖（包括任務日誌的地圖）上的大小。"
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel

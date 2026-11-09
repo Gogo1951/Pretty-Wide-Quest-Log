@@ -43,9 +43,6 @@ L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
 L["ENABLE_QUEST_ARROW"] = "퀘스트 화살표 사용"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"경로의 다음 경유지를 가리키는 화살표인 퀘스트 화살표를 화면에 표시하고, 그곳에서 할 퀘스트와 목표를 함께 보여 줍니다. 기본적으로 공격대와 인스턴스에서는 숨겨집니다."
-L["ENABLE_PLAYER_ICON"] = "지도에 플레이어 아이콘 사용"
-L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
-	"미니맵과 지역 지도에서 Blizzard의 플레이어 화살표와 파티원 점 대신, 나를 직업 색상의 화살표로, 파티원을 각자의 직업 색상 원으로 표시합니다."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"넓은 퀘스트 목록 사용은 UI를 다시 불러온 후에 적용되며, 설정 창을 닫을 때 다시 불러오기를 안내합니다."
 L["RELOAD_PROMPT"] =
@@ -260,18 +257,6 @@ L["HIDE_IN_RAIDS"] = "공격대에서 숨기기"
 L["HIDE_IN_RAIDS_DESCRIPTION"] = "공격대에 있는 동안 퀘스트 화살표를 숨깁니다."
 L["HIDE_IN_INSTANCES"] = "인스턴스에서 숨기기"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] = "던전, 공격대, 전장에서 퀘스트 화살표를 숨깁니다."
-
---------------------------------------------------------------------------------
--- Options: Player Icon on Maps Panel
---------------------------------------------------------------------------------
-
-L["TAB_PLAYER_ICON"] = "지도의 플레이어 아이콘"
-L["TAB_PLAYER_ICON_DESCRIPTION"] = "미니맵과 지도에 직업 색상으로 표시되는 나와 파티원입니다."
-L["PLAYER_ICON_HEADER"] = "아이콘"
-L["PLAYER_ICON_DESCRIPTION"] = "내 화살표와 파티원의 원입니다."
-L["PLAYER_ICON_SIZE"] = "아이콘 크기"
-L["PLAYER_ICON_SIZE_DESCRIPTION"] =
-	"미니맵과 지도(퀘스트 목록의 지도 포함)에서 내 화살표와 파티원의 원이 얼마나 큰지 정합니다."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel

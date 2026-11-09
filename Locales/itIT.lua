@@ -44,9 +44,6 @@ L["FEATURE_QUEST_ROUTE_DESCRIPTION"] =
 L["ENABLE_QUEST_ARROW"] = "Attiva Freccia delle missioni"
 L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 	"Mostra sullo schermo una freccia, la Freccia delle missioni, che punta al prossimo punto di passaggio del percorso, con le missioni e gli obiettivi da completare lì. Per impostazione predefinita si nasconde nei gruppi da incursione e nelle istanze."
-L["ENABLE_PLAYER_ICON"] = "Attiva icona del giocatore sulle mappe"
-L["FEATURE_PLAYER_ICON_DESCRIPTION"] =
-	"Ti mostra come una freccia del colore della tua classe sulla minimappa e sulla mappa della zona, e i membri del tuo gruppo come dischi del colore della loro, al posto della freccia del giocatore e dei puntini del gruppo di Blizzard."
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Attiva registro delle missioni largo ha effetto dopo un ricaricamento, che ti verrà proposto alla chiusura dell'interfaccia delle opzioni."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia registro delle missioni dopo un ricaricamento. Ricaricare ora?"
@@ -260,18 +257,6 @@ L["HIDE_IN_RAIDS_DESCRIPTION"] = "Nasconde la Freccia delle missioni mentre sei 
 L["HIDE_IN_INSTANCES"] = "Nascondi nelle istanze"
 L["HIDE_IN_INSTANCES_DESCRIPTION"] =
 	"Nasconde la Freccia delle missioni in spedizioni, incursioni e campi di battaglia."
-
---------------------------------------------------------------------------------
--- Options: Player Icon on Maps Panel
---------------------------------------------------------------------------------
-
-L["TAB_PLAYER_ICON"] = "Icona del giocatore sulle mappe"
-L["TAB_PLAYER_ICON_DESCRIPTION"] = "Tu e il tuo gruppo sulla minimappa e sulle mappe, nei colori delle vostre classi."
-L["PLAYER_ICON_HEADER"] = "Icone"
-L["PLAYER_ICON_DESCRIPTION"] = "La tua freccia e i dischi dei membri del tuo gruppo."
-L["PLAYER_ICON_SIZE"] = "Dimensione dell'icona"
-L["PLAYER_ICON_SIZE_DESCRIPTION"] =
-	"Quanto sono grandi la tua freccia e i dischi dei membri del tuo gruppo sulla minimappa e sulle mappe, compresa la mappa del registro delle missioni."
 
 --------------------------------------------------------------------------------
 -- Options: Feedback & Support Panel
