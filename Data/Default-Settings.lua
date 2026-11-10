@@ -55,4 +55,7 @@ ns.DATABASE_DEFAULTS = {
 		scale = 1,
 		mapScale = 1,
 	},
+	char = {
+		routesIgnored = {}, -- The Quest Arrow's ignores of the character's own objectives, by task key, until the zone is reset
+	},
 }

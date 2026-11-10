@@ -2,8 +2,9 @@ local _, ns = ...
 
 --[[
 	Routes: the ignore list. Objectives, turn-ins and party members left out of the route from the Quest
-	Arrow's menu or a right-click on a map marker, cleared on joining or leaving a group, and put back all
-	at once with a middle-click
+	Arrow's menu or a right-click on a map marker. The player's own are saved for the character and last
+	until the zone they were ignored in is reset (a middle-click on the Quest Arrow). A party member's
+	objective, and a member switched off, are for that group only: gone once the member leaves it
 ]]
 
 local routes = ns.routes
@@ -16,15 +17,59 @@ local L = ns.L
 
 local ignoredCount = 0 -- How many tasks have been ignored, for each one's place in the list
 
--- Puts one task on the ignore list, as the Quest Arrow's menu lists it
+-- A party member's objective, for a quest the player doesn't have, keyed questID:p<index>
+local function IsPartyKey(key)
+	return key:find(":p%d+$") ~= nil
+end
+
+-- The player's own ignores, saved for the character, by task key, each as routes.skipped has it
+local function Saved()
+	return ns.db and ns.db.char.routesIgnored
+end
+
+-- The zone ignores are kept by, and reset by: the one the player is in (0 where the client won't say)
+local function CurrentZone()
+	return routes.PlayerZone() or 0
+end
+
+--[[
+	Puts one task on the ignore list, as the Quest Arrow's menu lists it, with the zone the player is in. A
+	party member's also keeps who has its quest, so it goes once they've all left the group; the player's
+	own is saved
+]]
 local function Ignore(task)
-	if not routes.skipped[task.key] then
-		ignoredCount = ignoredCount + 1
-		routes.skipped[task.key] = { label = routes.TaskLabel(task), questID = task.questID, order = ignoredCount }
+	if routes.skipped[task.key] then
+		return
+	end
+	ignoredCount = ignoredCount + 1
+	local entry = { label = routes.TaskLabel(task), questID = task.questID, order = ignoredCount, zone = CurrentZone() }
+	if IsPartyKey(task.key) then
+		entry.holders = routes.PartyQuestHolders(task.questID)
+	elseif Saved() then
+		Saved()[task.key] = entry
+	end
+	routes.skipped[task.key] = entry
+end
+
+-- Takes one task off the ignore list, saved or not
+local function Forget(key)
+	routes.skipped[key] = nil
+	if Saved() then
+		Saved()[key] = nil
 	end
 end
 
--- Leaves the stop's tasks out of the route until the ignore list is cleared (a right-click on a world map waypoint)
+-- The saved ignores back on the list at login, ahead of the first plan
+routes.OnLogin(function()
+	for key, entry in pairs(Saved() or {}) do
+		if type(key) == "string" and type(entry) == "table" and not IsPartyKey(key) then
+			routes.skipped[key] = entry
+			ignoredCount = math.max(ignoredCount, tonumber(entry.order) or 0)
+		end
+	end
+end)
+
+-- Leaves the stop's tasks out of the route until the zone is reset (a right-click on a world map waypoint)
 function routes.SkipStop(stop)
 	if not stop then
 		return
@@ -56,18 +101,25 @@ function routes.TaskLabel(task)
 	return task.objective and task.objective.Description or ""
 end
 
--- What ignoring an objective or turn-in prints; the Quest Arrow panel's Example draws it too
-function routes.BuildIgnoredMessage(label, questID, questName)
-	return string.format(L["ROUTES_IGNORED"], label, routes.QuestLink(questID, questName))
+--[[
+	What ignoring an objective or turn-in prints; the Quest Arrow panel's Example draws it too. A party
+	member's lasts while they're in the group, the player's own until the zone is reset
+]]
+function routes.BuildIgnoredMessage(label, questID, questName, party)
+	return string.format(
+		L[party and "ROUTES_IGNORED_PARTY" or "ROUTES_IGNORED"],
+		label,
+		routes.QuestLink(questID, questName)
+	)
 end
 
--- Leaves one objective or turn-in out of the route until the ignore list is cleared, from the Quest Arrow's menu
+-- Leaves one objective or turn-in out of the route, from the Quest Arrow's menu or a right-click
 function routes.IgnoreTask(task)
 	if not (task and task.key) or task.kind == "corpse" then
 		return
 	end
 	Ignore(task)
-	routes.Print(routes.BuildIgnoredMessage(routes.TaskLabel(task), task.questID, task.questName))
+	routes.Print(routes.BuildIgnoredMessage(routes.TaskLabel(task), task.questID, task.questName, IsPartyKey(task.key)))
 	routes.RequestPlan()
 end
 
@@ -77,7 +129,7 @@ function routes.UnignoreTask(key)
 	if not entry then
 		return
 	end
-	routes.skipped[key] = nil
+	Forget(key)
 	routes.Print(string.format(L["ROUTES_UNIGNORED"], entry.label))
 	routes.RequestPlan()
 end
@@ -92,7 +144,7 @@ function routes.IgnoredTasks()
 	local list = {}
 	for key, entry in pairs(routes.skipped) do
 		local held = log[entry.questID]
-		if key:find(":p%d+$") then
+		if IsPartyKey(key) then
 			partyLog = partyLog or routes.PartyProgress(log)
 			held = partyLog[entry.questID]
 		end
@@ -106,11 +158,44 @@ function routes.IgnoredTasks()
 	return list
 end
 
--- Every ignored objective and turn-in back on the route (a middle-click on the Quest Arrow)
-function routes.ClearIgnored()
-	routes.skipped = {}
-	routes.Print(L["ROUTES_IGNORE_CLEARED"])
+--[[
+	Resets the zone the player is in, a middle-click on the Quest Arrow or a map marker: every objective
+	and turn-in ignored here back on the route, saved or a party member's, and no camp held first for having
+	been in it, so only one the player stands in now goes first again. Other zones' ignores, and party
+	members switched off, stay
+]]
+function routes.ResetZone()
+	local zone = CurrentZone()
+	for key, entry in pairs(routes.skipped) do
+		if (entry.zone or 0) == zone then
+			Forget(key)
+		end
+	end
+	routes.engaged = nil
+	routes.worked = {}
+	routes.Print(L["ROUTES_ZONE_RESET"])
+	routes.CancelPlan() -- A plan underway was made with the old lists and would put them back
 	routes.RequestPlan()
+end
+
+-- A quest turned in or dropped takes its saved ignores with it, so they don't pile up
+local function ForgetQuest(questID)
+	if type(questID) ~= "number" then
+		return
+	end
+	for key, entry in pairs(routes.skipped) do
+		if entry.questID == questID and not IsPartyKey(key) and not key:find(":pickUp$") then
+			Forget(key)
+		end
+	end
+end
+
+function routes:OnQuestRemoved(questID)
+	ForgetQuest(questID)
+end
+
+function routes:OnQuestTurnedIn(questID)
+	ForgetQuest(questID)
 end
 
 -- Leaves a party member's quests out of the route, or takes them back in, from the Quest Arrow's menu
@@ -121,45 +206,62 @@ function routes.SetMemberIgnored(name, ignored)
 end
 
 --[[
-	Joining or leaving a group starts the ignore list over: every ignored objective and turn-in back on the
-	route, and no party member left out, as the party they were ignored in is gone. Said in chat only when
-	something was ignored
+	A member leaving the group takes the ignores that were for them: their objectives switch back on, and a
+	party objective goes once everyone who had its quest is gone. Said in chat, by name, only when something
+	was ignored. Nothing while a member's name is still unknown, so a roster still loading clears nothing
 ]]
-local function ClearForGroup(message)
-	local had = next(routes.skipped) ~= nil or next(routes.ignoredMembers) ~= nil
-	routes.skipped = {}
-	routes.ignoredMembers = {}
-	if had then
-		routes.Print(L[message])
+function routes.PruneGroupIgnores()
+	local names = routes.GroupNames()
+	if not names then
+		return
+	end
+	local gone, changed = {}, false
+	for name in pairs(routes.ignoredMembers) do
+		if not names[Ambiguate(name, "short")] then
+			routes.ignoredMembers[name] = nil
+			gone[#gone + 1], changed = name, true
+		end
+	end
+	for key, entry in pairs(routes.skipped) do
+		if IsPartyKey(key) then
+			local holders, stays = entry.holders or {}, false
+			for _, holder in ipairs(holders) do
+				stays = stays or names[holder] == true
+			end
+			if not stays then
+				routes.skipped[key], changed = nil, true
+				for _, holder in ipairs(holders) do
+					if not tContains(gone, holder) then
+						gone[#gone + 1] = holder
+					end
+				end
+			end
+		end
+	end
+	if changed then
+		table.sort(gone)
+		routes.Print(string.format(L["ROUTES_MEMBER_LEFT_CLEARED"], table.concat(gone, L["LIST_SEPARATOR"])))
 		routes.RequestPlan()
 	end
 end
 
-function routes:OnGroupJoined()
-	ClearForGroup("ROUTES_GROUP_JOINED_CLEARED")
-end
-
+-- Leaving the group takes every ignore that was for it; the player's own stay
 function routes:OnGroupLeft()
-	ClearForGroup("ROUTES_GROUP_LEFT_CLEARED")
+	local had = next(routes.ignoredMembers) ~= nil
+	routes.ignoredMembers = {}
+	for key in pairs(routes.skipped) do
+		if IsPartyKey(key) then
+			routes.skipped[key], had = nil, true
+		end
+	end
+	if had then
+		routes.Print(L["ROUTES_GROUP_LEFT_CLEARED"])
+		routes.RequestPlan()
+	end
 end
 
 -- The partyQuests setting, as the Quest Arrow's menu and Options both switch it, planned again at once
 function routes.SetPartyQuests(on)
 	routes.SetSetting("partyQuests", on)
-	routes.RequestPlan()
-end
-
---[[
-	Back to the route as it plans from scratch (a middle-click on the world map's route): every ignored task
-	back on it, no party member's quests ignored, and no camp held first for having been in it, so only one
-	the player stands in now goes first again
-]]
-function routes.ResetObjectives()
-	routes.skipped = {}
-	routes.ignoredMembers = {}
-	routes.engaged = nil
-	routes.worked = {}
-	routes.Print(L["ROUTES_RESET"])
-	routes.CancelPlan()
 	routes.RequestPlan()
 end

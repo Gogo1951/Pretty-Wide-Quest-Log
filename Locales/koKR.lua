@@ -215,7 +215,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "퀘스트 화살표"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"경로의 다음 경유지를 가리키는 화면 위 화살표로, 그곳에서 할 퀘스트와 목표를 함께 보여 줍니다. 마우스를 올리면 목표를 하나씩 무시하고 무시한 항목을 확인할 수 있는 메뉴가 열립니다. 가운데 클릭하면 무시 목록을 비웁니다."
+	"경로의 다음 경유지를 가리키는 화면 위 화살표로, 그곳에서 할 퀘스트와 목표를 함께 보여 줍니다. 마우스를 올리면 목표를 하나씩 무시하고 무시한 항목을 확인할 수 있는 메뉴가 열립니다. 가운데 클릭하면 지역을 초기화하여 그곳에서 무시한 항목을 되돌립니다."
 L["QUEST_ARROW_HEADER"] = "화살표"
 L["QUEST_ARROW_DESCRIPTION"] = "퀘스트 화살표의 위치와 크기입니다."
 L["ARROW_SIZE"] = "화살표 크기"
@@ -390,17 +390,15 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "이 경유지 무시"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "이 목표 무시"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "다시 경로에 포함"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "모든 경로 초기화"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "무시 목록 비우기"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "이 지역 초기화"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "무시 목록을 비울 때까지 %s 항목을 무시합니다."
-L["ROUTES_RESET"] = "모든 경로 초기화: 무시한 목표와 파티원이 다시 경로에 포함되었습니다."
-L["ROUTES_IGNORE_CLEARED"] =
-	"무시 목록을 비웠습니다: 무시한 목표가 다시 경로에 포함되었습니다."
-L["ROUTES_GROUP_JOINED_CLEARED"] =
-	"파티에 참가했습니다: 무시한 목표와 파티원이 다시 경로에 포함되었습니다."
+L["ROUTES_SKIPPED"] = "지역을 초기화할 때까지 %s 항목을 무시합니다."
+L["ROUTES_ZONE_RESET"] = "지역 초기화: 이곳에서 무시한 목표가 다시 경로에 포함되었습니다."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
-	"파티를 떠났습니다: 무시한 목표와 파티원이 다시 경로에 포함되었습니다."
+	"파티를 떠났습니다: 무시한 파티 목표와 파티원이 다시 경로에 포함되었습니다."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] =
+	"%s 님이 파티를 떠났습니다: 무시했던 해당 목표가 다시 경로에 포함되었습니다."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "무시"
 L["ROUTES_MENU_SECTION_SHOWN"] = "표시 항목"
@@ -426,7 +424,10 @@ L["ROUTES_MENU_OFFLINE"] = "오프라인"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "%s 님의 목표"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "%s 항목(%s)을 무시 목록을 비울 때까지 무시합니다."
+L["ROUTES_IGNORED"] = "%s 항목(%s)을 지역을 초기화할 때까지 무시합니다."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] =
+	"%s 항목(%s)을 해당 퀘스트를 가진 파티원이 파티를 떠날 때까지 무시합니다."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s 항목이 다시 경로에 포함되었습니다."
 -- TRANSLATORS: %s is a party member's name

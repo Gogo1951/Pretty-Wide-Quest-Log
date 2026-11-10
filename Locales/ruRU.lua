@@ -220,7 +220,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Стрелка заданий"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"Стрелка на экране, указывающая на следующую путевую точку маршрута, с заданиями и целями, которые там нужно выполнить. Наведите на неё курсор, чтобы открыть меню, где можно игнорировать цели по одной и увидеть, что вы игнорируете. Щёлкните по ней средней кнопкой, чтобы очистить список игнорирования."
+	"Стрелка на экране, указывающая на следующую путевую точку маршрута, с заданиями и целями, которые там нужно выполнить. Наведите на неё курсор, чтобы открыть меню, где можно игнорировать цели по одной и увидеть, что вы игнорируете. Щёлкните по ней средней кнопкой, чтобы сбросить зону и вернуть всё, что вы там игнорировали."
 L["QUEST_ARROW_HEADER"] = "Стрелка"
 L["QUEST_ARROW_DESCRIPTION"] =
 	"Где находится Стрелка заданий и какого она размера."
@@ -406,19 +406,16 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Игнорировать эту пу�
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Игнорировать эту цель"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Вернуть на маршрут"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "Сбросить все маршруты"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Очистить список игнорирования"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Сбросить эту зону"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] =
-	"Маршрут игнорирует %s до очистки списка игнорирования."
-L["ROUTES_RESET"] =
-	"Все маршруты сброшены: игнорируемые цели и участники группы снова на маршруте."
-L["ROUTES_IGNORE_CLEARED"] =
-	"Список игнорирования очищен: игнорируемые цели снова на маршруте."
-L["ROUTES_GROUP_JOINED_CLEARED"] =
-	"Вы вступили в группу: игнорируемые цели и участники группы снова на маршруте."
+L["ROUTES_SKIPPED"] = "Маршрут игнорирует %s до сброса зоны."
+L["ROUTES_ZONE_RESET"] =
+	"Зона сброшена: цели, игнорируемые здесь, снова на маршруте."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
-	"Вы покинули группу: игнорируемые цели и участники группы снова на маршруте."
+	"Вы покинули группу: игнорируемые цели группы и участники снова на маршруте."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] =
+	"Группу покинули: %s. Игнорируемые для них цели снова на маршруте."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Игнорировать"
 L["ROUTES_MENU_SECTION_SHOWN"] = "Что показывать"
@@ -444,8 +441,10 @@ L["ROUTES_MENU_OFFLINE"] = "Не в сети"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Цели участника %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] =
-	"Маршрут игнорирует %s для задания %s до очистки списка игнорирования."
+L["ROUTES_IGNORED"] = "Маршрут игнорирует %s для задания %s до сброса зоны."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] =
+	"Маршрут игнорирует %s для задания %s, пока участники группы с этим заданием не покинут группу."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s: снова на маршруте."
 -- TRANSLATORS: %s is a party member's name
