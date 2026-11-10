@@ -330,12 +330,8 @@ function routes.PartyNeeds(questID)
 		return nil
 	end
 	local self = routes.UnitFullName("player")
-	local progress = GatherProgress(
-		questID,
-		players,
-		ns.ImportQuestieModule("CommsVisibility"),
-		self and ShortName(self)
-	)
+	local progress =
+		GatherProgress(questID, players, ns.ImportQuestieModule("CommsVisibility"), self and ShortName(self))
 	local needs
 	for index, entry in pairs(progress or {}) do
 		if #entry.needed > 0 then
