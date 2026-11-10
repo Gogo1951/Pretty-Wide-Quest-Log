@@ -253,6 +253,30 @@ L["SHOW_LOCAL_QUESTS"] = "Mostrar missões disponíveis próximas como objetivos
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"Coloca na rota as missões que você pode pegar, quando o Questie as mostra como disponíveis e um PNJ ou objeto que as inicia está a até %s de você, marcadas com o ponto de exclamação do Questie. Missões iniciadas por um item de saque e missões de masmorra e raide ficam de fora."
+L["LOCAL_QUESTS_HEADER"] = "Missões disponíveis próximas"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"Para quais missões próximas a seta de missão leva você. Uma que ela pula ainda pode aparecer no mapa-múndi, sem linha de rota até ela."
+L["LOCAL_QUEST_RANGE"] = "Raio de busca"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"A quantos metros de você quem dá a missão pode estar e ainda contar. Abaixo de 400, alguém por quem você passa entre dois cálculos da rota pode ficar de fora."
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "O que conta"
+L["LOCAL_ESCORT_QUESTS"] = "Missões de escolta"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Missões em que você protege um PNJ pelo caminho; levam tempo e muitas vezes um grupo. O marcador delas no mapa é verde."
+L["LOCAL_GROUP_QUESTS"] = "Missões de grupo e elite"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Missões que o Questie marca como elite, feitas para um grupo."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Objetivos em outra zona"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Missões com um objetivo, ou a entrega, só fora da sua zona, como uma que manda você para a próxima cidade."
+L["LOCAL_QUEST_LEVEL"] = "Nível mínimo de missão"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Missões abaixo desta cor de dificuldade ficam de fora. Configuração do Questie mantém as missões que o Questie mostra no mapa dele."
+L["LOCAL_CHOICE_ROUTE"] = "Na rota"
+L["LOCAL_CHOICE_MAP"] = "Só no mapa"
+L["LOCAL_CHOICE_OFF"] = "De fora"
+L["LOCAL_LEVEL_QUESTIE"] = "Configuração do Questie"
+L["LOCAL_LEVEL_GREEN"] = "Verde e acima"
+L["LOCAL_LEVEL_YELLOW"] = "Amarelo e acima"
 L["QUEST_ARROW_HIDING_HEADER"] = "Ocultar"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Quando a Seta de missões sai do caminho."
 L["HIDE_IN_RAIDS"] = "Ocultar em grupos de raide"
@@ -370,6 +394,9 @@ L["ROUTES_TURN_IN_QUEST"] = "Entregar %s"
 L["ROUTES_PICK_UP"] = "Pegar missão"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Pegar %s"
+L["ROUTES_OFF_ROUTE_ESCORT"] = "Missão de escolta, fora da rota"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Missão de grupo, fora da rota"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Leva a outra zona, fora da rota"
 L["ROUTES_CORPSE"] = "Volte até o seu corpo"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Procure"

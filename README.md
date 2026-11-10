@@ -9,7 +9,7 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 <img width="800" alt="README-Infographic-Routes-on-Zone-Map" src="https://github.com/user-attachments/assets/67e326f3-5914-4dde-8843-d3ed55af852a" />
 
 * **Every Quest, One Route** // Pick your quests and the zone map lays them out as one route, nearest first, turn-ins included.
-* **Your Party's Quests Too** // In a party, quests your friends have and you don't join the route, as long as they run Questie too.
+* **Your Party's Quests Too** // In a party, quests your friends have and you don't join the route, as long as they run Questie too. Finish a shared quest first and the route keeps you helping until they're done, then sends you all to turn in.
 * **Skip What You Don't Want** // Ignore an objective you'd rather leave and the route plans around it.
 
 ### Quest Arrow

@@ -194,11 +194,12 @@ local function ListQuests(view, noteText, passing, nextStop)
 		line.next = entry.next
 		--[[
 			16 above each quest, heading and the count of quests not listed, 8 under a heading as the quest
-			page leaves under its headings, and 4 between a quest's lines
+			page leaves under its headings, and 4 between a quest's lines. In a party an objective and the
+			names under it are a group, so 8 above an objective that follows another's names
 		]]
 		if used == 1 or kind == "section" or kind == "more" then
 			y = y + SPACE.GROUP
-		elseif previous == "section" then
+		elseif previous == "section" or (kind == "objective" and previous == "name") then
 			y = y + SPACE.NEAR
 		elseif kind == "title" then
 			y = y + SPACE.GROUP

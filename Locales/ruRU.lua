@@ -265,6 +265,31 @@ L["SHOW_LOCAL_QUESTS"] = "Показывать доступные задания
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"Добавляет в маршрут задания, которые можно взять, если Questie показывает их как доступные, а НИП или предмет, выдающий их, находится не дальше %s, с восклицательным знаком Questie. Задания, которые начинает добыча, а также задания подземелий и рейдов не добавляются."
+L["LOCAL_QUESTS_HEADER"] = "Доступные задания поблизости"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"К каким заданиям поблизости ведёт стрелка заданий. Пропущенное может всё равно отображаться на карте мира, без линии маршрута к нему."
+L["LOCAL_QUEST_RANGE"] = "Радиус поиска"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"На скольких метрах от вас может стоять тот, кто даёт задание, чтобы оно учитывалось. Меньше 400 — и того, мимо кого вы прошли между расчётами маршрута, можно пропустить."
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "Что учитывается"
+L["LOCAL_ESCORT_QUESTS"] = "Задания сопровождения"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Задания, где вы охраняете NPC в пути; они требуют времени и часто группы. Их метка на карте зелёная."
+L["LOCAL_GROUP_QUESTS"] = "Групповые и элитные задания"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] =
+	"Задания, которые Questie отмечает как элитные, рассчитанные на группу."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Цели в другой зоне"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Задания, у которых цель или сдача есть только за пределами вашей зоны, например отправляющие в следующий город."
+L["LOCAL_QUEST_LEVEL"] = "Минимальный уровень задания"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Задания ниже этого цвета сложности не учитываются. «Настройка Questie» оставляет задания, которые Questie показывает на своей карте."
+L["LOCAL_CHOICE_ROUTE"] = "На маршруте"
+L["LOCAL_CHOICE_MAP"] = "Только карта"
+L["LOCAL_CHOICE_OFF"] = "Не учитывать"
+L["LOCAL_LEVEL_QUESTIE"] = "Настройка Questie"
+L["LOCAL_LEVEL_GREEN"] = "Зелёные и выше"
+L["LOCAL_LEVEL_YELLOW"] = "Жёлтые и выше"
 L["QUEST_ARROW_HIDING_HEADER"] = "Скрытие"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] =
 	"Когда Стрелка заданий скрывается, чтобы не мешать."
@@ -390,6 +415,9 @@ L["ROUTES_TURN_IN_QUEST"] = "Сдать: %s"
 L["ROUTES_PICK_UP"] = "Взять задание"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Взять: %s"
+L["ROUTES_OFF_ROUTE_ESCORT"] = "Задание сопровождения, не на маршруте"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Групповое задание, не на маршруте"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Ведёт в другую зону, не на маршруте"
 L["ROUTES_CORPSE"] = "Вернитесь к своему телу"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Ищите"

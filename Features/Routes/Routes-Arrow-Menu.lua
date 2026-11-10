@@ -12,8 +12,9 @@ local _, ns = ...
 	What is Shown: Next Objective, the showNextObjective setting; Future Turn-Ins, showUpcomingTurnIns;
 	Local Available Quests, showLocalQuests; in a party, Party Objectives, partyQuests, and with it on an
 	Objectives From switch for each member, a space further in. A switch that's off is gray, On green. Ignored, with
-	how many on the right: the ignore list in gray, a row brightening with Put Back on the right under the
-	mouse, clicked to put it back on the route (routes.UnignoreTask). Then the arrow's click hints:
+	how many and an arrow on the right: its label opens the ignore list in a flyout beside the menu, on the
+	same plate, each row gray, brightening with Put Back on the right under the mouse, clicked to put it back
+	on the route (routes.UnignoreTask). Then the arrow's click hints:
 	right-click ignores the objective the arrow shows first (routes.IgnoreArrowObjective), middle-click
 	resets the zone (routes.ResetZone)
 ]]
@@ -41,24 +42,19 @@ local TEXT_INSET = SPACE.NEAR -- From a row's edge to its text
 local HIGHLIGHT_ALPHA = 0.16
 local PLATE_ALPHA = 0.8 -- The plate's art is black: a little of the world shows through, so it reads lighter
 local INDENT = " " -- Per level, as the tooltips indent their rows
-
-local menu = CreateFrame("Frame", "PrettyWideQuestLogRouteMenu", UIParent)
-menu:SetFrameStrata("DIALOG")
-menu:SetClampedToScreen(true)
-menu:EnableMouse(true)
-menu:Hide()
-tinsert(UISpecialFrames, menu:GetName()) -- Escape closes it
+-- Blizzard's own arrow on a dropdown row with a submenu, after the Ignored count
+local SUBMENU_ARROW = "|TInterface\\ChatFrame\\ChatFrameExpandArrow:0|t"
 
 --------------------------------------------------------------------------------
 -- The plate
 --------------------------------------------------------------------------------
 
 -- Nine pieces: the corners at their own size, keeping the angle and shadow, the edges and middle stretched
-do
-	local plate = CreateFrame("Frame", nil, menu)
+local function AddPlate(panel)
+	local plate = CreateFrame("Frame", nil, panel)
 	plate:SetPoint("TOPLEFT", -PLATE_MARGIN.left * PLATE_SCALE, PLATE_MARGIN.top * PLATE_SCALE)
 	plate:SetPoint("BOTTOMRIGHT", PLATE_MARGIN.right * PLATE_SCALE, -PLATE_MARGIN.bottom * PLATE_SCALE)
-	plate:SetFrameLevel(menu:GetFrameLevel()) -- Under the rows
+	plate:SetFrameLevel(panel:GetFrameLevel()) -- Under the rows
 	plate:SetAlpha(PLATE_ALPHA)
 
 	local near, far = PLATE_CORNER / PLATE_SIZE, 1 - PLATE_CORNER / PLATE_SIZE
@@ -100,6 +96,31 @@ do
 	middle:SetPoint("TOPLEFT", topLeft, "BOTTOMRIGHT")
 	middle:SetPoint("BOTTOMRIGHT", bottomRight, "TOPLEFT")
 end
+
+--[[
+	A plate with rows on it: the menu, and the flyout its Ignored label opens beside it (submenu), drawn
+	over the menu. Escape closes both
+]]
+local function NewPanel(name, level)
+	local panel = CreateFrame("Frame", name, UIParent)
+	panel:SetFrameStrata("DIALOG")
+	if level then
+		panel:SetFrameLevel(level)
+	end
+	panel:SetClampedToScreen(true)
+	panel:EnableMouse(true)
+	panel:Hide()
+	panel.rows = {}
+	AddPlate(panel)
+	tinsert(UISpecialFrames, name)
+	return panel
+end
+
+local menu = NewPanel("PrettyWideQuestLogRouteMenu")
+local submenu = NewPanel("PrettyWideQuestLogRouteSubmenu", menu:GetFrameLevel() + 20)
+menu:HookScript("OnHide", function()
+	submenu:Hide()
+end)
 
 --------------------------------------------------------------------------------
 -- What's on it
@@ -160,11 +181,21 @@ local function Colored(text, red, green, blue)
 	return string.format("|cff%02x%02x%02x%s|r", red * 255, green * 255, blue * 255, text)
 end
 
+-- A key for a panel's rows that changes only when what they say does
+local function EntriesKey(entries)
+	local parts = {}
+	for index, entry in ipairs(entries) do
+		parts[index] = entry.kind .. "|" .. (entry.left or "") .. "|" .. (entry.right or "")
+	end
+	return table.concat(parts, "\n")
+end
+
 --[[
-	The menu's rows, each { kind, left, right, leftColor, rightColor, hover, action }: kind "header",
+	The menu's rows, each { kind, left, right, leftColor, rightColor, hover, action, submenu }: kind "header",
 	"section" (a group's label), "separator", "action" (a row to click), "toggle" (a row to click, On or Off
 	on the right), "status" (a toggle that can't be switched now, its reason on the right), or "hint" (a
-	click hint). hover, { right, rightColor }, is the right side under the mouse, the name brightened.
+	click hint). hover, { right, rightColor }, is the right side under the mouse, the name brightened. submenu
+	marks the Ignored label, which opens the flyout under the mouse or a click.
 	Returns them and a key that changes only when what they say does
 ]]
 local function Entries()
@@ -275,21 +306,16 @@ local function Entries()
 		end
 	end
 
-	-- Ignored, with how many: the ignore list in gray, each brightening with Put Back under the mouse
+	-- Ignored, with how many and an arrow: the label opens the ignore list beside the menu (IgnoredEntries)
 	local ignored = routes.IgnoredTasks()
 	if #ignored > 0 then
-		Section(L["ROUTES_MENU_IGNORED"], tostring(#ignored))
-		for _, entry in ipairs(ignored) do
-			Add({
-				kind = "action",
-				left = INDENT .. entry.label,
-				leftColor = "MUTED",
-				hover = { right = L["ROUTES_MENU_PUT_BACK"], rightColor = "ON" },
-				action = function()
-					routes.UnignoreTask(entry.key)
-				end,
-			})
-		end
+		Add({
+			kind = "section",
+			left = L["ROUTES_MENU_IGNORED"],
+			right = tostring(#ignored) .. " " .. SUBMENU_ARROW,
+			rightColor = "MUTED",
+			submenu = true,
+		})
 	end
 
 	Separator()
@@ -301,18 +327,29 @@ local function Entries()
 	end
 	Add({ kind = "hint", left = L["ROUTES_CLICK_MIDDLE"], right = L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] })
 
-	local parts = {}
-	for index, entry in ipairs(entries) do
-		parts[index] = entry.kind .. "|" .. (entry.left or "") .. "|" .. (entry.right or "")
+	return entries, EntriesKey(entries)
+end
+
+-- The flyout's rows: the ignore list in gray, each brightening with Put Back under the mouse
+local function IgnoredEntries()
+	local entries = {}
+	for _, entry in ipairs(routes.IgnoredTasks()) do
+		entries[#entries + 1] = {
+			kind = "action",
+			left = entry.label,
+			leftColor = "MUTED",
+			hover = { right = L["ROUTES_MENU_PUT_BACK"], rightColor = "ON" },
+			action = function()
+				routes.UnignoreTask(entry.key)
+			end,
+		}
 	end
-	return entries, table.concat(parts, "\n")
+	return entries, EntriesKey(entries)
 end
 
 --------------------------------------------------------------------------------
 -- Laying it out
 --------------------------------------------------------------------------------
-
-local rows = {}
 
 local function Paint(fontString, text, colorKey, fontObject)
 	if fontObject then
@@ -336,10 +373,12 @@ local function Dress(row, over)
 	end
 end
 
-local function Row(index)
-	local row = rows[index]
+local OpenSubmenu, CloseSubmenu -- Below, once the rows are laid out
+
+local function Row(panel, index)
+	local row = panel.rows[index]
 	if not row then
-		row = CreateFrame("Button", nil, menu)
+		row = CreateFrame("Button", nil, panel)
 		row:RegisterForClicks("LeftButtonUp")
 		row.highlight = row:CreateTexture(nil, "HIGHLIGHT")
 		row.highlight:SetAllPoints()
@@ -358,14 +397,25 @@ local function Row(index)
 		red, green, blue = ns.GetColorRGB("SEPARATOR")
 		row.line:SetColorTexture(red, green, blue, 0.35)
 		row:SetScript("OnClick", function(self)
-			if self.action then
+			if self.submenu then
+				OpenSubmenu(self)
+			elseif self.action then
 				self.action()
 				routes.RefreshArrowMenu()
 			end
 		end)
+		--[[
+			On the menu, the Ignored label opens the flyout and any other row closes it, as a dropdown's
+			submenu does; the flyout's own rows leave it open
+		]]
 		row:SetScript("OnEnter", function(self)
 			if self.hover then
 				Dress(self, true)
+			end
+			if self.submenu then
+				OpenSubmenu(self)
+			elseif panel == menu then
+				CloseSubmenu()
 			end
 		end)
 		row:SetScript("OnLeave", function(self)
@@ -373,7 +423,7 @@ local function Row(index)
 				Dress(self, false)
 			end
 		end)
-		rows[index] = row
+		panel.rows[index] = row
 	end
 	row:Show()
 	return row
@@ -383,15 +433,21 @@ end
 	Sizes the menu to its rows: each as tall as a line and SPACE.LINE above and below, a group's label
 	SPACE.NEAR above instead to set its group apart, the separators SPACE.NEAR
 ]]
-local function Layout(entries)
+local function Layout(panel, entries)
 	local width, y = MIN_WIDTH, SPACE.NEAR
+	local rows = panel.rows
+	panel.submenuRow = nil
 	for index, entry in ipairs(entries) do
-		local row = Row(index)
+		local row = Row(panel, index)
 		local kind = entry.kind
-		local clickable = kind == "action" or kind == "toggle"
+		local clickable = kind == "action" or kind == "toggle" or entry.submenu == true
 		row:EnableMouse(clickable)
 		row.line:SetShown(kind == "separator")
 		row.hover = entry.hover
+		row.submenu = entry.submenu
+		if entry.submenu then
+			panel.submenuRow = row
+		end
 		local height
 		if kind == "separator" then
 			Paint(row.left, nil)
@@ -439,30 +495,80 @@ local function Layout(entries)
 		end
 		row:SetHeight(height)
 		row:ClearAllPoints()
-		row:SetPoint("TOPLEFT", menu, "TOPLEFT", ROW_INSET, -y)
-		row:SetPoint("TOPRIGHT", menu, "TOPRIGHT", -ROW_INSET, -y)
+		row:SetPoint("TOPLEFT", panel, "TOPLEFT", ROW_INSET, -y)
+		row:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -ROW_INSET, -y)
 		y = y + height
 	end
 	for index = #entries + 1, #rows do
 		rows[index]:Hide()
 	end
-	menu:SetSize(math.ceil(width), y + SPACE.NEAR)
+	panel:SetSize(math.ceil(width), y + SPACE.NEAR)
 end
 
-local shownKey
+-- Lays a panel out again where what its rows say has changed; their actions always, as a new plan makes new tasks
+local function Fill(panel, entries, key)
+	if key ~= panel.shownKey then
+		panel.shownKey = key
+		Layout(panel, entries)
+	end
+	for index, entry in ipairs(entries) do
+		panel.rows[index].action = entry.action
+	end
+end
 
--- Rebuilds the rows where what they say has changed; their actions always, as a new plan makes new tasks
+--[[
+	The flyout beside the Ignored label, its first row level with the label: to the right of the menu, or to
+	the left where the screen hasn't the room. The label keeps its highlight while the flyout is open
+]]
+local function PlaceSubmenu(row)
+	submenu:ClearAllPoints()
+	local gap = ROW_INSET + SPACE.NEAR
+	local right = menu:GetRight() or 0
+	local scale = menu:GetEffectiveScale() / UIParent:GetEffectiveScale()
+	if (right + gap + submenu:GetWidth()) * scale > UIParent:GetWidth() then
+		submenu:SetPoint("TOPRIGHT", row, "TOPLEFT", -gap, SPACE.NEAR)
+	else
+		submenu:SetPoint("TOPLEFT", row, "TOPRIGHT", gap, SPACE.NEAR)
+	end
+end
+
+function OpenSubmenu(row)
+	local entries, key = IgnoredEntries()
+	if #entries == 0 then
+		CloseSubmenu()
+		return
+	end
+	if not submenu:IsShown() then
+		submenu.shownKey = nil
+	end
+	Fill(submenu, entries, key)
+	PlaceSubmenu(row)
+	submenu:Show()
+	row:LockHighlight()
+end
+
+function CloseSubmenu()
+	if menu.submenuRow then
+		menu.submenuRow:UnlockHighlight()
+	end
+	submenu:Hide()
+end
+
+-- Rebuilds the menu's rows, and the flyout's while it's open; the flyout closes once nothing is ignored
 function routes.RefreshArrowMenu()
 	if not menu:IsShown() then
 		return
 	end
-	local entries, key = Entries()
-	if key ~= shownKey then
-		shownKey = key
-		Layout(entries)
+	if menu.submenuRow then
+		menu.submenuRow:UnlockHighlight()
 	end
-	for index, entry in ipairs(entries) do
-		rows[index].action = entry.action
+	Fill(menu, Entries())
+	if submenu:IsShown() then
+		if menu.submenuRow then
+			OpenSubmenu(menu.submenuRow)
+		else
+			submenu:Hide()
+		end
 	end
 end
 
@@ -491,7 +597,7 @@ menu:SetScript("OnUpdate", function(self, elapsed)
 		return
 	end
 	local now = GetTime()
-	if self:IsMouseOver() or routes.IsMouseOverArrow() then
+	if self:IsMouseOver() or routes.IsMouseOverArrow() or (submenu:IsShown() and submenu:IsMouseOver()) then
 		lastOver = now
 	elseif now - lastOver > CLOSE_DELAY then
 		self:Hide()
@@ -507,7 +613,7 @@ end)
 function routes.ShowArrowMenu()
 	lastOver, sinceRefresh = GetTime(), 0
 	if not menu:IsShown() then
-		shownKey = nil
+		menu.shownKey = nil
 		Place()
 		menu:Show()
 	end

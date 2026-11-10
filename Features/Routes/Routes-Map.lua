@@ -470,8 +470,12 @@ function providerMixin:RefreshAllData()
 			marker = byKey[key][1]
 			position = MapPosition(mapID, marker.x, marker.y, marker.instance)
 		end
-		-- Dim on the route's zone only while the route could take it; one it won't has its ring instead
-		AddStopPin(map, marker, position, textures, onRoute and not IsUntracked(marker))
+		--[[
+			Dim on the route's zone only while the route could take it; one it won't has its ring instead.
+			An escort to pick up later stays at full strength, its green the point of it
+		]]
+		local escort = marker.tasks[1].kind == "pickUp" and marker.tasks[1].escort
+		AddStopPin(map, marker, position, textures, onRoute and not IsUntracked(marker) and not escort)
 	end
 end
 

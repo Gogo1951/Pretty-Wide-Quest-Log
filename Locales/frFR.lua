@@ -253,6 +253,30 @@ L["SHOW_LOCAL_QUESTS"] = "Afficher les quêtes disponibles proches comme objecti
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"Place sur l'itinéraire les quêtes que vous pouvez prendre, quand Questie les affiche comme disponibles et qu'un PNJ ou un objet qui les donne se trouve à %s ou moins, marquées du point d'exclamation de Questie. Les quêtes lancées par un objet ramassé sur un butin, et les quêtes de donjon et de raid, sont laissées de côté."
+L["LOCAL_QUESTS_HEADER"] = "Quêtes disponibles proches"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"Vers quelles quêtes proches la flèche de quête vous mène. Une quête qu'elle ignore peut quand même apparaître sur la carte du monde, sans ligne de route jusqu'à elle."
+L["LOCAL_QUEST_RANGE"] = "Rayon de recherche"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"À combien de mètres de vous un donneur de quête peut se trouver pour compter. En dessous de 400, un donneur croisé entre deux calculs de la route peut être manqué."
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "Ce qui compte"
+L["LOCAL_ESCORT_QUESTS"] = "Quêtes d'escorte"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Quêtes où vous protégez un PNJ en chemin ; elles prennent du temps et souvent un groupe. Leur marqueur sur la carte est vert."
+L["LOCAL_GROUP_QUESTS"] = "Quêtes de groupe et élites"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quêtes que Questie marque comme élites, faites pour un groupe."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Objectifs dans une autre zone"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Quêtes dont un objectif, ou le rendu, se trouve uniquement hors de votre zone, comme une quête qui vous envoie à la ville suivante."
+L["LOCAL_QUEST_LEVEL"] = "Niveau de quête minimum"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Les quêtes sous cette couleur de difficulté sont écartées. Réglage de Questie garde les quêtes que Questie affiche sur sa carte."
+L["LOCAL_CHOICE_ROUTE"] = "Sur la route"
+L["LOCAL_CHOICE_MAP"] = "Carte seulement"
+L["LOCAL_CHOICE_OFF"] = "Écartées"
+L["LOCAL_LEVEL_QUESTIE"] = "Réglage de Questie"
+L["LOCAL_LEVEL_GREEN"] = "Vertes et plus"
+L["LOCAL_LEVEL_YELLOW"] = "Jaunes et plus"
 L["QUEST_ARROW_HIDING_HEADER"] = "Masquage"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Quand la Flèche de quête s'écarte."
 L["HIDE_IN_RAIDS"] = "Masquer en groupe de raid"
@@ -371,6 +395,9 @@ L["ROUTES_TURN_IN_QUEST"] = "Rendre %s"
 L["ROUTES_PICK_UP"] = "Prendre la quête"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Prendre %s"
+L["ROUTES_OFF_ROUTE_ESCORT"] = "Quête d'escorte, hors de la route"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Quête de groupe, hors de la route"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Mène à une autre zone, hors de la route"
 L["ROUTES_CORPSE"] = "Retournez à votre cadavre"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Cherchez"

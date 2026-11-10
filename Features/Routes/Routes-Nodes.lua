@@ -163,8 +163,10 @@ end
 	{ key, kind, questID, questName, quest, objective, candidates, blobs }: kind is "objective" or
 	"turnIn", quest and objective Questie's live tables (for the level and progress), and blobs every
 	place in the zone it can be done. A timed or escort quest's nodes are urgent too, with turnInDistance,
-	how far its turn-in is. requires are the nodes one must wait on: a turn-in planned ahead its quest's
-	objectives, and routes.PinEngaged adds the rest
+	how far its turn-in is. In a party, an objective the player has done that a member still needs
+	(routes.PartyNeeds) is a node too, helping, and holds back the turn-in as one not done would. requires
+	are the nodes one must wait on: a turn-in planned ahead its quest's objectives, and routes.PinEngaged
+	adds the rest
 ]]
 function routes.BuildNodes(yield)
 	if not routes.IsQuestieReady() then
@@ -193,19 +195,31 @@ function routes.BuildNodes(yield)
 			local turnInDistance = urgent and TurnInDistance(quest, start, yield, instanceQuest) or nil
 			--[[
 				Its objectives' nodes, and whether any objective left has none (no spawns to go to, or
-				ignored), in which case the route can't finish the quest and plans no turn-in ahead for it
+				ignored), in which case the route can't finish the quest and plans no turn-in ahead for it.
+				One the player has done that the party still needs is helping; one the route can't plan is
+				simply left off, and the player turns in
 			]]
-			local objectiveNodes, unplanned = {}, false
-			if state == 0 and not instanceQuest then
+			local objectiveNodes, unplanned, helping = {}, false, false
+			local needs = state ~= -1 and not instanceQuest and routes.PartyNeeds(questID) or nil
+			if (state == 0 or needs) and not instanceQuest then
 				ForEachObjective(quest, function(objectiveKey, objective)
-					if type(objective) == "table" and not objective.Completed then
+					if type(objective) ~= "table" then
+						return
+					end
+					local helps = objective.Completed
+						and needs
+						and objective.Index
+						and needs[objective.Index]
+						and quest.Objectives[objective.Index] == objective
+					if not objective.Completed or helps then
 						local key = questID .. ":" .. objectiveKey
 						local blobs = HasSpawns(objective)
 							and not skipped[key]
 							and ObjectiveBlobs(objective, start, yield)
 						if not (blobs and #blobs > 0) then
-							unplanned = true
+							unplanned = unplanned or not helps
 						else
+							helping = helping or helps == true
 							objectiveNodes[#objectiveNodes + 1] = {
 								key = key,
 								kind = "objective",
@@ -218,6 +232,7 @@ function routes.BuildNodes(yield)
 								spawns = blobs.spawns,
 								urgent = urgent,
 								turnInDistance = turnInDistance,
+								helping = helps == true or nil, -- Done by the player, still needed by the party
 							}
 						end
 					end
@@ -229,7 +244,8 @@ function routes.BuildNodes(yield)
 			end
 
 			--[[
-				The turn-in: once the quest is done, ready now; before then, planned ahead, waiting on every
+				The turn-in: once the quest is done and the party needs none of it, ready now; before then
+				(or while helping), planned ahead, waiting on every
 				one of its objectives' nodes (requires), so the route and the Quest Arrow's Next Objective show
 				it where it falls once they're done. None ahead with Show Future Turn-Ins (showUpcomingTurnIns)
 		off, nor for a quest with an objective the route can't
@@ -237,8 +253,8 @@ function routes.BuildNodes(yield)
 				in the world, not at the end of the instance
 			]]
 			local key = questID .. ":turnIn"
-			local ready = state == 1
-			local ahead = state == 0
+			local ready = state == 1 and not helping
+			local ahead = (state == 0 or helping)
 				and routes.Settings().showUpcomingTurnIns
 				and not instanceQuest
 				and not unplanned

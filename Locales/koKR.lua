@@ -256,6 +256,30 @@ L["SHOW_LOCAL_QUESTS"] = "주변의 받을 수 있는 퀘스트를 목표로 표
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"Questie가 받을 수 있다고 표시하고, 퀘스트를 주는 NPC나 물체가 %s 이내에 있는 퀘스트를 경로에 넣고 Questie의 느낌표로 표시합니다. 전리품 아이템으로 시작하는 퀘스트와 던전 및 공격대 퀘스트는 제외됩니다."
+L["LOCAL_QUESTS_HEADER"] = "주변의 받을 수 있는 퀘스트"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"퀘스트 화살표가 주변의 어떤 퀘스트로 안내할지 정합니다. 건너뛴 퀘스트도 경로 선 없이 세계 지도에 표시될 수 있습니다."
+L["LOCAL_QUEST_RANGE"] = "검색 범위"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"퀘스트를 주는 대상이 몇 미터 안에 있어야 포함되는지 정합니다. 400 미만이면 경로를 다시 계산하는 사이에 지나친 대상을 놓칠 수 있습니다."
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "포함 기준"
+L["LOCAL_ESCORT_QUESTS"] = "호위 퀘스트"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"가는 길에 NPC를 지켜야 하는 퀘스트로, 시간이 걸리고 파티가 필요한 경우가 많습니다. 지도 표식은 초록색입니다."
+L["LOCAL_GROUP_QUESTS"] = "파티 및 정예 퀘스트"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Questie가 정예로 표시한, 파티용 퀘스트입니다."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "다른 지역의 목표"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"목표나 보고 장소가 현재 지역 밖에만 있는 퀘스트입니다. 다음 마을로 보내는 퀘스트 등이 해당합니다."
+L["LOCAL_QUEST_LEVEL"] = "최저 퀘스트 레벨"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"이 난이도 색보다 낮은 퀘스트는 제외됩니다. Questie 설정은 Questie가 지도에 표시하는 퀘스트를 그대로 둡니다."
+L["LOCAL_CHOICE_ROUTE"] = "경로에 포함"
+L["LOCAL_CHOICE_MAP"] = "지도에만"
+L["LOCAL_CHOICE_OFF"] = "제외"
+L["LOCAL_LEVEL_QUESTIE"] = "Questie 설정"
+L["LOCAL_LEVEL_GREEN"] = "초록색 이상"
+L["LOCAL_LEVEL_YELLOW"] = "노란색 이상"
 L["QUEST_ARROW_HIDING_HEADER"] = "숨기기"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "퀘스트 화살표를 숨기는 경우입니다."
 L["HIDE_IN_RAIDS"] = "공격대에서 숨기기"
@@ -374,6 +398,9 @@ L["ROUTES_TURN_IN_QUEST"] = "%s 완료 보고"
 L["ROUTES_PICK_UP"] = "퀘스트 받기"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "%s 받기"
+L["ROUTES_OFF_ROUTE_ESCORT"] = "호위 퀘스트, 경로에 없음"
+L["ROUTES_OFF_ROUTE_GROUP"] = "파티 퀘스트, 경로에 없음"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "다른 지역으로 이어짐, 경로에 없음"
 L["ROUTES_CORPSE"] = "내 시체로 달려가세요"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "찾을 대상"

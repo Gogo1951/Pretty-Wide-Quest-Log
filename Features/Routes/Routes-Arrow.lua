@@ -18,7 +18,8 @@ local _, ns = ...
 	are "work here": the eye, "Current Objective Area", over a note, "Finish Here Before Moving On" where
 	one of them can be done nowhere else or "More Along the Route" where the route passes more of each,
 	and the list. Any other objective the player is among is on the way: the arrow keeps pointing, and it's
-	listed dimmed under "While You're Here", to tag without stopping.
+	listed dimmed under "While You're Here", to tag without stopping; with many, only the nearest
+	(Routes-Arrow-Survey.lua).
 
 	Under the list, dimmed, with showNextObjective, the Next Objective: the waypoint after the area, or
 	heading to a waypoint, the one after that. On the left a 32px arrow turning toward it, colored as the
