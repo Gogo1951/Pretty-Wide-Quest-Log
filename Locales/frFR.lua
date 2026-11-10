@@ -212,7 +212,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Flèche de quête"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"Une flèche à l'écran qui pointe vers le prochain point de passage de l'itinéraire, avec les quêtes et objectifs à y accomplir. Survolez-la pour ouvrir un menu où vous pouvez ignorer un objectif à la fois et voir ce que vous avez ignoré. Faites un clic milieu dessus pour vider la liste des ignorés."
+	"Une flèche à l'écran qui pointe vers le prochain point de passage de l'itinéraire, avec les quêtes et objectifs à y accomplir. Survolez-la pour ouvrir un menu où vous pouvez ignorer un objectif à la fois et voir ce que vous avez ignoré. Faites un clic milieu dessus pour réinitialiser la zone et remettre ce que vous y avez ignoré."
 L["QUEST_ARROW_HEADER"] = "Flèche"
 L["QUEST_ARROW_DESCRIPTION"] = "Où se trouve la Flèche de quête et quelle est sa taille."
 L["ARROW_SIZE"] = "Taille de la flèche"
@@ -253,6 +253,30 @@ L["SHOW_LOCAL_QUESTS"] = "Afficher les quêtes disponibles proches comme objecti
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"Place sur l'itinéraire les quêtes que vous pouvez prendre, quand Questie les affiche comme disponibles et qu'un PNJ ou un objet qui les donne se trouve à %s ou moins, marquées du point d'exclamation de Questie. Les quêtes lancées par un objet ramassé sur un butin, et les quêtes de donjon et de raid, sont laissées de côté."
+L["LOCAL_QUESTS_HEADER"] = "Quêtes disponibles proches"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"Vers quelles quêtes proches la flèche de quête vous mène. Une quête qu'elle ignore peut quand même apparaître sur la carte du monde, sans ligne de route jusqu'à elle."
+L["LOCAL_QUEST_RANGE"] = "Rayon de recherche"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"À combien de mètres de vous un donneur de quête peut se trouver pour compter. En dessous de 400, un donneur croisé entre deux calculs de la route peut être manqué."
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "Ce qui compte"
+L["LOCAL_ESCORT_QUESTS"] = "Quêtes d'escorte"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Quêtes où vous protégez un PNJ en chemin ; elles prennent du temps et souvent un groupe. Leur marqueur sur la carte est vert."
+L["LOCAL_GROUP_QUESTS"] = "Quêtes de groupe et élites"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quêtes que Questie marque comme élites, faites pour un groupe."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Objectifs dans une autre zone"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Quêtes dont un objectif, ou le rendu, se trouve uniquement hors de votre zone, comme une quête qui vous envoie à la ville suivante."
+L["LOCAL_QUEST_LEVEL"] = "Niveau de quête minimum"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Les quêtes sous cette couleur de difficulté sont écartées. Réglage de Questie garde les quêtes que Questie affiche sur sa carte."
+L["LOCAL_CHOICE_ROUTE"] = "Sur la route"
+L["LOCAL_CHOICE_MAP"] = "Carte seulement"
+L["LOCAL_CHOICE_OFF"] = "Écartées"
+L["LOCAL_LEVEL_QUESTIE"] = "Réglage de Questie"
+L["LOCAL_LEVEL_GREEN"] = "Vertes et plus"
+L["LOCAL_LEVEL_YELLOW"] = "Jaunes et plus"
 L["QUEST_ARROW_HIDING_HEADER"] = "Masquage"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Quand la Flèche de quête s'écarte."
 L["HIDE_IN_RAIDS"] = "Masquer en groupe de raid"
@@ -371,6 +395,9 @@ L["ROUTES_TURN_IN_QUEST"] = "Rendre %s"
 L["ROUTES_PICK_UP"] = "Prendre la quête"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Prendre %s"
+L["ROUTES_OFF_ROUTE_ESCORT"] = "Quête d'escorte, hors de la route"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Quête de groupe, hors de la route"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Mène à une autre zone, hors de la route"
 L["ROUTES_CORPSE"] = "Retournez à votre cadavre"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Cherchez"
@@ -387,17 +414,15 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorer ce point de passage"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorer cet objectif"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Remettre sur l'itinéraire"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "Réinitialiser tous les itinéraires"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Vider la liste des ignorés"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Réinitialiser cette zone"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "L'itinéraire ignore %s jusqu'à ce que la liste des ignorés soit vidée."
-L["ROUTES_RESET"] =
-	"Tous les itinéraires sont réinitialisés : les objectifs et membres du groupe ignorés sont de retour sur l'itinéraire."
-L["ROUTES_IGNORE_CLEARED"] = "Liste des ignorés vidée : les objectifs ignorés sont de retour sur l'itinéraire."
-L["ROUTES_GROUP_JOINED_CLEARED"] =
-	"Groupe rejoint : les objectifs et membres du groupe ignorés sont de retour sur l'itinéraire."
+L["ROUTES_SKIPPED"] = "L'itinéraire ignore %s jusqu'à ce que vous réinitialisiez la zone."
+L["ROUTES_ZONE_RESET"] = "Zone réinitialisée : les objectifs ignorés ici sont de retour sur l'itinéraire."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
-	"Groupe quitté : les objectifs et membres du groupe ignorés sont de retour sur l'itinéraire."
+	"Groupe quitté : les objectifs de groupe et membres ignorés sont de retour sur l'itinéraire."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] =
+	"%s a quitté le groupe : les objectifs ignorés correspondants sont de retour sur l'itinéraire."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Ignorer"
 L["ROUTES_MENU_SECTION_SHOWN"] = "Éléments affichés"
@@ -423,7 +448,10 @@ L["ROUTES_MENU_OFFLINE"] = "Hors ligne"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objectifs de %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "L'itinéraire ignore %s pour %s jusqu'à ce que la liste des ignorés soit vidée."
+L["ROUTES_IGNORED"] = "L'itinéraire ignore %s pour %s jusqu'à ce que vous réinitialisiez la zone."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] =
+	"L'itinéraire ignore %s pour %s jusqu'à ce que les membres du groupe qui l'ont quittent le groupe."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s est de retour sur l'itinéraire."
 -- TRANSLATORS: %s is a party member's name

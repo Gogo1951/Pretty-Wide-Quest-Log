@@ -2218,6 +2218,11 @@ local function ArrowLines(lines)
 	RouteSetting(lines, "Show next objective", "showNextObjective")
 	RouteSetting(lines, "Show future turn-ins", "showUpcomingTurnIns")
 	RouteSetting(lines, "Show available local quests as objectives", "showLocalQuests")
+	RouteSetting(lines, "Local quests: search range", "localQuestRange")
+	RouteSetting(lines, "Local quests: lowest level", "localQuestLevel")
+	RouteSetting(lines, "Local quests: escort quests", "localEscortQuests")
+	RouteSetting(lines, "Local quests: group and elite quests", "localGroupQuests")
+	RouteSetting(lines, "Local quests: objectives in another zone", "localOtherZoneQuests")
 	-- How many quests Questie offers, and how many the route picks up nearby (Routes-Pick-Ups.lua)
 	local availableQuests = ns.ImportQuestieModule("AvailableQuests")
 	local available = availableQuests and availableQuests.__availableQuests
@@ -2232,10 +2237,11 @@ local function ArrowLines(lines)
 		end
 	end
 	lines[#lines + 1] = string.format(
-		"Quests Questie shows as available: %s; on the route to pick up, within %d yards: %d",
+		"Quests Questie shows as available: %s; on the route to pick up, within %d yards: %d; on the map only: %d",
 		type(available) == "table" and tostring(offered) or "not found",
-		ns.routes and ns.routes.LOCAL_QUEST_RANGE or 0,
-		pickUps
+		ns.routes and ns.routes.LocalQuestRange() or 0,
+		pickUps,
+		ns.routes and #ns.routes.mapOnlyPickUps or 0
 	)
 end
 

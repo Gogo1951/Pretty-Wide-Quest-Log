@@ -205,7 +205,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Quest Arrow"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"An arrow on screen pointing to the next waypoint on the route, with the quests and objectives to do there. Hover it for a menu where you can ignore one objective at a time and see what you've ignored. Middle-click it to clear the ignore list."
+	"An arrow on screen pointing to the next waypoint on the route, with the quests and objectives to do there. Hover it for a menu where you can ignore one objective at a time and see what you've ignored. Middle-click it to reset the zone, putting back what you ignored there."
 L["QUEST_ARROW_HEADER"] = "Arrow"
 L["QUEST_ARROW_DESCRIPTION"] = "Where the Quest Arrow sits and how big it is."
 L["ARROW_SIZE"] = "Arrow Size"
@@ -244,6 +244,35 @@ L["SHOW_LOCAL_QUESTS"] = "Show Available Local Quests as Objectives"
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"Puts quests you can pick up on the route, where Questie shows them as available and an NPC or object that starts them is within %s of you, marked with Questie's exclamation mark. Quests started by an item that drops, and dungeon and raid quests, are left out."
+L["LOCAL_QUESTS_HEADER"] = "Local Available Quests"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"Which quests near you the Quest Arrow takes you to. One it skips can still show on the world map, with no route line to it."
+L["LOCAL_QUEST_RANGE"] = "Search Range"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"How many yards from you a quest giver can be and still count. Under 400, a giver you walk past between the route's plans can be missed."
+-- TRANSLATORS: heads the rows that choose which kinds of nearby quests go on the route
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "What Counts"
+L["LOCAL_ESCORT_QUESTS"] = "Escort Quests"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Quests where you protect an NPC along the way, which take time and often a group. Their marker on the map is green."
+L["LOCAL_GROUP_QUESTS"] = "Group and Elite Quests"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quests Questie marks as elite, made for a group."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Objectives in Another Zone"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Quests with an objective, or the turn-in, only outside the zone you're in, such as one that sends you on to the next town."
+L["LOCAL_QUEST_LEVEL"] = "Lowest Quest Level"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Quests below this difficulty color are left off. Questie's Setting keeps the quests Questie shows on its map."
+-- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
+L["LOCAL_CHOICE_ROUTE"] = "On the Route"
+-- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
+L["LOCAL_CHOICE_MAP"] = "Map Only"
+-- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
+L["LOCAL_CHOICE_OFF"] = "Left Off"
+L["LOCAL_LEVEL_QUESTIE"] = "Questie's Setting"
+-- TRANSLATORS: quest difficulty colors, green being a few levels below the player
+L["LOCAL_LEVEL_GREEN"] = "Green and Higher"
+L["LOCAL_LEVEL_YELLOW"] = "Yellow and Higher"
 L["QUEST_ARROW_HIDING_HEADER"] = "Hiding"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "When the Quest Arrow steps out of the way."
 L["HIDE_IN_RAIDS"] = "Hide in Raid Groups"
@@ -361,6 +390,10 @@ L["ROUTES_TURN_IN_QUEST"] = "Turn in %s"
 L["ROUTES_PICK_UP"] = "Pick up Quest"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Pick up %s"
+-- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
+L["ROUTES_OFF_ROUTE_ESCORT"] = "Escort Quest, Not on the Route"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Group Quest, Not on the Route"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Leads to Another Zone, Not on the Route"
 L["ROUTES_CORPSE"] = "Run Back to Your Corpse"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Look For"
@@ -377,14 +410,13 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignore This Waypoint"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignore This Objective"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Back on the Route"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "Reset All Routes"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Clear Ignore List"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Reset This Zone"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "Ignoring %s until the ignore list is cleared."
-L["ROUTES_RESET"] = "All routes reset: ignored objectives and party members are back on the route."
-L["ROUTES_IGNORE_CLEARED"] = "Ignore list cleared: ignored objectives are back on the route."
-L["ROUTES_GROUP_JOINED_CLEARED"] = "Joined a group: ignored objectives and party members are back on the route."
-L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: ignored objectives and party members are back on the route."
+L["ROUTES_SKIPPED"] = "Ignoring %s until you reset the zone."
+L["ROUTES_ZONE_RESET"] = "Zone reset: objectives ignored here are back on the route."
+L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: party objectives and members you ignored are back on the route."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s left the group: the objectives you ignored for them are back on the route."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Ignore"
 L["ROUTES_MENU_SECTION_SHOWN"] = "What is Shown"
@@ -410,7 +442,9 @@ L["ROUTES_MENU_OFFLINE"] = "Offline"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objectives From %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "Ignoring %s for %s until the ignore list is cleared."
+L["ROUTES_IGNORED"] = "Ignoring %s for %s until you reset the zone."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] = "Ignoring %s for %s until the party members on it leave the group."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s is back on the route."
 -- TRANSLATORS: %s is a party member's name

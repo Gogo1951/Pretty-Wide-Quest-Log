@@ -18,7 +18,8 @@ local _, ns = ...
 	are "work here": the eye, "Current Objective Area", over a note, "Finish Here Before Moving On" where
 	one of them can be done nowhere else or "More Along the Route" where the route passes more of each,
 	and the list. Any other objective the player is among is on the way: the arrow keeps pointing, and it's
-	listed dimmed under "While You're Here", to tag without stopping.
+	listed dimmed under "While You're Here", to tag without stopping; with many, only the nearest
+	(Routes-Arrow-Survey.lua).
 
 	Under the list, dimmed, with showNextObjective, the Next Objective: the waypoint after the area, or
 	heading to a waypoint, the one after that. On the left a 32px arrow turning toward it, colored as the
@@ -27,7 +28,7 @@ local _, ns = ...
 
 	Drag it to move it, held by its top so the list grows and shrinks below it; the mouse over it opens its
 	menu (Routes-Arrow-Menu.lua), to ignore one objective
-	at a time, here or at the Next Objective; middle-click clears the ignore list. By default it
+	at a time, here or at the Next Objective; middle-click resets the zone, putting back what was ignored in it. By default it
 	hides in a raid group and in instances (dungeons, raids, battlegrounds), where it isn't questing that's
 	under way. Its size, lock, text and hiding are the Quest Arrow panel's settings
 	(Options/Options-Quest-Arrow.lua)
@@ -193,7 +194,7 @@ frame:SetScript("OnClick", function(_, button)
 	if button == "RightButton" then
 		routes.IgnoreArrowObjective()
 	elseif button == "MiddleButton" then
-		routes.ClearIgnored()
+		routes.ResetZone()
 	end
 end)
 

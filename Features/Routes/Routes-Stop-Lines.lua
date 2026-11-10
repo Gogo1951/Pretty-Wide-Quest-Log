@@ -62,9 +62,17 @@ function routes.IsAreaPoint(point)
 	return point ~= nil and IsArea(point)
 end
 
--- Whether a task is still to do: an objective not yet done, or a turn-in
+--[[
+	Whether a task is still to do: an objective not yet done, or a turn-in. An objective of the player's
+	that they've done but someone in the party still needs (helping, Routes-Nodes.lua) is left until
+	nobody does
+]]
 function routes.IsTaskLeft(task)
-	return not (task.objective and task.objective.Completed)
+	local objective = task.objective
+	if not (objective and objective.Completed) then
+		return true
+	end
+	return task.helping == true and routes.IsHelpNeeded(task)
 end
 
 -- Yards from a point to a task's place, or past the edge of its area, nothing when it has none
@@ -92,8 +100,8 @@ routes.PositionAt = PositionAt
 
 --[[
 	The quests at a stop, each { task, here, turnIn, pickUp, distance }: task the first of its tasks there,
-	here the set of its objectives done at the stop, turnIn whether it's turned in there, pickUp whether it's
-	picked up there. Given the player's
+	here the set of its objectives done at the stop, left those of them still to do (routes.IsTaskLeft),
+	turnIn whether it's turned in there, pickUp whether it's picked up there. Given the player's
 	position, nearest first, each with distance[objective] for its objectives' places; else in route order
 ]]
 function routes.QuestsAt(stop, x, y)
@@ -101,7 +109,7 @@ function routes.QuestsAt(stop, x, y)
 	for index, task in ipairs(stop.tasks) do
 		local entry = byID[task.questID]
 		if not entry then
-			entry = { task = task, here = {}, distance = {}, order = index, nearest = math.huge }
+			entry = { task = task, here = {}, left = {}, distance = {}, order = index, nearest = math.huge }
 			byID[task.questID] = entry
 			quests[#quests + 1] = entry
 		end
@@ -112,7 +120,11 @@ function routes.QuestsAt(stop, x, y)
 		elseif task.objective then
 			entry.here[task.objective] = true
 		end
-		local yards = routes.IsTaskLeft(task) and routes.TaskDistance(task, x, y)
+		local left = routes.IsTaskLeft(task)
+		if left and task.objective then
+			entry.left[task.objective] = true
+		end
+		local yards = left and routes.TaskDistance(task, x, y)
 		if yards then
 			if task.objective then
 				entry.distance[task.objective] = yards
@@ -212,7 +224,7 @@ end
 	Calls back with each line describing the stop's quests: kind ("title", "objective", "name" or "more"),
 	text, r, g, b, then the count on the right, if any, and on a quest's title its quest ID, which the
 	Quest Arrow's item buttons go by (Routes-Arrow-Items.lua). Under each quest, only what's to do at the stop: its
-	objectives there not yet done, each with its count, "4 / 12", as the quest log writes it. In a party,
+	objectives there still to do (routes.IsTaskLeft, so a done one the party needs too), each with its count, "4 / 12", as the quest log writes it. In a party,
 	with Show Party Objectives on (routes.ShowsParty), who still needs each objective is listed under it with their own count, the player first, the rest by
 	name, each in their class color; the objective has no count of its own then. Where it's only turned in
 	there, the quest is one line, "Turn in [2] Wayward Weapons". At most maxQuests quests, then a count of
@@ -233,7 +245,7 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 		-- Its objectives here, nearest first, else in the quest log's order
 		local toDo, logOrder = {}, {}
 		for index, objective in ipairs(routes.QuestObjectives(entry)) do
-			if entry.here[objective] and not objective.Completed then
+			if entry.left[objective] then
 				toDo[#toDo + 1] = objective
 				logOrder[objective] = index
 			end

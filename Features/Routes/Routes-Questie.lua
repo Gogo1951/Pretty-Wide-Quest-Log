@@ -195,7 +195,8 @@ routes.HasSpawns = HasSpawns
 
 --[[
 	What the route depends on, as text: each quest's state, whether it's in an instance and whether its
-	timer is running, each objective's being done and having spawns, the party's quests' progress
+	timer is running, each objective's being done and having spawns, and of those done whether the party
+	still needs it (routes.PartyNeeds), the party's quests' progress
 	(routes.PartyProgress), the ignored objectives and party members, the members in another zone, Show Future Turn-Ins, the player's zone and whether they're a ghost. The route is
 	planned again when this changes. Nil until Questie is ready
 ]]
@@ -208,8 +209,13 @@ function routes.Signature()
 	for questID, quest in pairs(QuestLog()) do
 		if type(quest) == "table" then
 			local bits = {}
+			local needs = routes.PartyNeeds(questID)
 			ForEachObjective(quest, function(key, objective)
-				bits[#bits + 1] = key .. (objective.Completed and "+" or "-") .. (HasSpawns(objective) and "s" or "")
+				local helps = needs and objective.Completed and objective.Index and needs[objective.Index]
+				bits[#bits + 1] = key
+					.. (objective.Completed and "+" or "-")
+					.. (HasSpawns(objective) and "s" or "")
+					.. (helps and "h" or "")
 			end)
 			table.sort(bits)
 			parts[#parts + 1] = tostring(questID)

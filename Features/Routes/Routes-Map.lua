@@ -115,9 +115,16 @@ local function IsUntrackedTask(task)
 	return task.untracked or (task.key ~= nil and routes.skipped[task.key] ~= nil)
 end
 
--- A marker whose every objective the route won't take, a dungeon's or one ignored: a red ring
+-- A marker whose every objective the route won't take, a dungeon's or one ignored
 local function IsUntracked(stop)
 	return not stop.corpse and IsEveryTask(stop, IsUntrackedTask)
+end
+
+-- Not a dungeon or raid quest's: what the route won't take there is only ignored, for the gray ring over the red
+local function IsUntrackedOnlyIgnored(stop)
+	return IsEveryTask(stop, function(task)
+		return not task.untracked
+	end)
 end
 
 --[[
@@ -167,7 +174,7 @@ local function OnStopEnter(pin)
 	if rightClick then
 		hints[#hints + 1] = { L["ROUTES_CLICK_RIGHT"], rightClick }
 	end
-	hints[#hints + 1] = { L["ROUTES_CLICK_MIDDLE"], L["ROUTES_MIDDLE_CLICK_RESET"] }
+	hints[#hints + 1] = { L["ROUTES_CLICK_MIDDLE"], L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] }
 	routes.AddClickHints(GameTooltip, hints)
 	GameTooltip:Show()
 end
@@ -189,7 +196,7 @@ local function OnStopMouseUp(pin, button)
 		end
 	elseif button == "MiddleButton" then
 		OnStopLeave()
-		routes.ResetObjectives()
+		routes.ResetZone()
 	end
 end
 
@@ -266,12 +273,12 @@ local function AddStopPin(map, stop, position, textures, dim)
 	local task = stop.tasks[1]
 	pin.Disc:SetVertexColor(routes.TaskColor(task))
 	--[[
-		A red ring, to stand out, for one the route won't take: a dungeon or raid quest's, or one ignored. A
-		white one for a party member's, a quest the player doesn't have; else the disc's black ring
+		A ring for one the route won't take: red, to stand out, for a dungeon or raid quest's, light gray for
+		one ignored. A white one for a party member's, a quest the player doesn't have; else the disc's black ring
 	]]
 	local ringColor
 	if IsUntracked(stop) then
-		ringColor = "ROUTE_ALERT_RING"
+		ringColor = IsUntrackedOnlyIgnored(stop) and "ROUTE_IGNORED_RING" or "ROUTE_ALERT_RING"
 	elseif IsPartyStop(stop) then
 		ringColor = "ROUTE_PARTY_RING"
 	end
@@ -463,8 +470,12 @@ function providerMixin:RefreshAllData()
 			marker = byKey[key][1]
 			position = MapPosition(mapID, marker.x, marker.y, marker.instance)
 		end
-		-- Dim on the route's zone only while the route could take it; one it won't has its ring instead
-		AddStopPin(map, marker, position, textures, onRoute and not IsUntracked(marker))
+		--[[
+			Dim on the route's zone only while the route could take it; one it won't has its ring instead.
+			An escort to pick up later stays at full strength, its green the point of it
+		]]
+		local escort = marker.tasks[1].kind == "pickUp" and marker.tasks[1].escort
+		AddStopPin(map, marker, position, textures, onRoute and not IsUntracked(marker) and not escort)
 	end
 end
 

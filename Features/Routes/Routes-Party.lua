@@ -146,12 +146,17 @@ end
 
 --[[
 	What the sharing members have of a quest, by objective: how many each needs, the fewest any of them
-	has of it, and who still needs it
+	has of it, and who still needs it. except, a short name, is left out: the player, for their own quest
 ]]
-local function GatherProgress(questID, players, visibility)
+local function GatherProgress(questID, players, visibility, except)
 	local progress, sharing = {}, false
 	for name, objectives in pairs(players) do
-		if type(name) == "string" and type(objectives) == "table" and IsSharing(name, questID, visibility) then
+		if
+			type(name) == "string"
+			and type(objectives) == "table"
+			and ShortName(name) ~= except
+			and IsSharing(name, questID, visibility)
+		then
 			sharing = true
 			for index, remote in pairs(objectives) do
 				if type(index) == "number" and type(remote) == "table" then
@@ -311,6 +316,43 @@ function routes.PartyProgress(ownLog)
 	return found
 end
 
+--[[
+	Which objectives of one of the player's own quests someone in the party still needs, by the objective's
+	place in the quest: a set, or nothing for none. Members count as for the party's quests (online, in the
+	zone, sharing it, not switched off), and only with Party Objectives on in a party. The route keeps an
+	objective the player has done while anyone here still needs it, so they help rather than run off to
+	turn in (Routes-Nodes.lua)
+]]
+function routes.PartyNeeds(questID)
+	local logs = RemoteLogs()
+	local players = logs and logs[questID]
+	if type(players) ~= "table" then
+		return nil
+	end
+	local self = routes.UnitFullName("player")
+	local progress =
+		GatherProgress(questID, players, ns.ImportQuestieModule("CommsVisibility"), self and ShortName(self))
+	local needs
+	for index, entry in pairs(progress or {}) do
+		if #entry.needed > 0 then
+			needs = needs or {}
+			needs[index] = true
+		end
+	end
+	return needs
+end
+
+--[[
+	Whether the party still needs an objective of the player's own quest that the player has done: a
+	helping node (Routes-Nodes.lua) is left while this holds. Asked every second for each such task, which
+	is cheap: a walk of at most four members' shares
+]]
+function routes.IsHelpNeeded(task)
+	local objective = task.objective
+	local needs = objective and objective.Index and routes.PartyNeeds(task.questID)
+	return needs ~= nil and needs[objective.Index] == true
+end
+
 -- The key Questie's party map icons are told apart by: the quest, and the objective's place in it
 function routes.PartyObjectiveKey(questID, index)
 	return "party:" .. tostring(questID) .. ":" .. tostring(index)
@@ -353,6 +395,41 @@ function routes.PartyMembers(includeOffline)
 		return a.name < b.name
 	end)
 	return members
+end
+
+--[[
+	Everyone else in the group, offline ones too, as a set of short names (Ambiguate's), for telling who left.
+	Nothing while any member's name is still unknown, as just after a roster change, so nobody reads as gone
+]]
+function routes.GroupNames()
+	local names = {}
+	local raid = IsInRaid()
+	for i = 1, raid and 40 or 4 do
+		local unit = (raid and "raid" or "party") .. i
+		if UnitExists(unit) and not UnitIsUnit(unit, "player") then
+			local name = routes.UnitFullName(unit)
+			if not name or name == UNKNOWNOBJECT then
+				return nil
+			end
+			names[ShortName(name)] = true
+		end
+	end
+	return names
+end
+
+-- The members whose shared logs have a quest, as short names: whom ignoring one of its party objectives is for
+function routes.PartyQuestHolders(questID)
+	local holders = {}
+	local logs = RemoteLogs()
+	local players = logs and logs[questID]
+	if type(players) == "table" then
+		for name in pairs(players) do
+			if type(name) == "string" then
+				holders[#holders + 1] = ShortName(name)
+			end
+		end
+	end
+	return holders
 end
 
 --[[

@@ -213,7 +213,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Flecha de misiones"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"Una flecha en pantalla que apunta al siguiente punto de ruta, con las misiones y objetivos que hacer ahí. Pasa el mouse por encima para ver un menú donde puedes ignorar los objetivos uno por uno y ver lo que ignoraste. Haz clic central en ella para vaciar la lista de ignorados."
+	"Una flecha en pantalla que apunta al siguiente punto de ruta, con las misiones y objetivos que hacer ahí. Pasa el mouse por encima para ver un menú donde puedes ignorar los objetivos uno por uno y ver lo que ignoraste. Haz clic central en ella para restablecer la zona y recuperar lo que ignoraste ahí."
 L["QUEST_ARROW_HEADER"] = "Flecha"
 L["QUEST_ARROW_DESCRIPTION"] = "Dónde se ubica la Flecha de misiones y qué tamaño tiene."
 L["ARROW_SIZE"] = "Tamaño de la flecha"
@@ -254,6 +254,30 @@ L["SHOW_LOCAL_QUESTS"] = "Mostrar misiones disponibles cercanas como objetivos"
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"Pone en la ruta las misiones que puedes aceptar, cuando Questie las muestra como disponibles y un PNJ u objeto que las inicia está a %s o menos, marcadas con el signo de exclamación de Questie. Se dejan fuera las misiones que inicia un objeto que se obtiene como botín y las de calabozo y banda."
+L["LOCAL_QUESTS_HEADER"] = "Misiones disponibles cercanas"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"A qué misiones cercanas te lleva la flecha de misión. Una que se salta puede seguir apareciendo en el mapa del mundo, sin línea de ruta hasta ella."
+L["LOCAL_QUEST_RANGE"] = "Radio de búsqueda"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"A cuántos metros de ti puede estar quien da la misión para que cuente. Por debajo de 400, puedes pasar junto a uno entre dos planificaciones de la ruta sin que aparezca."
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "Qué cuenta"
+L["LOCAL_ESCORT_QUESTS"] = "Misiones de escolta"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Misiones en las que proteges a un PNJ en el camino; toman tiempo y a menudo un grupo. Su marcador en el mapa es verde."
+L["LOCAL_GROUP_QUESTS"] = "Misiones de grupo y élite"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Misiones que Questie marca como élite, pensadas para un grupo."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Objetivos en otra zona"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Misiones con un objetivo, o la entrega, solo fuera de tu zona, como una que te manda al siguiente pueblo."
+L["LOCAL_QUEST_LEVEL"] = "Nivel mínimo de misión"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Las misiones por debajo de este color de dificultad se quedan fuera. Ajuste de Questie mantiene las misiones que Questie muestra en su mapa."
+L["LOCAL_CHOICE_ROUTE"] = "En la ruta"
+L["LOCAL_CHOICE_MAP"] = "Solo mapa"
+L["LOCAL_CHOICE_OFF"] = "Fuera"
+L["LOCAL_LEVEL_QUESTIE"] = "Ajuste de Questie"
+L["LOCAL_LEVEL_GREEN"] = "Verde o superior"
+L["LOCAL_LEVEL_YELLOW"] = "Amarillo o superior"
 L["QUEST_ARROW_HIDING_HEADER"] = "Ocultar"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Cuándo se aparta la Flecha de misiones."
 L["HIDE_IN_RAIDS"] = "Ocultar en grupos de banda"
@@ -371,6 +395,9 @@ L["ROUTES_TURN_IN_QUEST"] = "Entregar %s"
 L["ROUTES_PICK_UP"] = "Aceptar misión"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Aceptar %s"
+L["ROUTES_OFF_ROUTE_ESCORT"] = "Misión de escolta, fuera de la ruta"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Misión de grupo, fuera de la ruta"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Lleva a otra zona, fuera de la ruta"
 L["ROUTES_CORPSE"] = "Regresa corriendo a tu cadáver"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Busca"
@@ -387,17 +414,14 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorar este punto de ruta"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorar este objetivo"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Volver a la ruta"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "Restablecer todas las rutas"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Vaciar la lista de ignorados"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Restablecer esta zona"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "Ignorando %s hasta que se vacíe la lista de ignorados."
-L["ROUTES_RESET"] =
-	"Todas las rutas restablecidas: los objetivos y miembros del grupo ignorados vuelven a estar en la ruta."
-L["ROUTES_IGNORE_CLEARED"] = "Lista de ignorados vaciada: los objetivos ignorados vuelven a estar en la ruta."
-L["ROUTES_GROUP_JOINED_CLEARED"] =
-	"Te uniste a un grupo: los objetivos y miembros del grupo ignorados vuelven a estar en la ruta."
+L["ROUTES_SKIPPED"] = "Ignorando %s hasta que restablezcas la zona."
+L["ROUTES_ZONE_RESET"] = "Zona restablecida: los objetivos ignorados aquí vuelven a estar en la ruta."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
-	"Dejaste el grupo: los objetivos y miembros del grupo ignorados vuelven a estar en la ruta."
+	"Dejaste el grupo: los objetivos de grupo y los miembros ignorados vuelven a estar en la ruta."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s dejó el grupo: sus objetivos ignorados vuelven a estar en la ruta."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Ignorar"
 L["ROUTES_MENU_SECTION_SHOWN"] = "Qué se muestra"
@@ -423,7 +447,9 @@ L["ROUTES_MENU_OFFLINE"] = "Desconectado"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objetivos de %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "Ignorando %s de %s hasta que se vacíe la lista de ignorados."
+L["ROUTES_IGNORED"] = "Ignorando %s de %s hasta que restablezcas la zona."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] = "Ignorando %s de %s hasta que los miembros del grupo que la tienen dejen el grupo."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s vuelve a estar en la ruta."
 -- TRANSLATORS: %s is a party member's name

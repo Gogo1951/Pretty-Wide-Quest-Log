@@ -55,8 +55,10 @@ ns.PALETTE = {
 	ARROW_WRONG_WAY = "FF3333", -- Red: The Quest Arrow Pointing Behind
 	ARROW_GHOST_TEXT = "000000", -- Black: The Quest Arrow's Words While a Ghost, Read on the Pale Spirit World
 	ROUTE_LINE = "333333", -- Dark Gray: The Route's Line, Plain on the Yellow Maps
-	ROUTE_ALERT_RING = "FF3333", -- Red: A Marker's Ring for a Dungeon Objective, or One Ignored
+	ROUTE_ALERT_RING = "FF3333", -- Red: A Marker's Ring for a Dungeon Objective
+	ROUTE_IGNORED_RING = "CCCCCC", -- Light Gray: A Marker's Ring for an Ignored Objective
 	ROUTE_PARTY_RING = "FFFFFF", -- White: A Marker's Ring for a Party Member's Objective
+	ROUTE_ESCORT = "33CC33", -- Green: An Escort Quest's Pick-Up Marker, One to Leave for Later
 	QUEST_TIMER_LOW = "FF3333", -- Red: A Timed Quest's Last Minute on the Quest Arrow
 	PARCHMENT_GAIN = "1D6B1D", -- Deep Green: A Skin's Experience Share, Read on the Parchment
 }

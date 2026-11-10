@@ -205,7 +205,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "任務箭頭"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"畫面上的一個箭頭，指向路線上的下一個路徑點，並列出要在那裡完成的任務和目標。將滑鼠游標停在它上面會顯示一個選單，你可以在其中逐一忽略目標，並查看已忽略的項目。中鍵點擊它可清空忽略清單。"
+	"畫面上的一個箭頭，指向路線上的下一個路徑點，並列出要在那裡完成的任務和目標。將滑鼠游標停在它上面會顯示一個選單，你可以在其中逐一忽略目標，並查看已忽略的項目。中鍵點擊它可重設區域，恢復你在那裡忽略的項目。"
 L["QUEST_ARROW_HEADER"] = "箭頭"
 L["QUEST_ARROW_DESCRIPTION"] = "任務箭頭的位置和大小。"
 L["ARROW_SIZE"] = "箭頭大小"
@@ -246,6 +246,30 @@ L["SHOW_LOCAL_QUESTS"] = "將附近可接任務顯示為目標"
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"把你能接的任務加入路線：Questie 顯示為可接，且發布任務的 NPC 或物件在 %s以內，並以 Questie 的驚嘆號標出。由掉落物品開始的任務以及地城和團隊副本任務不會加入。"
+L["LOCAL_QUESTS_HEADER"] = "附近可接任務"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"任務箭頭會帶你去哪些附近的任務。被跳過的任務仍可顯示在世界地圖上，但沒有路線連到那裡。"
+L["LOCAL_QUEST_RANGE"] = "搜尋範圍"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"發布任務者離你多少碼以內才算數。低於 400 時，在兩次路線規劃之間路過的任務發布者可能會被漏掉。"
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "計入哪些"
+L["LOCAL_ESCORT_QUESTS"] = "護送任務"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"需要一路保護 NPC 的任務，耗時且常需隊伍。它們在地圖上的標記為綠色。"
+L["LOCAL_GROUP_QUESTS"] = "團隊和精英任務"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Questie 標為精英、適合組隊的任務。"
+L["LOCAL_OTHER_ZONE_QUESTS"] = "目標在其他區域"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"有目標或交任務地點只在你所在區域之外的任務，例如讓你前往下一個城鎮的任務。"
+L["LOCAL_QUEST_LEVEL"] = "最低任務等級"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"低於此難度顏色的任務不計入。「Questie 設定」保留 Questie 在其地圖上顯示的任務。"
+L["LOCAL_CHOICE_ROUTE"] = "加入路線"
+L["LOCAL_CHOICE_MAP"] = "僅地圖"
+L["LOCAL_CHOICE_OFF"] = "不計入"
+L["LOCAL_LEVEL_QUESTIE"] = "Questie 設定"
+L["LOCAL_LEVEL_GREEN"] = "綠色及以上"
+L["LOCAL_LEVEL_YELLOW"] = "黃色及以上"
 L["QUEST_ARROW_HIDING_HEADER"] = "隱藏"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "任務箭頭何時自動隱藏。"
 L["HIDE_IN_RAIDS"] = "在團隊中隱藏"
@@ -362,6 +386,9 @@ L["ROUTES_TURN_IN_QUEST"] = "回報 %s"
 L["ROUTES_PICK_UP"] = "接受任務"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "接受 %s"
+L["ROUTES_OFF_ROUTE_ESCORT"] = "護送任務，不在路線上"
+L["ROUTES_OFF_ROUTE_GROUP"] = "組隊任務，不在路線上"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "通往其他區域，不在路線上"
 L["ROUTES_CORPSE"] = "跑回你的屍體處"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "尋找"
@@ -378,14 +405,13 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "忽略此路徑點"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "忽略此目標"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "放回路線"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "重設所有路線"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "清空忽略清單"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "重設此區域"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "忽略 %s，直到清空忽略清單。"
-L["ROUTES_RESET"] = "所有路線已重設：已忽略的目標和隊友已回到路線上。"
-L["ROUTES_IGNORE_CLEARED"] = "忽略清單已清空：已忽略的目標已回到路線上。"
-L["ROUTES_GROUP_JOINED_CLEARED"] = "已加入隊伍：已忽略的目標和隊友已回到路線上。"
-L["ROUTES_GROUP_LEFT_CLEARED"] = "已離開隊伍：已忽略的目標和隊友已回到路線上。"
+L["ROUTES_SKIPPED"] = "忽略 %s，直到重設區域。"
+L["ROUTES_ZONE_RESET"] = "區域已重設：在此忽略的目標已回到路線上。"
+L["ROUTES_GROUP_LEFT_CLEARED"] = "已離開隊伍：已忽略的隊伍目標和隊友已回到路線上。"
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s 已離開隊伍：為其忽略的目標已回到路線上。"
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "忽略"
 L["ROUTES_MENU_SECTION_SHOWN"] = "顯示內容"
@@ -411,7 +437,9 @@ L["ROUTES_MENU_OFFLINE"] = "離線"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "%s 的目標"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "忽略 %s（%s），直到清空忽略清單。"
+L["ROUTES_IGNORED"] = "忽略 %s（%s），直到重設區域。"
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] = "忽略 %s（%s），直到有該任務的隊友離開隊伍。"
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s 已回到路線上。"
 -- TRANSLATORS: %s is a party member's name

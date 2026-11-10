@@ -17,6 +17,13 @@ local L = ns.L
 ]]
 local ROW_INDENT = " "
 
+-- Why a quest to pick up is on the map but not the route, by its task's offRoute (Routes-Pick-Ups.lua)
+local OFF_ROUTE_REASONS = {
+	escort = "ROUTES_OFF_ROUTE_ESCORT",
+	group = "ROUTES_OFF_ROUTE_GROUP",
+	elsewhere = "ROUTES_OFF_ROUTE_ELSEWHERE",
+}
+
 -- A name in its class color, where the client says the class
 local function PlayerName(unit, name)
 	local red, green, blue = routes.ClassColor(unit)
@@ -113,12 +120,17 @@ function routes.AddStopTooltip(tooltip, stop)
 		for _, objective in ipairs(routes.QuestObjectives(entry)) do
 			if entry.here[objective] then
 				objectives[#objectives + 1] = objective
-				anyLeft = anyLeft or not objective.Completed
+				anyLeft = anyLeft or entry.left[objective] == true
 			end
 		end
 		if entry.pickUp then
 			local title, red, green, blue = routes.QuestTitle(entry.task)
 			tooltip:AddLine(string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue)
+			-- Why a map-only pick-up isn't on the route (Routes-Pick-Ups.lua), indented a space as objectives are
+			local reason = OFF_ROUTE_REASONS[entry.task.offRoute or ""]
+			if reason then
+				tooltip:AddLine(ROW_INDENT .. L[reason], ns.GetColorRGB("HELP"))
+			end
 		elseif entry.turnIn and not anyLeft then
 			local title = routes.QuestTitle(entry.task)
 			tooltip:AddLine(string.format(L["ROUTES_TURN_IN_QUEST"], title), ns.GetColorRGB("TITLE"))

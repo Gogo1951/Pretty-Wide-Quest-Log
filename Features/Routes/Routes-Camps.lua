@@ -8,7 +8,8 @@ local _, ns = ...
 	scatter of icons.
 
 	A camp is a blob (Routes-Blobs.lua) of an objective's spawns, gathered across the whole continent, and
-	every done quest's turn-in is a camp too, where its NPC or object stands. Each is shaped as a stop is
+	every done quest's turn-in is a camp too, where its NPC or object stands, as is each quest to pick up nearby
+	that the Local Available Quests settings put on the map only (routes.mapOnlyPickUps, Routes-Pick-Ups.lua). Each is shaped as a stop is
 	(Routes-Stops.lua), with the one task, so the map draws and lists it as it does a waypoint. Worked out
 	with each plan (Routes-Core.lua), from blobs cached by objective until Questie changes its spawn list
 ]]
@@ -92,7 +93,7 @@ local function ObjectiveTask(key, questID, quest, objective, party)
 end
 
 --[[
-	Every camp: each objective not yet done of the player's quests, a dungeon or raid quest's at the
+	Every camp: each objective not yet done of the player's quests (or done, while the party needs it), a dungeon or raid quest's at the
 	instance's entrance and marked untracked, as the route never goes in; each done quest's turn-in; and
 	with the partyQuests setting, the objectives of the party's quests the player doesn't have, from members
 	not left out. An ignored objective still has its camps: ignoring leaves it off the route, not off the map
@@ -107,20 +108,30 @@ function routes.BuildCamps(yield)
 		local quest = log[questID]
 		if type(quest) == "table" then
 			local state = QuestState(quest)
-			if state == 0 then
+			-- Objectives the player has done that the party still needs are camps too, as on the route
+			local needs = state ~= -1 and routes.PartyNeeds(questID) or nil
+			if state == 0 or needs then
 				-- A dungeon or raid quest's objectives are inside the instance: camps at its entrance, untracked
 				local untracked = IsInstanceQuest(questID) or nil
 				ForEachObjective(quest, function(objectiveKey, objective)
-					if type(objective) == "table" and not objective.Completed and HasSpawns(objective) then
+					local helps = type(objective) == "table"
+						and objective.Completed
+						and needs
+						and objective.Index
+						and needs[objective.Index]
+						and quest.Objectives[objective.Index] == objective
+					if type(objective) == "table" and (not objective.Completed or helps) and HasSpawns(objective) then
 						local blobs =
 							Cached(objective, routes.CountEntries(objective.spawnList), yield, GatherObjective)
 						local key = questID .. ":" .. objectiveKey
 						local task = ObjectiveTask(key, questID, quest, objective)
 						task.untracked = untracked
+						task.helping = helps == true or nil
 						AddCamps(camps, blobs, task)
 					end
 				end)
-			elseif state == 1 and routes.IsOnQuest(questID) then
+			end
+			if state == 1 and routes.IsOnQuest(questID) then
 				local blobs = Cached(quest, 1, yield, GatherTurnIn)
 				AddCamps(camps, blobs, {
 					key = questID .. ":turnIn",
@@ -145,6 +156,9 @@ function routes.BuildCamps(yield)
 			end
 		end
 		yield()
+	end
+	for _, pickUp in ipairs(routes.mapOnlyPickUps) do
+		AddCamps(camps, { [pickUp.instance] = pickUp.blobs }, pickUp.task)
 	end
 	return camps
 end

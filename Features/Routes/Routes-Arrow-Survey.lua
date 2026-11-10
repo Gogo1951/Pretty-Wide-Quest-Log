@@ -9,7 +9,10 @@ local _, ns = ...
 local routes = ns.routes
 local L = ns.L
 
+local PASSING_STEP = 50 -- Yards less reach for each objective listed ahead of one under "While You're Here"
+
 local hereKeys = {} -- The tasks whose areas the player is in, by key, held until routes.AREA_GRACE further
+local passingKeys = {} -- The tasks listed under "While You're Here" last look, by key
 local moreCache = {} -- MoreAhead's answers, for the plan they were worked out for (moreCache.stops)
 
 -- Squared yards from a point to the nearest point on the line from a to b
@@ -88,16 +91,71 @@ end
 	Whether the player is near a quest to pick up (Routes-Pick-Ups.lua): within routes.AREA_REACH of its
 	giver, as near as counts as being in an objective's area, with routes.AREA_GRACE more once they were.
 	A giver is one place, which routes.InArea never counts, so without this one beside an area the player
-	is working would show only as the Next Objective
+	is working would show only as the Next Objective. Returns the yards to it when near, else nothing
 ]]
 local function NearPickUp(task, x, y, wasNear)
 	local point = task.kind == "pickUp" and routes.TaskPoint(task)
 	if not point then
-		return false
+		return nil
 	end
 	local reach = routes.AREA_REACH + (wasNear and routes.AREA_GRACE or 0)
 	local dx, dy = point.x - x, point.y - y
-	return dx * dx + dy * dy <= reach * reach
+	local squared = dx * dx + dy * dy
+	return squared <= reach * reach and math.sqrt(squared) or nil
+end
+
+-- Yards from the player to an objective's nearest spawn, as routes.InArea measures
+local function NearestSpawnYards(task, x, y)
+	local spawns = task.spawns
+	local xs, ys = spawns.x, spawns.y
+	local nearest
+	for i = 1, spawns.count do
+		local dx, dy = xs[i] - x, ys[i] - y
+		local squared = dx * dx + dy * dy
+		if not nearest or squared < nearest then
+			nearest = squared
+		end
+	end
+	return math.sqrt(nearest)
+end
+
+--[[
+	Which of the tasks on the way "While You're Here" lists, so a crowd of them doesn't run the list long.
+	Nearest first, each must be within routes.AREA_REACH, less PASSING_STEP for every one listed ahead of
+	it: the first within 200 yards, the second 150, the third 100, the fourth 50, no more. The more there
+	are, the nearer they must be. One listed last look gets routes.AREA_GRACE more, so two about as far
+	don't swap in and out. Returns the listed ones, in the order given (the route's)
+]]
+local function ListPassing(onTheWay, yards, wasListed)
+	local nearestFirst = {}
+	for _, task in ipairs(onTheWay) do
+		nearestFirst[#nearestFirst + 1] = task
+	end
+	table.sort(nearestFirst, function(a, b)
+		if yards[a.key] ~= yards[b.key] then
+			return yards[a.key] < yards[b.key]
+		end
+		return a.key < b.key
+	end)
+	local count = 0
+	for _, task in ipairs(nearestFirst) do
+		local reach = routes.AREA_REACH - PASSING_STEP * count
+		if reach <= 0 then
+			break
+		end
+		local key = task.key
+		if yards[key] <= reach + (wasListed[key] and routes.AREA_GRACE or 0) then
+			passingKeys[key] = true
+			count = count + 1
+		end
+	end
+	local listed = {}
+	for _, task in ipairs(onTheWay) do
+		if passingKeys[task.key] then
+			listed[#listed + 1] = task
+		end
+	end
+	return listed
 end
 
 local function View(stop, tasks)
@@ -117,12 +175,12 @@ end
 	worked (routes.engaged), or on the way, planned for a later waypoint. The next destination is the first
 	stop with a task left that isn't work. Dead, there's only the corpse. Returns here and passing (each a
 	stop's worth of tasks, or nil), the note under "Current Objective Area", the destination and the waypoint
-	after it
+	after it. Passing lists only the nearest of what's on the way (ListPassing)
 ]]
 local function Survey(x, y)
 	local stops = routes.stops
-	local wasHere = hereKeys
-	hereKeys = {}
+	local wasHere, wasListed = hereKeys, passingKeys
+	hereKeys, passingKeys = {}, {}
 	local sentTo
 	for index, stop in ipairs(stops) do
 		for _, task in ipairs(stop.tasks) do
@@ -135,7 +193,7 @@ local function Survey(x, y)
 			break
 		end
 	end
-	local work, onTheWay, workKeys, nearPickUps = {}, {}, {}, {}
+	local work, onTheWay, workKeys, nearPickUps, yards = {}, {}, {}, {}, {}
 	if not stops[1].corpse then
 		local engaged = routes.engaged or {}
 		for index, stop in ipairs(stops) do
@@ -149,10 +207,15 @@ local function Survey(x, y)
 							workKeys[key] = true
 						else
 							onTheWay[#onTheWay + 1] = task
+							yards[key] = NearestSpawnYards(task, x, y)
 						end
-					elseif NearPickUp(task, x, y, wasHere[key]) then
-						hereKeys[key] = true
-						nearPickUps[#nearPickUps + 1] = { task = task, index = index }
+					else
+						local giverYards = NearPickUp(task, x, y, wasHere[key])
+						if giverYards then
+							hereKeys[key] = true
+							yards[key] = giverYards
+							nearPickUps[#nearPickUps + 1] = { task = task, index = index }
+						end
 					end
 				end
 			end
@@ -189,7 +252,8 @@ local function Survey(x, y)
 			onTheWay[#onTheWay + 1] = near.task
 		end
 	end
-	local passing = #onTheWay > 0 and { tasks = onTheWay, instance = instance } or nil
+	local listed = ListPassing(onTheWay, yards, wasListed)
+	local passing = #listed > 0 and { tasks = listed, instance = instance } or nil
 	return here, passing, areaNote, destination, afterDestination
 end
 

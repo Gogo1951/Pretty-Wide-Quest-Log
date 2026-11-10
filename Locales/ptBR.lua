@@ -212,7 +212,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Seta de missões"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"Uma seta na tela apontando para o próximo ponto de passagem da rota, com as missões e objetivos a fazer lá. Passe o mouse sobre ela para ver um menu onde você pode ignorar um objetivo por vez e ver o que ignorou. Clique nela com o botão do meio para limpar a lista de ignorados."
+	"Uma seta na tela apontando para o próximo ponto de passagem da rota, com as missões e objetivos a fazer lá. Passe o mouse sobre ela para ver um menu onde você pode ignorar um objetivo por vez e ver o que ignorou. Clique nela com o botão do meio para redefinir a zona e trazer de volta o que você ignorou lá."
 L["QUEST_ARROW_HEADER"] = "Seta"
 L["QUEST_ARROW_DESCRIPTION"] = "Onde a Seta de missões fica e qual é o tamanho dela."
 L["ARROW_SIZE"] = "Tamanho da seta"
@@ -253,6 +253,30 @@ L["SHOW_LOCAL_QUESTS"] = "Mostrar missões disponíveis próximas como objetivos
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"Coloca na rota as missões que você pode pegar, quando o Questie as mostra como disponíveis e um PNJ ou objeto que as inicia está a até %s de você, marcadas com o ponto de exclamação do Questie. Missões iniciadas por um item de saque e missões de masmorra e raide ficam de fora."
+L["LOCAL_QUESTS_HEADER"] = "Missões disponíveis próximas"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"Para quais missões próximas a seta de missão leva você. Uma que ela pula ainda pode aparecer no mapa-múndi, sem linha de rota até ela."
+L["LOCAL_QUEST_RANGE"] = "Raio de busca"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"A quantos metros de você quem dá a missão pode estar e ainda contar. Abaixo de 400, alguém por quem você passa entre dois cálculos da rota pode ficar de fora."
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "O que conta"
+L["LOCAL_ESCORT_QUESTS"] = "Missões de escolta"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Missões em que você protege um PNJ pelo caminho; levam tempo e muitas vezes um grupo. O marcador delas no mapa é verde."
+L["LOCAL_GROUP_QUESTS"] = "Missões de grupo e elite"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Missões que o Questie marca como elite, feitas para um grupo."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Objetivos em outra zona"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Missões com um objetivo, ou a entrega, só fora da sua zona, como uma que manda você para a próxima cidade."
+L["LOCAL_QUEST_LEVEL"] = "Nível mínimo de missão"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Missões abaixo desta cor de dificuldade ficam de fora. Configuração do Questie mantém as missões que o Questie mostra no mapa dele."
+L["LOCAL_CHOICE_ROUTE"] = "Na rota"
+L["LOCAL_CHOICE_MAP"] = "Só no mapa"
+L["LOCAL_CHOICE_OFF"] = "De fora"
+L["LOCAL_LEVEL_QUESTIE"] = "Configuração do Questie"
+L["LOCAL_LEVEL_GREEN"] = "Verde e acima"
+L["LOCAL_LEVEL_YELLOW"] = "Amarelo e acima"
 L["QUEST_ARROW_HIDING_HEADER"] = "Ocultar"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Quando a Seta de missões sai do caminho."
 L["HIDE_IN_RAIDS"] = "Ocultar em grupos de raide"
@@ -370,6 +394,9 @@ L["ROUTES_TURN_IN_QUEST"] = "Entregar %s"
 L["ROUTES_PICK_UP"] = "Pegar missão"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Pegar %s"
+L["ROUTES_OFF_ROUTE_ESCORT"] = "Missão de escolta, fora da rota"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Missão de grupo, fora da rota"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Leva a outra zona, fora da rota"
 L["ROUTES_CORPSE"] = "Volte até o seu corpo"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Procure"
@@ -386,15 +413,13 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorar este ponto de passagem"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorar este objetivo"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "De volta à rota"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "Redefinir todas as rotas"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Limpar lista de ignorados"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Redefinir esta zona"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "Ignorando %s até a lista de ignorados ser limpa."
-L["ROUTES_RESET"] = "Todas as rotas redefinidas: os objetivos e membros do grupo ignorados voltaram para a rota."
-L["ROUTES_IGNORE_CLEARED"] = "Lista de ignorados limpa: os objetivos ignorados voltaram para a rota."
-L["ROUTES_GROUP_JOINED_CLEARED"] =
-	"Você entrou em um grupo: os objetivos e membros do grupo ignorados voltaram para a rota."
-L["ROUTES_GROUP_LEFT_CLEARED"] = "Você saiu do grupo: os objetivos e membros do grupo ignorados voltaram para a rota."
+L["ROUTES_SKIPPED"] = "Ignorando %s até você redefinir a zona."
+L["ROUTES_ZONE_RESET"] = "Zona redefinida: os objetivos ignorados aqui voltaram para a rota."
+L["ROUTES_GROUP_LEFT_CLEARED"] = "Você saiu do grupo: os objetivos de grupo e membros ignorados voltaram para a rota."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s saiu do grupo: os objetivos ignorados correspondentes voltaram para a rota."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Ignorar"
 L["ROUTES_MENU_SECTION_SHOWN"] = "O que é mostrado"
@@ -420,7 +445,9 @@ L["ROUTES_MENU_OFFLINE"] = "Offline"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objetivos de %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "Ignorando %s de %s até a lista de ignorados ser limpa."
+L["ROUTES_IGNORED"] = "Ignorando %s de %s até você redefinir a zona."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] = "Ignorando %s de %s até os membros do grupo com essa missão saírem do grupo."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s voltou para a rota."
 -- TRANSLATORS: %s is a party member's name

@@ -26,11 +26,13 @@ local QUESTS_LISTED_TEXT = L["QUESTS_LISTED_DESCRIPTION"]:format(L["ROUTES_MORE_
 local SHOW_NEXT_TEXT =
 	L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"]:format(L["ROUTES_OBJECTIVE_AREA"], L["ROUTES_NEXT_OBJECTIVE"])
 
--- How near a quest giver must be, in the Quest Arrow's own words for a distance (Routes-Pick-Ups.lua)
+-- How near a quest giver must be, the Search Range, in the Quest Arrow's own words for a distance (Routes-Pick-Ups.lua)
 local function LocalQuestsToggle()
-	local toggle = Toggle("showLocalQuests", "SHOW_LOCAL_QUESTS", 29, ArrowHidden)
-	local range = ns.routes and ns.routes.LOCAL_QUEST_RANGE or 400
-	toggle.desc = L["SHOW_LOCAL_QUESTS_DESCRIPTION"]:format(L["ROUTES_YARDS"]:format(range))
+	local toggle = Toggle("showLocalQuests", "SHOW_LOCAL_QUESTS", 29.5, ArrowHidden)
+	toggle.desc = function()
+		local range = ns.routes and ns.routes.LocalQuestRange() or 400
+		return L["SHOW_LOCAL_QUESTS_DESCRIPTION"]:format(L["ROUTES_YARDS"]:format(range))
+	end
 	return toggle
 end
 
@@ -55,6 +57,67 @@ local function QuestsHidden()
 	return ArrowHidden() or not Settings().showQuests
 end
 
+local function LocalHidden()
+	return ArrowHidden() or not Settings().showLocalQuests
+end
+
+-- What a Local Available Quests choice does with a kind of quest (Routes-Pick-Ups.lua)
+local LOCAL_CHOICES = { route = "LOCAL_CHOICE_ROUTE", map = "LOCAL_CHOICE_MAP", off = "LOCAL_CHOICE_OFF" }
+local LOCAL_CHOICE_ORDER = { "route", "map", "off" }
+local LOCAL_LEVELS = { questie = "LOCAL_LEVEL_QUESTIE", green = "LOCAL_LEVEL_GREEN", yellow = "LOCAL_LEVEL_YELLOW" }
+local LOCAL_LEVEL_ORDER = { "questie", "green", "yellow" }
+
+local function Choices(names)
+	local values = {}
+	for value, nameKey in pairs(names) do
+		values[value] = L[nameKey]
+	end
+	return values
+end
+
+-- A row of the Local Available Quests section: its caption on the left, a dropdown of choices on the right
+local function LocalRow(args, key, nameKey, order, names, sorting)
+	local desc = L[nameKey .. "_DESCRIPTION"]
+	args[key .. "Space"] = ns.OptionsSpacer(order - 0.02, LocalHidden)
+	args[key .. "Label"] = ns.OptionsRowLabel(L[nameKey], order, nil, LocalHidden, desc)
+	args[key] = ns.OptionsRoutesControl(key, {
+		type = "select",
+		desc = desc,
+		values = function()
+			return Choices(names)
+		end,
+		sorting = sorting,
+	}, order + 0.01, LocalHidden)
+end
+
+-- The Local Available Quests section, between Under the Arrow and Hiding: which nearby quests count
+local function AddLocalQuestsSection(args)
+	args.spaceLocal0 = ns.OptionsSpacer(29, ArrowHidden)
+	args.headerLocal = ns.OptionsHeader(L["LOCAL_QUESTS_HEADER"], 29.1, ArrowHidden)
+	args.spaceLocal1 = ns.OptionsSpacer(29.2, ArrowHidden)
+	args.descLocal = ns.OptionsDesc(L["LOCAL_QUESTS_DESCRIPTION"], 29.3, ArrowHidden)
+	args.spaceLocal2 = ns.OptionsSpacer(29.4, ArrowHidden)
+	-- The same setting as the Quest Arrow menu's Local Available Quests
+	args.showLocalQuests = LocalQuestsToggle()
+	args.spaceLocalRange = ns.OptionsSpacer(29.55, LocalHidden)
+	args.localQuestRangeLabel =
+		ns.OptionsRowLabel(L["LOCAL_QUEST_RANGE"], 29.6, nil, LocalHidden, L["LOCAL_QUEST_RANGE_DESCRIPTION"])
+	args.localQuestRange = ns.OptionsRoutesControl("localQuestRange", {
+		type = "range",
+		desc = L["LOCAL_QUEST_RANGE_DESCRIPTION"],
+		min = 200,
+		max = 800,
+		step = 50,
+	}, 29.61, LocalHidden)
+	args.spaceLocalCounts = ns.OptionsSpacer(29.63, LocalHidden)
+	args.localCountsLabel =
+		ns.OptionsDesc(ns.GetColor("TITLE") .. L["LOCAL_QUESTS_WHAT_COUNTS"] .. "|r", 29.64, LocalHidden)
+	LocalRow(args, "localEscortQuests", "LOCAL_ESCORT_QUESTS", 29.7, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
+	LocalRow(args, "localGroupQuests", "LOCAL_GROUP_QUESTS", 29.75, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
+	LocalRow(args, "localOtherZoneQuests", "LOCAL_OTHER_ZONE_QUESTS", 29.8, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
+	LocalRow(args, "localQuestLevel", "LOCAL_QUEST_LEVEL", 29.85, LOCAL_LEVELS, LOCAL_LEVEL_ORDER)
+end
+
 -- What ignoring a waypoint from the Quest Arrow's menu prints, for the flavor's first sample quest's turn-in
 local function IgnoredPrintExample()
 	local quest = ns.SampleQuests()[1]
@@ -63,7 +126,7 @@ local function IgnoredPrintExample()
 end
 
 function ns.BuildQuestArrowOptions()
-	return {
+	local options = {
 		type = "group",
 		name = L["TAB_QUEST_ARROW"],
 		args = {
@@ -130,9 +193,6 @@ function ns.BuildQuestArrowOptions()
 			spaceUpcomingTurnIns = ns.OptionsSpacer(27.5, ArrowHidden),
 			-- The same setting as the Quest Arrow menu's Future Turn-Ins
 			showUpcomingTurnIns = Toggle("showUpcomingTurnIns", "SHOW_UPCOMING_TURN_INS", 28, ArrowHidden),
-			spaceLocalQuests = ns.OptionsSpacer(28.5, ArrowHidden),
-			-- The same setting as the Quest Arrow menu's Show Available Local Quests as Objectives
-			showLocalQuests = LocalQuestsToggle(),
 
 			spaceHiding0 = ns.OptionsSpacer(30, ArrowHidden),
 			headerHiding = ns.OptionsHeader(L["QUEST_ARROW_HIDING_HEADER"], 31, ArrowHidden),
@@ -144,4 +204,6 @@ function ns.BuildQuestArrowOptions()
 			hideInInstances = Toggle("hideInInstances", "HIDE_IN_INSTANCES", 34, ArrowHidden),
 		},
 	}
+	AddLocalQuestsSection(options.args)
+	return options
 end

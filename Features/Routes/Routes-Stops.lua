@@ -122,10 +122,13 @@ function routes.TaskText(task)
 	return routes.ObjectiveText(task.objective or {})
 end
 
--- The color Questie gave the task's objective, the turn-in's gold, or the corpse's white
+-- The color Questie gave the task's objective, the turn-in's gold, an escort pick-up's green, or the corpse's white
 function routes.TaskColor(task)
 	if task.kind == "corpse" then
 		return ns.GetColorRGB("TEXT")
+	end
+	if task.kind == "pickUp" and task.escort then
+		return ns.GetColorRGB("ROUTE_ESCORT")
 	end
 	local color = task.objective and task.objective.Color
 	if type(color) == "table" and color[1] then

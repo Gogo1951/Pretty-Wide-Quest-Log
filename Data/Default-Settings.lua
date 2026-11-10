@@ -46,6 +46,12 @@ ns.DATABASE_DEFAULTS = {
 			showNextObjective = false, -- In an objective area, the waypoint after it, dimmed under the list
 			showUpcomingTurnIns = false, -- A quest's turn-in planned before it's done, Questie's gray question mark
 			showLocalQuests = false, -- Quests Questie shows as available, whose giver is nearby, as waypoints to pick up
+			-- Local Available Quests: which nearby quests count. "route", "map" (a marker, no route line) or "off"
+			localQuestRange = 400, -- Yards a quest giver can be from the player
+			localQuestLevel = "green", -- Lowest level: "questie" (Questie's own filter), "green" or "yellow" and higher
+			localEscortQuests = "map",
+			localGroupQuests = "map", -- Group and elite quests
+			localOtherZoneQuests = "map", -- An objective or the turn-in only in another zone
 			hideInRaids = true,
 			hideInInstances = true,
 			partyQuests = true, -- Party members' quests the player doesn't have, as their Questie shares them
@@ -54,5 +60,8 @@ ns.DATABASE_DEFAULTS = {
 	global = {
 		scale = 1,
 		mapScale = 1,
+	},
+	char = {
+		routesIgnored = {}, -- The Quest Arrow's ignores of the character's own objectives, by task key, until the zone is reset
 	},
 }

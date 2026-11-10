@@ -220,7 +220,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Стрелка заданий"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"Стрелка на экране, указывающая на следующую путевую точку маршрута, с заданиями и целями, которые там нужно выполнить. Наведите на неё курсор, чтобы открыть меню, где можно игнорировать цели по одной и увидеть, что вы игнорируете. Щёлкните по ней средней кнопкой, чтобы очистить список игнорирования."
+	"Стрелка на экране, указывающая на следующую путевую точку маршрута, с заданиями и целями, которые там нужно выполнить. Наведите на неё курсор, чтобы открыть меню, где можно игнорировать цели по одной и увидеть, что вы игнорируете. Щёлкните по ней средней кнопкой, чтобы сбросить зону и вернуть всё, что вы там игнорировали."
 L["QUEST_ARROW_HEADER"] = "Стрелка"
 L["QUEST_ARROW_DESCRIPTION"] =
 	"Где находится Стрелка заданий и какого она размера."
@@ -265,6 +265,31 @@ L["SHOW_LOCAL_QUESTS"] = "Показывать доступные задания
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
 	"Добавляет в маршрут задания, которые можно взять, если Questie показывает их как доступные, а НИП или предмет, выдающий их, находится не дальше %s, с восклицательным знаком Questie. Задания, которые начинает добыча, а также задания подземелий и рейдов не добавляются."
+L["LOCAL_QUESTS_HEADER"] = "Доступные задания поблизости"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"К каким заданиям поблизости ведёт стрелка заданий. Пропущенное может всё равно отображаться на карте мира, без линии маршрута к нему."
+L["LOCAL_QUEST_RANGE"] = "Радиус поиска"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"На скольких метрах от вас может стоять тот, кто даёт задание, чтобы оно учитывалось. Меньше 400 — и того, мимо кого вы прошли между расчётами маршрута, можно пропустить."
+L["LOCAL_QUESTS_WHAT_COUNTS"] = "Что учитывается"
+L["LOCAL_ESCORT_QUESTS"] = "Задания сопровождения"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Задания, где вы охраняете NPC в пути; они требуют времени и часто группы. Их метка на карте зелёная."
+L["LOCAL_GROUP_QUESTS"] = "Групповые и элитные задания"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] =
+	"Задания, которые Questie отмечает как элитные, рассчитанные на группу."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Цели в другой зоне"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Задания, у которых цель или сдача есть только за пределами вашей зоны, например отправляющие в следующий город."
+L["LOCAL_QUEST_LEVEL"] = "Минимальный уровень задания"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Задания ниже этого цвета сложности не учитываются. «Настройка Questie» оставляет задания, которые Questie показывает на своей карте."
+L["LOCAL_CHOICE_ROUTE"] = "На маршруте"
+L["LOCAL_CHOICE_MAP"] = "Только карта"
+L["LOCAL_CHOICE_OFF"] = "Не учитывать"
+L["LOCAL_LEVEL_QUESTIE"] = "Настройка Questie"
+L["LOCAL_LEVEL_GREEN"] = "Зелёные и выше"
+L["LOCAL_LEVEL_YELLOW"] = "Жёлтые и выше"
 L["QUEST_ARROW_HIDING_HEADER"] = "Скрытие"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] =
 	"Когда Стрелка заданий скрывается, чтобы не мешать."
@@ -390,6 +415,9 @@ L["ROUTES_TURN_IN_QUEST"] = "Сдать: %s"
 L["ROUTES_PICK_UP"] = "Взять задание"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Взять: %s"
+L["ROUTES_OFF_ROUTE_ESCORT"] = "Задание сопровождения, не на маршруте"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Групповое задание, не на маршруте"
+L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Ведёт в другую зону, не на маршруте"
 L["ROUTES_CORPSE"] = "Вернитесь к своему телу"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Ищите"
@@ -406,19 +434,16 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Игнорировать эту пу�
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Игнорировать эту цель"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Вернуть на маршрут"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "Сбросить все маршруты"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Очистить список игнорирования"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Сбросить эту зону"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] =
-	"Маршрут игнорирует %s до очистки списка игнорирования."
-L["ROUTES_RESET"] =
-	"Все маршруты сброшены: игнорируемые цели и участники группы снова на маршруте."
-L["ROUTES_IGNORE_CLEARED"] =
-	"Список игнорирования очищен: игнорируемые цели снова на маршруте."
-L["ROUTES_GROUP_JOINED_CLEARED"] =
-	"Вы вступили в группу: игнорируемые цели и участники группы снова на маршруте."
+L["ROUTES_SKIPPED"] = "Маршрут игнорирует %s до сброса зоны."
+L["ROUTES_ZONE_RESET"] =
+	"Зона сброшена: цели, игнорируемые здесь, снова на маршруте."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
-	"Вы покинули группу: игнорируемые цели и участники группы снова на маршруте."
+	"Вы покинули группу: игнорируемые цели группы и участники снова на маршруте."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] =
+	"Группу покинули: %s. Игнорируемые для них цели снова на маршруте."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Игнорировать"
 L["ROUTES_MENU_SECTION_SHOWN"] = "Что показывать"
@@ -444,8 +469,10 @@ L["ROUTES_MENU_OFFLINE"] = "Не в сети"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Цели участника %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] =
-	"Маршрут игнорирует %s для задания %s до очистки списка игнорирования."
+L["ROUTES_IGNORED"] = "Маршрут игнорирует %s для задания %s до сброса зоны."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] =
+	"Маршрут игнорирует %s для задания %s, пока участники группы с этим заданием не покинут группу."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s: снова на маршруте."
 -- TRANSLATORS: %s is a party member's name
