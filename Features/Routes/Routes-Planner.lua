@@ -279,13 +279,17 @@ watcher:SetScript("OnUpdate", function(_, elapsed)
 	end
 end)
 
--- Someone joined or left: their quest log takes Questie a few seconds to share
+--[[
+	Someone joined or left: their quest log takes Questie a few seconds to share. One who left takes the
+	ignores that were for them (Routes-Ignore.lua)
+]]
 function routes:OnGroupRosterUpdate()
 	local size = GetNumGroupMembers()
 	if size ~= groupSize then
 		groupSize = size
 		groupSettleUntil = GetTime() + GROUP_SETTLE_DELAY
 	end
+	routes.PruneGroupIgnores()
 end
 
 -- Some time after the quest log last changed, so Questie has caught up

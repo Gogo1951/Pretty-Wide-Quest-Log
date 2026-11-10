@@ -209,7 +209,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Questpfeil"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"Ein Pfeil auf dem Bildschirm, der zum nächsten Wegpunkt der Route zeigt, mit den Quests und Zielen, die dort zu erledigen sind. Fahre mit der Maus darüber, um ein Menü zu sehen, in dem du jeweils ein Ziel ignorieren und sehen kannst, was du ignoriert hast. Klicke ihn mit der mittleren Maustaste, um die Ignorierliste zu leeren."
+	"Ein Pfeil auf dem Bildschirm, der zum nächsten Wegpunkt der Route zeigt, mit den Quests und Zielen, die dort zu erledigen sind. Fahre mit der Maus darüber, um ein Menü zu sehen, in dem du jeweils ein Ziel ignorieren und sehen kannst, was du ignoriert hast. Klicke ihn mit der mittleren Maustaste, um die Zone zurückzusetzen und alles, was du dort ignoriert hast, zurückzuholen."
 L["QUEST_ARROW_HEADER"] = "Pfeil"
 L["QUEST_ARROW_DESCRIPTION"] = "Wo der Questpfeil sitzt und wie groß er ist."
 L["ARROW_SIZE"] = "Größe des Pfeils"
@@ -384,15 +384,14 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Diesen Wegpunkt ignorieren"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Dieses Ziel ignorieren"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Wieder auf die Route"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "Alle Routen zurücksetzen"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Ignorierliste leeren"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Diese Zone zurücksetzen"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "Die Route ignoriert %s, bis die Ignorierliste geleert wird."
-L["ROUTES_RESET"] = "Alle Routen zurückgesetzt: ignorierte Ziele und Gruppenmitglieder sind wieder auf der Route."
-L["ROUTES_IGNORE_CLEARED"] = "Ignorierliste geleert: ignorierte Ziele sind wieder auf der Route."
-L["ROUTES_GROUP_JOINED_CLEARED"] =
-	"Einer Gruppe beigetreten: ignorierte Ziele und Gruppenmitglieder sind wieder auf der Route."
-L["ROUTES_GROUP_LEFT_CLEARED"] = "Gruppe verlassen: ignorierte Ziele und Gruppenmitglieder sind wieder auf der Route."
+L["ROUTES_SKIPPED"] = "Die Route ignoriert %s, bis du die Zone zurücksetzt."
+L["ROUTES_ZONE_RESET"] = "Zone zurückgesetzt: hier ignorierte Ziele sind wieder auf der Route."
+L["ROUTES_GROUP_LEFT_CLEARED"] =
+	"Gruppe verlassen: ignorierte Gruppenziele und Gruppenmitglieder sind wieder auf der Route."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s hat die Gruppe verlassen: die dafür ignorierten Ziele sind wieder auf der Route."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Ignorieren"
 L["ROUTES_MENU_SECTION_SHOWN"] = "Was angezeigt wird"
@@ -418,7 +417,10 @@ L["ROUTES_MENU_OFFLINE"] = "Offline"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Ziele von %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "Die Route ignoriert %s für %s, bis die Ignorierliste geleert wird."
+L["ROUTES_IGNORED"] = "Die Route ignoriert %s für %s, bis du die Zone zurücksetzt."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] =
+	"Die Route ignoriert %s für %s, bis die Gruppenmitglieder mit dieser Quest die Gruppe verlassen."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s ist wieder auf der Route."
 -- TRANSLATORS: %s is a party member's name

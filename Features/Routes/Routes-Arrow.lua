@@ -27,7 +27,7 @@ local _, ns = ...
 
 	Drag it to move it, held by its top so the list grows and shrinks below it; the mouse over it opens its
 	menu (Routes-Arrow-Menu.lua), to ignore one objective
-	at a time, here or at the Next Objective; middle-click clears the ignore list. By default it
+	at a time, here or at the Next Objective; middle-click resets the zone, putting back what was ignored in it. By default it
 	hides in a raid group and in instances (dungeons, raids, battlegrounds), where it isn't questing that's
 	under way. Its size, lock, text and hiding are the Quest Arrow panel's settings
 	(Options/Options-Quest-Arrow.lua)
@@ -193,7 +193,7 @@ frame:SetScript("OnClick", function(_, button)
 	if button == "RightButton" then
 		routes.IgnoreArrowObjective()
 	elseif button == "MiddleButton" then
-		routes.ClearIgnored()
+		routes.ResetZone()
 	end
 end)
 

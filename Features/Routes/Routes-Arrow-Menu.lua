@@ -8,14 +8,14 @@ local _, ns = ...
 
 	Three groups, each under a small gold label, its rows indented a space as the tooltips are:
 	Ignore, each objective or turn-in at the waypoint the arrow shows, then at its Next Objective (Next on
-	the right), clicked to leave it off the route until the ignore list is cleared (routes.IgnoreTask).
+	the right), clicked to leave it off the route until the zone is reset (routes.IgnoreTask).
 	What is Shown: Next Objective, the showNextObjective setting; Future Turn-Ins, showUpcomingTurnIns;
 	Local Available Quests, showLocalQuests; in a party, Party Objectives, partyQuests, and with it on an
 	Objectives From switch for each member, a space further in. A switch that's off is gray, On green. Ignored, with
 	how many on the right: the ignore list in gray, a row brightening with Put Back on the right under the
 	mouse, clicked to put it back on the route (routes.UnignoreTask). Then the arrow's click hints:
 	right-click ignores the objective the arrow shows first (routes.IgnoreArrowObjective), middle-click
-	clears the ignore list
+	resets the zone (routes.ResetZone)
 ]]
 
 local routes = ns.routes
@@ -299,7 +299,7 @@ local function Entries()
 	if ArrowObjective() then
 		Add({ kind = "hint", left = L["ROUTES_CLICK_RIGHT"], right = L["ROUTES_RIGHT_CLICK_IGNORE"] })
 	end
-	Add({ kind = "hint", left = L["ROUTES_CLICK_MIDDLE"], right = L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] })
+	Add({ kind = "hint", left = L["ROUTES_CLICK_MIDDLE"], right = L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] })
 
 	local parts = {}
 	for index, entry in ipairs(entries) do

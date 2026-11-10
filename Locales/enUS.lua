@@ -205,7 +205,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Quest Arrow"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"An arrow on screen pointing to the next waypoint on the route, with the quests and objectives to do there. Hover it for a menu where you can ignore one objective at a time and see what you've ignored. Middle-click it to clear the ignore list."
+	"An arrow on screen pointing to the next waypoint on the route, with the quests and objectives to do there. Hover it for a menu where you can ignore one objective at a time and see what you've ignored. Middle-click it to reset the zone, putting back what you ignored there."
 L["QUEST_ARROW_HEADER"] = "Arrow"
 L["QUEST_ARROW_DESCRIPTION"] = "Where the Quest Arrow sits and how big it is."
 L["ARROW_SIZE"] = "Arrow Size"
@@ -377,14 +377,13 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignore This Waypoint"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignore This Objective"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Back on the Route"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "Reset All Routes"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Clear Ignore List"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Reset This Zone"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "Ignoring %s until the ignore list is cleared."
-L["ROUTES_RESET"] = "All routes reset: ignored objectives and party members are back on the route."
-L["ROUTES_IGNORE_CLEARED"] = "Ignore list cleared: ignored objectives are back on the route."
-L["ROUTES_GROUP_JOINED_CLEARED"] = "Joined a group: ignored objectives and party members are back on the route."
-L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: ignored objectives and party members are back on the route."
+L["ROUTES_SKIPPED"] = "Ignoring %s until you reset the zone."
+L["ROUTES_ZONE_RESET"] = "Zone reset: objectives ignored here are back on the route."
+L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: party objectives and members you ignored are back on the route."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s left the group: the objectives you ignored for them are back on the route."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Ignore"
 L["ROUTES_MENU_SECTION_SHOWN"] = "What is Shown"
@@ -410,7 +409,9 @@ L["ROUTES_MENU_OFFLINE"] = "Offline"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objectives From %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "Ignoring %s for %s until the ignore list is cleared."
+L["ROUTES_IGNORED"] = "Ignoring %s for %s until you reset the zone."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] = "Ignoring %s for %s until the party members on it leave the group."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s is back on the route."
 -- TRANSLATORS: %s is a party member's name

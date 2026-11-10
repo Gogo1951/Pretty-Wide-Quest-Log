@@ -9,7 +9,7 @@ Pretty Wide Quest Log turns the quest log into one wide window, with your quest 
 1. Take a quest with an item to use (one to throw, plant, or use on a target), follow the Quest Arrow to it, and click the button beside the quest's name, in and out of a fight.
 2. Set a key for **Use Quest Item** in Key Bindings and press it beside a quest with an item to use.
 3. On WoW Forever with Questie on, press `M`; Blizzard's own quest markers and shaded areas should be gone for everything on the route.
-4. In a party where everyone runs Questie, press `M`; a member's objectives should have white rings, and a marker you right-click to ignore should turn red-ringed.
+4. In a party where everyone runs Questie, press `M`; a member's objectives should have white rings, and a marker you right-click to ignore should get a light gray ring (a dungeon quest's stays red). Have that member leave the group: their ignored objective should come back, with a line in chat saying so.
 5. With Leatrix Maps or Mapster on, press `M` while a route shows; the map should open full size and fit your screen.
 6. With TomTom on, follow the Quest Arrow; TomTom's own quest arrow should stay away until the Quest Arrow hides.
 7. Back up or strafe toward the Quest Arrow's waypoint; the arrow should stay green.
@@ -22,3 +22,4 @@ Pretty Wide Quest Log turns the quest log into one wide window, with your quest 
 11. Walk into a dungeon you have quests for with a party, or form one after logging in there; party chat should list them, and your party should be offered each one you can share.
 12. On WoW Forever and MoP Classic, press `L` in and out of combat, and open the quest log from the micro menu; it should be the wide quest log every time.
 13. Open the options with `/pwql` and from **Options > AddOns > Pretty Wide Quest Log**, then try `/pwql` in combat; it should refuse with a chat message.
+14. Right-click the Quest Arrow to ignore what it shows, then `/reload` and log out and back in; it should stay ignored, with a light gray ring on the map. Middle-click the arrow; everything you ignored in that zone should come back.

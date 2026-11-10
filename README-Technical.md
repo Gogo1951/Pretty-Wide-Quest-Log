@@ -97,7 +97,7 @@ Pretty-Wide-Quest-Log/
 │       ├── Routes.xml                      Lists the Routes files in load order, and the two map pin templates
 │       ├── Routes-Core.lua                 Settings, listeners, login setup, migrations, shared helpers
 │       ├── Routes-Planner.lua              The planner coroutine, the watcher, when to plan again
-│       ├── Routes-Ignore.lua               The ignore list: objectives, turn-ins and party members left off the route
+│       ├── Routes-Ignore.lua               The ignore list: objectives, turn-ins and party members left off the route, kept by zone
 │       ├── Routes-Solver.lua               Orders the route: cheapest insertion, or-opt, 2-opt, seeded shakes
 │       ├── Routes-Party.lua                Party members' quests from Questie's shared quest logs
 │       ├── Routes-Geography.lua            Position and zone in world yards, a ghost's corpse, which maps lie within a zone
@@ -184,7 +184,8 @@ Retired, so don't bring them back: an unsuffixed TOC; the root-level `Legacy.lua
   - `ADDON_LOADED` → `ns:OnAddonLoaded`, then `ns.routesMap:OnAddonLoaded` (adds the route when `Blizzard_WorldMap` loads on demand). Its rows run for every add-on, so each checks the name.
   - `PLAYER_REGEN_ENABLED` → the work held during combat (see Combat Lockdown).
   - `BAG_UPDATE_DELAYED`, `BAG_UPDATE_COOLDOWN`, `PLAYER_TARGET_CHANGED` → `ns.routesItems` only (the Quest Arrow's Use Item buttons).
-  - `GROUP_JOINED` / `GROUP_LEFT` → dungeon quests, share reminders, then `ns.routes` (clears the ignore list).
+  - `GROUP_JOINED` / `GROUP_LEFT` → dungeon quests, share reminders; `GROUP_LEFT` then `ns.routes` (drops the group's ignores).
+  - `QUEST_REMOVED`, `QUEST_TURNED_IN` → the quest log, then `ns.routes` (drops that quest's saved ignores).
   - `PLAYER_DEAD`, `PLAYER_ALIVE`, `PLAYER_UNGHOST` → `ns.routes` only.
 - Routes takes events only through these rows. Each TOC lists it with the single line `Features/Routes/Routes.xml`; without it the Routes owners are nil and their rows skip.
 - **`ADDON_LOADED` for this add-on, in order**: `AceDB:New`; `PruneOtherClientCharacters`; the profile callbacks (all three to `ns:ApplyProfile`); `ns.RegisterOptionsPanels`; registration pass 1; `StartWideQuestLog` (sets `ns.wideQuestLogActive`, runs the parts); registration pass 2; `ns.ApplyQuestGiverCleanup`; `ns:OnDatabaseReady` (one slot, defined only by `Forever-Quest-Log.lua`, which calls `ns.TakeOverQuestLog()` when the wide quest log runs). Each step through `securecall`; panels and events come first so a feature erroring in setup takes only itself down.
@@ -825,7 +826,7 @@ The shortest trip alone would walk the player out of a half-done camp. `routes.P
 
 - A step-2 node also gets `node.inArea` when standing in its area (not just working from afar), which lets `MakeStops` join all such areas into one waypoint.
 - Pins become `routes.engaged`, by key, `{ blob, collected }` (count when first pinned, kept while pinned): the "was in" state for the next plan's grace. `routes.EngagedSignature(nodes)` lists nodes the player is in now by the same rules, `IsPinnable` included, so walking through a later area doesn't replan; `routes.PinnedSignature()` lists what the plan pinned.
-- **Worked camps.** At each plan start `BuildNodes` calls `routes.NoteLeftCamps`: a spread-out objective (more than one blob) not done, whose count rose since pinned and whose camp the player has left (past `EngagedBlob`'s reach with grace, `WORKING_REACH` while working), goes on `routes.worked` by `routes.BlobKey` for `WORKED_MEMORY` (`Routes-Nodes.lua`). Leaving a camp early moves on instead of pointing back. One-place objectives never go on it (nowhere else to do them). `routes.ResetObjectives` (`Routes-Ignore.lua`) clears it with `routes.engaged`, and cancels any plan underway first so one finishing with the old pins can't put them back (see Ignoring and Resetting).
+- **Worked camps.** At each plan start `BuildNodes` calls `routes.NoteLeftCamps`: a spread-out objective (more than one blob) not done, whose count rose since pinned and whose camp the player has left (past `EngagedBlob`'s reach with grace, `WORKING_REACH` while working), goes on `routes.worked` by `routes.BlobKey` for `WORKED_MEMORY` (`Routes-Nodes.lua`). Leaving a camp early moves on instead of pointing back. One-place objectives never go on it (nowhere else to do them). `routes.ResetZone` (`Routes-Ignore.lua`) clears it with `routes.engaged`, and cancels any plan underway first so one finishing with the old pins can't put them back (see Ignoring and Resetting).
 
 #### Solving the Order
 
@@ -865,7 +866,7 @@ All in `Routes-Planner.lua`.
   - `QUEST_LOG_UPDATE` restarts a `QUEST_LOG_DELAY` timer that, on firing, calls `routes.ForgetQuestTags` and forces the next check, giving Questie time to catch up.
   - `PLAYER_ENTERING_WORLD`, `ZONE_CHANGED_NEW_AREA` → `OnNewArea` (landing too): `routes.CancelPlan` (a finishing plan would restore the old `routes.start`), clear `routes.start`, force a check counted as past `REPLAN_INTERVAL`.
   - `PLAYER_DEAD`, `PLAYER_ALIVE`, `PLAYER_UNGHOST` force a check.
-  - `GROUP_ROSTER_UPDATE` starts the group hold on a size change. `GROUP_JOINED`/`GROUP_LEFT` clear the ignore list (`Routes-Ignore.lua`) and plan if anything was on it.
+  - `GROUP_ROSTER_UPDATE` starts the group hold on a size change and drops the ignores of members who left (`routes.PruneGroupIgnores`). `GROUP_LEFT` drops every group ignore (`Routes-Ignore.lua`) and plans if there was one.
   - `PLAYER_LOGIN` (`Routes-Core.lua`) runs migrations and login handlers.
   - `routesMap:OnAddonLoaded` adds the data provider when `Blizzard_WorldMap` loads after login; `routesArrow`'s `GROUP_ROSTER_UPDATE`/`PLAYER_ENTERING_WORLD`/`ZONE_CHANGED_NEW_AREA` re-check hiding; `routesItems` rows belong to the item buttons.
 - **Registration.** Core registers an event at `ADDON_LOADED` when any row has a handler by then (before the quest log parts run, and after). Routes' handlers are all file-scope, so with the TOC line they register on every client regardless of the Wide Quest Log switch. `PLAYER_DEAD`, `PLAYER_ALIVE`, `PLAYER_UNGHOST`, `BAG_UPDATE_DELAYED`, `BAG_UPDATE_COOLDOWN` and `PLAYER_TARGET_CHANGED` are Routes' alone, and on Classic Era and TBC so is `QUEST_LOG_UPDATE`. `Classic-Quest-Log.lua` defines `ns:OnZoneChangedNewArea` inside its wide quest log part, so there the second pass registers `ZONE_CHANGED_NEW_AREA` with the switch on even without Routes.
@@ -919,7 +920,7 @@ Markers (`PrettyWideQuestLogRouteStopPinTemplate`; `STOP_SIZE`/`STOP_ICON_SIZE` 
 
 - `Route-Stop` disc tinted by the first task (`routes.TaskColor`).
 - Icon: Questie's own for that objective/turn-in, taken from Questie's pin on the map shown (`routes.QuestieTextures`). If Questie hasn't drawn yet (it draws a while after a quest changes), `QuestieIcon` picks from `Questie.usedIcons` by icon type in the player's theme: the objective's `Icon`, else the first spawn's. Turn-in: `ICON_TYPE_INCOMPLETE` when planned ahead of being done (`showUpcomingTurnIns`), else `ICON_TYPE_COMPLETE`. Camps never hold an upcoming turn-in. Corpse: `routes.CORPSE_ICON`/`CORPSE_ICON_COORDS` (`Routes-Stop-Lines.lua`), the game's own gravestone cell.
-- Ring, checked in order, swaps the disc for `Route-Stop-Fill` under a tinted `Route-Stop-Ring`: `IsUntracked` (every task `untracked` or on the ignore list) gets `ROUTE_ALERT_RING`; else `IsPartyStop` (every task a party member's) gets `ROUTE_PARTY_RING`; any of the player's own routed tasks keeps the disc's black ring.
+- Ring, checked in order, swaps the disc for `Route-Stop-Fill` under a tinted `Route-Stop-Ring`: `IsUntracked` (every task `untracked` or on the ignore list) gets `ROUTE_ALERT_RING` (red) when any is a dungeon or raid quest's, else `ROUTE_IGNORED_RING` (`CCCCCC`, every task ignored); else `IsPartyStop` (every task a party member's) gets `ROUTE_PARTY_RING`; any of the player's own routed tasks keeps the disc's black ring.
 - Size: `markerScale * UIParent:GetEffectiveScale() / map:GetEffectiveScale()`, times `WIDE_MAP_SCALE` on continent-or-wider maps (`IsWideMap`). `SetScalingLimits` only sets how fast a pin grows with zoom, so `markerScale` must go into the size. The effective-scale ratio is why markers look the same on every client (Classic Era/TBC draw the full-size map at a larger scale).
 - Pins are recycled: every acquire sets alpha, frame level, textures, tex coords and ring, never only what differs from default.
 
@@ -931,7 +932,7 @@ Hovering a marker (`OnStopEnter`):
 - Then blob names under a gold `ROUTES_LOOK_FOR` heading, one per line (grows down, not wide), then click hints (`routes.AddClickHints`).
 - Sets `routes.hoveredStop`, which brings back Questie's icons for its tasks. `RemoveAllData` clears it: a pin can vanish under a mouse that never leaves it.
 
-Clicking (`OnMouseUp`; pins aren't buttons): right-click on a waypoint ignores it whole (`routes.SkipStop`), on a camp works one objective (above), on the corpse nothing. Middle-click on any marker: `routes.ResetObjectives`.
+Clicking (`OnMouseUp`; pins aren't buttons): right-click on a waypoint ignores it whole (`routes.SkipStop`), on a camp works one objective (above), on the corpse nothing. Middle-click on any marker: `routes.ResetZone`, as the Quest Arrow's middle-click.
 
 Questie's icons (`Routes-Map-Questie-Icons.lua`):
 
@@ -1003,7 +1004,7 @@ How it points (`Point`, the frame's `OnUpdate`):
 Interaction:
 
 - Drag moves it unless `lockArrow`, and closes the menu. On drop `HoldByTop` anchors `"TOP"` to `UIParent`'s `"BOTTOMLEFT"` so the list grows below a still arrow (`StopMovingOrSizing` alone anchors by the nearest corner and would move the arrow whenever the list changes height). Saved in screen units (offsets times scale) via `routes.SetArrowPoint` to `ns.db.global.routesArrowPoint`, account-wide, so profile changes never move it. `PlaceFrame` re-saves a spot saved by another point (migration). No spot: above screen center.
-- Mouse over opens the menu unless dragging. Middle-click: `routes.ClearIgnored`.
+- Mouse over opens the menu unless dragging. Right-click: `routes.IgnoreArrowObjective`. Middle-click: `routes.ResetZone`.
 
 TomTom (`Routes-TomTom.lua`):
 
@@ -1068,7 +1069,7 @@ Clicking and the key:
   - Show Upcoming Turn-Ins (`showUpcomingTurnIns`): `routes.SetSetting` then `routes.RequestPlan`, since it changes the route (it's in the signature).
   - Party only (`routes.IsInParty`, not raid): Show Party Objectives (`partyQuests`, `routes.SetPartyQuests`). On: each member (`routes.PartyMembers(true)`, offline included) as `ROUTES_MENU_MEMBER_OBJECTIVES` in class color, On/Off (`routes.SetMemberIgnored`). Unclickable status row instead, checked in order: Offline; No Questie (`routes.MemberHasQuestie`); Out of Zone (`routes.IsUnitOutOfZone`). The row keeps its place for when that changes.
   - Ignore list (`routes.IgnoredTasks`, ignore order), "Ignored" in `OFF`; click puts it back (`routes.UnignoreTask`).
-  - Hints: Drag (only unlocked), Middle-Click clear ignore list.
+  - Hints: Drag (only unlocked), Right-Click ignore (only with an objective shown), Middle-Click reset this zone.
 - Rows are a line plus `SPACE.LINE` above/below; min `MIN_WIDTH`. Only actionable rows take the mouse; highlight at `HIGHLIGHT_ALPHA`.
 - Refreshes every `REFRESH_INTERVAL` while open, on listener calls, after a click. Layout keyed by each row's kind and text. Actions rebound every refresh: a new plan makes new task tables.
 
@@ -1101,20 +1102,23 @@ While a ghost, `routes.Origin` (`Routes-Geography.lua`) starts from the corpse (
 
 #### Ignoring and Resetting
 
-`Routes-Ignore.lua`. `routes.skipped`: task key → `{ label, questID, order }` (`routes.TaskLabel`, quest, ignore order for the menu). Every path goes through `Ignore`, which leaves an existing entry alone.
+`Routes-Ignore.lua`. `routes.skipped`: task key → `{ label, questID, order, zone }` (`routes.TaskLabel`, quest, ignore order for the menu, `routes.PlayerZone()` when ignored, `0` where unknown). Every path goes through `Ignore`, which leaves an existing entry alone.
+
+- **Own ignores** (every key but `:p<index>`) are mirrored to `ns.db.char.routesIgnored` and loaded back into `routes.skipped` at login (`ignoredCount` resumes from the highest `order`). They last until the zone they were ignored in is reset, the quest is turned in or dropped (`QUEST_TURNED_IN`/`QUEST_REMOVED`; pick-up keys stay).
+- **Group ignores** are session-only: a party objective (`:p<index>`) also keeps `holders`, the short names in Questie's shared logs for its quest (`routes.PartyQuestHolders`), and goes once none is in the group; a switched-off member (`routes.ignoredMembers`) goes when they leave. A reload drops both.
 
 - `routes.SkipStop(stop)` (waypoint right-click): ignores each non-corpse task, prints `ROUTES_SKIPPED` with Questie links (`routes.QuestLink`, `Routes-Core.lua`, `QuestieLink` in a `pcall`, else the name).
-- `routes.IgnoreTask(task)` (menu, camp right-click): one task, prints via `routes.BuildIgnoredMessage` (also drawn by the Quest Arrow panel's Example).
+- `routes.IgnoreTask(task)` (menu, camp right-click, arrow right-click): one task, prints via `routes.BuildIgnoredMessage` (`ROUTES_IGNORED`, or `ROUTES_IGNORED_PARTY` for a party objective; also drawn by the Quest Arrow panel's Example).
 - `routes.UnignoreTask(key)`: prints `ROUTES_UNIGNORED`.
 - `routes.IgnoredTasks()`: menu list sorted by `order`, only where the player still has the quest (for a `:p<index>` key, the party per `routes.PartyProgress`). Gone quests stay in `routes.skipped`, unlisted.
-- `routes.ClearIgnored()` (arrow middle-click): empties `routes.skipped`, prints `ROUTES_IGNORE_CLEARED`. Ignored members, `routes.engaged`, `routes.worked` stay.
+- `routes.ResetZone()` (middle-click on the Quest Arrow or any map marker): drops every entry, own or party, whose `zone` is the zone the player is in, saved ones too, and clears `routes.engaged` and `routes.worked`, so only a camp the player stands in now goes first. Prints `ROUTES_ZONE_RESET`, then `routes.CancelPlan` (a plan underway was made with the old lists and would put them back) and replans. Other zones' entries and ignored members stay. Nothing clears every zone at once.
 - `routes.SetMemberIgnored(name, ignored)`: leaves out every quest a member shares (`routes.ignoredMembers`, checked in `IsSharing`). Quests the player also has stay, minus that member's name.
 - `routes.SetPartyQuests(on)`: switches `partyQuests` and replans.
-- Ignored keys and members are in the signature, never saved; they last until cleared, reset, reload, or a group change.
-- `GROUP_JOINED`/`GROUP_LEFT` (`routes:OnGroupJoined`/`OnGroupLeft`) empty both lists (the party they were ignored in is gone). Prints `ROUTES_GROUP_JOINED_CLEARED`/`..._LEFT_CLEARED` and replans only when something was ignored, so a login in a group says nothing. `routes.engaged` stays.
+- Ignored keys and members are in the signature.
+- `routes.PruneGroupIgnores()` (every `GROUP_ROSTER_UPDATE`): against `routes.GroupNames()` (short names of everyone else in the group, offline too; nil while any name is still unknown, so nothing is dropped mid-load). Prints `ROUTES_MEMBER_LEFT_CLEARED` with who left and replans only when something went.
+- `GROUP_LEFT` (`routes:OnGroupLeft`) drops every party objective and ignored member; own ignores stay. Prints `ROUTES_GROUP_LEFT_CLEARED` and replans only when something went. Joining a group changes nothing. `routes.engaged` stays.
 - Every call plans through `routes.RequestPlan`, so in combat it takes effect after the fight (see Combat).
 
-`routes.ResetObjectives` (middle-click on any map marker): clears `routes.skipped`, `routes.ignoredMembers`, `routes.engaged` and `routes.worked`, so only a camp the player stands in now goes first. Prints `ROUTES_RESET`, then `routes.CancelPlan` (a plan underway was made with the old lists and would put them back) and replans.
 
 #### Client Differences
 
@@ -1198,9 +1202,10 @@ What the game names comes from the client, never `Locales/`; this add-on's looku
 
 ## Saved Variables
 
-- `PrettyWideQuestLogDB` (`ns.SAVED_VARIABLES_NAME`), AceDB-3.0, the only SavedVariables table: every setting and every remembered window spot.
-- **Simple model** (`AceDB:New(..., true)`): nothing stored differs per character. Reset Profile returns the shared profile to install defaults, Routes' `routes` subtable included, and leaves `global` alone.
+- `PrettyWideQuestLogDB` (`ns.SAVED_VARIABLES_NAME`), AceDB-3.0, the only SavedVariables table: every setting, every remembered window spot, and each character's Quest Arrow ignores.
+- **Simple model** (`AceDB:New(..., true)`): no setting differs per character. Reset Profile returns the shared profile to install defaults, Routes' `routes` subtable included, and leaves `global` alone.
   - **Profile**: every setting, Routes' in its own `routes` subtable.
+  - **`char`**: only `routesIgnored`, the character's own ignored objectives by task key (`Routes-Ignore.lua`). A profile reset leaves it; a middle-click on the Quest Arrow or a map marker resets the zone the player is in.
   - **`global`**: only presentation, kept from a profile reset or switch: the window's and map's scales, height, `mapHidden`, the own window's position (WoW Forever and Mists; Blizzard places Classic's) and the Quest Arrow's spot. Reset Window (`ns.ResetWindow`) and the Quest Arrow panel's Reset Arrow are the confirmed resets for those.
 - `ns:ApplyProfile` (all three profile callbacks) re-applies the quest giver cleanup, the list and map while the wide quest log runs, Routes (`routes.ApplySettings`), the dungeon quests, and open panels.
 - `PruneOtherClientCharacters` runs right after `AceDB:New` (standing cleanup, not a migration).
@@ -1329,7 +1334,7 @@ Run from Routes' `PLAYER_LOGIN` handler or as the arrow is placed; each tagged w
 - **Writing a plan's results one at a time**: the watcher could compare a new plan's pins with the old plan's nodes and replan in a loop. The planner's `OnUpdate` (`Routes-Planner.lua`) assigns `routes.stops`, `start`, `nodes`, `engaged` and `camps` together.
 - **Walking Questie's log with `pairs` across a yield**: before Questie 12.6.3 the log is Questie's live table, and `next` breaks if it changes mid-walk. Walk `routes.LoggedQuestIDs(log)` (`Routes-Planner.lua`), as `BuildNodes`, `BuildCamps` and `PartyQuests` do.
 - **A fixed per-frame planning budget**: halves the frame rate on a fast screen. The planner takes `FRAME_SHARE` of the last frame, clamped to `MIN_BUDGET`..`MAX_BUDGET` (`Routes-Planner.lua`).
-- **Resetting or changing zones while a plan runs**: finishing, it would put back the old pins and `routes.start`. `routes.ResetObjectives` and the zone handlers call `routes.CancelPlan()` first.
+- **Resetting or changing zones while a plan runs**: finishing, it would put back the old pins and `routes.start`. `routes.ResetZone` and the zone handlers call `routes.CancelPlan()` first.
 - **Reading a party member's map or connection in combat on WoW Forever**: the answer can be secret. `routes.IsUnitOutOfZone` and `Routes-Party.lua` test it with `ns.IsReadable` first (unreadable counts as present / offline).
 - **Detecting TomTom by its global alone**: other add-ons make a `TomTom` table of their own. `Routes-TomTom.lua` requires `IsCrazyArrowEmpty`, `SuppressFeature` and `ReleaseFeature`.
 - **Building a moved route to weigh each move**: a 90-node route weighs hundreds of thousands of moves, over 100 MB of garbage a plan. `IsValidMove` and the searches work through index maps (`OrOptIndex`, `TwoOptIndex`), building only the move taken.

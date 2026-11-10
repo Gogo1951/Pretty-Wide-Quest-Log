@@ -121,7 +121,7 @@ end
 	Camps of a spread-out objective the player worked (its count went up there) and then walked out of, by
 	node key, each blob's place (BlobKey) to when they left. Leaving one says "more along the route will do":
 	for WORKED_MEMORY the route plans that objective at another of its camps, or picks it up on the way,
-	rather than pointing back. routes.ResetObjectives clears it
+	rather than pointing back. routes.ResetZone clears it
 ]]
 routes.worked = {}
 

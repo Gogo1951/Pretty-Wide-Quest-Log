@@ -205,7 +205,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "任务箭头"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"屏幕上的一个箭头，指向路线上的下一个路径点，并列出要在那里完成的任务和目标。鼠标悬停在它上面会显示一个菜单，你可以在其中逐个忽略目标，并查看已忽略的内容。中键点击它可清空忽略列表。"
+	"屏幕上的一个箭头，指向路线上的下一个路径点，并列出要在那里完成的任务和目标。鼠标悬停在它上面会显示一个菜单，你可以在其中逐个忽略目标，并查看已忽略的内容。中键点击它可重置区域，恢复你在那里忽略的内容。"
 L["QUEST_ARROW_HEADER"] = "箭头"
 L["QUEST_ARROW_DESCRIPTION"] = "任务箭头的位置和大小。"
 L["ARROW_SIZE"] = "箭头大小"
@@ -378,14 +378,13 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "忽略此路径点"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "忽略此目标"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "放回路线"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "重置所有路线"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "清空忽略列表"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "重置此区域"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "忽略 %s，直到清空忽略列表。"
-L["ROUTES_RESET"] = "所有路线已重置：已忽略的目标和队友已回到路线上。"
-L["ROUTES_IGNORE_CLEARED"] = "忽略列表已清空：已忽略的目标已回到路线上。"
-L["ROUTES_GROUP_JOINED_CLEARED"] = "已加入队伍：已忽略的目标和队友已回到路线上。"
-L["ROUTES_GROUP_LEFT_CLEARED"] = "已离开队伍：已忽略的目标和队友已回到路线上。"
+L["ROUTES_SKIPPED"] = "忽略 %s，直到重置区域。"
+L["ROUTES_ZONE_RESET"] = "区域已重置：在此忽略的目标已回到路线上。"
+L["ROUTES_GROUP_LEFT_CLEARED"] = "已离开队伍：已忽略的队伍目标和队友已回到路线上。"
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s 已离开队伍：为其忽略的目标已回到路线上。"
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "忽略"
 L["ROUTES_MENU_SECTION_SHOWN"] = "显示内容"
@@ -411,7 +410,9 @@ L["ROUTES_MENU_OFFLINE"] = "离线"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "%s 的目标"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "忽略 %s（%s），直到清空忽略列表。"
+L["ROUTES_IGNORED"] = "忽略 %s（%s），直到重置区域。"
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] = "忽略 %s（%s），直到有该任务的队友离开队伍。"
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s 已回到路线上。"
 -- TRANSLATORS: %s is a party member's name

@@ -356,6 +356,41 @@ function routes.PartyMembers(includeOffline)
 end
 
 --[[
+	Everyone else in the group, offline ones too, as a set of short names (Ambiguate's), for telling who left.
+	Nothing while any member's name is still unknown, as just after a roster change, so nobody reads as gone
+]]
+function routes.GroupNames()
+	local names = {}
+	local raid = IsInRaid()
+	for i = 1, raid and 40 or 4 do
+		local unit = (raid and "raid" or "party") .. i
+		if UnitExists(unit) and not UnitIsUnit(unit, "player") then
+			local name = routes.UnitFullName(unit)
+			if not name or name == UNKNOWNOBJECT then
+				return nil
+			end
+			names[ShortName(name)] = true
+		end
+	end
+	return names
+end
+
+-- The members whose shared logs have a quest, as short names: whom ignoring one of its party objectives is for
+function routes.PartyQuestHolders(questID)
+	local holders = {}
+	local logs = RemoteLogs()
+	local players = logs and logs[questID]
+	if type(players) == "table" then
+		for name in pairs(players) do
+			if type(name) == "string" then
+				holders[#holders + 1] = ShortName(name)
+			end
+		end
+	end
+	return holders
+end
+
+--[[
 	Whether a party member (name as routes.UnitFullName gives it) has shared anything over Questie: a quest
 	in its party logs, or the class it sends with them. One without Questie shares nothing, and the game
 	itself tells nothing of another player's quests the player doesn't have. One with Questie and no quests,

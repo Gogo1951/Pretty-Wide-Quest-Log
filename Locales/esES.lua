@@ -213,7 +213,7 @@ L["PARTY_QUESTS_DESCRIPTION"] =
 
 L["TAB_QUEST_ARROW"] = "Flecha de misiones"
 L["TAB_QUEST_ARROW_DESCRIPTION"] =
-	"Una flecha en pantalla que apunta al siguiente punto de ruta, con las misiones y objetivos que hacer allí. Pasa el ratón por encima para ver un menú donde puedes ignorar los objetivos de uno en uno y ver lo que has ignorado. Haz clic central en ella para vaciar la lista de ignorados."
+	"Una flecha en pantalla que apunta al siguiente punto de ruta, con las misiones y objetivos que hacer allí. Pasa el ratón por encima para ver un menú donde puedes ignorar los objetivos de uno en uno y ver lo que has ignorado. Haz clic central en ella para restablecer la zona y recuperar lo que has ignorado allí."
 L["QUEST_ARROW_HEADER"] = "Flecha"
 L["QUEST_ARROW_DESCRIPTION"] = "Dónde se sitúa la Flecha de misiones y qué tamaño tiene."
 L["ARROW_SIZE"] = "Tamaño de la flecha"
@@ -387,17 +387,14 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorar este punto de ruta"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorar este objetivo"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Volver a la ruta"
-L["ROUTES_MIDDLE_CLICK_RESET"] = "Restablecer todas las rutas"
-L["ROUTES_MIDDLE_CLICK_CLEAR_IGNORED"] = "Vaciar la lista de ignorados"
+L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Restablecer esta zona"
 -- TRANSLATORS: %s is a quest link or a list of them
-L["ROUTES_SKIPPED"] = "Ignorando %s hasta que se vacíe la lista de ignorados."
-L["ROUTES_RESET"] =
-	"Todas las rutas restablecidas: los objetivos y miembros del grupo ignorados vuelven a estar en la ruta."
-L["ROUTES_IGNORE_CLEARED"] = "Lista de ignorados vaciada: los objetivos ignorados vuelven a estar en la ruta."
-L["ROUTES_GROUP_JOINED_CLEARED"] =
-	"Te has unido a un grupo: los objetivos y miembros del grupo ignorados vuelven a estar en la ruta."
+L["ROUTES_SKIPPED"] = "Ignorando %s hasta que restablezcas la zona."
+L["ROUTES_ZONE_RESET"] = "Zona restablecida: los objetivos ignorados aquí vuelven a estar en la ruta."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
-	"Has dejado el grupo: los objetivos y miembros del grupo ignorados vuelven a estar en la ruta."
+	"Has dejado el grupo: los objetivos de grupo y los miembros ignorados vuelven a estar en la ruta."
+-- TRANSLATORS: %s is a party member's name, or a list of them
+L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s ha dejado el grupo: sus objetivos ignorados vuelven a estar en la ruta."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Ignorar"
 L["ROUTES_MENU_SECTION_SHOWN"] = "Qué se muestra"
@@ -423,7 +420,9 @@ L["ROUTES_MENU_OFFLINE"] = "Desconectado"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
 L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objetivos de %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
-L["ROUTES_IGNORED"] = "Ignorando %s de %s hasta que se vacíe la lista de ignorados."
+L["ROUTES_IGNORED"] = "Ignorando %s de %s hasta que restablezcas la zona."
+-- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
+L["ROUTES_IGNORED_PARTY"] = "Ignorando %s de %s hasta que los miembros del grupo que la tienen dejen el grupo."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s vuelve a estar en la ruta."
 -- TRANSLATORS: %s is a party member's name
