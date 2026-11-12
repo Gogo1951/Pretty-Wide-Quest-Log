@@ -1,30 +1,37 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<!--
 		Routes: a route through every quest in the log, drawn on the world map, with an arrow to its next
-		stop. Each TOC lists only this file here, and the Waypoint Markers, Quest Route and Quest Arrow panels in Options
-		register only while it's loaded
+		stop. Each TOC lists only this file here, and the Maps & Objectives, Quest Route and Quest Arrow panels in
+		Options register only while it's loaded
 	-->
 	<Script file="Routes-Core.lua"/>
 	<Script file="Routes-Planner.lua"/>
 	<Script file="Routes-Ignore.lua"/>
 	<Script file="Routes-Solver.lua"/>
 	<Script file="Routes-Party.lua"/>
+	<Script file="Routes-Group-Up.lua"/>
 	<Script file="Routes-Geography.lua"/>
 	<Script file="Routes-Questie.lua"/>
 	<Script file="Routes-Blobs.lua"/>
 	<Script file="Routes-Nodes.lua"/>
 	<Script file="Routes-Pick-Ups.lua"/>
+	<Script file="Routes-Quest-Plans.lua"/>
+	<Script file="Routes-Chains.lua"/>
+	<Script file="Routes-Flights.lua"/>
 	<Script file="Routes-Pinning.lua"/>
 	<Script file="Routes-Overlaps.lua"/>
 	<Script file="Routes-Stops.lua"/>
 	<Script file="Routes-Stop-Lines.lua"/>
 	<Script file="Routes-Camps.lua"/>
+	<Script file="Routes-Stop-Look.lua"/>
 	<Script file="Routes-Map-Size.lua"/>
 	<Script file="Routes-Map-Line.lua"/>
 	<Script file="Routes-Map-Questie-Icons.lua"/>
 	<Script file="Routes-Map-Blizzard-Quests.lua"/>
 	<Script file="Routes-Map-Tooltip.lua"/>
 	<Script file="Routes-Map.lua"/>
+	<Script file="Routes-Map-Meet.lua"/>
+	<Script file="Routes-Minimap.lua"/>
 
 	<!--
 		The layer the route's line is drawn on, as large as the map. It takes no mouse, so dragging the map and hovering the icons above it pass straight through
@@ -39,7 +46,7 @@
 		(ROUTE_IGNORED_RING) for one ignored, white (ROUTE_PARTY_RING) for a party member's
 	-->
 	<Frame name="PrettyWideQuestLogRouteStopPinTemplate" mixin="PrettyWideQuestLogRoutePinMixin" enableMouse="true" virtual="true">
-		<Size x="42" y="42"/>
+		<Size x="32" y="32"/>
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture parentKey="Disc" file="Interface\AddOns\Pretty-Wide-Quest-Log\Includes\Images\Route-Stop" setAllPoints="true"/>
@@ -49,7 +56,32 @@
 			</Layer>
 			<Layer level="ARTWORK" textureSubLevel="2">
 				<Texture parentKey="Icon">
-					<Size x="24" y="24"/>
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+
+	<!--
+		Where to join up with the group, the middle of everyone and the group's first waypoint
+		(Routes-Group-Up.lua): a gold disc (Route-Stop-Fill, ROUTE_MEET) in a white ring (ROUTE_PARTY_RING), as a party member's
+		marker has, with the quest log's party icon on it in blue
+	-->
+	<Frame name="PrettyWideQuestLogRouteMeetPinTemplate" mixin="PrettyWideQuestLogRoutePinMixin" enableMouse="true" virtual="true">
+		<Size x="32" y="32"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Disc" file="Interface\AddOns\Pretty-Wide-Quest-Log\Includes\Images\Route-Stop-Fill" setAllPoints="true"/>
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="1">
+				<Texture parentKey="Ring" file="Interface\AddOns\Pretty-Wide-Quest-Log\Includes\Images\Route-Stop-Ring" setAllPoints="true"/>
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="2">
+				<Texture parentKey="Icon" file="Interface\AddOns\Pretty-Wide-Quest-Log\Includes\Images\Party-On-Quest">
+					<Size x="16" y="16"/>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
@@ -63,6 +95,8 @@
 	<Script file="Routes-Arrow-List.lua"/>
 	<Script file="Routes-Arrow-Item-Choice.lua"/>
 	<Script file="Routes-Arrow-Items.lua"/>
+	<Script file="Routes-Arrow-Shade.lua"/>
+	<Script file="Routes-Arrow-Menu-Panel.lua"/>
 	<Script file="Routes-Arrow-Menu.lua"/>
 	<Script file="Routes-TomTom.lua"/>
 </Ui>

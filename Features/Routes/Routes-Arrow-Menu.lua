@@ -6,17 +6,19 @@ local _, ns = ...
 	the lower half of the screen. It stays open while the mouse is on the arrow or the menu and closes
 	CLOSE_DELAY after the mouse leaves both; Escape closes it.
 
-	Three groups, each under a small gold label, its rows indented a space as the tooltips are:
-	Ignore, each objective or turn-in at the waypoint the arrow shows, then at its Next Objective (Next on
-	the right), clicked to leave it off the route until the zone is reset (routes.IgnoreTask).
-	What is Shown: Next Objective, the showNextObjective setting; Future Turn-Ins, showUpcomingTurnIns;
-	Local Available Quests, showLocalQuests; in a party, Party Objectives, partyQuests, and with it on an
-	Objectives From switch for each member, a space further in. A switch that's off is gray, On green. Ignored, with
-	how many and an arrow on the right: its label opens the ignore list in a flyout beside the menu, on the
-	same plate, each row gray, brightening with Put Back on the right under the mouse, clicked to put it back
-	on the route (routes.UnignoreTask). Then the arrow's click hints:
-	right-click ignores the objective the arrow shows first (routes.IgnoreArrowObjective), middle-click
-	resets the zone (routes.ResetZone)
+	Under the title and a line's room, groups under small gold labels, rows indented a space as the
+	tooltips are: Ignore, each objective or turn-in at the waypoint the arrow shows, then at its Next
+	Objective (Next on the right), clicked to leave it off the route until the zone is reset
+	(routes.IgnoreTask). Then three labels with Blizzard's submenu arrow, each opening a flyout beside the
+	menu on the same plate. Route, what the route plans, most used first: Predictive Questing Routes,
+	predictiveRoutes; Local Available Quests, showLocalQuests; Flight Paths, showFlightPaths; in a party,
+	Party Objectives, partyQuests, and with it on an Objectives From switch for each member, a space in.
+	Show, what only the arrow draws: Next Objective, showNextObjective. A switch that's off is gray, On
+	green. Ignored, with how many, only while something is: the ignore list, each row gray, brightening with
+	Put Back on the right under the mouse, clicked to put it back on the route (routes.UnignoreTask).
+	Then a line and the arrow's click hints, each a row to use as well as a reminder: Drag, dragged, moves the
+	arrow (routes.DragArrowFromMenu); right-click ignores the objective the arrow shows first
+	(routes.IgnoreArrowObjective); middle-click resets the zone (routes.ResetZone)
 ]]
 
 local routes = ns.routes
@@ -24,103 +26,16 @@ local L = ns.L
 
 local SPACE = ns.LAYOUT.SPACE
 
---[[
-	The plate's art, drawn at half its size so the edges stay sharp: PLATE_SIZE pixels square, the plate
-	itself PLATE_MARGIN in from each edge and the rest its shadow, each corner piece PLATE_CORNER across
-]]
-local PLATE_TEXTURE = "Interface\\AddOns\\Pretty-Wide-Quest-Log\\Includes\\Images\\Route-Menu"
-local PLATE_SIZE = 128
-local PLATE_MARGIN = { left = 12, right = 12, top = 10, bottom = 14 }
-local PLATE_CORNER = 32
-local PLATE_SCALE = 0.5
+-- The menu's plate and its flyout's, and laying out their rows (Routes-Arrow-Menu-Panel.lua)
+local panels = routes.arrowMenuPanels
+local menu, submenu = panels.menu, panels.submenu
+local Fill, OpenSubmenu, CloseSubmenu = panels.Fill, panels.OpenSubmenu, panels.CloseSubmenu
 
 local CLOSE_DELAY = 0.25 -- Seconds the menu stays once the mouse leaves it and the arrow
 local REFRESH_INTERVAL = 0.5 -- Seconds between checks for its rows changing
-local MIN_WIDTH = 128
-local ROW_INSET = SPACE.LINE -- From the plate's edge to a row's highlight
-local TEXT_INSET = SPACE.NEAR -- From a row's edge to its text
-local HIGHLIGHT_ALPHA = 0.16
-local PLATE_ALPHA = 0.8 -- The plate's art is black: a little of the world shows through, so it reads lighter
 local INDENT = " " -- Per level, as the tooltips indent their rows
--- Blizzard's own arrow on a dropdown row with a submenu, after the Ignored count
+-- Blizzard's own arrow on a dropdown row with a submenu, on the Route, Show and Ignored labels
 local SUBMENU_ARROW = "|TInterface\\ChatFrame\\ChatFrameExpandArrow:0|t"
-
---------------------------------------------------------------------------------
--- The plate
---------------------------------------------------------------------------------
-
--- Nine pieces: the corners at their own size, keeping the angle and shadow, the edges and middle stretched
-local function AddPlate(panel)
-	local plate = CreateFrame("Frame", nil, panel)
-	plate:SetPoint("TOPLEFT", -PLATE_MARGIN.left * PLATE_SCALE, PLATE_MARGIN.top * PLATE_SCALE)
-	plate:SetPoint("BOTTOMRIGHT", PLATE_MARGIN.right * PLATE_SCALE, -PLATE_MARGIN.bottom * PLATE_SCALE)
-	plate:SetFrameLevel(panel:GetFrameLevel()) -- Under the rows
-	plate:SetAlpha(PLATE_ALPHA)
-
-	local near, far = PLATE_CORNER / PLATE_SIZE, 1 - PLATE_CORNER / PLATE_SIZE
-	local corner = PLATE_CORNER * PLATE_SCALE
-
-	local function Piece(left, right, top, bottom)
-		local texture = plate:CreateTexture(nil, "BACKGROUND")
-		texture:SetTexture(PLATE_TEXTURE)
-		texture:SetTexCoord(left, right, top, bottom)
-		return texture
-	end
-
-	local topLeft = Piece(0, near, 0, near)
-	topLeft:SetSize(corner, corner)
-	topLeft:SetPoint("TOPLEFT")
-	local topRight = Piece(far, 1, 0, near)
-	topRight:SetSize(corner, corner)
-	topRight:SetPoint("TOPRIGHT")
-	local bottomLeft = Piece(0, near, far, 1)
-	bottomLeft:SetSize(corner, corner)
-	bottomLeft:SetPoint("BOTTOMLEFT")
-	local bottomRight = Piece(far, 1, far, 1)
-	bottomRight:SetSize(corner, corner)
-	bottomRight:SetPoint("BOTTOMRIGHT")
-
-	local top = Piece(near, far, 0, near)
-	top:SetPoint("TOPLEFT", topLeft, "TOPRIGHT")
-	top:SetPoint("BOTTOMRIGHT", topRight, "BOTTOMLEFT")
-	local bottom = Piece(near, far, far, 1)
-	bottom:SetPoint("TOPLEFT", bottomLeft, "TOPRIGHT")
-	bottom:SetPoint("BOTTOMRIGHT", bottomRight, "BOTTOMLEFT")
-	local left = Piece(0, near, near, far)
-	left:SetPoint("TOPLEFT", topLeft, "BOTTOMLEFT")
-	left:SetPoint("BOTTOMRIGHT", bottomLeft, "TOPRIGHT")
-	local right = Piece(far, 1, near, far)
-	right:SetPoint("TOPLEFT", topRight, "BOTTOMLEFT")
-	right:SetPoint("BOTTOMRIGHT", bottomRight, "TOPRIGHT")
-	local middle = Piece(near, far, near, far)
-	middle:SetPoint("TOPLEFT", topLeft, "BOTTOMRIGHT")
-	middle:SetPoint("BOTTOMRIGHT", bottomRight, "TOPLEFT")
-end
-
---[[
-	A plate with rows on it: the menu, and the flyout its Ignored label opens beside it (submenu), drawn
-	over the menu. Escape closes both
-]]
-local function NewPanel(name, level)
-	local panel = CreateFrame("Frame", name, UIParent)
-	panel:SetFrameStrata("DIALOG")
-	if level then
-		panel:SetFrameLevel(level)
-	end
-	panel:SetClampedToScreen(true)
-	panel:EnableMouse(true)
-	panel:Hide()
-	panel.rows = {}
-	AddPlate(panel)
-	tinsert(UISpecialFrames, name)
-	return panel
-end
-
-local menu = NewPanel("PrettyWideQuestLogRouteMenu")
-local submenu = NewPanel("PrettyWideQuestLogRouteSubmenu", menu:GetFrameLevel() + 20)
-menu:HookScript("OnHide", function()
-	submenu:Hide()
-end)
 
 --------------------------------------------------------------------------------
 -- What's on it
@@ -136,7 +51,7 @@ local function MenuTasks(view)
 	if not view or view.corpse then
 		return tasks
 	end
-	local byObjective, turnIns, pickUps = {}, {}, {}
+	local byObjective, turnIns, pickUps, flightPaths = {}, {}, {}, {}
 	for _, task in ipairs(view.tasks) do
 		if task.key and routes.IsTaskLeft(task) and not routes.skipped[task.key] then
 			if task.objective then
@@ -145,10 +60,15 @@ local function MenuTasks(view)
 				turnIns[task.questID] = task
 			elseif task.kind == "pickUp" then
 				pickUps[task.questID] = task
+			elseif task.kind == "flightPath" then
+				flightPaths[task.key] = task
 			end
 		end
 	end
 	for _, entry in ipairs(routes.QuestsAt(view, routes.PositionAt(view))) do
+		if flightPaths[entry.task.key] then
+			tasks[#tasks + 1] = flightPaths[entry.task.key]
+		end
 		for _, objective in ipairs(routes.QuestObjectives(entry)) do
 			if byObjective[objective] then
 				tasks[#tasks + 1] = byObjective[objective]
@@ -169,8 +89,14 @@ local function ArrowObjective()
 	return MenuTasks(routes.arrowTarget)[1]
 end
 
--- Right-click on the arrow: leaves the objective it shows first off the route, as the menu's first Ignore does
+--[[
+	Right-click on the arrow: leaves the objective it shows first off the route, as the menu's first Ignore
+	does. Nothing while it says Join Up with Group, which the setting turns off, not a click
+]]
 function routes.IgnoreArrowObjective()
+	if routes.groupUpTarget then
+		return
+	end
 	local task = ArrowObjective()
 	if task then
 		routes.IgnoreTask(task)
@@ -190,12 +116,24 @@ local function EntriesKey(entries)
 	return table.concat(parts, "\n")
 end
 
+-- A switch: On in green, or Off with its name gray too, so what's off sits back
+local function ToggleEntry(left, on, action)
+	return {
+		kind = "toggle",
+		left = left,
+		leftColor = not on and "MUTED" or nil,
+		right = on and L["ROUTES_MENU_ON"] or L["ROUTES_MENU_OFF"],
+		rightColor = on and "ON" or "MUTED",
+		action = action,
+	}
+end
+
 --[[
 	The menu's rows, each { kind, left, right, leftColor, rightColor, hover, action, submenu }: kind "header",
-	"section" (a group's label), "separator", "action" (a row to click), "toggle" (a row to click, On or Off
-	on the right), "status" (a toggle that can't be switched now, its reason on the right), or "hint" (a
-	click hint). hover, { right, rightColor }, is the right side under the mouse, the name brightened. submenu
-	marks the Ignored label, which opens the flyout under the mouse or a click.
+	"spacer" (a line's room), "section" (a group's label), "separator", "action" (a row to click), "toggle" (a
+	row to click, On or Off on the right), "status" (a toggle that can't be switched now, its reason on the
+	right), or "hint" (a click hint). hover, { right, rightColor }, is the right side under the mouse, the name
+	brightened. submenu, on a label, names the flyout it opens under the mouse or a click (panels.submenus).
 	Returns them and a key that changes only when what they say does
 ]]
 local function Entries()
@@ -209,8 +147,19 @@ local function Entries()
 	local function Section(left, right)
 		Add({ kind = "section", left = left, right = right, rightColor = "MUTED" })
 	end
+	-- A label that opens a flyout, Blizzard's submenu arrow on the right after anything it says there
+	local function Submenu(left, name, count)
+		Add({
+			kind = "section",
+			left = left,
+			right = (count and tostring(count) .. " " or "") .. SUBMENU_ARROW,
+			rightColor = "MUTED",
+			submenu = name,
+		})
+	end
 
 	Add({ kind = "header", left = L["TAB_QUEST_ARROW"], right = L["ADDON_SHORT_NAME"], rightColor = "MUTED" })
+	Add({ kind = "spacer" })
 
 	--[[
 		Ignore: what the arrow lists, then its Next Objective, Next on the right, so the next waypoint can be
@@ -242,95 +191,104 @@ local function Entries()
 		end
 	end
 
-	-- A switch: On in green, or Off with its name gray too, so what's off sits back
-	local function Toggle(left, on, action)
-		Add({
-			kind = "toggle",
-			left = left,
-			leftColor = not on and "MUTED" or nil,
-			right = on and L["ROUTES_MENU_ON"] or L["ROUTES_MENU_OFF"],
-			rightColor = on and "ON" or "MUTED",
-			action = action,
-		})
+	-- Route and Show, each a flyout of its switches (RouteEntries, ShowEntries)
+	Submenu(L["ROUTES_MENU_SECTION_ROUTE"], "route")
+	Submenu(L["ROUTES_MENU_SECTION_SHOW"], "show")
+
+	-- Ignored, with how many: the ignore list in a flyout (IgnoredEntries)
+	local ignored = routes.IgnoredTasks()
+	if #ignored > 0 then
+		Submenu(L["ROUTES_MENU_IGNORED"], "ignored", #ignored)
 	end
 
-	Section(L["ROUTES_MENU_SECTION_SHOWN"])
-
-	-- Next Objective, the showNextObjective setting, as Options switches it
-	Toggle(INDENT .. L["ROUTES_NEXT_OBJECTIVE"], routes.Settings().showNextObjective, function()
-		routes.SetSetting("showNextObjective", not routes.Settings().showNextObjective)
-	end)
-
-	-- Future Turn-Ins, the showUpcomingTurnIns setting, as Options switches it: planned again at once
-	Toggle(INDENT .. L["ROUTES_MENU_SHOWN_TURN_INS"], routes.Settings().showUpcomingTurnIns, function()
-		routes.SetSetting("showUpcomingTurnIns", not routes.Settings().showUpcomingTurnIns)
-		routes.RequestPlan()
-	end)
-
-	-- Local Available Quests, the showLocalQuests setting, as Options switches it
-	Toggle(INDENT .. L["ROUTES_MENU_SHOWN_LOCAL"], routes.Settings().showLocalQuests, function()
-		routes.SetSetting("showLocalQuests", not routes.Settings().showLocalQuests)
-		routes.RequestPlan()
-	end)
-
 	--[[
-		Under it, only in a party, where the setting does anything: Party Objectives, and with it on, a
-		switch for each member's objectives a space further in
+		The click hints, each a row to use as well: Drag dragged moves the arrow, the others clicked do what that
+		click on the arrow does
 	]]
+	Separator()
+	if not routes.Settings().lockArrow then
+		Add({ kind = "hint", left = L["ROUTES_CLICK_DRAG"], right = L["ROUTES_DRAG_MOVE"], drag = true })
+	end
+	if not routes.groupUpTarget and ArrowObjective() then
+		Add({
+			kind = "hint",
+			left = L["ROUTES_CLICK_RIGHT"],
+			right = L["ROUTES_RIGHT_CLICK_IGNORE"],
+			action = routes.IgnoreArrowObjective,
+		})
+	end
+	Add({
+		kind = "hint",
+		left = L["ROUTES_CLICK_MIDDLE"],
+		right = L["ROUTES_MIDDLE_CLICK_RESET_ZONE"],
+		action = routes.ResetZone,
+	})
+
+	return entries, EntriesKey(entries)
+end
+
+--[[
+	Route's flyout: what the route plans, most used first, each as Options switches it and planned again at
+	once. In a party, where the setting does anything, Party Objectives, and with it on, a switch for each
+	member's objectives a space in
+]]
+local function RouteEntries()
+	local settings = routes.Settings()
+	local entries = {
+		ToggleEntry(L["ROUTES_MENU_SHOWN_PREDICTIVE"], settings.predictiveRoutes, function()
+			routes.SetSetting("predictiveRoutes", not routes.Settings().predictiveRoutes)
+			routes.RequestPlan()
+		end),
+		ToggleEntry(L["ROUTES_MENU_SHOWN_LOCAL"], settings.showLocalQuests, function()
+			routes.SetSetting("showLocalQuests", not routes.Settings().showLocalQuests)
+			routes.RequestPlan()
+		end),
+		ToggleEntry(L["ROUTES_MENU_SHOWN_FLIGHTS"], settings.showFlightPaths, function()
+			routes.SetSetting("showFlightPaths", not routes.Settings().showFlightPaths)
+			routes.RequestPlan()
+		end),
+	}
 	if routes.IsInParty() then
-		local on = routes.Settings().partyQuests
-		Toggle(INDENT .. L["ROUTES_MENU_SHOWN_PARTY"], on, function()
+		local on = settings.partyQuests
+		entries[#entries + 1] = ToggleEntry(L["ROUTES_MENU_SHOWN_PARTY"], on, function()
 			routes.SetPartyQuests(not routes.Settings().partyQuests)
 		end)
-		local members = on and routes.PartyMembers(true) or {}
 		--[[
 			Why a member's objectives aren't on the route, in gray: Offline; No Questie, for one sharing none;
 			Out of Zone, left off until they're back. None has anything to click, and the switch keeps its
 			place for when that changes
 		]]
-		for _, member in ipairs(members) do
+		for _, member in ipairs(on and routes.PartyMembers(true) or {}) do
 			local included = routes.ignoredMembers[member.name] == nil
 			local name = Colored(member.name, routes.ClassColor(member.unit))
-			local left = INDENT .. INDENT .. string.format(L["ROUTES_MENU_MEMBER_OBJECTIVES"], name)
-			if member.offline then
-				Add({ kind = "status", left = left, right = L["ROUTES_MENU_OFFLINE"], rightColor = "MUTED" })
-			elseif not routes.MemberHasQuestie(member.name) then
-				Add({ kind = "status", left = left, right = L["ROUTES_MENU_NO_QUESTIE"], rightColor = "MUTED" })
-			elseif routes.IsUnitOutOfZone(member.unit) then
-				Add({ kind = "status", left = left, right = L["ROUTES_MENU_OUT_OF_ZONE"], rightColor = "MUTED" })
+			local left = INDENT .. string.format(L["ROUTES_MENU_MEMBER_OBJECTIVES"], name)
+			local reason = member.offline and L["ROUTES_MENU_OFFLINE"]
+				or not routes.MemberHasQuestie(member.name) and L["ROUTES_MENU_NO_QUESTIE"]
+				or routes.IsUnitOutOfZone(member.unit) and L["ROUTES_MENU_OUT_OF_ZONE"]
+				or nil
+			if reason then
+				entries[#entries + 1] = { kind = "status", left = left, right = reason, rightColor = "MUTED" }
 			else
-				Toggle(left, included, function()
+				entries[#entries + 1] = ToggleEntry(left, included, function()
 					routes.SetMemberIgnored(member.name, included)
 				end)
 			end
 		end
 	end
-
-	-- Ignored, with how many and an arrow: the label opens the ignore list beside the menu (IgnoredEntries)
-	local ignored = routes.IgnoredTasks()
-	if #ignored > 0 then
-		Add({
-			kind = "section",
-			left = L["ROUTES_MENU_IGNORED"],
-			right = tostring(#ignored) .. " " .. SUBMENU_ARROW,
-			rightColor = "MUTED",
-			submenu = true,
-		})
-	end
-
-	Separator()
-	if not routes.Settings().lockArrow then
-		Add({ kind = "hint", left = L["ROUTES_CLICK_DRAG"], right = L["ROUTES_DRAG_MOVE"] })
-	end
-	if ArrowObjective() then
-		Add({ kind = "hint", left = L["ROUTES_CLICK_RIGHT"], right = L["ROUTES_RIGHT_CLICK_IGNORE"] })
-	end
-	Add({ kind = "hint", left = L["ROUTES_CLICK_MIDDLE"], right = L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] })
-
 	return entries, EntriesKey(entries)
 end
 
--- The flyout's rows: the ignore list in gray, each brightening with Put Back under the mouse
+-- Show's flyout: what only the arrow draws. Next Objective, the showNextObjective setting, as Options switches it
+local function ShowEntries()
+	local entries = {
+		ToggleEntry(L["ROUTES_NEXT_OBJECTIVE"], routes.Settings().showNextObjective, function()
+			routes.SetSetting("showNextObjective", not routes.Settings().showNextObjective)
+		end),
+	}
+	return entries, EntriesKey(entries)
+end
+
+-- Ignored's flyout: the ignore list in gray, each brightening with Put Back under the mouse
 local function IgnoredEntries()
 	local entries = {}
 	for _, entry in ipairs(routes.IgnoredTasks()) do
@@ -347,228 +305,27 @@ local function IgnoredEntries()
 	return entries, EntriesKey(entries)
 end
 
---------------------------------------------------------------------------------
--- Laying it out
---------------------------------------------------------------------------------
-
-local function Paint(fontString, text, colorKey, fontObject)
-	if fontObject then
-		fontString:SetFontObject(fontObject)
-	end
-	fontString:SetText(text or "")
-	if colorKey then
-		fontString:SetTextColor(ns.GetColorRGB(colorKey))
-	end
-	fontString:SetShown(text ~= nil)
-end
-
--- How a row reads, or under the mouse its hover: the name brightened and the hover's right side
-local function Dress(row, over)
-	local look, hover = row.look, over and row.hover
-	Paint(row.left, look.left, hover and "TEXT" or look.leftColor)
-	if hover then
-		Paint(row.right, hover.right, hover.rightColor)
-	else
-		Paint(row.right, look.right, look.rightColor)
-	end
-end
-
-local OpenSubmenu, CloseSubmenu -- Below, once the rows are laid out
-
-local function Row(panel, index)
-	local row = panel.rows[index]
-	if not row then
-		row = CreateFrame("Button", nil, panel)
-		row:RegisterForClicks("LeftButtonUp")
-		row.highlight = row:CreateTexture(nil, "HIGHLIGHT")
-		row.highlight:SetAllPoints()
-		local red, green, blue = ns.GetColorRGB("TITLE")
-		row.highlight:SetColorTexture(red, green, blue, HIGHLIGHT_ALPHA)
-		row.left = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		row.left:SetJustifyH("LEFT")
-		row.left:SetWordWrap(false)
-		row.right = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		row.right:SetJustifyH("RIGHT")
-		row.right:SetWordWrap(false)
-		row.line = row:CreateTexture(nil, "ARTWORK")
-		row.line:SetHeight(1)
-		row.line:SetPoint("LEFT", TEXT_INSET, 0)
-		row.line:SetPoint("RIGHT", -TEXT_INSET, 0)
-		red, green, blue = ns.GetColorRGB("SEPARATOR")
-		row.line:SetColorTexture(red, green, blue, 0.35)
-		row:SetScript("OnClick", function(self)
-			if self.submenu then
-				OpenSubmenu(self)
-			elseif self.action then
-				self.action()
-				routes.RefreshArrowMenu()
-			end
-		end)
-		--[[
-			On the menu, the Ignored label opens the flyout and any other row closes it, as a dropdown's
-			submenu does; the flyout's own rows leave it open
-		]]
-		row:SetScript("OnEnter", function(self)
-			if self.hover then
-				Dress(self, true)
-			end
-			if self.submenu then
-				OpenSubmenu(self)
-			elseif panel == menu then
-				CloseSubmenu()
-			end
-		end)
-		row:SetScript("OnLeave", function(self)
-			if self.hover then
-				Dress(self, false)
-			end
-		end)
-		panel.rows[index] = row
-	end
-	row:Show()
-	return row
-end
+-- Each flyout's rows, by the name its label carries, for the flyout to fill itself from (Routes-Arrow-Menu-Panel.lua)
+panels.submenus = { route = RouteEntries, show = ShowEntries, ignored = IgnoredEntries }
 
 --[[
-	Sizes the menu to its rows: each as tall as a line and SPACE.LINE above and below, a group's label
-	SPACE.NEAR above instead to set its group apart, the separators SPACE.NEAR
+	Rebuilds the menu's rows, and the open flyout's; it closes once its label is gone, as Ignored's does once
+	nothing is ignored
 ]]
-local function Layout(panel, entries)
-	local width, y = MIN_WIDTH, SPACE.NEAR
-	local rows = panel.rows
-	panel.submenuRow = nil
-	for index, entry in ipairs(entries) do
-		local row = Row(panel, index)
-		local kind = entry.kind
-		local clickable = kind == "action" or kind == "toggle" or entry.submenu == true
-		row:EnableMouse(clickable)
-		row.line:SetShown(kind == "separator")
-		row.hover = entry.hover
-		row.submenu = entry.submenu
-		if entry.submenu then
-			panel.submenuRow = row
-		end
-		local height
-		if kind == "separator" then
-			Paint(row.left, nil)
-			Paint(row.right, nil)
-			height = SPACE.NEAR
-		else
-			local font = kind == "header" and "GameFontNormal"
-				or kind == "section" and "GameFontNormalSmall"
-				or "GameFontHighlight"
-			row.left:SetFontObject(font)
-			row.right:SetFontObject(kind == "section" and font or "GameFontHighlight")
-			local leftColor = entry.leftColor
-				or (kind == "header" or kind == "section") and "TITLE"
-				or kind == "hint" and "INFO"
-				or "TEXT"
-			local rightColor = entry.rightColor or (kind == "hint" and "INFO") or "TEXT"
-			row.look = { left = entry.left, leftColor = leftColor, right = entry.right, rightColor = rightColor }
-			local _, size = row.left:GetFont()
-			local above = kind == "section" and SPACE.NEAR or SPACE.LINE
-			height = (size or 12) + above + SPACE.LINE
-			-- Centered on the line, not the row, so a label's extra room is all above it
-			local drop = (above - SPACE.LINE) / 2
-			row.left:ClearAllPoints()
-			row.left:SetPoint("LEFT", TEXT_INSET, -drop)
-			row.right:ClearAllPoints()
-			row.right:SetPoint("RIGHT", -TEXT_INSET, -drop)
-			-- As wide as its widest look: the hover's right side measured too, so Put Back never crowds the name
-			local rightWidth = 0
-			if row.hover then
-				Dress(row, true)
-				rightWidth = row.right:GetStringWidth() or 0
-			end
-			Dress(row, false)
-			if entry.right then
-				rightWidth = math.max(rightWidth, row.right:GetStringWidth() or 0)
-			end
-			local textWidth = row.left:GetStringWidth() or 0
-			if rightWidth > 0 then
-				textWidth = textWidth + SPACE.GROUP + rightWidth
-			end
-			width = math.max(width, textWidth + 2 * (TEXT_INSET + ROW_INSET))
-			if row.hover and row:IsMouseOver() then
-				Dress(row, true)
-			end
-		end
-		row:SetHeight(height)
-		row:ClearAllPoints()
-		row:SetPoint("TOPLEFT", panel, "TOPLEFT", ROW_INSET, -y)
-		row:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -ROW_INSET, -y)
-		y = y + height
-	end
-	for index = #entries + 1, #rows do
-		rows[index]:Hide()
-	end
-	panel:SetSize(math.ceil(width), y + SPACE.NEAR)
-end
-
--- Lays a panel out again where what its rows say has changed; their actions always, as a new plan makes new tasks
-local function Fill(panel, entries, key)
-	if key ~= panel.shownKey then
-		panel.shownKey = key
-		Layout(panel, entries)
-	end
-	for index, entry in ipairs(entries) do
-		panel.rows[index].action = entry.action
-	end
-end
-
---[[
-	The flyout beside the Ignored label, its first row level with the label: to the right of the menu, or to
-	the left where the screen hasn't the room. The label keeps its highlight while the flyout is open
-]]
-local function PlaceSubmenu(row)
-	submenu:ClearAllPoints()
-	local gap = ROW_INSET + SPACE.NEAR
-	local right = menu:GetRight() or 0
-	local scale = menu:GetEffectiveScale() / UIParent:GetEffectiveScale()
-	if (right + gap + submenu:GetWidth()) * scale > UIParent:GetWidth() then
-		submenu:SetPoint("TOPRIGHT", row, "TOPLEFT", -gap, SPACE.NEAR)
-	else
-		submenu:SetPoint("TOPLEFT", row, "TOPRIGHT", gap, SPACE.NEAR)
-	end
-end
-
-function OpenSubmenu(row)
-	local entries, key = IgnoredEntries()
-	if #entries == 0 then
-		CloseSubmenu()
-		return
-	end
-	if not submenu:IsShown() then
-		submenu.shownKey = nil
-	end
-	Fill(submenu, entries, key)
-	PlaceSubmenu(row)
-	submenu:Show()
-	row:LockHighlight()
-end
-
-function CloseSubmenu()
-	if menu.submenuRow then
-		menu.submenuRow:UnlockHighlight()
-	end
-	submenu:Hide()
-end
-
--- Rebuilds the menu's rows, and the flyout's while it's open; the flyout closes once nothing is ignored
 function routes.RefreshArrowMenu()
 	if not menu:IsShown() then
 		return
 	end
-	if menu.submenuRow then
-		menu.submenuRow:UnlockHighlight()
+	local open = submenu:IsShown() and submenu.name
+	for _, row in pairs(menu.submenuRows or {}) do
+		row:UnlockHighlight()
 	end
 	Fill(menu, Entries())
-	if submenu:IsShown() then
-		if menu.submenuRow then
-			OpenSubmenu(menu.submenuRow)
-		else
-			submenu:Hide()
-		end
+	local row = open and menu.submenuRows[open]
+	if row then
+		OpenSubmenu(row)
+	else
+		CloseSubmenu()
 	end
 end
 

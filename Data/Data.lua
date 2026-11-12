@@ -53,12 +53,14 @@ ns.PALETTE = {
 	ARROW_ON_COURSE = "00FF00", -- Green: The Quest Arrow Pointing Ahead
 	ARROW_TURN = "FFFF00", -- Yellow: The Quest Arrow Pointing to the Side
 	ARROW_WRONG_WAY = "FF3333", -- Red: The Quest Arrow Pointing Behind
-	ARROW_GHOST_TEXT = "000000", -- Black: The Quest Arrow's Words While a Ghost, Read on the Pale Spirit World
 	ROUTE_LINE = "333333", -- Dark Gray: The Route's Line, Plain on the Yellow Maps
 	ROUTE_ALERT_RING = "FF3333", -- Red: A Marker's Ring for a Dungeon Objective
 	ROUTE_IGNORED_RING = "CCCCCC", -- Light Gray: A Marker's Ring for an Ignored Objective
-	ROUTE_PARTY_RING = "FFFFFF", -- White: A Marker's Ring for a Party Member's Objective
+	ROUTE_PARTY_RING = "FFFFFF", -- White: A Marker's Ring for a Party Member's Objective, and Join Up with Group's
+	ROUTE_MEET = "FFD100", -- Gold: Join Up with Group's Disc, Under the Quest Log's Blue Party Icon
 	ROUTE_ESCORT = "33CC33", -- Green: An Escort Quest's Pick-Up Marker, One to Leave for Later
+	ROUTE_PREDICTED = "808080", -- Gray: A Marker's Disc for an Objective of a Quest Not Picked Up Yet
+	ROUTE_FLIGHT = "33CC33", -- Green: A Flight Path's Marker, a Flight Master Not Yet Talked To
 	QUEST_TIMER_LOW = "FF3333", -- Red: A Timed Quest's Last Minute on the Quest Arrow
 	PARCHMENT_GAIN = "1D6B1D", -- Deep Green: A Skin's Experience Share, Read on the Parchment
 }
@@ -84,10 +86,17 @@ ns.CLASS_COLORS = {
 ns.OPTIONS_REGISTRY = {
 	General = ADDON_NAME,
 	QuestLog = ADDON_NAME .. "_QuestLog",
+	QuestList = ADDON_NAME .. "_QuestList",
+	QuestDetails = ADDON_NAME .. "_QuestDetails",
+	WindowMap = ADDON_NAME .. "_WindowMap",
+	NPCDialogue = ADDON_NAME .. "_NPCDialogue",
 	QualityOfLife = ADDON_NAME .. "_QualityOfLife",
-	WaypointMarkers = ADDON_NAME .. "_WaypointMarkers",
 	QuestRoute = ADDON_NAME .. "_QuestRoute",
 	QuestArrow = ADDON_NAME .. "_QuestArrow",
+	MapsObjectives = ADDON_NAME .. "_MapsObjectives",
+	Minimap = ADDON_NAME .. "_Minimap",
+	ZoneMap = ADDON_NAME .. "_ZoneMap",
+	WideMap = ADDON_NAME .. "_WideMap",
 	Profiles = ADDON_NAME .. "_Profiles",
 	FeedbackSupport = ADDON_NAME .. "_FeedbackSupport",
 	Diagnostics = ADDON_NAME .. "_Diagnostics",
@@ -339,3 +348,13 @@ ns.SHARE_INTERVAL_MAX = 10
 ns.DUNGEON_CHECK_INTERVAL = 2
 ns.DUNGEON_SHARE_MAX_WAIT = 60
 ns.DUNGEON_LOGIN_GRACE = 10
+
+--[[
+	Offering a zone's quests to a party member (Zone-Share-Offer.lua): how long after they join, or the
+	player does, to wait for Questie to swap quest logs; how long past that to keep trying while where they
+	are or what quests they have isn't known yet; and after a login or reload in a group, the longest to
+	wait for Questie to start before asking it for the party's quest logs
+]]
+ns.ZONE_OFFER_DELAY = 20
+ns.ZONE_OFFER_MAX_WAIT = 60
+ns.ZONE_OFFER_QUESTIE_WAIT = 30

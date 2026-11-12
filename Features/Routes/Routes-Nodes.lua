@@ -245,20 +245,18 @@ function routes.BuildNodes(yield)
 
 			--[[
 				The turn-in: once the quest is done and the party needs none of it, ready now; before then
-				(or while helping), planned ahead, waiting on every
-				one of its objectives' nodes (requires), so the route and the Quest Arrow's Next Objective show
-				it where it falls once they're done. None ahead with Show Future Turn-Ins (showUpcomingTurnIns)
-		off, nor for a quest with an objective the route can't
-				do, nor a dungeon or raid quest's until it's done. A dungeon or raid quest's only where it's out
-				in the world, not at the end of the instance
+				(or while helping), planned ahead, waiting on every one of its objectives' nodes (requires),
+				so the route and the Quest Arrow's Next Objective show it where it falls once they're done.
+				With Predictive Questing Routes (predictiveRoutes) off it's still planned, hidden: the player
+				walks back to hand the quest in either way, and a route planned as if they didn't would end
+				out in the fields, sending them to town first for a turn-in that's ready and then back out
+				again. The planner drops hidden ones from what's drawn (Routes-Planner.lua). None ahead for a
+				quest with an objective the route can't do, nor a dungeon or raid quest's until it's done. A
+				dungeon or raid quest's only where it's out in the world, not at the end of the instance
 			]]
 			local key = questID .. ":turnIn"
 			local ready = state == 1 and not helping
-			local ahead = (state == 0 or helping)
-				and routes.Settings().showUpcomingTurnIns
-				and not instanceQuest
-				and not unplanned
-				and #objectiveNodes > 0
+			local ahead = (state == 0 or helping) and not instanceQuest and not unplanned and #objectiveNodes > 0
 			if (ready or ahead) and not skipped[key] and routes.IsOnQuest(questID) then
 				local blobs = TurnInBlobs(quest, start, yield, instanceQuest)
 				if #blobs > 0 then
@@ -271,6 +269,7 @@ function routes.BuildNodes(yield)
 						candidates = Candidates(blobs, start, false),
 						blobs = blobs,
 						ready = ready, -- Done: it can be turned in now
+						hidden = not ready and not routes.Settings().predictiveRoutes or nil, -- Planned, not drawn
 						requires = not ready and objectiveNodes or nil,
 						urgent = urgent,
 						turnInDistance = turnInDistance,
@@ -281,19 +280,29 @@ function routes.BuildNodes(yield)
 		yield()
 	end
 
-	-- The party's quests the player doesn't have, their objectives planned as the player's own; none of a dungeon's
+	--[[
+		The party's quests the player doesn't have, their objectives planned as the player's own, and their
+		turn-ins (questID:pt), from Questie's database: ready once nobody needs any of it, else planned ahead
+		of the objectives and hidden with Predictive Questing Routes off, as the player's own are. The route
+		then heads back to town with the party rather than ending out where their last objective is, and the
+		party's follow-ups grow from these (Routes-Chains.lua). None of a dungeon's, and no turn-in ahead
+		while an objective the party still needs has nowhere to go
+	]]
+	local predictive = routes.Settings().predictiveRoutes
 	for questID, quest in pairs(routes.PartyQuests(QuestLog(), yield)) do
 		if not IsInstanceQuest(questID) then
+			local questName = quest.name or tostring(questID)
+			local objectiveNodes, unplanned = {}, false
 			for index, objective in pairs(quest.Objectives) do
 				local key = questID .. ":p" .. tostring(index)
-				if not objective.Completed and HasSpawns(objective) and not skipped[key] then
-					local blobs = ObjectiveBlobs(objective, start, yield)
-					if #blobs > 0 then
-						nodes[#nodes + 1] = {
+				if not objective.Completed then
+					local blobs = HasSpawns(objective) and not skipped[key] and ObjectiveBlobs(objective, start, yield)
+					if blobs and #blobs > 0 then
+						local node = {
 							key = key,
 							kind = "objective",
 							questID = questID,
-							questName = quest.name or tostring(questID),
+							questName = questName,
 							quest = quest,
 							objective = objective,
 							candidates = Candidates(Unworked(key, blobs), start, true),
@@ -301,15 +310,66 @@ function routes.BuildNodes(yield)
 							spawns = blobs.spawns,
 							party = true,
 						}
+						nodes[#nodes + 1] = node
+						objectiveNodes[#objectiveNodes + 1] = node
+					else
+						unplanned = true
 					end
+				end
+			end
+			local key = questID .. ":pt"
+			local ready = #objectiveNodes == 0
+			if not unplanned and not skipped[key] then
+				local blobs = routes.QuestTurnInBlobs(questID, start, yield)
+				if blobs and #blobs > 0 then
+					nodes[#nodes + 1] = {
+						key = key,
+						kind = "turnIn",
+						questID = questID,
+						questName = questName,
+						quest = quest,
+						candidates = Candidates(blobs, start, false),
+						blobs = blobs,
+						ready = ready,
+						hidden = not ready and not predictive or nil,
+						requires = not ready and objectiveNodes or nil,
+						party = true,
+					}
 				end
 			end
 		end
 		yield()
 	end
 
-	-- Quests to pick up nearby, with Show Available Local Quests as Objectives on (Routes-Pick-Ups.lua)
-	routes.AddLocalQuestNodes(nodes, start, log, yield)
+	-- Quests to pick up, nearby with Local Available Quests on, across the zone with Predictive Questing Routes (Routes-Pick-Ups.lua)
+	local chainStarts = routes.AddLocalQuestNodes(nodes, start, log, yield)
+
+	-- Quests the zone can finish, planned whole with their follow-ups, with Predictive Questing Routes on (Routes-Chains.lua)
+	routes.AddChainNodes(nodes, start, log, chainStarts, yield)
+
+	--[[
+		A quest the party has that the player is to pick up: its party objectives wait on the pick-up, so the
+		two do them together once both have it, rather than the player helping before they'd get the credit
+	]]
+	local pickUpOf = {}
+	for _, node in ipairs(nodes) do
+		if node.kind == "pickUp" and not node.party then
+			pickUpOf[node.questID] = node
+		end
+	end
+	for _, node in ipairs(nodes) do
+		local pickUp = node.party and node.kind == "objective" and pickUpOf[node.questID]
+		if pickUp then
+			local requires = { pickUp }
+			for _, required in ipairs(node.requires or {}) do
+				requires[#requires + 1] = required
+			end
+			node.requires = requires
+		end
+	end
+
+	-- Flight paths not yet discovered, with Discover Flight Paths on (Routes-Flights.lua)
+	routes.AddFlightPathNodes(nodes, start, yield)
 
 	-- Questie's log is a hash, so its order changes; the same quests always make the same route
 	table.sort(nodes, ByKey)

@@ -5,9 +5,66 @@ local GetColor = ns.GetColor
 -- The Features switches, two to a line
 local FEATURE_WIDTH = ns.OPTIONS_ROW_WIDTH / 2
 
+-- A key binding row: its caption, the bound key, and Set Key
+local KEY_LABEL_WIDTH = 1.9
+local KEY_STATUS_WIDTH = 0.85
+local KEY_BUTTON_WIDTH = 0.55
+
 --------------------------------------------------------------------------------
 -- General Panel
 --------------------------------------------------------------------------------
+
+local function BindingStatus(command)
+	local key = GetBindingKey(command)
+	if not key then
+		return GetColor("MUTED") .. NOT_BOUND .. "|r"
+	end
+	return GetColor("TEXT") .. GetBindingText(key) .. "|r"
+end
+
+--[[
+	The Quest Arrow's Use Quest Item key, where Routes is loaded. A binding can't be set from an AceConfig
+	panel, so the row shows the key and Set Key opens the game's list (ns:OpenKeyBindings, Key-Bindings.lua)
+]]
+local function AddKeyBindings(args, order)
+	if not ns.routes then
+		return
+	end
+	local command = ns.routes.USE_ITEM_COMMAND
+	args.spaceKeyBindings0 = ns.OptionsSpacer(order)
+	args.headerKeyBindings = ns.OptionsHeader(L["OPTIONS_KEY_BINDINGS_HEADER"], order + 1)
+	args.spaceKeyBindings1 = ns.OptionsSpacer(order + 2)
+	args.rowKeyBinding = {
+		type = "group",
+		name = "",
+		inline = true,
+		order = order + 3,
+		args = {
+			caption = ns.OptionsRowLabel(GetColor("INFO") .. L["BINDING_USE_QUEST_ITEM"] .. "|r", 1, KEY_LABEL_WIDTH),
+			status = {
+				type = "description",
+				name = function()
+					return BindingStatus(command)
+				end,
+				fontSize = "medium",
+				width = KEY_STATUS_WIDTH,
+				order = 2,
+			},
+			setKey = {
+				type = "execute",
+				name = L["OPTIONS_KEY_SET"],
+				desc = L["OPTIONS_KEY_SET_DESCRIPTION"],
+				width = KEY_BUTTON_WIDTH,
+				order = 3,
+				func = function()
+					ns:OpenKeyBindings()
+				end,
+			},
+		},
+	}
+	args.descKeyBinding =
+		ns.OptionsDesc(GetColor("HELP") .. L["OPTIONS_KEY_BINDING_USE_QUEST_ITEM_DESCRIPTION"] .. "|r", order + 4)
+end
 
 local function AddCommands(args, order)
 	args.spaceCommands0 = ns.OptionsSpacer(order)
@@ -77,6 +134,7 @@ function ns.BuildGeneralOptions()
 		questLogReloadPending = ns.OptionsStatusLine(ns.QuestLogReloadPendingText, 19),
 	}
 
+	AddKeyBindings(args, 80)
 	AddCommands(args, 100)
 
 	return {

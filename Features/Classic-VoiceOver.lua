@@ -10,21 +10,25 @@ ns.AddWideQuestLogPart(function()
 	--[[
 		VoiceOver puts its play button over the start of the title, so with it loaded each title starts with
 		enough spaces to clear the button (as VoiceOver pads it). Spaces only: a tab draws as a missing glyph
-		in some fonts, ElvUI's among them
+		in some fonts, ElvUI's among them. Measured once per font and size, so a font the player picks later
+		gets its own
 	]]
-	local voiceOverPadding
+	local voiceOverPadding = {}
 	local function VoiceOverPadding(text)
-		if not voiceOverPadding then
+		local file, size = text:GetFont()
+		local font = tostring(file) .. ":" .. tostring(size)
+		if not voiceOverPadding[font] then
+			local padding = "  "
 			for count = 1, 20 do
 				text:SetText(string.rep(" ", count))
 				if text:GetStringWidth() >= 24 then
-					voiceOverPadding = text:GetText()
+					padding = text:GetText()
 					break
 				end
 			end
-			voiceOverPadding = voiceOverPadding or "  "
+			voiceOverPadding[font] = padding
 		end
-		return voiceOverPadding
+		return voiceOverPadding[font]
 	end
 
 	-- What goes in front of a quest title in the list: the padding while VoiceOver's buttons are on (isOn), nothing otherwise

@@ -123,7 +123,10 @@ function routes.AddStopTooltip(tooltip, stop)
 				anyLeft = anyLeft or entry.left[objective] == true
 			end
 		end
-		if entry.pickUp then
+		if entry.flightPath then
+			local text = string.format(L["ROUTES_FLIGHT_PATH_FROM"], entry.task.flightMaster or "")
+			tooltip:AddLine(text, ns.GetColorRGB("TITLE"))
+		elseif entry.pickUp then
 			local title, red, green, blue = routes.QuestTitle(entry.task)
 			tooltip:AddLine(string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue)
 			-- Why a map-only pick-up isn't on the route (Routes-Pick-Ups.lua), indented a space as objectives are
@@ -131,11 +134,18 @@ function routes.AddStopTooltip(tooltip, stop)
 			if reason then
 				tooltip:AddLine(ROW_INDENT .. L[reason], ns.GetColorRGB("HELP"))
 			end
+			-- A follow-up planned ahead (Routes-Chains.lua): the turn-in that unlocks it, the party's for theirs
+			local after = entry.task.after
+			if after then
+				local unlocker = routes.QuestTitle(after)
+				local text = L[after.party and "ROUTES_AFTER_PARTY_TURN_IN" or "ROUTES_AFTER_TURN_IN"]
+				tooltip:AddLine(ROW_INDENT .. string.format(text, unlocker), ns.GetColorRGB("HELP"))
+			end
 		elseif entry.turnIn and not anyLeft then
 			local title = routes.QuestTitle(entry.task)
 			tooltip:AddLine(string.format(L["ROUTES_TURN_IN_QUEST"], title), ns.GetColorRGB("TITLE"))
 		else
-			tooltip:AddLine(routes.QuestTitle(entry.task))
+			tooltip:AddLine(routes.ObjectivesTitle(entry.task))
 			AddProgress(tooltip, entry, objectives)
 		end
 	end

@@ -51,3 +51,21 @@
 - **Departs from:** COMPATIBILITY, writing nothing to a Blizzard panel.
 - **Instead:** Quest Giver Window Cleanup restyles Blizzard's quest giver and gossip windows on every client, and parents its own pieces, such as the quest ID and its Wowhead button, onto their pages.
 - **Why:** Those windows are unprotected, and pieces that live on a scrolling page must be its children to scroll and clip with it.
+
+### Party whispers are fixed text
+
+- **Departs from:** MESSAGES → Editable Messages, a message sent straight to one player is the player's to word.
+- **Instead:** The Zone Share Offer whisper and the whisper sent when a quest share fails go out as the add-on's own localized text, with no message box, Send Messages In or Send Test to Me.
+- **Why:** They are short, fixed notices about a quest share, not messages written in the player's voice.
+
+### Font sections carry Reset Font
+
+- **Departs from:** SAVED VARIABLES → Reset, no control resets settings Reset Profile can reach beyond a text input's Reset.
+- **Instead:** Each area's font section ends with a Reset Font button that puts that area's font settings back to their defaults.
+- **Why:** A player trying fonts can undo one area without resetting every other setting on the profile.
+
+### Per-character route state on the Simple model
+
+- **Departs from:** SAVED VARIABLES → The Two Models, an add-on storing per-character data uses Per-Character.
+- **Instead:** Settings live on one shared profile, while the route's ignore list and the flight paths each character knows live in AceDB's per-character section, which Reset Profile doesn't clear.
+- **Why:** Every character shares the same settings, but what a character has ignored and which flight paths it knows belong to that character alone.

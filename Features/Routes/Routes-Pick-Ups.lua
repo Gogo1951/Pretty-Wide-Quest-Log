@@ -75,12 +75,17 @@ local function ForEachStarter(QuestieDB, questID, add)
 end
 
 --[[
-	A quest giver's blobs, worked out once for the zone they were worked out in: spawns don't move. Each
-	quest has a table of its own here, as a weak-keyed cache needs a table to key by
+	A quest giver's blobs, worked out once for the zone they were worked out in: spawns don't move. A plain
+	table by quest ID, emptied when the planner moves to another zone
 ]]
 local starterCache = {}
+local startersZone -- The zone the cached givers were worked out in
 
 local function StarterBlobs(QuestieDB, questID, start, yield)
+	if start.zone ~= startersZone then
+		startersZone = start.zone
+		wipe(starterCache) -- A new zone: the last one's givers go, so they don't pile up over a session
+	end
 	local cached = starterCache[questID]
 	if cached and cached.zone == start.zone and cached.instance == start.instance then
 		return cached.blobs
@@ -262,6 +267,7 @@ local elsewhereCache = {}
 local function IsElsewhere(QuestieDB, questID, zone, yield)
 	local byZone = elsewhereCache[zone]
 	if not byZone then
+		wipe(elsewhereCache) -- A new zone: the last one's answers go
 		byZone = {}
 		elsewhereCache[zone] = byZone
 	end
@@ -316,22 +322,78 @@ local function Handling(QuestieDB, questID, zone, settings, yield)
 	return handling, reason
 end
 
+-- Yards from the start to the nearest of some blobs, math.huge for none
+local function NearestYards(blobs, start)
+	local nearest = math.huge
+	for _, blob in ipairs(blobs) do
+		local dx, dy = blob.x - start.x, blob.y - start.y
+		nearest = math.min(nearest, math.sqrt(dx * dx + dy * dy))
+	end
+	return nearest
+end
+
+--[[
+	How many more quests the log takes: the client's own limit where it says, else Classic's 20, less the
+	quests in Questie's log. Planning pick-ups past it would send the player to a giver who can't give
+]]
+local function FreeQuestSlots(log)
+	local most = 20
+	if C_QuestLog and type(C_QuestLog.GetMaxNumQuestsCanAccept) == "function" then
+		local ok, value = pcall(C_QuestLog.GetMaxNumQuestsCanAccept)
+		most = ok and tonumber(value) or most
+	elseif tonumber(MAX_QUESTS) then
+		most = tonumber(MAX_QUESTS)
+	end
+	local taken = 0
+	for _, quest in pairs(log) do
+		if type(quest) == "table" then
+			taken = taken + 1
+		end
+	end
+	return math.max(0, most - taken)
+end
+
+-- A small table of a quest's name and level, for the arrow's title line, and the name
+local function QuestInfo(QuestieDB, questID)
+	local name = QueryQuest(QuestieDB, questID, "name") or tostring(questID)
+	return { name = name, level = QuestLevel(QuestieDB, questID) }, name
+end
+
+-- What Routes-Chains.lua shares from here
+routes.pickUpHelpers = {
+	QueryQuest = QueryQuest,
+	QuestInfo = QuestInfo,
+	StarterBlobs = StarterBlobs,
+	IsTakenOrDone = IsTakenOrDone,
+	IsTooLow = IsTooLow,
+	IsElsewhere = IsElsewhere,
+	Handling = Handling,
+	ROUTE = ROUTE,
+}
+
 --[[
 	Adds a "pickUp" node to nodes for every quest the player can pick up nearby that the settings put on the
 	route. Each is { key, kind, questID, questName, quest, candidates, blobs, ready, escort }, quest a small
-	table of its name and level for the arrow's title line. The map-only ones go on routes.mapOnlyPickUps
+	table of its name and level for the arrow's title line. The map-only ones go on routes.mapOnlyPickUps.
+
+	With Predictive Questing Routes on (predictiveRoutes), a quest that can be done in the zone from start
+	to finish (routes.IsChainQuest) counts from anywhere in the zone, not only within the Search Range, and
+	Routes-Chains.lua plans its objectives, its turn-in and the quests that follow it. Those are returned,
+	nearest giver first. With Local Available Quests off, those are the only quests to pick up. No more
+	quests are picked up than the log has room for, nearest first
 ]]
 function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	local mapOnly = {}
 	routes.mapOnlyPickUps = mapOnly
 	local settings = routes.Settings()
-	if not settings.showLocalQuests then
-		return
+	local nearby, planChains = settings.showLocalQuests, settings.predictiveRoutes
+	if not (nearby or planChains) then
+		return {}
 	end
 	local available = AvailableQuestIDs()
 	local QuestieDB = ns.ImportQuestieModule("QuestieDB")
 	if not (available and QuestieDB and type(QuestieDB.QueryQuestSingle) == "function") then
-		return
+		return {}
 	end
 	local skipped = routes.skipped
 	local range = routes.LocalQuestRange()
@@ -340,35 +402,56 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 		questIDs[#questIDs + 1] = questID
 	end
 	table.sort(questIDs)
+	local onRoute = {}
 	for _, questID in ipairs(questIDs) do
 		local key = questID .. ":pickUp"
-		if
-			available[questID]
+		--[[
+			Its givers first, worked out once a zone, so a quest with none in this zone, most of them, skips the
+			tag and level lookups
+		]]
+		local starters = available[questID]
 			and not skipped[key]
 			and not IsTakenOrDone(questID, log)
+			and StarterBlobs(QuestieDB, questID, start, yield)
+		if
+			starters
+			and #starters > 0
 			and not routes.IsInstanceQuest(questID)
 			and not IsTooLow(QuestieDB, questID, settings.localQuestLevel)
 		then
-			local blobs = InRange(StarterBlobs(QuestieDB, questID, start, yield), start, range)
+			local chained = planChains
+				and #starters > 0
+				and routes.IsChainQuest(QuestieDB, questID, start, yield)
+				and Handling(QuestieDB, questID, start.zone, settings, yield) == ROUTE
+			--[[
+				One someone in the party has (Party Objectives on): from across the zone, whatever the Search
+				Range, as taking it lets the two do it together and both get the credit
+			]]
+			local shared = routes.PartyHasQuest(questID)
+			local blobs = (chained or shared) and starters or InRange(starters, start, range)
 			local handling, reason = OFF, nil
-			if #blobs > 0 then
+			if chained then
+				handling = ROUTE
+			elseif (nearby or shared) and #blobs > 0 then
 				handling, reason = Handling(QuestieDB, questID, start.zone, settings, yield)
 			end
 			if handling ~= OFF then
-				local name = QueryQuest(QuestieDB, questID, "name") or tostring(questID)
+				local info, name = QuestInfo(QuestieDB, questID)
 				local task = {
 					key = key,
 					kind = "pickUp",
 					questID = questID,
 					questName = name,
-					quest = { name = name, level = QuestLevel(QuestieDB, questID) },
+					quest = info,
 					ready = true,
 					escort = routes.IsEscort(questID) or nil,
 				}
 				if handling == ROUTE then
 					task.candidates = Candidates(blobs, start, false)
 					task.blobs = blobs
-					nodes[#nodes + 1] = task
+					task.chained = chained or nil
+					task.shared = shared or nil
+					onRoute[#onRoute + 1] = { task = task, yards = NearestYards(blobs, start) }
 				else
 					task.offRoute = reason
 					mapOnly[#mapOnly + 1] = { task = task, blobs = blobs, instance = start.instance }
@@ -377,6 +460,42 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 		end
 		yield()
 	end
+
+	--[[
+		Only as many as the log takes: the party's quests first, then nearest giver first; the quest ID breaks a
+		tie, so the same quests always win
+	]]
+	table.sort(onRoute, function(a, b)
+		if (a.task.shared ~= nil) ~= (b.task.shared ~= nil) then
+			return a.task.shared ~= nil
+		end
+		if a.yards ~= b.yards then
+			return a.yards < b.yards
+		end
+		return a.task.questID < b.task.questID
+	end)
+	--[[
+		Past the nearest MAX_CHAIN_STARTS planned whole, a quest from across the zone waits for a later plan,
+		and one within the Search Range is picked up as any other nearby
+	]]
+	local chainStarts, added = {}, 0
+	local free = FreeQuestSlots(log)
+	for _, entry in ipairs(onRoute) do
+		local task = entry.task
+		if task.chained and #chainStarts >= routes.MAX_CHAIN_STARTS then
+			task.chained = nil
+			task.blobs = task.shared and task.blobs or nearby and InRange(task.blobs, start, range) or {}
+			task.candidates = #task.blobs > 0 and Candidates(task.blobs, start, false) or nil
+		end
+		if added < free and task.candidates then
+			added = added + 1
+			nodes[#nodes + 1] = task
+			if task.chained then
+				chainStarts[#chainStarts + 1] = task
+			end
+		end
+	end
+	return chainStarts
 end
 
 --[[
@@ -386,16 +505,17 @@ end
 ]]
 function routes.LocalQuestSignature()
 	local settings = routes.Settings()
-	if not settings.showLocalQuests then
+	if not (settings.showLocalQuests or settings.predictiveRoutes) then
 		return "no-local"
 	end
 	return table.concat({
-		"local",
+		settings.showLocalQuests and "local" or "chains-only",
 		tostring(UnitLevel("player")),
 		tostring(routes.LocalQuestRange()),
 		tostring(settings.localQuestLevel),
 		tostring(settings.localEscortQuests),
 		tostring(settings.localGroupQuests),
 		tostring(settings.localOtherZoneQuests),
+		settings.predictiveRoutes and "chains" or "no-chains",
 	}, ":")
 end

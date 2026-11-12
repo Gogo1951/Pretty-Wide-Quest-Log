@@ -1,4 +1,4 @@
-local _, ns = ...
+local ADDON_NAME, ns = ...
 local L = ns.L
 
 local LAYOUT = ns.LAYOUT
@@ -18,7 +18,8 @@ local listBar = CreateFrame("EventFrame", nil, frame, "MinimalScrollBar")
 listBar:SetPoint("TOPLEFT", listBox, "TOPRIGHT", 8, -4)
 listBar:SetPoint("BOTTOMLEFT", listBox, "BOTTOMRIGHT", 8, 4)
 
-local noQuestsText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+local noQuestsText = frame:CreateFontString(nil, "OVERLAY")
+noQuestsText:SetFontObject(ns.AreaFont("list", "GameFontHighlight"))
 noQuestsText:SetPoint("TOP", listBox, "TOP", 0, -90)
 noQuestsText:SetText(QUESTLOG_NO_QUESTS_TEXT)
 noQuestsText:Hide()
@@ -26,8 +27,9 @@ noQuestsText:Hide()
 local PLUS_TEXTURE = "Interface\\Buttons\\UI-PlusButton-Up"
 local MINUS_TEXTURE = "Interface\\Buttons\\UI-MinusButton-Up"
 local TITLE_HIGHLIGHT = "Interface\\QuestFrame\\UI-QuestLogTitleHighlight"
-local PARTY_TEXTURE = "Interface\\AddOns\\Pretty-Wide-Quest-Log\\Includes\\Images\\Party-On-Quest"
+local PARTY_TEXTURE = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Party-On-Quest"
 local SPACE = LAYOUT.SPACE
+local CountPartyOnQuest, ShowPartyOnQuest = ns.CountPartyOnQuest, ns.ShowPartyOnQuest -- Forever-Quest-List-Party.lua
 
 local function ToggleHeader(questLogIndex)
 	local entry = ns.GetQuestLogEntry(questLogIndex)
@@ -138,80 +140,6 @@ local function Row_OnClick(self, button)
 end
 
 --[[
-	Whether a party unit has a quest. The game only answers for members in range, so where it says no (or keeps
-	the answer secret) a share from the member's Questie counts too (Routes-Party.lua). The second return is
-	whether a "no" is unknown rather than known: the answer stayed secret, or the member is out of range
-]]
-local function IsPartyMemberOnQuest(unit, questID, questLogIndex)
-	local onQuest = ns.IsUnitOnQuest(unit, questID, questLogIndex)
-	local readable = ns.IsReadable(onQuest)
-	if readable and onQuest then
-		return true, false
-	end
-	if ns.routes and ns.routes.QuestieHasUnitOnQuest(unit, questID) then
-		return true, false
-	end
-	local visible = UnitIsVisible(unit)
-	return false, not (readable and ns.IsReadable(visible) and visible)
-end
-
---[[
-	How many party members have a quest, their names (class-colored where the class is readable), and whether
-	any member's answer is unknown (IsPartyMemberOnQuest). Only the player's party (their raid subgroup in a
-	raid). A secret name or class only leaves the member's name off the tooltip
-]]
-local function GetPartyOnQuest(questID, questLogIndex)
-	local count, names, anyUnknown = 0, {}, false
-	if not IsInGroup() then
-		return count, names, anyUnknown
-	end
-	for index = 1, GetNumSubgroupMembers() do
-		local unit = "party" .. index
-		local onQuest, unknown = IsPartyMemberOnQuest(unit, questID, questLogIndex)
-		if onQuest then
-			count = count + 1
-			local name = GetUnitName(unit, true)
-			local _, class = UnitClass(unit)
-			if name and ns.IsReadable(name) then
-				local color = class and ns.IsReadable(class) and RAID_CLASS_COLORS[class]
-				names[#names + 1] = color and color:WrapTextInColorCode(name) or name
-			end
-		elseif unknown then
-			anyUnknown = true
-		end
-	end
-	return count, names, anyUnknown
-end
-
---[[
-	While in a group, hovering a quest's row lists the party members who have it, as Blizzard's own quest
-	log rows do on Classic Era and TBC, under the client's own labels. With any answer unknown (secret, or a
-	member out of range), "none" would be a guess, so it isn't shown
-]]
-local function ShowPartyOnQuest(row, questID, questLogIndex)
-	if not IsInGroup() then
-		return
-	end
-	local count, names, anyUnknown = GetPartyOnQuest(questID, questLogIndex)
-	if count == 0 and (anyUnknown or not PARTY_QUEST_STATUS_NONE) then
-		return
-	end
-	if count > 0 and not PARTY_QUEST_STATUS_ON then
-		return
-	end
-	GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
-	if count > 0 then
-		GameTooltip:AddLine(PARTY_QUEST_STATUS_ON)
-		for _, name in ipairs(names) do
-			GameTooltip:AddLine(name)
-		end
-	else
-		GameTooltip:AddLine(PARTY_QUEST_STATUS_NONE, 1, 1, 1)
-	end
-	GameTooltip:Show()
-end
-
---[[
 	A zone name shows its Share Quests button on hover (Zone-Share.lua); a quest lists the party
 	members who have it
 ]]
@@ -240,16 +168,20 @@ local function SetupRow(row)
 	row.Icon:SetSize(16, 16)
 	row.Icon:SetPoint("LEFT", LAYOUT.CHECK_X, 0) -- The +/- in the tracking mark's column
 
-	row.Text = row:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	-- In the quest list's copies of the fonts (Fonts.lua)
+	row.Text = row:CreateFontString(nil, "ARTWORK")
+	row.Text:SetFontObject(ns.AreaFont("list", "GameFontNormal"))
 	row.Text:SetJustifyH("LEFT")
 	row.Text:SetWordWrap(false)
 
-	row.Tag = row:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	row.Tag = row:CreateFontString(nil, "ARTWORK")
+	row.Tag:SetFontObject(ns.AreaFont("list", "GameFontNormal"))
 	row.Tag:SetPoint("RIGHT", -2, 0)
 	row.Tag:SetJustifyH("RIGHT")
 
 	-- How many party members have the quest: a group icon and the count, just left of the tag
-	row.PartyCount = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+	row.PartyCount = row:CreateFontString(nil, "ARTWORK")
+	row.PartyCount:SetFontObject(ns.AreaFont("list", "GameFontHighlight"))
 	row.PartyCount:SetJustifyH("RIGHT")
 	row.PartyCount:SetTextColor(ns.GetColorRGB("INFO"))
 	row.PartyIcon = row:CreateTexture(nil, "ARTWORK")
@@ -325,7 +257,7 @@ local function InitRow(row, data)
 		end
 
 		local used = tag and (row.Tag:GetStringWidth() + 6) or 2
-		local onQuest = GetPartyOnQuest(questID, data.questLogIndex)
+		local onQuest = CountPartyOnQuest(questID, data.questLogIndex)
 		if onQuest > 0 then
 			row.PartyCount:ClearAllPoints()
 			if tag then

@@ -116,6 +116,8 @@ local SHARED_FUNCTIONS = {
 	"GossipSharedActiveQuestButtonMixin.Setup",
 	-- The Example lines ask for a sample quest's title that hasn't loaded (Options-Quality-of-Life.lua)
 	"C_QuestLog.RequestLoadQuestByID",
+	-- The name a zone offer is whispered to when the party frame has none yet (Zone-Share-Offer.lua)
+	"GetPlayerInfoByGUID",
 }
 
 -- The quest giver window's pieces, the quest text fonts, and the mixins the map's canvas is built from
@@ -128,6 +130,8 @@ local SHARED_TABLES = {
 	"QuestFontNormalSmall",
 	"QuestInfoRewardsFrame",
 	"QuestInfoDescriptionText",
+	-- The quest text's fade, put right as the quest giver's page shows (Quest-Giver.lua)
+	"QuestFrameDetailPanel",
 	"QuestDetailScrollChildFrame",
 	"QuestProgressScrollChildFrame",
 	"QuestProgressText",
@@ -166,6 +170,8 @@ local GIVER_PAGE_TABLES = {
 	"AvailableQuestsText",
 	"QuestProgressTitleText",
 	"GossipGreetingTextMixin",
+	-- The gossip options' line spacing (Gossip.lua)
+	"GossipOptionButtonMixin",
 	"GossipFrame.GreetingPanel.ScrollBox",
 	"ScrollBoxConstants",
 	"QuestGreetingScrollChildFrame",
@@ -183,6 +189,7 @@ local GIVER_PAGE_TABLES = {
 
 local GIVER_PAGE_FUNCTIONS = {
 	"GossipGreetingTextMixin.Setup",
+	"GossipOptionButtonMixin.Setup",
 	-- The gossip list update the greeting's measuring copy is styled after, and the relayout it may need (Gossip.lua)
 	"GossipFrame.Update",
 	"GossipFrame.GreetingPanel.ScrollBox.GetDataProvider",
@@ -209,6 +216,24 @@ local REWARDS_HEADING_ROUTE = {
 	"QuestInfoRewardsFrame.Header or QuestInfoRewardsHeader",
 	function()
 		return type(Resolve("QuestInfoRewardsFrame.Header")) == "table" or type(QuestInfoRewardsHeader) == "table"
+	end,
+}
+
+--[[
+	The General panel's Set Key button (Key-Bindings.lua): the Settings panel's Key Bindings category, or
+	the older KeyBindingFrame, loaded on demand. Without either, a chat line says where the list is
+]]
+local KEY_BINDINGS_ROUTE = {
+	"Settings.OpenToCategory with a Key Bindings category, or KeyBindingFrame",
+	function()
+		local settings = type(Resolve("Settings.OpenToCategory")) == "function"
+			and (
+				Resolve("Settings.KEYBINDINGS_CATEGORY_ID") ~= nil
+				or type(Resolve("SettingsPanel.GetCategoryList")) == "function"
+			)
+		return settings
+			or type(Resolve("KeyBindingFrame")) == "table"
+			or type(Resolve("KeyBindingFrame_LoadUI")) == "function"
 	end,
 }
 
@@ -244,6 +269,14 @@ local ROUTES_FUNCTIONS = {
 	"GetNumGroupMembers",
 	-- A timed quest's time left under its title on the Quest Arrow (Routes-Arrow-List.lua)
 	"SecondsToTime",
+	--[[
+		The flight paths a flight map shows as known, and the flight master the player talks to; the map's
+		ID and each node's place on it are only read where the client has them (Routes-Flights.lua)
+	]]
+	"C_TaxiMap.GetAllTaxiNodes",
+	"UnitGUID",
+	"GetTaxiMapID",
+	"TaxiNodePosition",
 }
 
 -- The fonts a tooltip's click hints are set in (Routes-Core.lua)
@@ -313,7 +346,6 @@ local LOG_INDEX_FUNCTIONS = {
 	"GetQuestLogPushable",
 	"CollapseQuestHeader",
 	"SetAbandonQuest",
-	"AbandonQuest",
 }
 
 local CLASSIC_FUNCTIONS = {
@@ -481,7 +513,10 @@ local OWN_WINDOW_ROUTES = {
 	},
 }
 
--- WoW Forever's quest log calls by quest ID (Quest-Log-API.lua, Forever-Tracking.lua, Forever-Zone-Actions.lua)
+--[[
+	WoW Forever's quest log calls by quest ID (Quest-Log-API.lua, Share-Needs.lua, Forever-Tracking.lua,
+	Forever-Zone-Actions.lua)
+]]
 local QUEST_ID_FUNCTIONS = {
 	"C_QuestLog.GetInfo",
 	"C_QuestLog.GetNumQuestLogEntries",
@@ -500,8 +535,6 @@ local QUEST_ID_FUNCTIONS = {
 	"C_QuestLog.RemoveQuestWatch",
 	"C_QuestLog.GetNumQuestWatches",
 	"C_QuestLog.CanAbandonQuest",
-	"C_QuestLog.SetAbandonQuest",
-	"C_QuestLog.AbandonQuest",
 	"C_QuestLog.IsPushableQuest",
 	"C_QuestLog.IsUnitOnQuest",
 	"C_QuestLog.IsQuestDisabledForSession",
@@ -599,12 +632,14 @@ Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "LE_PARTY_CATEGORY_INSTANCE" }
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", { "issecretvalue" }))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", GIVER_PAGE_TABLES))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", GIVER_PAGE_FUNCTIONS))
-Append(ns.DIAGNOSTIC_API_CHECKS, { REWARDS_HEADING_ROUTE, TURN_IN_MONEY_ROUTE })
+Append(ns.DIAGNOSTIC_API_CHECKS, { REWARDS_HEADING_ROUTE, TURN_IN_MONEY_ROUTE, KEY_BINDINGS_ROUTE })
 -- Routes is one TOC line (Routes.xml), so a release can leave it out
 if ns.routes then
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", ROUTES_FUNCTIONS))
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", ROUTES_TABLES))
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", ROUTES_NUMBERS))
+	-- The line that marks the flight master the player talks to as known (Routes-Flights.lua)
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "ERR_NEWTAXIPATH" }))
 	Append(ns.DIAGNOSTIC_API_CHECKS, { TIMED_QUESTS_ROUTE, ON_QUEST_ROUTE })
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", ITEM_BUTTON_FUNCTIONS))
 end
@@ -705,7 +740,8 @@ end
 	tags are keyed by QuestInfo ID, which nothing on the client lists, so they print their row count
 	("other"). The sample dungeon is a single area ID beside the sample quests rather than a table of its
 	own, so its source reaches it through the quest table's file and names the constant in a DATA_ column.
-	The Wowhead address is a single setting, not a table, so it prints the address itself ("value").
+	The Wowhead address and the corpse icon's coords are single settings, not tables of IDs, so each prints
+	its value itself ("value").
 ]]
 local function KeyId(id)
 	return id
@@ -727,6 +763,10 @@ end
 
 ns.DIAGNOSTIC_DATA_SOURCES = {
 	-- { label, sources = { { table, kind, rowId or collect, dataColumns } } }
+	{
+		label = "Map-Icons",
+		sources = { { table = "CORPSE_ICON_COORDS", kind = "value" } },
+	},
 	{
 		label = "Map-Reveal",
 		sources = { { table = "MAP_REVEAL_OVERLAYS", kind = "mapArt", rowId = KeyId } },
@@ -800,6 +840,10 @@ local SHARED_LABELS = {
 	-- How the Example lines lead a whisper and a line of party chat (Options-Quality-of-Life.lua)
 	"CHAT_WHISPER_GET",
 	"CHAT_PARTY_GET",
+	-- A key binding with no key on the General panel (Options-General.lua)
+	"NOT_BOUND",
+	-- The menu the chat line names when Set Key can't open the Key Bindings list (Key-Bindings.lua)
+	"GAMEMENU_OPTIONS",
 }
 
 -- The window's own text (WoW Forever and Mists)
@@ -838,6 +882,22 @@ local function AddLabels(constants)
 end
 
 AddLabels(SHARED_LABELS)
+--[[
+	The Key Bindings list's name in that chat line, and the title Set Key looks for among the Settings
+	panel's categories: the Settings panel's label where the client has one, else the older one
+	(Key-Bindings.lua)
+]]
+ns.DIAGNOSTIC_NAME_LOOKUPS[#ns.DIAGNOSTIC_NAME_LOOKUPS + 1] = {
+	constant = "SETTINGS_KEYBINDINGS_LABEL or KEY_BINDINGS",
+	kind = "uiLabel",
+	id = "SETTINGS_KEYBINDINGS_LABEL or KEY_BINDINGS",
+	lookup = function()
+		if SETTINGS_KEYBINDINGS_LABEL ~= nil then
+			return SETTINGS_KEYBINDINGS_LABEL
+		end
+		return KEY_BINDINGS
+	end,
+}
 if OWN_WINDOW then
 	AddLabels(OWN_WINDOW_LABELS)
 	-- The quest details' headings and reward lines (see OWN_WINDOW_STRINGS above)
@@ -850,8 +910,9 @@ elseif ns.hasWideQuestLog then
 	AddLabels({ "QUEST_WATCH_TOO_MANY" })
 end
 -- The name a party member has before the client knows it, which the route's party reads skip (Routes-Party.lua)
+-- and the line that marks a flight path learned (Routes-Flights.lua)
 if ns.routes then
-	AddLabels({ "UNKNOWNOBJECT" })
+	AddLabels({ "UNKNOWNOBJECT", "ERR_NEWTAXIPATH" })
 end
 -- The daily tag, on the client that has daily quests (see LE_QUEST_FREQUENCY_DAILY above)
 if IS_WIDENED_BLIZZARD_LOG and ns.FLAVOR == "TBC" then
@@ -903,7 +964,7 @@ end
 
 -- The add-on's own example reports, appended to the shared Event Log intro.
 ns.DiagnosticsStrings.EVENT_LOG_EXAMPLES =
-	"Best for 'no whisper went out' or 'the dungeon quests weren't announced' reports, and on WoW Forever 'the quest log didn't update', 'tracking didn't change' or 'the quest log key opened the world map'."
+	"Best for 'no whisper went out', 'the dungeon quests weren't announced' or 'a flight path I just learned is still on the route' reports, and on WoW Forever 'the quest log didn't update', 'tracking didn't change' or 'the quest log key opened the world map'."
 
 local function YesNo(value)
 	return value and "yes" or "no"
@@ -912,6 +973,58 @@ end
 local function Setting(lines, label, key)
 	local value = ns.db and ns.db.profile[key]
 	lines[#lines + 1] = string.format("%s: %s", label, tostring(value))
+end
+
+--[[
+	Each text area's font settings (Fonts.lua) and what its main text draws with, so a report shows what a
+	font add-on or a SharedMedia font did: QuestFont is the details' and dialogue's quest text,
+	GameFontNormal the list's, GameFontNormalSmall the window's. SharedMedia ships with the add-on, so what
+	can go missing is a font another add-on registered with it: the area then keeps the game's font until
+	that add-on is back
+]]
+local FONT_REPORT_BASES =
+	{ list = "GameFontNormal", details = "QuestFont", dialogue = "QuestFont", window = "GameFontNormalSmall" }
+
+-- Where a saved face comes from, as Fonts.lua's FontFile reads it: "" and its GAME_FONTS keys are the game's own
+local GAME_FONT_FACES = { [""] = true, GAME_STANDARD = true, GAME_NAMES = true, GAME_DAMAGE = true }
+
+local function FontFaceSource(face, sharedMedia)
+	if type(face) ~= "string" or GAME_FONT_FACES[face] then
+		return "the game's"
+	end
+	if sharedMedia and sharedMedia:IsValid("font", face) then
+		return "SharedMedia"
+	end
+	return "not in SharedMedia, so the game's"
+end
+
+local function FontLines(lines)
+	local sharedMedia = LibStub("LibSharedMedia-3.0", true)
+	lines[#lines + 1] = string.format(
+		"SharedMedia fonts registered: %s",
+		sharedMedia and tostring(#sharedMedia:List("font")) or "SharedMedia missing"
+	)
+	for _, area in ipairs(ns.FONT_AREAS or {}) do
+		local settings = ns.FontSettings(area) or {}
+		local copy = ns.AreaFont(area, FONT_REPORT_BASES[area])
+		local file, size, flags
+		if copy then
+			file, size, flags = copy:GetFont()
+		end
+		lines[#lines + 1] = string.format(
+			"Font, %s: face %q (%s), size %+d, outline %s, shadow %s, slug %s -> %s %s %q",
+			area,
+			tostring(settings.face),
+			FontFaceSource(settings.face, sharedMedia),
+			tonumber(settings.size) or 0,
+			tostring(settings.outline),
+			tostring(settings.shadow),
+			tostring(settings.slug),
+			tostring(file),
+			tostring(size and math.floor(size * 10 + 0.5) / 10),
+			tostring(flags)
+		)
+	end
 end
 
 local function Loaded(name)
@@ -1106,6 +1219,37 @@ local function VoiceOverContext(lines)
 	lines[#lines + 1] = string.format("Play buttons in the quest list: %s", YesNo(ns.GetVoiceOver()))
 end
 
+--[[
+	Where the General panel's Set Key button goes, tried in Key-Bindings.lua's order: the category the
+	client names outright, the Settings panel's category titled Key Bindings, then the older
+	KeyBindingFrame, loaded on demand; with none, a chat line says where the list is. Nothing is opened
+	or loaded here
+]]
+local function KeyBindingsRoute()
+	local canOpen = type(Settings) == "table" and type(Settings.OpenToCategory) == "function"
+	if canOpen and Settings.KEYBINDINGS_CATEGORY_ID then
+		return string.format(
+			"the Settings panel's Key Bindings (category %s)",
+			tostring(Settings.KEYBINDINGS_CATEGORY_ID)
+		)
+	end
+	local list = canOpen and SettingsPanel and SettingsPanel.GetCategoryList and SettingsPanel:GetCategoryList()
+	local categories = list and list.GetAllCategories and list:GetAllCategories()
+	for _, category in ipairs(categories or {}) do
+		local name = category.GetName and category:GetName()
+		if name and (name == KEY_BINDINGS or name == SETTINGS_KEYBINDINGS_LABEL) and category.GetID then
+			return string.format("the Settings panel's %s (category %s)", name, tostring(category:GetID()))
+		end
+	end
+	if type(KeyBindingFrame) == "table" then
+		return "KeyBindingFrame"
+	end
+	if type(KeyBindingFrame_LoadUI) == "function" then
+		return "KeyBindingFrame, loaded on the first click"
+	end
+	return "nothing, so a chat line says where the list is"
+end
+
 -- Whether any zone header in the quest log is the player's zone
 local function CurrentZoneHeaderListed()
 	for index = 1, ns.GetNumQuestLogEntries() do
@@ -1255,6 +1399,7 @@ function ns:BuildQuestLogContextReport()
 		YesNo(ns.optionsFrames),
 		tostring(ns.optionsFrames and ns.optionsFrames.categoryID)
 	)
+	lines[#lines + 1] = string.format("Set Key opens: %s", KeyBindingsRoute())
 
 	lines[#lines + 1] = ""
 	Setting(lines, "Zone order", "zoneSort")
@@ -1268,11 +1413,11 @@ function ns:BuildQuestLogContextReport()
 	Setting(lines, "Completed quests first", "completedFirst")
 	Setting(lines, "Close when combat starts", "closeInCombat")
 	Setting(lines, "Welcome message", "showWelcome")
-	Setting(lines, "Quality of Life switch", "enableQualityOfLife")
 	Setting(lines, "Quest giver window cleanup", "giverCleanup")
 	Setting(lines, "Quest levels at quest givers", "giverLevels")
-	-- Both switches above have to be on (Quest-Giver.lua)
+	-- Its own switch on the NPC Dialogue panel; Quality of Life's no longer counts (Quest-Giver.lua)
 	lines[#lines + 1] = string.format("Quest giver window cleanup in effect: %s", YesNo(ns.IsQuestGiverCleanupOn()))
+	FontLines(lines)
 	-- Quest ID lines link to Wowhead only on a client with a Wowhead address (Wowhead-Link.lua)
 	lines[#lines + 1] = string.format("Wowhead quest address: %s", tostring(ns.WOWHEAD_QUEST_URL or "(none)"))
 
@@ -1658,6 +1803,16 @@ function ns:BuildSharingContextReport()
 			"  The game lets you share it: %s",
 			pushable == nil and "not checked (Blizzard's selected quest is another)" or YesNo(pushable)
 		)
+		--[[
+			Every share leaves out a quest everyone it could reach already has; a member out of range or kept
+			secret, whom Questie doesn't answer for, counts as needing it (Share-Needs.lua)
+		]]
+		if IsInGroup() then
+			lines[#lines + 1] = string.format(
+				"  Anyone in the group needs it shared: %s",
+				YesNo(ns.PartyNeedsQuest(questID, select(3, SelectedQuest())))
+			)
+		end
 		ZoneShareLines(lines, QuestZone(questID))
 	end
 
@@ -1665,6 +1820,21 @@ function ns:BuildSharingContextReport()
 	lines[#lines + 1] = ""
 	Setting(lines, "Quality of Life switch", "enableQualityOfLife")
 	Setting(lines, "Whisper when a share fails", "shareWhispers")
+	Setting(lines, "Offer zone quests on joining", "zoneShareOffer")
+	-- Each party member's zone offer: due, done or waiting, and why the last try did what it did (Zone-Share-Offer.lua)
+	if ns.ZoneShareOfferStatus then
+		local members, ready, checking = ns.ZoneShareOfferStatus()
+		local zone = ns.CurrentZone()
+		lines[#lines + 1] = string.format(
+			"Zone offer: ready %s, checking %s, your zone %s",
+			YesNo(ready),
+			YesNo(checking),
+			zone and string.format("%s (%s)", zone.name, tostring(zone.zoneMapID)) or "unknown"
+		)
+		for _, line in ipairs(members) do
+			lines[#lines + 1] = "  " .. line
+		end
+	end
 	Setting(lines, "Seconds between shares", "shareInterval")
 	-- Party only: no whisper in a raid, a battleground or an arena (Share-Reminders.lua)
 	local _, instanceType = IsInInstance()
@@ -2216,7 +2386,7 @@ local function ArrowLines(lines)
 		(questieDB and type(questieDB.GetQuest) == "function") and "found" or "not found, so only the client's own"
 	)
 	RouteSetting(lines, "Show next objective", "showNextObjective")
-	RouteSetting(lines, "Show future turn-ins", "showUpcomingTurnIns")
+	RouteSetting(lines, "Predictive questing routes", "predictiveRoutes")
 	RouteSetting(lines, "Show available local quests as objectives", "showLocalQuests")
 	RouteSetting(lines, "Local quests: search range", "localQuestRange")
 	RouteSetting(lines, "Local quests: lowest level", "localQuestLevel")
@@ -2230,10 +2400,13 @@ local function ArrowLines(lines)
 	for _ in pairs(type(available) == "table" and available or {}) do
 		offered = offered + 1
 	end
-	local pickUps = 0
+	local pickUps, predicted = 0, 0
 	for _, node in ipairs(ns.routes and ns.routes.nodes or {}) do
 		if node.kind == "pickUp" then
 			pickUps = pickUps + 1
+		end
+		if node.predicted then
+			predicted = predicted + 1
 		end
 	end
 	lines[#lines + 1] = string.format(
@@ -2243,6 +2416,61 @@ local function ArrowLines(lines)
 		pickUps,
 		ns.routes and #ns.routes.mapOnlyPickUps or 0
 	)
+	--[[
+		Pick-ups stop once the quest log is full: the client's own limit where it says, else MAX_QUESTS,
+		else 20, less the quests in Questie's log (Routes-Pick-Ups.lua)
+	]]
+	local most = 20
+	if C_QuestLog and type(C_QuestLog.GetMaxNumQuestsCanAccept) == "function" then
+		local ok, value = pcall(C_QuestLog.GetMaxNumQuestsCanAccept)
+		most = ok and tonumber(value) or most
+	elseif tonumber(MAX_QUESTS) then
+		most = tonumber(MAX_QUESTS)
+	end
+	local taken = 0
+	for _, quest in pairs(ns.routes and ns.routes.QuestLog() or {}) do
+		if type(quest) == "table" then
+			taken = taken + 1
+		end
+	end
+	lines[#lines + 1] = string.format("Quest log room for pick-ups: %d free of %d", math.max(most - taken, 0), most)
+	-- Waypoints of quests not taken yet, planned ahead with Predictive Questing Routes (Routes-Chains.lua)
+	lines[#lines + 1] = string.format("Waypoints planned ahead for quests not taken yet: %d", predicted)
+	-- A party member's race is matched to a follow-up through Questie's race masks (Routes-Chains.lua)
+	local raceMasks = LibQuestieDB and LibQuestieDB.Enum and LibQuestieDB.Enum.raceMaskById
+	lines[#lines + 1] = string.format(
+		"Questie race masks for party members' follow-ups (LibQuestieDB): %s",
+		type(raceMasks) == "table" and "found" or "not found, so a quest for some races only is left off for them"
+	)
+	--[[
+		Flight paths to discover (Routes-Flights.lua): whether the character's are tracked yet, how many it
+		has, how many flight masters of its faction Questie lists, how many the route goes to, and what the
+		last flight map said, its places lining up with the world's or not
+	]]
+	RouteSetting(lines, "Discover flight paths", "showFlightPaths")
+	local flights = 0
+	for _, node in ipairs(ns.routes and ns.routes.nodes or {}) do
+		if node.kind == "flightPath" then
+			flights = flights + 1
+		end
+	end
+	lines[#lines + 1] = string.format(
+		"Flight paths tracked: %s; known: %d; flight masters of your faction in Questie: %d; on the route: %d",
+		YesNo(ns.routes and ns.routes.IsFlightTracked()),
+		ns.routes and ns.routes.KnownFlightCount() or 0,
+		ns.routes and #ns.routes.FlightMasters() or 0,
+		flights
+	)
+	local flightMap = ns.routes and ns.routes.lastFlightMap
+	lines[#lines + 1] = flightMap
+			and string.format(
+				"Last flight map (map %s): %d known shown, places line up: %s, matched to flight masters: %d",
+				tostring(flightMap.mapID),
+				flightMap.shown,
+				YesNo(flightMap.linedUp),
+				flightMap.matched
+			)
+		or "Last flight map: none opened this session"
 end
 
 local function ZoneMapLines(lines)
@@ -2278,7 +2506,17 @@ local function ZoneMapLines(lines)
 		"Questie's icon set for the stop markers: %s",
 		(type(Questie) == "table" and type(Questie.usedIcons) == "table") and "found" or "not found"
 	)
-	RouteSetting(lines, "Marker size", "markerScale")
+	RouteSetting(lines, "Marker size (zone map)", "markerScale")
+	-- Maps & Objectives: the markers on continent and world maps, and on the minimap (Routes-Minimap.lua)
+	RouteSetting(lines, "Markers on continent and world maps", "showWideMapMarkers")
+	RouteSetting(lines, "Marker size (continent and world maps)", "wideMarkerScale")
+	RouteSetting(lines, "Markers on the minimap", "showMinimapMarkers")
+	RouteSetting(lines, "Marker size (minimap)", "minimapMarkerScale")
+	-- The minimap's markers are placed through Questie's copy of HereBeDragons-Pins (Routes-Minimap.lua)
+	lines[#lines + 1] = string.format(
+		"HereBeDragonsQuestie-Pins-2.0 for the minimap markers: %s",
+		LibStub("HereBeDragonsQuestie-Pins-2.0", true) and "found" or "not found, so none show"
+	)
 	RouteSetting(lines, "Quest Route switch (the line)", "showLine")
 	RouteSetting(lines, "Line speed", "lineSpeed")
 	RouteSetting(lines, "Line opacity", "lineOpacity")
@@ -2300,6 +2538,11 @@ end
 local function PartyLines(lines)
 	-- A party member's quests come from their Questie, in a party but not a raid group (Routes-Party.lua)
 	RouteSetting(lines, "Party members' quests", "partyQuests")
+	-- Joining up (Routes-Group-Up.lua): whether the player is heading to the group, no names or places
+	RouteSetting(lines, "Join up with group", "groupUp")
+	if ns.routes.GroupUpState then
+		lines[#lines + 1] = string.format("Joining up: %s", ns.routes.GroupUpState())
+	end
 	lines[#lines + 1] = string.format("In a party, not a raid group: %s", YesNo(IsInGroup() and not IsInRaid()))
 	--[[
 		What the game tells the quest list's party count (Forever-Quest-List.lua): how many members share a quest

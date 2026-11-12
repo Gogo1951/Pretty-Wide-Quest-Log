@@ -9,7 +9,7 @@ local _, ns = ...
 local routes = ns.routes
 local L = ns.L
 
-local PASSING_STEP = 50 -- Yards less reach for each objective listed ahead of one under "While You're Here"
+local PASSING_STEP = routes.AREA_REACH / 4 -- Yards less reach for each objective listed ahead of one under "While You're Here"
 
 local hereKeys = {} -- The tasks whose areas the player is in, by key, held until routes.AREA_GRACE further
 local passingKeys = {} -- The tasks listed under "While You're Here" last look, by key
@@ -88,13 +88,14 @@ local function AreaNote(work, stops, index)
 end
 
 --[[
-	Whether the player is near a quest to pick up (Routes-Pick-Ups.lua): within routes.AREA_REACH of its
-	giver, as near as counts as being in an objective's area, with routes.AREA_GRACE more once they were.
-	A giver is one place, which routes.InArea never counts, so without this one beside an area the player
-	is working would show only as the Next Objective. Returns the yards to it when near, else nothing
+	Whether the player is near a quest to pick up (Routes-Pick-Ups.lua) or a flight path to discover
+	(Routes-Flights.lua): within routes.AREA_REACH of its giver or flight master, as near as counts as being
+	in an objective's area, with routes.AREA_GRACE more once they were. A giver is one place, which
+	routes.InArea never counts, so without this one beside an area the player is working would show only as
+	the Next Objective. Returns the yards to it when near, else nothing
 ]]
 local function NearPickUp(task, x, y, wasNear)
-	local point = task.kind == "pickUp" and routes.TaskPoint(task)
+	local point = (task.kind == "pickUp" or task.kind == "flightPath") and routes.TaskPoint(task)
 	if not point then
 		return nil
 	end
@@ -122,7 +123,7 @@ end
 --[[
 	Which of the tasks on the way "While You're Here" lists, so a crowd of them doesn't run the list long.
 	Nearest first, each must be within routes.AREA_REACH, less PASSING_STEP for every one listed ahead of
-	it: the first within 200 yards, the second 150, the third 100, the fourth 50, no more. The more there
+	it: the first within 60 yards, the second 45, the third 30, the fourth 15, no more. The more there
 	are, the nearer they must be. One listed last look gets routes.AREA_GRACE more, so two about as far
 	don't swap in and out. Returns the listed ones, in the order given (the route's)
 ]]
@@ -199,7 +200,8 @@ local function Survey(x, y)
 		for index, stop in ipairs(stops) do
 			for _, task in ipairs(stop.tasks) do
 				local key = task.key
-				if key and not hereKeys[key] and routes.IsTaskLeft(task) then
+				-- Nothing of a quest not taken yet counts as here: nothing done there counts for it
+				if key and not hereKeys[key] and not task.predicted and routes.IsTaskLeft(task) then
 					if routes.InArea(task, x, y, wasHere[key]) then
 						hereKeys[key] = true
 						if index == sentTo or engaged[key] then
@@ -257,9 +259,9 @@ local function Survey(x, y)
 	return here, passing, areaNote, destination, afterDestination
 end
 
--- Where in a stop the arrow points: its nearest place still to go to, or the nearest edge of an area
+-- Where in a stop the arrow points: its nearest place still to go to, or the nearest edge of an area, and whose it is
 local function NearestPlace(stop, x, y)
-	local nearest, nearestYards
+	local nearest, nearestYards, nearestTask
 	for _, task in ipairs(stop.tasks) do
 		local point = routes.IsTaskLeft(task) and routes.TaskPoint(task)
 		if point then
@@ -269,13 +271,42 @@ local function NearestPlace(stop, x, y)
 				yards = math.max(0, yards - point.radius)
 			end
 			if not nearestYards or yards < nearestYards then
-				nearest, nearestYards = point, yards
+				nearest, nearestYards, nearestTask = point, yards, task
 			end
 		end
 	end
-	return nearest
+	return nearest, nearestTask
 end
 
--- Point asks these each second (Routes-Arrow.lua)
+--[[
+	Heading for an area: its nearest spawn in the blob the route chose, the edge of the camp the player
+	walks into, where routes.InArea starts counting them in and the eye takes over. Nothing when the task
+	has no spawns there (a rider sent to its anchor's spot)
+]]
+local function NearestSpawn(task, blob, x, y)
+	local spawns = task.spawns
+	if not spawns then
+		return nil
+	end
+	local xs, ys = spawns.x, spawns.y
+	local reach = blob.radius + 1
+	local reachSquared = reach * reach
+	local bestX, bestY, bestSquared
+	for i = 1, spawns.count do
+		local sx, sy = xs[i], ys[i]
+		local bx, by = sx - blob.x, sy - blob.y
+		if bx * bx + by * by <= reachSquared then
+			local dx, dy = sx - x, sy - y
+			local squared = dx * dx + dy * dy
+			if not bestSquared or squared < bestSquared then
+				bestX, bestY, bestSquared = sx, sy, squared
+			end
+		end
+	end
+	return bestX, bestY
+end
+
+-- Point asks these each second, or each turn (Routes-Arrow.lua)
 routes.ArrowSurvey = Survey
 routes.ArrowNearestPlace = NearestPlace
+routes.ArrowNearestSpawn = NearestSpawn

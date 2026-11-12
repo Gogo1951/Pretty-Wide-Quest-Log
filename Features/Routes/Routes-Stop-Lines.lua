@@ -10,19 +10,6 @@ local L = ns.L
 
 local IsArea = routes.IsArea
 
---[[
-	The corpse's gravestone, the one the game marks it with on the world map and minimap (Blizzard's
-	CorpsePinTemplate: a cell of the POI icons), on its waypoint on the map (Routes-Map.lua). The coords are
-	{ left, right, top, bottom }. WoW Forever ships the retail sheet, laid out differently from the Classic
-	clients', so it takes the cell its own CorpsePinTemplate does
-]]
-routes.CORPSE_ICON = "Interface\\Minimap\\POIIcons"
-if ns.FLAVOR == "Camelot" or ns.FLAVOR == "Mainline" then
-	routes.CORPSE_ICON_COORDS = { 0.56640625, 0.6328125, 0.001953125, 0.03515625 }
-else
-	routes.CORPSE_ICON_COORDS = { 0.875, 1, 0, 0.125 }
-end
-
 --------------------------------------------------------------------------------
 -- What a stop holds, for the arrow and the map's tooltip
 --------------------------------------------------------------------------------
@@ -52,6 +39,19 @@ function routes.QuestTitle(task)
 	return ns.LevelTitle(level, task.questName, suffix), color.r, color.g, color.b
 end
 
+--[[
+	The title line over a quest's objectives: routes.QuestTitle, or for a quest not taken yet, whose
+	objectives are planned ahead (Routes-Chains.lua), "After you pick up [12] Quest Name" in the same color,
+	or for a party member's, "After your party picks up"
+]]
+function routes.ObjectivesTitle(task)
+	local title, red, green, blue = routes.QuestTitle(task)
+	if task.predicted then
+		title = string.format(L[task.party and "ROUTES_AFTER_PARTY_PICK_UP" or "ROUTES_AFTER_PICK_UP"], title)
+	end
+	return title, red, green, blue
+end
+
 -- Where a task is done: the place the route chose for it
 function routes.TaskPoint(task)
 	return task.candidates and task.candidates[task.choice or 1]
@@ -63,11 +63,15 @@ function routes.IsAreaPoint(point)
 end
 
 --[[
-	Whether a task is still to do: an objective not yet done, or a turn-in. An objective of the player's
-	that they've done but someone in the party still needs (helping, Routes-Nodes.lua) is left until
-	nobody does
+	Whether a task is still to do: an objective not yet done, a turn-in, or a flight path not yet
+	discovered, which is done the moment the flight master says so, not at the next plan. An objective of
+	the player's that they've done but someone in the party still needs (helping, Routes-Nodes.lua) is
+	left until nobody does
 ]]
 function routes.IsTaskLeft(task)
+	if task.kind == "flightPath" then
+		return not routes.IsFlightMasterKnown(task.npcID)
+	end
 	local objective = task.objective
 	if not (objective and objective.Completed) then
 		return true
@@ -99,24 +103,28 @@ end
 routes.PositionAt = PositionAt
 
 --[[
-	The quests at a stop, each { task, here, turnIn, pickUp, distance }: task the first of its tasks there,
-	here the set of its objectives done at the stop, left those of them still to do (routes.IsTaskLeft),
-	turnIn whether it's turned in there, pickUp whether it's picked up there. Given the player's
-	position, nearest first, each with distance[objective] for its objectives' places; else in route order
+	The quests at a stop, each { task, here, turnIn, pickUp, flightPath, distance }: task the first of its
+	tasks there, here the set of its objectives done at the stop, left those of them still to do
+	(routes.IsTaskLeft), turnIn whether it's turned in there, pickUp whether it's picked up there. A flight
+	path, which has no quest, is an entry of its own with flightPath set. Given the player's position,
+	nearest first, each with distance[objective] for its objectives' places; else in route order
 ]]
 function routes.QuestsAt(stop, x, y)
 	local quests, byID = {}, {}
 	for index, task in ipairs(stop.tasks) do
-		local entry = byID[task.questID]
+		local id = task.questID or task.key
+		local entry = byID[id]
 		if not entry then
 			entry = { task = task, here = {}, left = {}, distance = {}, order = index, nearest = math.huge }
-			byID[task.questID] = entry
+			byID[id] = entry
 			quests[#quests + 1] = entry
 		end
 		if task.kind == "turnIn" then
 			entry.turnIn = true
 		elseif task.kind == "pickUp" then
 			entry.pickUp = true
+		elseif task.kind == "flightPath" then
+			entry.flightPath = true
 		elseif task.objective then
 			entry.here[task.objective] = true
 		end
@@ -228,11 +236,11 @@ end
 	with Show Party Objectives on (routes.ShowsParty), who still needs each objective is listed under it with their own count, the player first, the rest by
 	name, each in their class color; the objective has no count of its own then. Where it's only turned in
 	there, the quest is one line, "Turn in [2] Wayward Weapons". At most maxQuests quests, then a count of
-	the rest. A corpse is one line too, "Run Back to Your Corpse", in black to read on the ghost's pale world
+	the rest. A corpse is one line too, "Run Back to Your Corpse", in the same gold as a turn-in
 ]]
 function routes.ForEachStopLine(stop, maxQuests, callback)
 	if stop.corpse then
-		callback("title", L["ROUTES_CORPSE"], ns.GetColorRGB("ARROW_GHOST_TEXT"))
+		callback("title", L["ROUTES_CORPSE"], ns.GetColorRGB("TITLE"))
 		return
 	end
 	local inParty = routes.ShowsParty()
@@ -258,14 +266,16 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 			return logOrder[a] < logOrder[b]
 		end)
 		--[[
-			The turn-in comes after the quest's objectives, so once none are left here it's the one line, in
-			the turn-in's gold (routes.TaskColor) rather than the quest's difficulty color
+			A flight path to discover is one line, "Get the Flight Path from Devrak", in the turn-in's gold. A
+			quest to pick up is one line too, "Pick up [12] Quest Name", in its difficulty color, so how worth the
+			walk it is shows at a glance. The turn-in comes after the quest's objectives, so once none are left
+			here it's the one line, in the turn-in's gold (routes.TaskColor) rather than the quest's difficulty
+			color. Otherwise the quest's objectives, each under its title
 		]]
-		--[[
-			A quest to pick up is one line, "Pick up [12] Quest Name", in its difficulty color, so how worth
-			the walk it is shows at a glance
-		]]
-		if entry.pickUp then
+		if entry.flightPath then
+			local text = string.format(L["ROUTES_FLIGHT_PATH_FROM"], entry.task.flightMaster or "")
+			callback("title", text, ns.GetColorRGB("TITLE"))
+		elseif entry.pickUp then
 			local title, red, green, blue = routes.QuestTitle(entry.task)
 			callback("title", string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue)
 		elseif entry.turnIn and #toDo == 0 then
@@ -273,8 +283,9 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 			local red, green, blue = ns.GetColorRGB("TITLE")
 			callback("title", text, red, green, blue, nil, entry.task.questID)
 		else
-			local text, red, green, blue = routes.QuestTitle(entry.task)
-			callback("title", text, red, green, blue, nil, entry.task.questID)
+			local text, red, green, blue = routes.ObjectivesTitle(entry.task)
+			-- No quest ID for one not taken yet: it has no item to use until it's in the log
+			callback("title", text, red, green, blue, nil, not entry.task.predicted and entry.task.questID or nil)
 			local members = inParty and #toDo > 0 and routes.MemberProgress(entry.task.questID)
 			for _, objective in ipairs(toDo) do
 				local rows = members and StillNeeded(entry, objective, members) or {}

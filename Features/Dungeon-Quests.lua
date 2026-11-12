@@ -75,18 +75,21 @@ function ns.BuildDungeonAnnouncement(dungeonQuests)
 	return messages
 end
 
+--[[
+	Announces the dungeon's quests to the group. False only during chat lockdown on WoW Forever, when
+	nothing can be sent, so the next check tries again
+]]
 local function Announce(quests)
-	-- During chat lockdown on WoW Forever nothing can be sent
 	if C_ChatInfo.InChatMessagingLockdown() then
-		return
+		return false
 	end
 	local channel = ns:GetGroupChatChannel()
-	if not channel then
-		return
+	if channel then
+		for _, arguments in ipairs(DungeonAnnouncementArguments(quests)) do
+			ns:Announce(channel, nil, unpack(arguments))
+		end
 	end
-	for _, arguments in ipairs(DungeonAnnouncementArguments(quests)) do
-		ns:Announce(channel, nil, unpack(arguments))
-	end
+	return true
 end
 
 --------------------------------------------------------------------------------
@@ -94,22 +97,25 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-	Shares every quest for the dungeon the game lets you share, ready to turn in or not, one every
-	ns.GetShareInterval() seconds, as Share Quests does. A failed share gets the usual whisper
-	(Share-Reminders.lua). The caller waits out a run still going
+	Shares every quest for the dungeon the game lets you share, ready to turn in or not, that one of units
+	(the members it's going to this time) doesn't have yet (ns.PartyNeedsQuest), one every
+	ns.GetShareInterval() seconds, as Share Quests does. When they have every one already, nothing is
+	shared or printed. A failed share gets the usual whisper (Share-Reminders.lua). The caller waits out a
+	run still going
 ]]
-local function Share(quests, dungeon)
-	local questIDs = {}
+local function Share(quests, dungeon, units)
+	local pushable = {}
 	for _, quest in ipairs(quests) do
 		if quest.pushable then
-			questIDs[#questIDs + 1] = quest.questID
+			pushable[#pushable + 1] = quest.questID
 		end
 	end
+	local questIDs = #pushable > 0 and ns.QuestsPartyNeeds(pushable, units) or pushable
 	if #questIDs == 0 then
 		return
 	end
 	ns:PrintMessage(ns.BuildSharePrint(#questIDs, dungeon.name))
-	ns.ShareQuests(questIDs)
+	ns.ShareQuests(questIDs, units)
 end
 
 --------------------------------------------------------------------------------
@@ -270,17 +276,18 @@ local function Check()
 
 	local quests = ns.DungeonQuests(dungeon)
 	if announce then
-		state.announced = true
-		Announce(quests)
+		state.announced = Announce(quests)
 	end
 	if share then
 		if ns.sharingQuests then
 			return
 		end
+		local units = {}
 		for _, guid in ipairs(newInRange) do
 			state.sharedWith[guid] = true
+			units[#units + 1] = members[guid].unit
 		end
-		Share(quests, dungeon)
+		Share(quests, dungeon, units)
 	end
 	waitKey, waitStart = nil, nil
 end

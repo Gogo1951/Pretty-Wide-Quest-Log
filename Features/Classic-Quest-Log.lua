@@ -10,7 +10,7 @@ ns.AddWideQuestLogPart(function()
 
 	--[[
 		Blizzard's code reads a few things this layout writes: the window's panel attributes (here), the
-		number of list rows (QUESTS_DISPLAYED, Classic-Quest-List.lua) and entries taken off QUEST_WATCH_LIST
+		number of list rows (QUESTS_DISPLAYED, Classic-Quest-Rows.lua) and entries taken off QUEST_WATCH_LIST
 		(Classic-Tracking.lua). It also calls QuestLog_Update and HideUIPanel. All of it is unprotected on
 		these clients (README-Technical: Taint)
 	]]
@@ -39,6 +39,9 @@ ns.AddWideQuestLogPart(function()
 	QuestLogTitleText:ClearAllPoints()
 	QuestLogTitleText:SetPoint("TOP", QuestLogFrame, "TOP", 0, -17)
 	QuestLogTitleText:SetText(ns.BuildWindowTitle())
+	-- The title and quest count in the window's copies of their fonts (Fonts.lua)
+	ns.SetAreaFont(QuestLogTitleText, "window")
+	ns.SetAreaFont(_G.QuestLogQuestCount, "window")
 
 	--[[
 		Which piece of Blizzard's art a texture is, if it's one of pieces (fileDataID -> name). On current

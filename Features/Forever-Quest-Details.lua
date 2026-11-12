@@ -55,13 +55,14 @@ detailScroll:SetScrollChild(detailChild)
 --[[
 	The details' text, in the fonts Blizzard's quest details use: the title in QuestTitleFont, the section
 	headings in the smaller section heading font (ns.StyleQuestText), the rest in QuestFont, all a text
-	column wide with the quest text's line spacing
+	column wide with the quest text's line spacing. Each is the details' copy of the font (Fonts.lua)
 ]]
 local function Text(fontObject, sectionHeading)
-	local text = detailChild:CreateFontString(nil, "ARTWORK", fontObject)
+	local text = detailChild:CreateFontString(nil, "ARTWORK")
+	text:SetFontObject(ns.AreaFont("details", fontObject))
 	text:SetJustifyH("LEFT")
 	text:SetWidth(WIDTH)
-	ns.StyleQuestText(text, sectionHeading)
+	ns.StyleQuestText(text, sectionHeading, "details")
 	text:Hide()
 	return text
 end
@@ -71,8 +72,11 @@ local objectivesText = Text("QuestFont")
 local timerText = Text("QuestFont")
 local timerExpires -- When the shown quest's timer runs out (GetTime), while the pane shows one
 local sinceTimer = 0
--- The timer counts down between repaints, which only events bring, as Blizzard's QuestInfo timer did
-detailChild:SetScript("OnUpdate", function(_, elapsed)
+--[[
+	The timer counts down between repaints, which only events bring, as Blizzard's QuestInfo timer did. It runs
+	only while the shown quest has a timer (ns.DisplayQuestDetails)
+]]
+local function CountDown(_, elapsed)
 	sinceTimer = sinceTimer + elapsed
 	if sinceTimer < 1 or not timerExpires then
 		return
@@ -81,7 +85,7 @@ detailChild:SetScript("OnUpdate", function(_, elapsed)
 	if timerText:IsShown() then
 		timerText:SetText(TIME_REMAINING .. " " .. SecondsToTime(math.max(0, timerExpires - GetTime())))
 	end
-end)
+end
 local groupSizeText = Text("QuestFont")
 local requiredMoneyText = Text("QuestFont")
 local waypointText = Text("QuestFont")
@@ -99,7 +103,8 @@ experienceText:SetText(EXPERIENCE_COLON)
 
 -- Gold and experience, right-aligned two spaces in from the right edge of the text column like the objective counts
 local function Number()
-	local number = detailChild:CreateFontString(nil, "ARTWORK", "QuestFont")
+	local number = detailChild:CreateFontString(nil, "ARTWORK")
+	number:SetFontObject(ns.AreaFont("details", "QuestFont"))
 	number:SetJustifyH("RIGHT")
 	number:Hide()
 	return number
@@ -152,7 +157,8 @@ local chainSection = ns.CreateQuestChainSection(detailChild)
 -- The quest ID, right-aligned under whatever comes last, in the description's color
 local questIDRow = CreateFrame("Frame", nil, detailChild)
 questIDRow:SetSize(WIDTH, 14)
-questIDRow.Text = questIDRow:CreateFontString(nil, "ARTWORK", "QuestFontNormalSmall")
+questIDRow.Text = questIDRow:CreateFontString(nil, "ARTWORK")
+questIDRow.Text:SetFontObject(ns.AreaFont("details", "QuestFontNormalSmall"))
 questIDRow.Text:SetPoint("RIGHT")
 questIDRow.Text:SetJustifyH("RIGHT")
 ns.LinkQuestIDToWowhead(questIDRow, questIDRow.Text, function()
@@ -293,6 +299,22 @@ local function PlaceObjectives(details, textColor)
 	end
 end
 
+-- The text drawn in the title color, and the text drawn in the body color, each repaint
+local TITLE_COLOR_REGIONS = { titleText, descriptionHeading, rewardsHeading }
+local TEXT_COLOR_REGIONS = {
+	objectivesText,
+	timerText,
+	groupSizeText,
+	requiredMoneyText,
+	descriptionText,
+	choiceText,
+	spellText,
+	receiveText,
+	experienceText,
+	moneyNumber,
+	experienceNumber,
+}
+
 function ns.DisplayQuestDetails(resetScroll)
 	detailScroll:SetShown(state.selectedQuestID ~= nil)
 	HideEverything()
@@ -311,22 +333,10 @@ function ns.DisplayQuestDetails(resetScroll)
 		detail.ContrastBG:Hide()
 	end
 	local textColor, titleColor = TextColors()
-	for _, region in ipairs({ titleText, descriptionHeading, rewardsHeading }) do
+	for _, region in ipairs(TITLE_COLOR_REGIONS) do
 		SetColor(region, titleColor)
 	end
-	for _, region in ipairs({
-		objectivesText,
-		timerText,
-		groupSizeText,
-		requiredMoneyText,
-		descriptionText,
-		choiceText,
-		spellText,
-		receiveText,
-		experienceText,
-		moneyNumber,
-		experienceNumber,
-	}) do
+	for _, region in ipairs(TEXT_COLOR_REGIONS) do
 		SetColor(region, textColor)
 	end
 
@@ -341,6 +351,7 @@ function ns.DisplayQuestDetails(resetScroll)
 	PlaceText(titleText, title, 0)
 	PlaceText(objectivesText, details.objectivesText, LAYOUT.TITLE_SPACE_BELOW)
 	timerExpires = details.timeLeft and (GetTime() + details.timeLeft) or nil
+	detailChild:SetScript("OnUpdate", timerExpires and CountDown or nil)
 	if details.timeLeft then
 		PlaceText(timerText, TIME_REMAINING .. " " .. SecondsToTime(details.timeLeft), SPACE.NEAR)
 	end

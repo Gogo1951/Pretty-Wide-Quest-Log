@@ -89,7 +89,8 @@ end
 -- Returns the line; fill it with ns.UpdateTurnInLine
 function ns.CreateTurnInLine(parent)
 	local line = CreateFrame("Frame", nil, parent)
-	line.Text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	line.Text = line:CreateFontString(nil, "OVERLAY")
+	line.Text:SetFontObject(ns.AreaFont("window", "GameFontNormalSmall"))
 	line.Text:SetPoint("RIGHT")
 	line:SetScript("OnEnter", ShowTurnInTooltip)
 	line:SetScript("OnLeave", HideTurnInTooltip)

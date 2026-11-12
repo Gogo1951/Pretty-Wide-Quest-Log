@@ -46,6 +46,36 @@ function routes.IsUnitOutOfZone(unit)
 	return mine ~= nil and theirs ~= nil and mine ~= theirs
 end
 
+-- The zone a party member is in, or nothing where the client won't say or keeps it secret
+function routes.UnitZone(unit)
+	local mapID = C_Map.GetBestMapForUnit(unit)
+	if not ns.IsReadable(mapID) then
+		return nil
+	end
+	return ZoneOf(mapID)
+end
+
+--[[
+	A party member's world position in yards, and continent, from where the zone map puts them: nothing
+	where the client won't say, as in a dungeon, or keeps it secret, as WoW Forever can in combat
+]]
+function routes.UnitWorldPosition(unit)
+	local hereBeDragons = GetHereBeDragons()
+	local mapID = C_Map.GetBestMapForUnit(unit)
+	if not (hereBeDragons and ns.IsReadable(mapID) and mapID) then
+		return nil
+	end
+	local position = C_Map.GetPlayerMapPosition(mapID, unit)
+	if not position then
+		return nil
+	end
+	local x, y = position:GetXY()
+	if not (ns.IsReadable(x, y) and x and y) or (x == 0 and y == 0) then
+		return nil
+	end
+	return hereBeDragons:GetWorldCoordinatesFromZone(x, y, mapID)
+end
+
 --[[
 	While the player is a ghost, where their corpse lies: world yards, continent and zone. Asked of the
 	zone the ghost is in first, then each map above it, since the graveyard can be a zone away. Nothing

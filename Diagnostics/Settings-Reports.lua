@@ -106,10 +106,10 @@ local function DumpTable(value, indent, depth, lines)
 end
 
 --[[
-    Dumps the single AceDB-managed table (profiles, profileKeys, global)
+    Dumps the single AceDB-managed table (profiles, profileKeys, char, global)
     so a player can paste their exact configuration: every setting in each
-    profile, the window's saved size and position, and the Quest Arrow's
-    saved spot.
+    profile, the window's saved size and position, the Quest Arrow's saved
+    spot, and each character's route ignores, flight paths and zone offers.
 ]]
 function ns:BuildSavedVariablesReport()
 	local lines = { GetClientHeader(), "", ns.SAVED_VARIABLES_NAME .. " = {" }

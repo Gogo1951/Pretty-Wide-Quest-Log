@@ -9,13 +9,13 @@ local _, ns = ...
 ]]
 
 --[[
-	The quest giver window's styling, here and in Forever-Quest-Giver.lua, runs while the Quality of Life
-	switch and giverCleanup are both on. It never follows the Quest Log switch, so it works alongside
+	The quest giver window's styling, here and in Forever-Quest-Giver.lua, runs while giverCleanup (the NPC
+	Dialogue panel's switch) is on. It never follows the Quest Log switch, so it works alongside
 	Blizzard's quest log too
 ]]
 function ns.IsQuestGiverCleanupOn()
 	local profile = ns.db and ns.db.profile
-	return profile and profile.enableQualityOfLife and profile.giverCleanup or false
+	return profile and profile.giverCleanup or false
 end
 
 -- Whether a QuestInfo_Display parent is one of the quest giver window's pages
@@ -49,10 +49,11 @@ local function StyleQuestGiverPages(on)
 			if region:GetObjectType() == "FontString" then
 				if on then
 					ns.RememberBlizzardStyle(region)
+					-- By the font Blizzard gave it, as the styling changes the font each time it runs
 					local _, relativeTo = region:GetPoint(1)
-					local isHeading = region:GetFont() == headingFile
+					local isHeading = ns.BlizzardFontFile(region) == headingFile
 					local isTitle = isHeading and ((not relativeTo) or (relativeTo == page))
-					ns.StyleQuestText(region, isHeading and not isTitle)
+					ns.StyleQuestText(region, isHeading and not isTitle, "dialogue")
 				else
 					ns.RestoreBlizzardStyle(region)
 				end

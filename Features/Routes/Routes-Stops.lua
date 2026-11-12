@@ -28,17 +28,17 @@ local function IsArea(point)
 end
 routes.IsArea = IsArea
 
+-- A turn-in, a quest to pick up or a flight path: at one NPC or object, which only others at the same one join
+local function AtQuestGiver(node)
+	return node.kind == "turnIn" or node.kind == "pickUp" or node.kind == "flightPath"
+end
+
 --[[
 	Whether a task joins the stop before it: objectives within MERGE_RADIUS, as one trip, and every
 	objective whose area the player is standing in, however far apart the areas' middles, as the player
 	works them all at once; a turn-in only with turn-ins at the same NPC, so the route hands in one quest
 	giver's quests at a time
 ]]
--- A turn-in or a quest to pick up: at one NPC or object, which only others at the same one join
-local function AtQuestGiver(node)
-	return node.kind == "turnIn" or node.kind == "pickUp"
-end
-
 local function JoinsStop(stop, node, point)
 	if not stop or stop.corpse then
 		return false
@@ -110,25 +110,30 @@ function routes.ObjectiveText(objective)
 	return text
 end
 
--- What a task asks for: its objective, the turn-in, the pick-up, or the way back to the corpse
+-- What a task asks for: its objective, the turn-in, the pick-up, the flight path, or the way back to the corpse
 function routes.TaskText(task)
 	if task.kind == "turnIn" then
 		return L["ROUTES_TURN_IN"]
 	elseif task.kind == "pickUp" then
 		return L["ROUTES_PICK_UP"]
+	elseif task.kind == "flightPath" then
+		return L["ROUTES_FLIGHT_PATH"]
 	elseif task.kind == "corpse" then
 		return L["ROUTES_CORPSE"]
 	end
 	return routes.ObjectiveText(task.objective or {})
 end
 
--- The color Questie gave the task's objective, the turn-in's gold, an escort pick-up's green, or the corpse's white
+-- The color Questie gave the task's objective, the turn-in's gold, an escort pick-up's or a flight path's green, or the corpse's white
 function routes.TaskColor(task)
 	if task.kind == "corpse" then
 		return ns.GetColorRGB("TEXT")
 	end
 	if task.kind == "pickUp" and task.escort then
 		return ns.GetColorRGB("ROUTE_ESCORT")
+	end
+	if task.kind == "flightPath" then
+		return ns.GetColorRGB("ROUTE_FLIGHT")
 	end
 	local color = task.objective and task.objective.Color
 	if type(color) == "table" and color[1] then

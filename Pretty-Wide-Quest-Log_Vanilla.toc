@@ -37,6 +37,7 @@ Includes/Libraries/AceConfig-3.0/AceConfigCmd-3.0/AceConfigCmd-3.0.lua
 Includes/Libraries/AceConfig-3.0/AceConfigDialog-3.0/AceConfigDialog-3.0.lua
 Includes/Libraries/AceConfig-3.0/AceConfig-3.0.lua
 Includes/Libraries/AceDBOptions-3.0/AceDBOptions-3.0.lua
+Includes/Libraries/LibSharedMedia-3.0/LibSharedMedia-3.0.lua
 
 # Localization
 Locales/enUS.lua
@@ -54,10 +55,12 @@ Locales/zhTW.lua
 # Data
 Data/Flavor.lua
 Data/Data.lua
+Data/Vanilla/Map-Icons-Vanilla.lua
 Data/Vanilla/Map-Reveal-Vanilla.lua
 Data/Vanilla/Quest-Tags-Vanilla.lua
 Data/Vanilla/Sample-Quests-Vanilla.lua
 Data/Vanilla/Wowhead-Vanilla.lua
+Data/Discovery/Map-Icons-Discovery.lua
 Data/Discovery/Map-Reveal-Discovery.lua
 Data/Discovery/Quest-Tags-Discovery.lua
 Data/Discovery/Sample-Quests-Discovery.lua
@@ -67,8 +70,11 @@ Data/Default-Settings.lua
 # Pretty Wide Quest Log
 Features/Core.lua
 Features/Utilities.lua
+Features/Fonts.lua
 Features/Announcements.lua
+Features/Key-Bindings.lua
 Features/Quest-Log-API.lua
+Features/Share-Needs.lua
 Features/Quest-Sort.lua
 Features/Quest-Display.lua
 Features/Quest-Objectives.lua
@@ -94,6 +100,7 @@ Features/Classic-Quest-Log.lua
 Features/Classic-Zone-Actions.lua
 Features/Zone-Share.lua
 Features/Share-Reminders.lua
+Features/Zone-Share-Offer.lua
 Features/Dungeon-Quest-Lookup.lua
 Features/Dungeon-Quests.lua
 Features/Player-Map-Pin.lua
@@ -123,11 +130,14 @@ Diagnostics/Report-Runner.lua
 
 # Options
 Options/Options-Utilities.lua
+Options/Options-Fonts.lua
 Options/Options-General.lua
 Options/Options-Quest-Log.lua
+Options/Options-NPC-Dialogue.lua
 Options/Options-Quality-of-Life.lua
 Options/Options-Routes-Map.lua
 Options/Options-Quest-Arrow.lua
+Options/Options-Maps.lua
 Options/Options-Profiles.lua
 Options/Options-Feedback-Support.lua
 Diagnostics/Options-Diagnostics.lua

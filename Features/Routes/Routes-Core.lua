@@ -17,8 +17,15 @@ local _, ns = ...
 local routes = {}
 ns.routes = routes
 
-routes.AREA_REACH = 200 -- Yards from an objective's nearest spawn that count as being in its area
-routes.AREA_GRACE = 20 -- Yards past an objective area's edge the player can stray and still be in it
+--[[
+	Being in an objective's area means being among its mobs or objects, not on the way to them. Questie's
+	spawns in a camp lie about 22 yards apart (the middle of every hostile camp in Tirisfal Glades), 40 for
+	nine in ten, and up to 75 for the most spread out, as darkhounds and duskbats are. 60 yards from the
+	nearest spawn covers the gaps of almost every camp, and the eye shows a few seconds' run from the edge
+	of it, never from across the zone. Once in, AREA_GRACE more, so its edge doesn't flicker in and out
+]]
+routes.AREA_REACH = 60 -- Yards from an objective's nearest spawn that count as being in its area
+routes.AREA_GRACE = 30 -- Yards past an objective area's edge the player can stray and still be in it
 
 --------------------------------------------------------------------------------
 -- Settings
@@ -71,6 +78,17 @@ local function DropRetiredSettings()
 	local settings = ns.db.profile.routes
 	settings.cycleSeconds = nil
 	settings.enabled = nil
+end
+
+--[[
+	MIGRATION (remove after 2026-12-11): Show Future Turn-Ins (showUpcomingTurnIns) is part of Predictive
+	Questing Routes (predictiveRoutes) now, on by default, so it's dropped from the profile, and
+	planQuestChains, from test builds
+]]
+local function DropPredictiveSettings()
+	local settings = ns.db.profile.routes
+	settings.showUpcomingTurnIns = nil
+	settings.planQuestChains = nil
 end
 
 -- A line in chat the way the rest of the add-on writes them: its name, a separator, the message
@@ -149,9 +167,10 @@ routes.stops = {}
 -- Every place each objective can be done, in every zone, shaped as stops, for the map (Routes-Camps.lua)
 routes.camps = {}
 --[[
-	Task keys ignored until the ignore list is cleared, each { label, questID, order }: what the Quest Arrow's
-	menu lists it as, its quest, and when it was ignored, so the list keeps that order. Never saved, so a
-	logout clears it, and joining or leaving a group does too (ClearForGroup), with ignoredMembers
+	Task keys left off the route, each { label, questID, order, zone }: what the Quest Arrow's menu lists it
+	as, its quest, when it was ignored, so the list keeps that order, and the zone whose reset clears it
+	(Routes-Ignore.lua). The player's own are saved for the character (char.routesIgnored), so they last
+	through a logout and a group change; a party member's go once everyone who had its quest leaves the group
 ]]
 routes.skipped = {}
 routes.ignoredMembers = {} -- Party members whose quests are left out, by name as routes.UnitFullName gives it
@@ -197,6 +216,24 @@ end
 function routes.IsMapShown()
 	local settings = routes.Settings()
 	return settings.showMap
+end
+
+-- Whether a map is a continent's, the world's or the cosmos', not a zone's or one inside a zone
+function routes.IsWideMap(mapID)
+	local info = mapID and C_Map.GetMapInfo(mapID)
+	return info ~= nil and info.mapType ~= nil and info.mapType <= Enum.UIMapType.Continent
+end
+
+--[[
+	Whether a world map shows the markers: any zone's while the Waypoint Markers are on, a continent's or the
+	world's only with Show Markers on Continent and World Maps too. Where it doesn't, Questie's icons and
+	Blizzard's quest markers stay, as nothing stands in for them
+]]
+function routes.IsMapShownOn(mapID)
+	if not routes.IsMapShown() then
+		return false
+	end
+	return routes.Settings().showWideMapMarkers or not routes.IsWideMap(mapID)
 end
 
 -- A switch that brings the route back into view plans it, rather than waiting for the next change
@@ -245,6 +282,7 @@ end
 function routes:OnPlayerLogin()
 	MigrateSettings() -- MIGRATION (remove after 2026-12-06)
 	DropRetiredSettings() -- MIGRATION (remove after 2026-12-07)
+	DropPredictiveSettings() -- MIGRATION (remove after 2026-12-11)
 	for _, handler in ipairs(routes.loginHandlers) do
 		handler()
 	end

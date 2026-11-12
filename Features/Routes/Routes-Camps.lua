@@ -8,10 +8,11 @@ local _, ns = ...
 	scatter of icons.
 
 	A camp is a blob (Routes-Blobs.lua) of an objective's spawns, gathered across the whole continent, and
-	every done quest's turn-in is a camp too, where its NPC or object stands, as is each quest to pick up nearby
-	that the Local Available Quests settings put on the map only (routes.mapOnlyPickUps, Routes-Pick-Ups.lua). Each is shaped as a stop is
-	(Routes-Stops.lua), with the one task, so the map draws and lists it as it does a waypoint. Worked out
-	with each plan (Routes-Core.lua), from blobs cached by objective until Questie changes its spawn list
+	every done quest's turn-in is a camp too, where its NPC or object stands, as is each quest to pick up
+	nearby that the Local Available Quests settings put on the map only (routes.mapOnlyPickUps,
+	Routes-Pick-Ups.lua). Each is shaped as a stop is (Routes-Stops.lua), with the one task, so the map draws
+	and lists it as it does a waypoint. Worked out with each plan (Routes-Planner.lua), from blobs cached by
+	objective until Questie changes its spawn list
 ]]
 
 local routes = ns.routes

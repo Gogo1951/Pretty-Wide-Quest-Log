@@ -16,16 +16,28 @@ if C_QuestLog.GetInfo then
 		return (C_QuestLog.GetNumQuestLogEntries())
 	end
 
-	-- One entry (a zone header or a quest), as C_QuestLog.GetInfo describes it
+	--[[
+		Which zones the window shows collapsed, by zone name, for the session, kept here and never in the game's
+		quest log, whose own zones are left as they are. ExpandQuestHeader and CollapseQuestHeader fire
+		QUEST_LOG_UPDATE inside the call (Blizzard's quest log sets ignoreQuestLogUpdate around them for that
+		reason), so called from add-on code they'd taint every objective tracker module's next update (GitHub
+		#23). And Blizzard's map collapses the zones away from the map it shows whenever it refreshes
+	]]
+	local collapsedZones = {}
+
+	-- One entry (a zone header or a quest), as C_QuestLog.GetInfo describes it; isCollapsed is the window's
 	function ns.GetQuestLogEntry(index)
-		return C_QuestLog.GetInfo(index)
+		local entry = C_QuestLog.GetInfo(index)
+		if entry and entry.isHeader then
+			entry.isCollapsed = collapsedZones[entry.title] and true or false
+		end
+		return entry
 	end
 
 	function ns.SetQuestZoneCollapsed(index, collapsed)
-		if collapsed then
-			ns.TrackerTaintStep("CollapseQuestHeader", CollapseQuestHeader, index)
-		else
-			ns.TrackerTaintStep("ExpandQuestHeader", ExpandQuestHeader, index)
+		local entry = C_QuestLog.GetInfo(index)
+		if entry and entry.isHeader and entry.title then
+			collapsedZones[entry.title] = collapsed or nil
 		end
 	end
 
@@ -59,36 +71,7 @@ if C_QuestLog.GetInfo then
 	ns.IsPushableQuest = C_QuestLog.IsPushableQuest
 	ns.CanAbandonQuest = C_QuestLog.CanAbandonQuest
 
-	--[[
-		WoW Forever blocks QuestLogPushQuest in combat for add-on code, a click on the add-on's own button
-		included, and no secure button or slash command shares a quest. So a share asked for in combat says
-		so in chat and goes out when combat ends (Core's PLAYER_REGEN_ENABLED), if the quest is still
-		shareable and the party still there; a second one asked for meanwhile takes its place
-	]]
-	local pendingShare
-	ns.questLogApi = {}
-
-	function ns.questLogApi:OnPlayerRegenEnabled()
-		local questID = pendingShare
-		pendingShare = nil
-		if
-			questID
-			and C_QuestLog.GetLogIndexForQuestID(questID)
-			and C_QuestLog.IsPushableQuest(questID)
-			and IsInGroup()
-		then
-			QuestMapQuestOptions_ShareQuest(questID)
-		end
-	end
-
-	function ns.ShareQuest(questID)
-		if InCombatLockdown() then
-			pendingShare = questID
-			ns:PrintMessage(ns.L["CHAT_SHARING_AFTER_COMBAT"]:format(C_QuestLog.GetTitleForQuestID(questID) or questID))
-			return
-		end
-		ns.TrackerTaintStep("QuestMapQuestOptions_ShareQuest", QuestMapQuestOptions_ShareQuest, questID)
-	end
+	-- Sharing a quest, held until combat ends while in combat: ns.ShareQuest in Share-Needs.lua
 
 	-- Asks whether to abandon the quest, as the game's own Abandon button does
 	function ns.AskToAbandonQuest(questID)

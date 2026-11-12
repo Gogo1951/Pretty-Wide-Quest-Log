@@ -1,6 +1,10 @@
 local _, ns = ...
 
--- Every client: the dungeon the player is in, and which of their quests belong to it, from the quest log and Questie.
+--[[
+	Every client: the dungeon or zone the player is in, and which of their quests belong to it, from the quest
+	log and Questie. A dungeon is known by Questie's area IDs for it, a zone by its map: a spawn counts there
+	when its area's map is the zone or inside it, never a dungeon inside it
+]]
 
 --------------------------------------------------------------------------------
 -- The Dungeon
@@ -60,12 +64,78 @@ local function CurrentDungeon()
 end
 
 --------------------------------------------------------------------------------
+-- The Zone
+--------------------------------------------------------------------------------
+
+local function QuestieAreaLookup()
+	local zoneDB = ns.ImportQuestieModule("ZoneDB")
+	return zoneDB and type(zoneDB.GetUiMapIdByAreaId) == "function" and zoneDB or nil
+end
+
+--[[
+	The zone the player is in outside a dungeon, shaped as a dungeon is, or nil inside one or where the
+	client won't say: its name, its map as the key, the names its quest log header can carry, and the
+	map spawns are placed by (zoneMapID)
+]]
+function ns.CurrentZone()
+	local _, instanceType = GetInstanceInfo()
+	if INSTANCE_TYPES[instanceType] or not ns.routes then
+		return nil
+	end
+	local mapID = ns.routes.PlayerZone()
+	if not (ns.IsReadable(mapID) and mapID) then
+		return nil
+	end
+	local zoneName = GetRealZoneText()
+	zoneName = zoneName ~= "" and zoneName or nil
+	local info = C_Map.GetMapInfo(mapID)
+	local mapName = info and info.name ~= "" and info.name or nil
+	local zone = { name = zoneName or mapName or "", key = mapID, zoneMapID = mapID, areaIDs = {}, names = {} }
+	if zoneName then
+		zone.names[zoneName] = true
+	end
+	if mapName then
+		zone.names[mapName] = true
+	end
+	return zone
+end
+
+--[[
+	Whether an area ID from Questie's database is in the dungeon or zone: one of the dungeon's own, or for
+	a zone, an area whose map is the zone or inside it and isn't a dungeon's. Maps are kept by area, as
+	this is asked per spawn
+]]
+local areaMaps = {}
+local function AreaHas(area, areaID)
+	if area.areaIDs[areaID] then
+		return true
+	end
+	local zone, routes = area.zoneMapID, ns.routes
+	if not (zone and routes and type(areaID) == "number" and areaID > 0) then
+		return false
+	end
+	local mapID = areaMaps[areaID]
+	if mapID == nil then
+		local zoneDB = QuestieAreaLookup()
+		local found, value = false, nil
+		if zoneDB then
+			found, value = pcall(zoneDB.GetUiMapIdByAreaId, zoneDB, areaID)
+		end
+		mapID = found and type(value) == "number" and value or false
+		areaMaps[areaID] = mapID
+	end
+	return mapID and routes.IsInZone(mapID, zone) and not routes.IsInstanceMap(mapID) or false
+end
+
+--------------------------------------------------------------------------------
 -- Questie
 --------------------------------------------------------------------------------
 
+local questieDB -- Questie's quest database once imported, as Quest-Chain-Data.lua keeps it
+
 -- One field of a record in Questie's database, or nil while Questie isn't loaded or doesn't know it
 local function Query(queryName, id, field)
-	local questieDB = ns.ImportQuestieModule("QuestieDB")
+	questieDB = questieDB or ns.ImportQuestieModule("QuestieDB")
 	local query = questieDB and questieDB[queryName]
 	if type(query) ~= "function" or not id then
 		return nil
@@ -74,13 +144,21 @@ local function Query(queryName, id, field)
 	return found and value or nil
 end
 
--- Whether a spawn list (zone ID -> coordinates) has any spawn in the dungeon
+-- Whether a spawn list (zone ID -> coordinates) has any spawn in the dungeon or zone
 local function SpawnsIn(spawns, dungeon)
 	if type(spawns) ~= "table" then
 		return false
 	end
-	for areaID in pairs(dungeon.areaIDs) do
-		if spawns[areaID] then
+	if not dungeon.zoneMapID then
+		for areaID in pairs(dungeon.areaIDs) do
+			if spawns[areaID] then
+				return true
+			end
+		end
+		return false
+	end
+	for areaID, list in pairs(spawns) do
+		if type(list) == "table" and next(list) ~= nil and AreaHas(dungeon, areaID) then
 			return true
 		end
 	end
@@ -121,11 +199,11 @@ local OBJECTIVE_CHECKS = { NpcIn, ObjectIn, ItemIn }
 	catches class quests and others filed under another zone
 ]]
 local function QuestieQuestIn(questID, dungeon)
-	if next(dungeon.areaIDs) == nil then
+	if next(dungeon.areaIDs) == nil and not (dungeon.zoneMapID and QuestieAreaLookup()) then
 		return false
 	end
 	local zoneOrSort = Query("QueryQuestSingle", questID, "zoneOrSort")
-	if zoneOrSort and dungeon.areaIDs[zoneOrSort] then
+	if zoneOrSort and AreaHas(dungeon, zoneOrSort) then
 		return true
 	end
 
@@ -214,6 +292,9 @@ function ns.DungeonQuests(dungeon)
 	end
 	return quests
 end
+
+-- The same for a zone (ns.CurrentZone): those under its header, and those with objectives Questie places in it
+ns.ZoneQuests = ns.DungeonQuests
 
 -- For Dungeon-Quests.lua and the Sharing Context report
 ns.CurrentDungeon = CurrentDungeon

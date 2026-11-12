@@ -15,7 +15,28 @@ ns.AddWideQuestLogPart(function()
 	-- Map layers
 	--------------------------------------------------------------------------------
 
-	canvas:AddDataProvider(CreateFromMixins(MapExplorationDataProviderMixin))
+	--[[
+		The canvas calls SetPassThroughButtons on every pin the exploration layer acquires, which WoW blocks
+		in combat when add-on code runs it, so its redraws wait out combat and run once it ends
+	]]
+	local exploration = CreateFromMixins(MapExplorationDataProviderMixin)
+	local refreshExploration = exploration.RefreshAllData
+	local explorationHeld = false
+	function exploration:RefreshAllData(...)
+		if InCombatLockdown() then
+			explorationHeld = true
+			return
+		end
+		return refreshExploration(self, ...)
+	end
+	canvas:AddDataProvider(exploration)
+
+	function questMap:OnPlayerRegenEnabled()
+		if explorationHeld then
+			explorationHeld = false
+			exploration:RefreshAllData()
+		end
+	end
 
 	-- Bottom to top, in the world map's order
 	local levels = canvas:GetPinFrameLevelsManager()

@@ -776,7 +776,8 @@ local function CollectIds(entry)
 			if rows == nil then
 				missing[#missing + 1] = source
 			else
-				values[#values + 1] = { STATUS_OK, source.table, CellText(rows) }
+				local value = type(rows) == "table" and FormatTable(rows) or rows
+				values[#values + 1] = { STATUS_OK, source.table, CellText(value) }
 			end
 		elseif type(rows) ~= "table" then
 			missing[#missing + 1] = source

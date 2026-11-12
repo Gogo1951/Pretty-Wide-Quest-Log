@@ -18,7 +18,7 @@ ns.AddWideQuestLogPart(function()
 
 	local PIN_TEMPLATE = "PrettyWideQuestLogQuestiePinTemplate"
 	questMap.QUESTIE_PIN_TEMPLATE = PIN_TEMPLATE -- For the pins' tooltip (Questie-Map-Tooltip.lua)
-	local ICON_SIZE = 24 -- Near the size of Blizzard's quest markers, before Questie's scale for the icon's kind
+	local ICON_SIZE = 16 -- Sized for a UI scale of 1, on the doubling scale; before Questie's scale for the icon's kind
 	local REFRESH_DELAY = 0.2 -- Questie draws in batches over several frames
 	local ZONE_DROPDOWN_WIDTH = 180
 
