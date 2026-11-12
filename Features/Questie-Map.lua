@@ -13,8 +13,8 @@ ns.AddWideQuestLogPart(function()
 	local canvas = questMap.canvas
 
 	-- Questie's own copies of HereBeDragons, which hold every icon it has placed on the world map
-	local hereBeDragons = LibStub("HereBeDragonsQuestie-2.0", true)
-	local hereBeDragonsPins = LibStub("HereBeDragonsQuestie-Pins-2.0", true)
+	local hereBeDragons = ns.QuestieHereBeDragons()
+	local hereBeDragonsPins = ns.QuestieHereBeDragonsPins()
 
 	local PIN_TEMPLATE = "PrettyWideQuestLogQuestiePinTemplate"
 	questMap.QUESTIE_PIN_TEMPLATE = PIN_TEMPLATE -- For the pins' tooltip (Questie-Map-Tooltip.lua)
