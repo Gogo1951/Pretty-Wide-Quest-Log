@@ -135,33 +135,39 @@ local function IsWithinByParents(mapID, zone)
 end
 
 --[[
-	Whether the whole of a map lies on the zone's map, on the same continent: a city drawn on the zone's
-	map, as the Exodar is on Azuremyst Isle's. The game files such a city under the continent, not the
-	zone, so its parents don't say
+	The zone each city on a map of its own is in, city map ID to zone map ID. The game files these cities
+	under the continent, not the zone, so their parents don't say. Only the zone named here counts: Thunder
+	Bluff is in Mulgore, not the Barrens, though the Barrens' map reaches over it. Classic Era, TBC and WoW
+	Forever share map IDs; Mists has its own
 ]]
-local function IsWithinByPlace(mapID, zone)
-	local hereBeDragons = GetHereBeDragons()
-	if not hereBeDragons then
-		return false
-	end
-	for _, corner in ipairs({ 0, 1 }) do
-		local worldX, worldY, instance = hereBeDragons:GetWorldCoordinatesFromZone(corner, corner, mapID)
-		if not worldX then
-			return false
-		end
-		local x, y = hereBeDragons:GetZoneCoordinatesFromWorldInstance(worldX, worldY, instance, zone, true)
-		if not (x and x >= 0 and x <= 1 and y >= 0 and y <= 1) then
-			return false
-		end
-	end
-	return true
-end
+local CITY_ZONES = {
+	-- Classic Era, TBC and WoW Forever
+	[1453] = 1429, -- Stormwind City: Elwynn Forest
+	[1454] = 1411, -- Orgrimmar: Durotar
+	[1455] = 1426, -- Ironforge: Dun Morogh
+	[1456] = 1412, -- Thunder Bluff: Mulgore
+	[1457] = 1438, -- Darnassus: Teldrassil
+	[1458] = 1420, -- Undercity: Tirisfal Glades
+	[1947] = 1943, -- The Exodar: Azuremyst Isle
+	[1954] = 1941, -- Silvermoon City: Eversong Woods
+	[1955] = 1952, -- Shattrath City: Terokkar Forest
+	-- Mists
+	[84] = 37, -- Stormwind City: Elwynn Forest
+	[85] = 1, -- Orgrimmar: Durotar
+	[87] = 27, -- Ironforge: Dun Morogh
+	[88] = 7, -- Thunder Bluff: Mulgore
+	[89] = 57, -- Darnassus: Teldrassil
+	[90] = 18, -- Undercity: Tirisfal Glades
+	[998] = 18, -- Undercity: Tirisfal Glades
+	[103] = 97, -- The Exodar: Azuremyst Isle
+	[110] = 94, -- Silvermoon City: Eversong Woods
+	[111] = 108, -- Shattrath City: Terokkar Forest
+}
 
 --[[
 	Whether a map from Questie's database is the zone or inside it: a micro map (a cave, a building), or a
-	city on a map of its own within the zone, as the Exodar is within Azuremyst Isle. Questie draws such a
-	city's NPCs on the zone's map too, so their turn-ins are on the route. Cached by zone, as it's asked
-	per spawn
+	city that's in the zone (CITY_ZONES). Questie draws such a city's NPCs on the zone's map too, so their
+	turn-ins are on the route. Cached by zone, as it's asked per spawn
 ]]
 local inZone = {}
 local function IsInZone(mapID, zone)
@@ -172,7 +178,7 @@ local function IsInZone(mapID, zone)
 	end
 	local found = cache[mapID]
 	if found == nil then
-		found = IsWithinByParents(mapID, zone) or IsWithinByPlace(mapID, zone)
+		found = IsWithinByParents(mapID, zone) or CITY_ZONES[mapID] == zone
 		cache[mapID] = found
 	end
 	return found

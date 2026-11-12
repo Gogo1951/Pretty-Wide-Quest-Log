@@ -204,7 +204,8 @@ end
 
 --[[
 	The places each thing a quest needs can be done, as lists of spawn tables: each creature, object and
-	item objective (an item where it drops), each kill credit, the area to reach, and the turn-in
+	item objective (an item where it drops), each kill credit, each child quest's finisher, the area to
+	reach, and the turn-in
 ]]
 local function Needs(QuestieDB, questID)
 	local needs = {}
@@ -236,6 +237,24 @@ local function Needs(QuestieDB, questID)
 			local lists = {}
 			for _, id in ipairs(type(entry[1]) == "table" and entry[1] or {}) do
 				lists[#lists + 1] = Spawns(NPC, id)
+			end
+			needs[#needs + 1] = lists
+		end
+	end
+	--[[
+		Each step Questie keeps as a quest of its own under this one, at the NPC or object that finishes it:
+		The Warsong Reports' updates, an item each from a scout in Ashenvale, which no creature drops
+	]]
+	local children = QueryQuest(QuestieDB, questID, "childQuests")
+	for _, childID in ipairs(type(children) == "table" and children or {}) do
+		local childFinishers = QueryQuest(QuestieDB, childID, "finishedBy")
+		if type(childFinishers) == "table" then
+			local lists = {}
+			for _, id in ipairs(type(childFinishers[1]) == "table" and childFinishers[1] or {}) do
+				lists[#lists + 1] = Spawns(NPC, id)
+			end
+			for _, id in ipairs(type(childFinishers[2]) == "table" and childFinishers[2] or {}) do
+				lists[#lists + 1] = Spawns(Object, id)
 			end
 			needs[#needs + 1] = lists
 		end
