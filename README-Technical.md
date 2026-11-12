@@ -1088,7 +1088,7 @@ Clicking (`OnStopMouseUp`; pins aren't buttons, both close the tooltip first): r
 
 Questie's icons (`Routes-Map-Questie-Icons.lua`):
 
-- While `routes.IsMapShownOn` the map shown and `hideQuestieIcons`, `ApplyQuestieIcons` hides HereBeDragons pins (`HereBeDragonsPinsTemplateQuestie`) whose icon is for a task on `routes.stops` or `routes.camps`, plus every party objective icon (`IsPartyIcon`, `ObjectiveData.IsPartyObjective`), except the hovered marker's. Shows again only what it hid (`pin.hiddenByRoute`).
+- While `routes.IsMapShownOn` the map shown and `hideQuestieIcons`, `ApplyQuestieIcons` hides HereBeDragons pins (`QuestieTemplate`: Pins' `worldmapPinTemplate`, `HereBeDragonsPins-Questie-WorldMapPin` since Questie 12.8.0, else `HereBeDragonsPinsTemplateQuestie`) whose icon is for a task on `routes.stops` or `routes.camps`, plus every party objective icon (`IsPartyIcon`, `ObjectiveData.IsPartyObjective`), except the hovered marker's. Shows again only what it hid (`pin.hiddenByRoute`).
 - Matching (`IsRouteIcon`): objective by Questie's objective table, a party one also by `routes.PartyObjectiveKey(questID, index)` (Questie's party icons hold an objective of its own making); turn-in by quest ID (`"complete"`); pick-up by quest ID (`"available"`). Other available-quest icons are left alone.
 - Re-apply: post-hooks on Questie's pin library `worldmapProvider.RefreshAllData` and `HandlePin`, coalesced to one next-frame pass (`RequestApplyQuestieIcons`). `HandlePin` also checks the placed pin at once (`routes.ApplyToPlacedQuestieIcon`, pin = `icon:GetParent()` with `pin.icon == icon`). Sets rebuilt at most once a frame (`Sets`, keyed by `GetTime()`).
 
@@ -1358,7 +1358,7 @@ Modules through `ns.ImportQuestieModule` (`Utilities.lua`). Database queries, qu
 - `QuestieLib:ColorWheel`, `QuestieLink:GetQuestHyperLink`, `QuestieQuest.private.objectiveSpawnListCallTable`.
 - Chains and pick-ups: `QuestiePlayer.HasRequiredRace`/`HasRequiredClass`, `QuestieCorrections.hiddenQuests`, `Questie.db.char.hidden`/`complete`, `LibQuestieDB.Enum.raceMaskById`, `AvailableQuests`, `QuestieCompat.GetQuestGreenRange`, `Townsfolk`.
 - Icons: `Questie.usedIcons` and its `ICON_TYPE_*` constants.
-- HereBeDragons world/zone coordinates, `GetWorldDistance`, `GetWorldVector`; Pins' `worldmapProvider` (`RefreshAllData`, `HandlePin(_, icon)`), `HereBeDragonsPinsTemplateQuestie` pins (`pin.icon`, `.data`, `.texture`), `AddMinimapIconWorld`/`RemoveAllMinimapIcons`.
+- HereBeDragons world/zone coordinates, `GetWorldDistance`, `GetWorldVector`; Pins' `worldmapProvider` (`RefreshAllData`, `HandlePin(_, icon)`), `worldmapPinTemplate` pins, or `HereBeDragonsPinsTemplateQuestie` before Questie 12.8.0 (`pin.icon`, `.data`, `.texture`), `AddMinimapIconWorld`/`RemoveAllMinimapIcons`.
 
 Without `ZoneDB` no objective has a place; without `Phasing` every spawn counts. Routes Context reports each, plus `QuestiePlayer`.
 
