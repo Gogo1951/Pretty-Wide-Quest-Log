@@ -60,8 +60,8 @@ local function MenuTasks(view)
 				turnIns[task.questID] = task
 			elseif task.kind == "pickUp" then
 				pickUps[task.questID] = task
-			elseif task.kind == "flightPath" then
-				flightPaths[task.key] = task
+			elseif task.kind == "flightPath" or task.kind == "fly" then
+				flightPaths[task.key] = task -- A flight path to discover or a flight to take, neither a quest's
 			end
 		end
 	end

@@ -115,7 +115,7 @@ Pretty-Wide-Quest-Log/
 │       ├── Routes-Pick-Ups.lua             Quests to pick up nearby: Local Available Quests, free quest slots
 │       ├── Routes-Quest-Plans.lua          A quest not yet taken: its objectives and turn-in from Questie's database
 │       ├── Routes-Chains.lua               Quest chains planned ahead: predicted objectives, turn-ins, follow-ups
-│       ├── Routes-Flights.lua              Flight paths to discover: known paths read from flight maps, per continent
+│       ├── Routes-Flights.lua              Flight paths to discover, and known ones as shortcuts: read from flight maps
 │       ├── Routes-Pinning.lua              Progress, camps worked and left, and the node pinned first
 │       ├── Routes-Overlaps.lua             Two objectives at once: riders where spawns overlap, shared camp credit
 │       ├── Routes-Stops.lua                Ordered nodes merged into waypoints, and each task's text and color
@@ -807,7 +807,7 @@ One route through the player's quests, planned by `Features/Routes/` and shown b
 
 - **Scope.** Only the player's zone (`routes.PlayerZone`), with the caves, buildings and cities inside it. Whatever zone a quest is filed under, only its spawns here count.
 - **What goes on it.** Objectives not done (their Questie spawns clustered into blobs); turn-ins, ready or planned ahead of their objectives; with `partyQuests`, party quests the player lacks; quests to pick up (nearby, or anywhere in the zone as a chain start); with `predictiveRoutes`, whole quests not yet taken and their follow-ups; flight paths not yet discovered.
-- **Order.** Open path from the origin, a traveling salesman problem with several candidate places per node and precedence (`Routes-Solver.lua`); a trip somewhere else costs more than its yards, and nothing far off goes between two places of one camp.
+- **Order.** Open path from the origin, a traveling salesman problem with several candidate places per node and precedence (`Routes-Solver.lua`); a trip somewhere else costs more than its yards, and nothing far off goes between two places of one camp. Known flight paths in the zone are shortcuts that take no time (Flying, below).
 - **Needs Questie.** Places, objectives and counts come from Questie's quest log and database; distances from Questie's HereBeDragons (`HereBeDragonsQuestie-2.0`, `routes.HereBeDragons()`, nil until Questie loads it), in world yards.
 - **Not a quest log part.** Runs on every client whatever the Wide Quest Log switch says; never draws on the add-on's own map (`ns.questMap`).
 - **Engine vs display.** This part covers planning: `Routes-Core.lua`, `-Planner`, `-Solver`, `-Geography`, `-Questie`, `-Blobs`, `-Nodes`, `-Pick-Ups`, `-Quest-Plans`, `-Chains`, `-Flights`, `-Pinning`, `-Overlaps`, `-Stops`, `-Camps`. Hand-off: the planner sets `routes.stops`, `routes.start`, `routes.nodes`, `routes.engaged`, `routes.camps` together and calls every `routes.AddListener` listener (`routes.Notify`); the views read those plus task fields (below). Display, party, group-up, ignore list and TomTom: The Zone Map onward.
@@ -898,7 +898,7 @@ Caching:
 - Database-only lookups (givers, `IsElsewhere`, `IsChainQuest`, quest plans) cache in plain tables per zone, wiped on entering another zone so they don't pile up over a session. Flight master blobs cache on the master's own entry.
 - **Trap: nodes are sorted by `key` before anything else**, because Questie's log is a hash and the same quests must give the same route (and the same Shake throws).
 
-Task fields the display reads (beyond the solver's `candidates`/`choice`/`requires`): `kind` (`objective`, `turnIn`, `pickUp`, `flightPath`, and `corpse` from `MakeStops`), `questID`, `questName`, `quest`, `objective`, `blobs`, `spawns`, `ready`, `hidden`, `urgent`, `party`, `helping`, `rider`, `inArea`, `predicted`, `pickUpNode`, `after`, `holdersOf`, `chained`, `shared`, `escort`, `offRoute`, `npcID`, `flightMaster`.
+Task fields the display reads (beyond the solver's `candidates`/`choice`/`requires`): `kind` (`objective`, `turnIn`, `pickUp`, `flightPath`, `corpse` from `MakeStops`, and `fly` from `routes.AddFlightStops`), `questID`, `questName`, `quest`, `objective`, `blobs`, `spawns`, `ready`, `hidden`, `urgent`, `party`, `helping`, `rider`, `inArea`, `predicted`, `pickUpNode`, `after`, `holdersOf`, `chained`, `shared`, `escort`, `offRoute`, `npcID`, `flightMaster`.
 
 #### Quests to Pick Up
 
@@ -935,6 +935,15 @@ Task fields the display reads (beyond the solver's `candidates`/`choice`/`requir
 - **Known** (`ns.db.char.routesFlightMasters`, NPC ID → true; no API says it away from a flight master). `TAXIMAP_OPENED` (`routes:OnTaximapOpened`) marks the NPC talked to (`TalkingTo`: `UnitGUID("npc")`, else `"target"`), then `ReadFlightMap`: `C_TaxiMap.GetAllTaxiNodes(TaxiMapID())` nodes not `Unreachable`, placed through HereBeDragons (`node.position`, else `TaxiNodePosition`) and matched to the Questie flight master within `MATCH_REACH` (`FlightMasterAt`). **Only when the `Current` node lands within `MATCH_REACH` of the player** (`linedUp`): a client whose flight map isn't drawn like its world map marks only the one talked to. `UI_INFO_MESSAGE` = `ERR_NEWTAXIPATH` marks the talked-to NPC too. `MarkKnown` plans when anything is new. `routes.lastFlightMap` keeps the last read for Routes Context.
 - **Trap: a character with paths from before tracking would be sent to every flight master.** Nothing goes on the route on a continent until `ns.db.char.routesFlightMapSeen[instance]` (HereBeDragons instance), set by a lined-up read Questie could match (a flight map shows only its continent). At login a character at `NEW_CHARACTER_LEVEL` or below with nothing seen gets `routesFlightMapSeen.all`.
 - `routes.FlightPathSignature()`: setting, tracked on this continent, known count, Questie's flight master count. Display: `routes.FLIGHT_ICON`, `ROUTE_FLIGHT` via `routes.TaskColor`, `routes.FlightPathLabel`.
+
+#### Flying
+
+Known flight paths are shortcuts, always on: flying between two takes no time. The arrow says "Talk to Devrak to fly to Camp Taurajo" (`ROUTES_FLY_FROM`).
+
+- **Which** (`routes.KnownFlights(start, yield)`, set as `start.flights` before the solve, `Routes-Planner.lua`): flight masters in the zone (`FlightMasterBlobs`, so `routes.IsInZone` and its city rule apply) whose path is known (`routes.IsFlightMasterKnown`), each `{ x, y, npcID, name, place }`; nil for fewer than two, or for a ghost. `place` is what the flight map calls it, from `C_TaxiMap.GetTaxiNodesForMap(zone)` (answers away from a flight master) matched within `MATCH_REACH`, the part before the comma ("Camp Taurajo, The Barrens"), cached by NPC ID; else the flight master's name.
+- **Cost** (`Routes-Solver.lua`): a leg is the shorter of walking and `FlightYards(a) + FlightYards(b) + FLIGHT_COST` (200 yards, for stopping to talk), each the walk to the place's nearest known flight master. The nearest at each end is always the best pair, and if both ends share one, flying can't beat walking (triangle inequality), so a leg stays a lookup. `FlightYards` caches on the point, stamped with `flightPlan`, which each `Solve` bumps.
+- **Waypoints** (`routes.AddFlightStops(stops, start)`, after `MakeStops`): before each stop the leg to it flies to (`Solver.FlightLeg`, the same test against the last solve's flights), a stop at the departure flight master with one `fly` task (`fly:<from>:<to>`, `npcID`, `flightMaster`, `destination`, one candidate) and `landing` (`{ x, y }` of the arrival flight master). Not when that key is ignored. `routes.FlyingSignature()` (known count) replans when a path is learned.
+- **Display.** `routes.TaskText`/`TaskColor` (`ROUTE_FLIGHT`), the arrow's and the map tooltip's one line, `routes.FLIGHT_ICON` on the marker, `routes.FlightLabel` ("Flight to Camp Taurajo", `ROUTES_MENU_FLY`) on the menu and in chat; ignorable like a flight path. The map line's leg after a fly waypoint starts at `landing` (`Draw(mapID, positions, landings)`, `Routes-Map-Line.lua`); the flight has no leg. Taking off hides the arrow; landing plans fresh from the arrival.
 
 #### Blobs and Candidates
 

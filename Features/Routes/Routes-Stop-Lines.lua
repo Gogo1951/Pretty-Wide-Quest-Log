@@ -103,10 +103,11 @@ end
 routes.PositionAt = PositionAt
 
 --[[
-	The quests at a stop, each { task, here, turnIn, pickUp, flightPath, distance }: task the first of its
-	tasks there, here the set of its objectives done at the stop, left those of them still to do
+	The quests at a stop, each { task, here, turnIn, pickUp, flightPath, fly, distance }: task the first of
+	its tasks there, here the set of its objectives done at the stop, left those of them still to do
 	(routes.IsTaskLeft), turnIn whether it's turned in there, pickUp whether it's picked up there. A flight
-	path, which has no quest, is an entry of its own with flightPath set. Given the player's position,
+	path to discover or a flight to take, which have no quest, are entries of their own with flightPath or
+	fly set. Given the player's position,
 	nearest first, each with distance[objective] for its objectives' places; else in route order
 ]]
 function routes.QuestsAt(stop, x, y)
@@ -125,6 +126,8 @@ function routes.QuestsAt(stop, x, y)
 			entry.pickUp = true
 		elseif task.kind == "flightPath" then
 			entry.flightPath = true
+		elseif task.kind == "fly" then
+			entry.fly = true
 		elseif task.objective then
 			entry.here[task.objective] = true
 		end
@@ -266,7 +269,8 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 			return logOrder[a] < logOrder[b]
 		end)
 		--[[
-			A flight path to discover is one line, "Get the Flight Path from Devrak", in the turn-in's gold. A
+			A flight path to discover is one line, "Get the Flight Path from Devrak", in the turn-in's gold, and a
+			flight to take is too, "Talk to Omusa Thunderhorn to fly to Camp Taurajo". A
 			quest to pick up is one line too, "Pick up [12] Quest Name", in its difficulty color, so how worth the
 			walk it is shows at a glance. The turn-in comes after the quest's objectives, so once none are left
 			here it's the one line, in the turn-in's gold (routes.TaskColor) rather than the quest's difficulty
@@ -275,6 +279,8 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 		if entry.flightPath then
 			local text = string.format(L["ROUTES_FLIGHT_PATH_FROM"], entry.task.flightMaster or "")
 			callback("title", text, ns.GetColorRGB("TITLE"))
+		elseif entry.fly then
+			callback("title", routes.TaskText(entry.task), ns.GetColorRGB("TITLE"))
 		elseif entry.pickUp then
 			local title, red, green, blue = routes.QuestTitle(entry.task)
 			callback("title", string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue)

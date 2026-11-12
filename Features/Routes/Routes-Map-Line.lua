@@ -130,8 +130,12 @@ function linePinMixin:PlacePlayerLeg()
 	end
 end
 
--- Draws every leg: the player's to the first stop, then stop to stop. positions[i] is stop i's, or false
-function linePinMixin:Draw(mapID, positions)
+--[[
+	Draws every leg: the player's to the first stop, then stop to stop. positions[i] is stop i's, or false;
+	landings[i], for a fly waypoint, where the leg after it starts, at the flight master it lands at. The
+	flight itself has no leg
+]]
+function linePinMixin:Draw(mapID, positions, landings)
 	local settings = routes.Settings()
 	if not settings.showLine then
 		positions = {} -- Quest Route off, Waypoint Markers only: no legs, and nothing to follow the player with
@@ -142,7 +146,7 @@ function linePinMixin:Draw(mapID, positions)
 		self.legs[i] = self:NewLeg()
 	end
 	for i = 2, needed do
-		local from, to = positions[i - 1], positions[i]
+		local from, to = landings and landings[i - 1] or positions[i - 1], positions[i]
 		if from and to then
 			self:PlaceLeg(self.legs[i], from, to)
 		else

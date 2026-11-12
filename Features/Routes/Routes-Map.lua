@@ -244,9 +244,14 @@ end
 
 -- The line and the waypoints, on a map of the route's zone
 local function DrawRoute(map, mapID, textures)
-	local positions = {}
+	local positions, landings = {}, {}
 	for i, stop in ipairs(routes.stops) do
 		positions[i] = MapPosition(mapID, stop.x, stop.y, stop.instance) or false
+		-- A fly waypoint: the leg after it runs from the flight master it lands at (Routes-Flights.lua)
+		local landing = stop.landing
+		if landing then
+			landings[i] = MapPosition(mapID, landing.x, landing.y, stop.instance)
+		end
 	end
 
 	-- No line pin, and so nothing running each frame, while Quest Route is off or there's no leg to draw
@@ -261,7 +266,7 @@ local function DrawRoute(map, mapID, textures)
 		pin:ApplyFrameLevel()
 		pin:SetSize(map:GetCanvas():GetSize())
 		pin:SetPosition(0.5, 0.5)
-		pin:Draw(mapID, positions)
+		pin:Draw(mapID, positions, landings)
 	end
 
 	for i, stop in ipairs(routes.stops) do

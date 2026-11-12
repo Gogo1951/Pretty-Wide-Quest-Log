@@ -367,6 +367,141 @@ function routes.AddFlightPathNodes(nodes, start, yield)
 	end
 end
 
+--------------------------------------------------------------------------------
+-- Flying
+--------------------------------------------------------------------------------
+
+--[[
+	What the flight map calls each flight path, by flight master NPC ID ("Camp Taurajo"), kept once found:
+	C_TaxiMap.GetTaxiNodesForMap names the zone's flight paths anywhere, and each is matched to the flight
+	master standing within MATCH_REACH of where it puts it. The part before a comma, as the flight map adds
+	the zone ("Camp Taurajo, The Barrens")
+]]
+local placeNames = {}
+
+local function NamePlaces(flights, start)
+	local missing = false
+	for _, flight in ipairs(flights) do
+		missing = missing or placeNames[flight.npcID] == nil
+	end
+	local hereBeDragons = routes.HereBeDragons()
+	if not (missing and hereBeDragons and C_TaxiMap and type(C_TaxiMap.GetTaxiNodesForMap) == "function") then
+		return
+	end
+	local ok, nodes = pcall(C_TaxiMap.GetTaxiNodesForMap, start.zone)
+	if not (ok and type(nodes) == "table") then
+		return
+	end
+	for _, node in ipairs(nodes) do
+		local x, y = NodePosition(node)
+		local worldX, worldY, instance
+		if x and type(node.name) == "string" then
+			worldX, worldY, instance = hereBeDragons:GetWorldCoordinatesFromZone(x, y, start.zone)
+		end
+		if worldX and instance == start.instance then
+			local nearest, nearestSquared = nil, MATCH_REACH * MATCH_REACH
+			for _, flight in ipairs(flights) do
+				local dx, dy = flight.x - worldX, flight.y - worldY
+				local squared = dx * dx + dy * dy
+				if squared <= nearestSquared then
+					nearest, nearestSquared = flight, squared
+				end
+			end
+			if nearest then
+				placeNames[nearest.npcID] = node.name:match("^([^,]+)") or node.name
+			end
+		end
+	end
+end
+
+--[[
+	The flight masters in the zone whose flight path the character has, each { x, y, npcID, name, place },
+	for the route to fly between (Routes-Solver.lua), or nil for fewer than two. place is what the flight map
+	calls the flight path, or the flight master's name where it can't be found
+]]
+function routes.KnownFlights(start, yield)
+	if start.corpse then
+		return nil -- A ghost runs back to the corpse; the plan after it lives again flies
+	end
+	local flights = {}
+	for _, master in ipairs(FlightMasters()) do
+		if routes.IsFlightMasterKnown(master.npcID) then
+			local blob = FlightMasterBlobs(master, start, yield)[1]
+			if blob then
+				flights[#flights + 1] = { x = blob.x, y = blob.y, npcID = master.npcID, name = master.name or "" }
+			end
+		end
+	end
+	if #flights < 2 then
+		return nil
+	end
+	NamePlaces(flights, start)
+	for _, flight in ipairs(flights) do
+		flight.place = placeNames[flight.npcID] or flight.name
+	end
+	return flights
+end
+
+-- A waypoint at the flight master to fly from, its one task "Talk to Omusa Thunderhorn to fly to Camp Taurajo"
+local function FlightStop(from, to, key, start)
+	local point = { x = from.x, y = from.y, radius = routes.MIN_STOP_RADIUS, count = 1, names = { from.name } }
+	return {
+		x = from.x,
+		y = from.y,
+		instance = start.instance,
+		radius = point.radius,
+		names = { from.name },
+		mapID = start.zone,
+		area = false,
+		landing = { x = to.x, y = to.y }, -- Where the line on the map picks up again (Routes-Map.lua)
+		tasks = {
+			{
+				key = key,
+				kind = "fly",
+				npcID = from.npcID,
+				flightMaster = from.name,
+				destination = to.place,
+				candidates = { point },
+				choice = 1,
+				ready = true,
+			},
+		},
+	}
+end
+
+--[[
+	The stops with a fly waypoint before each one the plan flies to (ns.routesSolver.FlightLeg): at the
+	flight master to fly from, the leg after it drawn from the one it lands at. Not one the player ignored
+]]
+function routes.AddFlightStops(stops, start)
+	if not start.flights then
+		return stops
+	end
+	local withFlights, previous = {}, start
+	for _, stop in ipairs(stops) do
+		local from, to = ns.routesSolver.FlightLeg(previous, stop)
+		if from then
+			local key = "fly:" .. from.npcID .. ":" .. to.npcID
+			if not routes.skipped[key] then
+				withFlights[#withFlights + 1] = FlightStop(from, to, key, start)
+			end
+		end
+		withFlights[#withFlights + 1] = stop
+		previous = stop
+	end
+	return withFlights
+end
+
+-- What a fly waypoint is called on the Quest Arrow's menu and in chat: "Flight to Camp Taurajo"
+function routes.FlightLabel(task)
+	return string.format(L["ROUTES_MENU_FLY"], task.destination or "")
+end
+
+-- What flying adds to the route's signature: how many flight paths the character has
+function routes.FlyingSignature()
+	return "fly:" .. tostring(routes.KnownFlightCount())
+end
+
 --[[
 	What flight paths add to the route's signature: the setting, whether they're tracked yet on this
 	continent, how many the character has, and how many flight masters Questie lists, so the route is

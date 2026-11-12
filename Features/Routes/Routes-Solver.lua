@@ -24,6 +24,12 @@ local _, ns = ...
 	more, one past TRIP_FAR all of it, between the two a share. The shortest route in yards alone will
 	leave a camp half done for a turn-in or another camp and come back, when finishing the camp first is
 	all but as short; this keeps it to finishing what's around before setting off
+
+	Flight paths are shortcuts: between two flight masters in the zone whose flight paths the character has
+	(start.flights, Routes-Flights.lua), a flight takes no time. A leg costs the shorter of walking it and
+	walking from its start to the nearest such flight master, flying, and walking on from the flight master
+	nearest its end, plus FLIGHT_COST. The nearest at each end is always the best pair, so a leg stays a
+	lookup however many flight masters there are
 ]]
 
 local Solver = {}
@@ -43,13 +49,46 @@ local TRIP_NEAR = 100 -- Yards a leg can be and still be within one camp, as sto
 local TRIP_FAR = 300 -- Yards past which a leg is a trip somewhere else
 local TRIP_COST = 150 -- Yards a trip somewhere else counts for more than its length
 local CAMP_SPAN = 200 -- Yards apart two places in a row can be and still be one camp, and yards out of the way a side trip from it can't be
+--[[
+	Yards a flight counts for, though it takes no time: stopping to talk to the flight master. A flight that
+	saves less than this walks instead
+]]
+local FLIGHT_COST = 200
 
 local sqrt = math.sqrt
 
--- What a leg costs: its yards, plus a share of TRIP_COST for setting off somewhere else
+--[[
+	The flight masters the plan underway can fly between, each { x, y, ... }, or nil, and a count that
+	changes with each plan, so a place's nearest flight master (FlightYards) is worked out again for it
+]]
+local flights, flightPlan = nil, 0
+
+-- Yards from a place to the nearest flight master it can fly from, and which: worked out once a plan
+local function FlightYards(point)
+	if point.flightPlan ~= flightPlan then
+		local nearest, nearestIndex = math.huge, nil
+		for i, flight in ipairs(flights) do
+			local dx, dy = flight.x - point.x, flight.y - point.y
+			local yards = sqrt(dx * dx + dy * dy)
+			if yards < nearest then
+				nearest, nearestIndex = yards, i
+			end
+		end
+		point.flightYards, point.flightIndex, point.flightPlan = nearest, nearestIndex, flightPlan
+	end
+	return point.flightYards, point.flightIndex
+end
+
+-- What a leg costs: its yards, walked or partly flown, plus a share of TRIP_COST for setting off somewhere else
 local function Distance(a, b)
 	local dx, dy = a.x - b.x, a.y - b.y
 	local yards = sqrt(dx * dx + dy * dy)
+	if flights then
+		local flown = FlightYards(a) + FlightYards(b) + FLIGHT_COST
+		if flown < yards then
+			yards = flown
+		end
+	end
 	if yards <= TRIP_NEAR then
 		return yards
 	elseif yards >= TRIP_FAR then
@@ -600,6 +639,8 @@ end
 ]]
 function Solver.Solve(start, nodes, yield, previous)
 	yield = yield or NoYield
+	flights = start.flights
+	flightPlan = flightPlan + 1
 	local usable = {}
 	for _, node in ipairs(nodes) do
 		if node.candidates and #node.candidates > 0 then
@@ -634,4 +675,20 @@ function Solver.Solve(start, nodes, yield, previous)
 		route = KeepCampsWhole(start, Shake(start, route, yield), yield)
 	end
 	return route, Solver.Cost(start, route)
+end
+
+--[[
+	Where a leg between two places flies, as the last plan weighed it (Distance): the flight master to fly
+	from and the one to fly to, or nothing where walking is shorter
+]]
+function Solver.FlightLeg(a, b)
+	if not flights then
+		return nil
+	end
+	local fromYards, from = FlightYards(a)
+	local toYards, to = FlightYards(b)
+	local dx, dy = a.x - b.x, a.y - b.y
+	if from ~= to and fromYards + toYards + FLIGHT_COST < sqrt(dx * dx + dy * dy) then
+		return flights[from], flights[to]
+	end
 end

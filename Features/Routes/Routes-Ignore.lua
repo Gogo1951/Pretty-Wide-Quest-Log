@@ -101,9 +101,9 @@ function routes.SkipStop(stop)
 	end
 	local names, seen = {}, {}
 	for _, task in ipairs(stop.tasks) do
-		if task.kind == "flightPath" then
+		if task.kind == "flightPath" or task.kind == "fly" then
 			Ignore(task)
-			names[#names + 1] = routes.FlightPathLabel(task)
+			names[#names + 1] = routes.TaskLabel(task)
 		elseif task.kind ~= "corpse" then
 			Ignore(task)
 			if not seen[task.questID] then
@@ -119,7 +119,7 @@ function routes.SkipStop(stop)
 	routes.RequestPlan()
 end
 
--- What a task is called in chat and the Quest Arrow's menu: its objective, "Wayward Weapons Turn-In" or "Devrak Flight Path"
+-- What a task is called in chat and the Quest Arrow's menu: its objective, "Wayward Weapons Turn-In", "Devrak Flight Path" or "Flight to Camp Taurajo"
 function routes.TaskLabel(task)
 	if task.kind == "turnIn" then
 		return string.format(L["ROUTES_MENU_TURN_IN"], task.questName or "")
@@ -127,6 +127,8 @@ function routes.TaskLabel(task)
 		return string.format(L["ROUTES_MENU_PICK_UP"], task.questName or "")
 	elseif task.kind == "flightPath" then
 		return routes.FlightPathLabel(task)
+	elseif task.kind == "fly" then
+		return routes.FlightLabel(task)
 	end
 	return task.objective and task.objective.Description or ""
 end
@@ -150,7 +152,7 @@ function routes.IgnoreTask(task)
 	end
 	task = task.pickUpNode or task -- One of a quest not taken yet goes with its pick-up, and says so
 	Ignore(task)
-	if task.kind == "flightPath" then
+	if task.kind == "flightPath" or task.kind == "fly" then
 		-- No quest to name: "Ignoring Devrak Flight Path until you reset the zone."
 		routes.Print(string.format(L["ROUTES_SKIPPED"], routes.TaskLabel(task)))
 	else

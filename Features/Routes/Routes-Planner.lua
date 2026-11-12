@@ -94,12 +94,13 @@ local function Plan()
 	end
 	local previous = lastSolve and lastSolve.zone == start.zone and lastSolve.instance == start.instance and lastSolve
 		or nil
+	start.flights = routes.KnownFlights(start, Yield) -- Flight paths as shortcuts (Routes-Flights.lua)
 	local solved = ns.routesSolver.Solve(start, nodes, Yield, previous)
 	local snapshot = ns.routesSolver.Snapshot(solved)
 	snapshot.zone, snapshot.instance = start.zone, start.instance
 	local order = Shown(solved)
 	routes.BringTurnInsForward(order, start)
-	local stops = routes.MakeStops(order, start)
+	local stops = routes.AddFlightStops(routes.MakeStops(order, start), start)
 	return stops, start, nodes, engaged, routes.BuildCamps(Yield), snapshot
 end
 
