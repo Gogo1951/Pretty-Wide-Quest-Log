@@ -141,6 +141,7 @@ routes.ARROW_LAYOUT = {
 	ARROW_SIZE = ARROW_SIZE,
 	NEXT_ARROW_SIZE = NEXT_ARROW_SIZE,
 	EYE_TEXTURE = EYE_TEXTURE,
+	ARROW_TEXTURE = ARROW_TEXTURE,
 	DIM_ALPHA = DIM_ALPHA,
 }
 
@@ -371,6 +372,24 @@ local function PointNext(hereBeDragons, x, y, instance, facing, heading, rewrite
 end
 
 --[[
+	The little arrow on each "Pick up" line in the list, to the quest giver, turned and colored as the big
+	one would be (Routes-Arrow-List.lua lays them out, hidden until turned here, so none shows unturned)
+]]
+local function PointLines(hereBeDragons, x, y, instance, facing, heading)
+	for _, line in ipairs(routes.arrowPointingLines or {}) do
+		local point = line.point
+		local angle = point and hereBeDragons:GetWorldVector(instance, x, y, point.x, point.y)
+		if angle then
+			line.icon:SetRotation(angle - facing)
+			line.icon:SetVertexColor(Shade(angle - heading))
+			line.icon:Show()
+		else
+			line.icon:Hide()
+		end
+	end
+end
+
+--[[
 	Joining up: the arrow points to the party member, or the middle of everyone, as it moves, with "Join Up
 	with Group" under it, and with showNextObjective the route's next waypoint dimmed below as the Next
 	Objective, where the group goes once together. Nothing on the menu's Ignore rows is at the arrow, and
@@ -476,6 +495,7 @@ local function Point(self, elapsed)
 	local heading = ColorHeading(TravelHeading(hereBeDragons, now, x, y, instance), facing)
 
 	PointNext(hereBeDragons, x, y, instance, facing, heading, rewrite)
+	PointLines(hereBeDragons, x, y, instance, facing, heading)
 
 	local angle, yards
 	if not label then

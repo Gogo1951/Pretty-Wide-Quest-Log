@@ -105,7 +105,8 @@ routes.PositionAt = PositionAt
 --[[
 	The quests at a stop, each { task, here, turnIn, pickUp, flightPath, fly, distance }: task the first of
 	its tasks there, here the set of its objectives done at the stop, left those of them still to do
-	(routes.IsTaskLeft), turnIn whether it's turned in there, pickUp whether it's picked up there. A flight
+	(routes.IsTaskLeft), turnIn whether it's turned in there, pickUp whether it's picked up there, with
+	pickUpTask the task that picks it up. A flight
 	path to discover or a flight to take, which have no quest, are entries of their own with flightPath or
 	fly set. Given the player's position,
 	nearest first, each with distance[objective] for its objectives' places; else in route order
@@ -123,7 +124,7 @@ function routes.QuestsAt(stop, x, y)
 		if task.kind == "turnIn" then
 			entry.turnIn = true
 		elseif task.kind == "pickUp" then
-			entry.pickUp = true
+			entry.pickUp, entry.pickUpTask = true, task
 		elseif task.kind == "flightPath" then
 			entry.flightPath = true
 		elseif task.kind == "fly" then
@@ -233,8 +234,9 @@ end
 
 --[[
 	Calls back with each line describing the stop's quests: kind ("title", "objective", "name" or "more"),
-	text, r, g, b, then the count on the right, if any, and on a quest's title its quest ID, which the
-	Quest Arrow's item buttons go by (Routes-Arrow-Items.lua). Under each quest, only what's to do at the stop: its
+	text, r, g, b, then the count on the right, if any, on a quest's title its quest ID, which the
+	Quest Arrow's item buttons go by (Routes-Arrow-Items.lua), and on a quest to pick up where its giver
+	stands (routes.TaskPoint), which the line's own little arrow points to. Under each quest, only what's to do at the stop: its
 	objectives there still to do (routes.IsTaskLeft, so a done one the party needs too), each with its count, "4 / 12", as the quest log writes it. In a party,
 	with Show Party Objectives on (routes.ShowsParty), who still needs each objective is listed under it with their own count, the player first, the rest by
 	name, each in their class color; the objective has no count of its own then. Where it's only turned in
@@ -283,7 +285,8 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 			callback("title", routes.TaskText(entry.task), ns.GetColorRGB("TITLE"))
 		elseif entry.pickUp then
 			local title, red, green, blue = routes.QuestTitle(entry.task)
-			callback("title", string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue)
+			local point = routes.TaskPoint(entry.pickUpTask or entry.task)
+			callback("title", string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue, nil, nil, point)
 		elseif entry.turnIn and #toDo == 0 then
 			local text = string.format(L["ROUTES_TURN_IN_QUEST"], routes.QuestTitle(entry.task))
 			local red, green, blue = ns.GetColorRGB("TITLE")
