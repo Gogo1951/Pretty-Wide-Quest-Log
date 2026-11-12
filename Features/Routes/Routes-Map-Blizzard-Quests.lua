@@ -76,7 +76,7 @@ local function ApplyBlizzardQuests()
 	if not WorldMapFrame then
 		return
 	end
-	local hide = routes.IsMapShown() and routes.Settings().hideQuestieIcons
+	local hide = routes.IsMapShownOn(WorldMapFrame:GetMapID()) and routes.Settings().hideQuestieIcons
 	local quests, any = RouteQuests()
 	hide = hide and any
 	for _, provider in ipairs(questProviders) do

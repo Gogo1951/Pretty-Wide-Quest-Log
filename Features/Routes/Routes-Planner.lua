@@ -61,14 +61,46 @@ local function Yield()
 	end
 end
 
+--[[
+	The route as drawn: the solved order without the turn-ins planned but hidden (Predictive Questing Routes
+	off, Routes-Nodes.lua), which still shaped it, so it heads back where the quests are handed in last
+]]
+local function Shown(order)
+	local shown = {}
+	for _, node in ipairs(order) do
+		if not node.hidden then
+			shown[#shown + 1] = node
+		end
+	end
+	return shown
+end
+
+--[[
+	The last plan's solved order, hidden turn-ins and all (Solver.Snapshot), with the zone and instance it was
+	planned in. The next plan there starts from it (Solver.Solve), so a replan after an objective or a quest
+	taken costs a fraction of a fresh one and keeps the route as it was where nothing changed. A new zone, a
+	landing or a reset starts fresh
+]]
+local lastSolve
+
+function routes.ForgetLastSolve()
+	lastSolve = nil
+end
+
 local function Plan()
 	local nodes, start, engaged = routes.BuildNodes(Yield)
 	if not nodes then
 		return nil
 	end
-	local order = ns.routesSolver.Solve(start, nodes, Yield)
+	local previous = lastSolve and lastSolve.zone == start.zone and lastSolve.instance == start.instance and lastSolve
+		or nil
+	local solved = ns.routesSolver.Solve(start, nodes, Yield, previous)
+	local snapshot = ns.routesSolver.Snapshot(solved)
+	snapshot.zone, snapshot.instance = start.zone, start.instance
+	local order = Shown(solved)
+	routes.BringTurnInsForward(order, start)
 	local stops = routes.MakeStops(order, start)
-	return stops, start, nodes, engaged, routes.BuildCamps(Yield)
+	return stops, start, nodes, engaged, routes.BuildCamps(Yield), snapshot
 end
 
 -- Nothing plans in combat (the watcher drops a plan underway as the fight starts); this covers the frame between
@@ -78,7 +110,7 @@ planner:SetScript("OnUpdate", function(self, elapsed)
 	end
 	budget = math.min(MAX_BUDGET, math.max(MIN_BUDGET, elapsed * 1000 * FRAME_SHARE))
 	sliceStarted = debugprofilestop()
-	local ok, stops, start, nodes, engaged, camps = coroutine.resume(job)
+	local ok, stops, start, nodes, engaged, camps, snapshot = coroutine.resume(job)
 	if coroutine.status(job) ~= "dead" then
 		return
 	end
@@ -90,6 +122,7 @@ planner:SetScript("OnUpdate", function(self, elapsed)
 		-- Together, so the watcher never compares a new plan's pins with the old plan's nodes
 		routes.stops, routes.start, routes.nodes, routes.engaged = stops, start, nodes, engaged
 		routes.camps = camps
+		lastSolve = snapshot or lastSolve
 		Notify()
 	end
 	if replanQueued then
@@ -166,6 +199,7 @@ local checkElapsed, sincePlan = 0, 0
 local function OnNewArea()
 	routes.CancelPlan()
 	routes.start = nil
+	lastSolve = nil
 	checkElapsed = CHECK_INTERVAL
 	sincePlan = REPLAN_INTERVAL
 end

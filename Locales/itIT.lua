@@ -15,6 +15,10 @@ L["CHAT_LOADED"] =
 	"Versione %s. Le impostazioni (inclusa l'opzione per disattivare questo messaggio) si trovano in Opzioni > AddOn > Pretty Wide Quest Log. Ti piace questo add-on? Parlane a un amico, aggiungilo ai preferiti su CurseForge o mettigli una Star su GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] =
 	"Per precauzione, l'interfaccia delle opzioni non può essere aperta durante il combattimento."
+L["CHAT_KEY_BINDINGS_IN_COMBAT"] =
+	"Per precauzione, la finestra Assegnazione tasti del gioco non può essere aperta durante il combattimento."
+-- TRANSLATORS: the first %s is the game menu's Options label, the second its Key Bindings label, both from the client
+L["KEY_BINDINGS_LOCATION"] = "Apri il menu di gioco, poi %s, poi %s, e cerca la sezione Pretty Wide Quest Log."
 L["CHAT_QUESTIE_MISSING_FEATURES"] =
 	"Senza Questie, la mappa delle missioni mostra meno cose, e le catene di missioni e il totale di Consegna restano nascosti. Attiva Questie nell'elenco degli AddOn per vederli."
 L["CHAT_PREDECESSOR_LOADED"] =
@@ -34,7 +38,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Sostituisce il registro delle missioni di Blizzard con quello largo, con la mappa accanto. Ha effetto dopo un ricaricamento."
 L["ENABLE_QUALITY_OF_LIFE"] = "Attiva funzioni di comodità"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Riordina la finestra del datore di missioni e aiuta il tuo gruppo a prendere le tue missioni: ritmo di condivisione, sussurri quando una condivisione non raggiunge qualcuno, e annuncio e condivisione delle missioni delle spedizioni. Il pulsante Condividi missioni di una zona nel registro delle missioni funziona anche con questa opzione disattivata."
+	"Aiuta il tuo gruppo a prendere le tue missioni: ritmo di condivisione, sussurri quando una condivisione non raggiunge qualcuno, e annuncio e condivisione delle missioni delle spedizioni. Il pulsante Condividi missioni di una zona nel registro delle missioni funziona anche con questa opzione disattivata."
 L["ENABLE_WAYPOINT_MARKERS"] = "Attiva Indicatori dei punti di passaggio"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Raccoglie le icone delle missioni di ogni obiettivo sulla mappa della zona in un solo indicatore, un punto di passaggio, dove si trova la maggior parte dei suoi nemici od oggetti, più uno per ogni consegna. Passa il mouse su un indicatore per vedere le icone che sostituisce."
@@ -47,12 +51,18 @@ L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Attiva registro delle missioni largo ha effetto dopo un ricaricamento, che ti verrà proposto alla chiusura dell'interfaccia delle opzioni."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log cambia registro delle missioni dopo un ricaricamento. Ricaricare ora?"
+L["OPTIONS_KEY_BINDINGS_HEADER"] = "Assegnazione tasti"
+L["OPTIONS_KEY_SET"] = "Assegna tasto"
+L["OPTIONS_KEY_SET_DESCRIPTION"] =
+	"Apre l'Assegnazione tasti del gioco, dove Pretty Wide Quest Log ha una sezione tutta sua."
+L["OPTIONS_KEY_BINDING_USE_QUEST_ITEM_DESCRIPTION"] =
+	"Usa l'oggetto del primo pulsante Usa l'oggetto della Freccia delle missioni, come se ci facessi clic, anche in combattimento."
 L["OPTIONS_COMMANDS_HEADER"] = "/Comandi"
 L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Apre l'interfaccia delle opzioni di questo add-on."
 
 --------------------------------------------------------------------------------
--- Options: Quest Log Panel
+-- Options: Wide Quest Log Panels
 --------------------------------------------------------------------------------
 
 L["TAB_WIDE_QUEST_LOG"] = "Registro delle missioni largo"
@@ -62,7 +72,7 @@ L["QUEST_LOG_SORTING_HEADER"] = "Ordinamento"
 L["QUEST_LOG_SORTING_DESCRIPTION"] = "Scegli l'ordine delle tue zone e delle missioni sotto di esse."
 L["QUEST_LOG_ROWS_HEADER"] = "Righe delle missioni"
 L["QUEST_LOG_ROWS_DESCRIPTION"] = "Scegli cosa mostra ogni riga."
-L["QUEST_LOG_WINDOW_MAP_HEADER"] = "Finestra e mappa"
+L["TAB_WINDOW_MAP"] = "Finestra e mappa"
 L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] =
 	"Adatta le dimensioni della finestra e della mappa al tuo schermo e scegli come si comportano."
 L["ZONE_ORDER"] = "Ordine delle zone"
@@ -119,14 +129,23 @@ L["HANDY_CLICK_MENU"] = "Clic destro su una missione"
 L["HANDY_CLICK_MENU_DESCRIPTION"] = "Seguila, condividila o abbandonala."
 L["HANDY_CLICK_ID"] = "Clic su un ID missione"
 L["HANDY_CLICK_ID_DESCRIPTION"] = "Ottieni il suo link a Wowhead."
+L["QUEST_LOG_SUB_PANELS_DESCRIPTION"] =
+	"Le sue impostazioni sono nei pannelli sotto questo: Elenco delle missioni, Dettagli della missione, Finestra e mappa e Dialogo con i PNG."
+L["NEEDS_WIDE_QUEST_LOG"] =
+	"Queste impostazioni sono per il registro delle missioni largo. Spunta Attiva registro delle missioni largo nel pannello Registro delle missioni largo per usarle."
+L["TAB_QUEST_LIST"] = "Elenco delle missioni"
+L["TAB_QUEST_LIST_DESCRIPTION"] = "Le tue missioni, elencate per zona sul lato sinistro del registro delle missioni."
+L["TAB_QUEST_DETAILS"] = "Dettagli della missione"
+L["TAB_QUEST_DETAILS_DESCRIPTION"] =
+	"I dettagli della missione selezionata, sulla pergamena accanto all'elenco delle missioni."
 
 --------------------------------------------------------------------------------
--- Options: Quality of Life Panel
+-- Options: NPC Dialogue Panel
 --------------------------------------------------------------------------------
 
-L["TAB_QUALITY_OF_LIFE"] = "Funzioni di comodità"
-L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Piccoli aiuti al di fuori del registro delle missioni stesso: per la finestra del datore di missioni, per condividere le missioni con il tuo gruppo e per le spedizioni."
+L["TAB_NPC_DIALOGUE"] = "Dialogo con i PNG"
+L["TAB_NPC_DIALOGUE_DESCRIPTION"] =
+	"Le finestre che un PNG apre quando gli parli: la finestra del datore di missioni e la finestra di dialogo. Queste impostazioni funzionano con o senza il registro delle missioni largo."
 L["QUEST_GIVERS_HEADER"] = "Datori di missioni"
 L["QUEST_GIVERS_DESCRIPTION"] = "La finestra che apre un datore di missioni, dove accetti e consegni le missioni."
 L["GIVER_CLEANUP"] = "Finestra del datore di missioni ordinata"
@@ -135,6 +154,53 @@ L["GIVER_CLEANUP_DESCRIPTION"] =
 -- TRANSLATORS: %s is a level tag such as [40D], as in SHOW_QUEST_LEVELS_DESCRIPTION
 L["GIVER_LEVELS_DESCRIPTION"] =
 	"Aggiunge le etichette di livello del registro delle missioni, come %s, all'elenco delle missioni di un datore di missioni."
+L["FONT_DIALOGUE_NEEDS_CLEANUP"] =
+	"Il carattere fa parte di Finestra del datore di missioni ordinata, quindi richiede che questa opzione sia attiva."
+
+--------------------------------------------------------------------------------
+-- Options: Font Sections
+--------------------------------------------------------------------------------
+
+L["FONT_HEADER"] = "Carattere"
+L["FONT_LIST_DESCRIPTION"] = "Il carattere dei nomi delle zone e delle missioni nell'elenco delle missioni."
+L["FONT_DETAILS_DESCRIPTION"] =
+	"Il carattere dei dettagli della missione: il titolo, le intestazioni e il testo della missione."
+L["FONT_DIALOGUE_DESCRIPTION"] =
+	"Il carattere delle finestre del datore di missioni e di dialogo: il titolo, le intestazioni e il testo della missione."
+L["FONT_WINDOW_DESCRIPTION"] = "Il carattere del titolo della finestra, del numero di missioni e della riga Consegna."
+L["FONT_FACE"] = "Tipo di carattere"
+L["FONT_FACE_DESCRIPTION"] =
+	"Il tipo di carattere. Predefinito del gioco segue il carattere del gioco e qualsiasi add-on che lo cambi. Sono elencati anche i caratteri aggiunti tramite SharedMedia."
+L["FONT_GAME_DEFAULT"] = "Predefinito del gioco"
+L["FONT_GAME_STANDARD"] = "Testo standard"
+L["FONT_GAME_NAMES"] = "Nomi dei personaggi"
+L["FONT_GAME_DAMAGE"] = "Numeri dei danni"
+L["FONT_SIZE"] = "Dimensione"
+L["FONT_SIZE_DESCRIPTION"] =
+	"Ingrandisce o rimpicciolisce il testo, in punti rispetto alla dimensione del gioco. 0 mantiene la dimensione del gioco."
+L["FONT_OUTLINE"] = "Contorno"
+L["FONT_OUTLINE_DESCRIPTION"] =
+	"Un contorno nero attorno a ogni lettera. Predefinito del gioco mantiene il contorno che ha il carattere del gioco, e Nessuno lo toglie."
+L["FONT_OUTLINE_DEFAULT"] = "Predefinito del gioco"
+L["FONT_OUTLINE_NONE"] = "Nessuno"
+L["FONT_OUTLINE_THIN"] = "Sottile"
+L["FONT_OUTLINE_THICK"] = "Spesso"
+L["FONT_SHADOW"] = "Ombra del testo"
+L["FONT_SHADOW_DESCRIPTION"] =
+	"Mantiene l'ombra proiettata che il carattere del gioco ha dietro il testo. Disattivala per togliere l'ombra, il che aiuta con un carattere che sembra sfocato o sbavato."
+L["FONT_SLUG"] = "Testo più nitido (Slug)"
+L["FONT_SLUG_DESCRIPTION"] =
+	"Disegna il testo con il più recente renderer Slug di Blizzard, per lettere più nitide a qualsiasi dimensione. Slug non può disegnare un contorno spesso né un'ombra, quindi il testo che ha l'uno o l'altra viene disegnato nel modo consueto."
+L["FONT_RESET_BUTTON"] = "Ripristina carattere"
+L["FONT_RESET_DESCRIPTION"] = "Riporta le impostazioni di questo carattere ai valori predefiniti."
+
+--------------------------------------------------------------------------------
+-- Options: Quality of Life Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUALITY_OF_LIFE"] = "Funzioni di comodità"
+L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
+	"Piccoli aiuti al di fuori del registro delle missioni stesso: per condividere le missioni con il tuo gruppo e per le spedizioni."
 L["QUEST_SHARING_HEADER"] = "Condivisione delle missioni"
 L["QUEST_SHARING_INTRO"] =
 	"Passa il mouse sul nome di una zona nel registro delle missioni e fai clic su Condividi missioni per offrire al tuo gruppo, una dopo l'altra, tutte le sue missioni che puoi condividere. Queste opzioni regolano il ritmo e cosa succede quando qualcuno ne perde una."
@@ -146,6 +212,9 @@ L["SHARE_INTERVAL_DESCRIPTION"] =
 L["SHARE_WHISPERS"] = "Sussurra quando una condivisione non riesce"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Quando un membro del gruppo è occupato, troppo lontano o ha il registro delle missioni pieno, gli sussurra quale missione hai provato a condividere e gli chiede di ricordartelo. Non viene inviato nulla se non ha i requisiti per la missione, ce l'ha già o l'ha già completata."
+L["ZONE_SHARE_OFFERS"] = "Offri le missioni della mia zona ai nuovi membri del gruppo"
+L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
+	"Quando entri in un gruppo, o qualcuno entra nel tuo, attende 20 secondi che Questie scambi i registri delle missioni, poi sussurra a ogni membro del gruppo nella tua zona quante delle tue missioni con obiettivi lì non ha e gli chiede se le vuole. Contano solo le missioni che puoi condividere. Non ricevono sussurri i membri di cui non si vedono le missioni (senza Questie, fuori portata) né chi le ha già tutte. Ogni membro viene interpellato una volta per gruppo, mai in una spedizione o in un gruppo da incursione."
 L["SAMPLE_EXAMPLE"] = "Esempio: %s"
 L["SAMPLE_QUEST_LOADING"] = "Caricamento ID missione: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Missioni delle spedizioni"
@@ -156,31 +225,48 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Dice al tuo gruppo quali delle tue missioni restano da fare nella spedizione in cui sei appena entrato, così tutti sanno cosa tenere d'occhio. Le missioni pronte da consegnare vengono escluse."
 L["DUNGEON_SHARE"] = "Condivisione automatica delle missioni delle spedizioni"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Condivide ogni missione della spedizione che il gioco ti permette di condividere, al ritmo impostato in Condivisione delle missioni, appena tutti sono a portata (o dopo un minuto; subito su WoW Forever). Ogni membro del gruppo le riceve una volta per spedizione, quindi le riceve anche chi entra dopo, e uscire e rientrare non condivide nulla. Con Sussurra quando una condivisione non riesce attivo, chi si perde una condivisione riceve un sussurro, così può richiederla."
+	"Condivide ogni missione della spedizione che il gioco ti permette di condividere e che a qualcuno del gruppo ancora manca, al ritmo impostato in Condivisione delle missioni, appena tutti sono a portata (o dopo un minuto; subito su WoW Forever). Ogni membro del gruppo le riceve una volta per spedizione, quindi le riceve anche chi entra dopo, e uscire e rientrare non condivide nulla. Con Sussurra quando una condivisione non riesce attivo, chi si perde una condivisione riceve un sussurro, così può richiederla."
 
 --------------------------------------------------------------------------------
--- Options: Waypoint Markers Panel
+-- Options: Maps & Objectives Panels
 --------------------------------------------------------------------------------
 
-L["TAB_WAYPOINT_MARKERS"] = "Indicatori dei punti di passaggio"
+L["TAB_MAPS_OBJECTIVES"] = "Mappe e obiettivi"
 L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Un indicatore sulla mappa della zona per ogni obiettivo e consegna, al posto di un mucchio di icone delle missioni."
-L["ROUTES_MAP_HEADER"] = "Mappa della zona"
-L["ROUTES_MAP_DESCRIPTION"] = "Come si apre la mappa della zona mentre mostra il percorso."
+L["MAPS_SUB_PANELS_DESCRIPTION"] =
+	"Le impostazioni di ogni mappa sono nei pannelli sotto questo: Minimappa, Mappa della zona e Mappa del continente e del mondo."
+L["MAPS_NEED_MARKERS"] = "Gli indicatori appaiono solo mentre Attiva Indicatori dei punti di passaggio è attivo."
+L["TAB_MINIMAP"] = "Minimappa"
+L["TAB_MINIMAP_DESCRIPTION"] =
+	"Le icone di Questie sulla minimappa mostrano esattamente dove compaiono le cose e dove si ottiene il bottino, quindi restano sempre. Gli indicatori del percorso possono apparire accanto a loro."
+L["SHOW_MINIMAP_MARKERS"] = "Mostra gli indicatori dei punti di passaggio sulla minimappa"
+L["SHOW_MINIMAP_MARKERS_DESCRIPTION"] =
+	"Mette un piccolo indicatore sulla minimappa per ogni punto di passaggio del percorso, accanto alle icone di Questie. Passa il mouse su uno per vederne le missioni."
+L["MINIMAP_MARKER_SIZE_DESCRIPTION"] = "Quanto sono grandi gli indicatori del percorso sulla minimappa."
+L["TAB_ZONE_MAP"] = "Mappa della zona"
+L["TAB_ZONE_MAP_DESCRIPTION"] =
+	"La mappa di una zona, dove il percorso passa tra i suoi indicatori dei punti di passaggio."
 L["FULL_SIZE_MAP"] = "Apri la mappa della zona ingrandita"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"Apre la mappa della zona ingrandita, come fa il suo pulsante di ingrandimento, così il percorso ha spazio. Se rimpicciolisci la mappa, la volta dopo si apre di nuovo ingrandita."
 L["HIDE_QUESTIE_ICONS"] = "Nascondi le icone delle missioni sul percorso"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
 	"Per ciò che è sul percorso, nasconde le icone di Questie sulla mappa, e i segnalini delle missioni e le aree degli obiettivi di Blizzard, così gli indicatori del percorso le sostituiscono. Nasconde anche le icone sbiadite di Questie per gli obiettivi dei membri del gruppo. Passa il mouse su un indicatore per vedere le icone di Questie."
-L["ROUTES_MARKERS_HEADER"] = "Indicatori"
-L["ROUTES_MARKERS_DESCRIPTION"] = "Gli indicatori di ogni punto di passaggio del percorso."
 L["MARKER_SIZE"] = "Dimensione degli indicatori"
 L["MARKER_SIZE_DESCRIPTION"] = "Quanto sono grandi gli indicatori del percorso sulla mappa della zona."
 L["MARKER_SIZE_SMALL"] = "Piccola"
 L["MARKER_SIZE_MEDIUM"] = "Media"
 L["MARKER_SIZE_LARGE"] = "Grande"
 L["MARKER_SIZE_HUGE"] = "Enorme"
+L["TAB_WIDE_MAP"] = "Mappa del continente e del mondo"
+L["TAB_WIDE_MAP_DESCRIPTION"] =
+	"Mappe che contengono molte zone insieme, dove ogni obiettivo e ogni consegna ha un solo indicatore, più piccolo."
+L["SHOW_WIDE_MAP_MARKERS"] = "Mostra gli indicatori dei punti di passaggio sulle mappe del continente e del mondo"
+L["SHOW_WIDE_MAP_MARKERS_DESCRIPTION"] =
+	"Mette un indicatore sulle mappe del continente e del mondo per ogni obiettivo e consegna, al posto delle icone di Questie. Disattivalo per vedere lì le icone di Questie al loro posto."
+L["WIDE_MAP_MARKER_SIZE_DESCRIPTION"] =
+	"Quanto sono grandi gli indicatori del percorso sulle mappe del continente e del mondo. Ogni dimensione lì è più piccola che sulla mappa della zona, perché queste mappe contengono molte zone."
 
 --------------------------------------------------------------------------------
 -- Options: Quest Route Panel
@@ -206,6 +292,9 @@ L["ROUTES_PARTY_DESCRIPTION"] = "Cosa aggiunge il tuo gruppo al percorso."
 L["PARTY_QUESTS"] = "Includi le missioni dei membri del gruppo"
 L["PARTY_QUESTS_DESCRIPTION"] =
 	"In gruppo, il percorso e la Freccia delle missioni includono anche le missioni che i membri del tuo gruppo hanno e tu no, mostrate come le tue. Serve Questie da entrambe le parti per condividerle. Le loro missioni delle spedizioni restano escluse, perché i loro obiettivi sono all'interno della spedizione."
+L["GROUP_UP"] = "Ricongiungiti al gruppo"
+L["GROUP_UP_DESCRIPTION"] =
+	"In gruppo, quando qualcuno nella tua zona è fuori dalla tua minimappa, la Freccia delle missioni mostra Ricongiungiti al gruppo e punta verso quella persona, o verso il punto centrale tra tutti, e la mappa del mondo segna il punto, così potete fare le missioni insieme."
 
 --------------------------------------------------------------------------------
 -- Options: Quest Arrow Panel
@@ -240,17 +329,21 @@ L["QUESTS_LISTED_DESCRIPTION"] =
 	'Il numero massimo di missioni che la Freccia delle missioni elenca sotto di sé per un punto di passaggio. Le altre vengono contate su una riga a parte, come "%s".'
 L["SHOW_ITEM_BUTTONS"] = "Mostra i pulsanti degli oggetti delle missioni"
 L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
-	"Mette un pulsante accanto a ogni missione elencata dalla Freccia delle missioni che ha un oggetto da usare, per esempio da lanciare, piantare o usare su un bersaglio. Cliccalo per usare l'oggetto, oppure assegna un tasto a Usa l'oggetto della missione in Assegnazione tasti del gioco per usare il primo. In combattimento i pulsanti restano dove sono finché non termina."
--- TRANSLATORS: also a switch on the Quest Arrow's menu
+	"Mette un pulsante accanto a ogni missione elencata dalla Freccia delle missioni che ha un oggetto da usare, per esempio da lanciare, piantare o usare su un bersaglio. Fai clic sul pulsante per usare l'oggetto, oppure assegna un tasto a Usa l'oggetto della missione in Assegnazione tasti nel pannello Pretty Wide Quest Log per usare il primo. In combattimento i pulsanti restano dove sono finché il combattimento non termina."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_NEXT_OBJECTIVE
 L["SHOW_NEXT_OBJECTIVE"] = "Mostra il prossimo obiettivo"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'In "%s", elenca "%s" sotto, attenuato: una piccola freccia verso il punto di passaggio successivo e cosa c\'è da fare lì.'
--- TRANSLATORS: also a switch on the Quest Arrow's menu
-L["SHOW_UPCOMING_TURN_INS"] = "Mostra consegne future"
-L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
-	"Mette la consegna di ogni missione sul percorso prima che i suoi obiettivi siano completati, segnata dal punto interrogativo grigio di Questie, così vedi dove la consegnerai. Disattivato, una consegna entra nel percorso quando la missione è completata."
--- TRANSLATORS: also a switch on the Quest Arrow's menu
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
+L["PREDICTIVE_ROUTES"] = "Percorsi di missioni predittivi"
+L["PREDICTIVE_ROUTES_DESCRIPTION"] =
+	"Pianifica le missioni che puoi completare in questa zona ovunque si trovi chi le assegna, non solo vicino: i loro obiettivi, la consegna e le missioni che le seguono. Il percorso ti fa poi accettare tutto ciò che serve per una parte della zona prima che tu ci vada, così ci vai una volta sola. Una catena si ferma alla prima missione che porta in un'altra zona. Gli obiettivi di una missione non ancora accettata hanno un indicatore grigio. Anche la consegna di ogni missione appare prima che sia completata, segnata dal punto interrogativo grigio di Questie."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
+L["SHOW_FLIGHT_PATHS"] = "Mostra i percorsi di volo non scoperti come obiettivi"
+L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
+	"Aggiunge al percorso ogni maestro di volo della tua zona di cui non hai ancora il percorso di volo, segnato con l'icona del maestro di volo. Su un personaggio che aveva già dei percorsi di volo, apri una volta una mappa di volo qualsiasi perché il percorso sappia quali hai; fino ad allora non ne viene aggiunto nessuno."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
 L["SHOW_LOCAL_QUESTS"] = "Mostra missioni disponibili vicine come obiettivi"
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
@@ -261,7 +354,6 @@ L["LOCAL_QUESTS_DESCRIPTION"] =
 L["LOCAL_QUEST_RANGE"] = "Raggio di ricerca"
 L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"A quanti metri da te può trovarsi chi dà la missione per contare ancora. Sotto i 400, un datore che superi tra due calcoli del percorso può sfuggire."
-L["LOCAL_QUESTS_WHAT_COUNTS"] = "Cosa conta"
 L["LOCAL_ESCORT_QUESTS"] = "Missioni di scorta"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"Missioni in cui proteggi un PNG lungo la strada; richiedono tempo e spesso un gruppo. Il loro indicatore sulla mappa è verde."
@@ -273,10 +365,14 @@ L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 L["LOCAL_QUEST_LEVEL"] = "Livello minimo delle missioni"
 L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
 	"Le missioni sotto questo colore di difficoltà restano fuori. Impostazione di Questie tiene le missioni che Questie mostra sulla sua mappa."
+-- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
 L["LOCAL_CHOICE_ROUTE"] = "Nel percorso"
+-- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
 L["LOCAL_CHOICE_MAP"] = "Solo mappa"
+-- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
 L["LOCAL_CHOICE_OFF"] = "Escluse"
 L["LOCAL_LEVEL_QUESTIE"] = "Impostazione di Questie"
+-- TRANSLATORS: quest difficulty colors, green being a few levels below the player
 L["LOCAL_LEVEL_GREEN"] = "Verdi e superiori"
 L["LOCAL_LEVEL_YELLOW"] = "Gialle e superiori"
 L["QUEST_ARROW_HIDING_HEADER"] = "Quando nascondere"
@@ -359,7 +455,7 @@ L["RESIZE_TOOLTIP"] = "Trascina per ridimensionare il registro delle missioni."
 
 L["SHARE_QUESTS"] = "Condividi missioni"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
-	"Offre al tuo gruppo le missioni di questa zona che il gioco ti permette di condividere, una ogni %d secondi."
+	"Offre al tuo gruppo le missioni di questa zona che il gioco ti permette di condividere e che a qualcuno ancora mancano, una ogni %d secondi."
 -- TRANSLATORS: %s is a quest's name
 L["CHAT_SHARING_AFTER_COMBAT"] = "Condivisione di %s alla fine del combattimento."
 -- TRANSLATORS: %s is the zone
@@ -368,6 +464,8 @@ L["CHAT_SHARING_ZONE_ONE"] = "Condivisione di 1 missione da %s."
 L["CHAT_SHARING_ZONE"] = "Condivisione di %d missioni da %s, una ogni %d secondi."
 -- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_NONE"] = "Nessuna delle tue missioni di %s può essere condivisa."
+-- TRANSLATORS: %s is the zone
+L["CHAT_SHARING_ZONE_PARTY_HAS"] = "Il tuo gruppo ha già tutte le tue missioni della zona %s."
 
 --------------------------------------------------------------------------------
 -- Waypoint Markers, Quest Route and the Quest Arrow
@@ -397,9 +495,21 @@ L["ROUTES_TURN_IN_QUEST"] = "Consegna %s"
 L["ROUTES_PICK_UP"] = "Accetta la missione"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Accetta %s"
+L["ROUTES_FLIGHT_PATH"] = "Ottieni il percorso di volo"
+-- TRANSLATORS: %s is the flight master's name, such as "Devrak"
+L["ROUTES_FLIGHT_PATH_FROM"] = "Ottieni il percorso di volo da %s"
+-- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Missione di scorta, fuori dal percorso"
 L["ROUTES_OFF_ROUTE_GROUP"] = "Missione di gruppo, fuori dal percorso"
 L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Porta in un'altra zona, fuori dal percorso"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
+L["ROUTES_AFTER_PICK_UP"] = "Dopo aver accettato %s"
+-- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
+L["ROUTES_AFTER_TURN_IN"] = "Dopo aver consegnato %s"
+-- TRANSLATORS: as ROUTES_AFTER_PICK_UP, for a party member's quest planned ahead, one you don't have
+L["ROUTES_AFTER_PARTY_PICK_UP"] = "Dopo che il tuo gruppo ha accettato %s"
+-- TRANSLATORS: as ROUTES_AFTER_TURN_IN, for a party member's quest
+L["ROUTES_AFTER_PARTY_TURN_IN"] = "Dopo che il tuo gruppo ha consegnato %s"
 L["ROUTES_CORPSE"] = "Torna di corsa al tuo cadavere"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Cerca"
@@ -427,7 +537,8 @@ L["ROUTES_MEMBER_LEFT_CLEARED"] =
 	"%s ha lasciato il gruppo: gli obiettivi ignorati corrispondenti sono di nuovo sul percorso."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Ignora"
-L["ROUTES_MENU_SECTION_SHOWN"] = "Cosa si vede"
+L["ROUTES_MENU_SECTION_ROUTE"] = "Percorso"
+L["ROUTES_MENU_SECTION_SHOW"] = "Mostra"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "Successivo"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
@@ -438,9 +549,12 @@ L["ROUTES_MENU_IGNORED"] = "Ignorati"
 L["ROUTES_MENU_TURN_IN"] = "Consegna di %s"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_PICK_UP"] = "Accettazione di %s"
--- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_SHOWN; Next Objective is ROUTES_NEXT_OBJECTIVE
-L["ROUTES_MENU_SHOWN_TURN_INS"] = "Consegne future"
+-- TRANSLATORS: %s is the flight master's name, such as "Devrak"
+L["ROUTES_MENU_FLIGHT_PATH"] = "Percorso di volo di %s"
+-- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
+L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Percorsi di missioni predittivi"
 L["ROUTES_MENU_SHOWN_LOCAL"] = "Missioni disponibili vicine"
+L["ROUTES_MENU_SHOWN_FLIGHTS"] = "Percorsi di volo"
 L["ROUTES_MENU_SHOWN_PARTY"] = "Obiettivi del gruppo"
 L["ROUTES_MENU_ON"] = "Attivo"
 L["ROUTES_MENU_OFF"] = "Disattivo"
@@ -460,6 +574,8 @@ L["ROUTES_UNIGNORED"] = "%s è di nuovo sul percorso."
 L["ROUTES_MEMBER_IGNORED"] = "Gli obiettivi di %s restano fuori dal percorso."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_INCLUDED"] = "Gli obiettivi di %s sono di nuovo sul percorso."
+-- TRANSLATORS: on the Quest Arrow and the world map's marker, while it points to where to join up with your party
+L["ROUTES_GROUP_UP"] = "Ricongiungiti al gruppo"
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players
@@ -472,6 +588,8 @@ L["ROUTES_MEMBER_INCLUDED"] = "Gli obiettivi di %s sono di nuovo sul percorso."
 L["WHISPER_SHARE_FAILED"] =
 	"Ho provato a condividere %s con te, ma non è andata. Se ti interessa la missione, fammi un fischio quando puoi e te la ricondivido"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Lo stesso vale per %s"
+L["ZONE_SHARE_OFFER"] = "Ho %d missioni nella zona %s che ti mancano. Vuoi che provi a condividerle?"
+L["ZONE_SHARE_OFFER_ONE"] = "Ho 1 missione nella zona %s che ti manca. Vuoi che provi a condividerla?"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "Ho %d missioni da fare qui: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "Ho 1 missione da fare qui: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Altre missioni da fare qui: %s"

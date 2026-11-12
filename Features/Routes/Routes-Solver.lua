@@ -8,7 +8,8 @@ local _, ns = ...
 
 	Cheapest insertion builds a first route, then three moves improve it until none helps: pick another
 	candidate for a node, move a run of one to three nodes elsewhere (or-opt), and reverse a stretch (2-opt).
-	A move that would put a turn-in before one of its objectives is refused. Moves are weighed without
+	A move that would put a turn-in before one of its objectives is refused. Last, nothing far off is left
+	between two places of one camp (KeepCampsWhole). Moves are weighed without
 	building the routes they'd make: a route of 90 stops weighs hundreds of thousands, and building each
 	would make over 100 MB of garbage a plan.
 
@@ -17,7 +18,12 @@ local _, ns = ...
 
 	Each node: { candidates = { { x, y, penalty }, ... }, requires = { node, ... } }. x and y are in
 	yards; a candidate's penalty is added to the route's length when it is chosen, so a sparse spot loses
-	out to a dense one unless it's on the way. Solve sets node.choice and returns the nodes in order
+	out to a dense one unless it's on the way. Solve sets node.choice and returns the nodes in order.
+
+	A leg costs its yards, and a trip somewhere else costs TRIP_COST more: a leg within a camp nothing
+	more, one past TRIP_FAR all of it, between the two a share. The shortest route in yards alone will
+	leave a camp half done for a turn-in or another camp and come back, when finishing the camp first is
+	all but as short; this keeps it to finishing what's around before setting off
 ]]
 
 local Solver = {}
@@ -30,12 +36,26 @@ local SHAKES = 16 -- Times the finished route is shaken up and improved again, f
 local MIN_SHAKES = 4 -- For a long one
 local SHAKE_WORK = 800 -- Shakes times nodes, which sets how many a route of some length gets
 local THROWS = 2 -- Nodes thrown somewhere else in each shake
+local WARM_SHAKES = 8 -- Shakes at most for a route started from the last one, which was shaken already
+local WARM_REACH = 150 -- Yards a candidate can be from where the last route had a node and still be its place
+
+local TRIP_NEAR = 100 -- Yards a leg can be and still be within one camp, as stops within it merge (Routes-Stops.lua)
+local TRIP_FAR = 300 -- Yards past which a leg is a trip somewhere else
+local TRIP_COST = 150 -- Yards a trip somewhere else counts for more than its length
+local CAMP_SPAN = 200 -- Yards apart two places in a row can be and still be one camp, and yards out of the way a side trip from it can't be
 
 local sqrt = math.sqrt
 
+-- What a leg costs: its yards, plus a share of TRIP_COST for setting off somewhere else
 local function Distance(a, b)
 	local dx, dy = a.x - b.x, a.y - b.y
-	return sqrt(dx * dx + dy * dy)
+	local yards = sqrt(dx * dx + dy * dy)
+	if yards <= TRIP_NEAR then
+		return yards
+	elseif yards >= TRIP_FAR then
+		return yards + TRIP_COST
+	end
+	return yards + TRIP_COST * (yards - TRIP_NEAR) / (TRIP_FAR - TRIP_NEAR)
 end
 
 local function NoYield() end
@@ -53,7 +73,7 @@ local function Positions(route)
 	return positions
 end
 
--- The route's length from the start, plus the penalty of every chosen candidate
+-- The route's cost from the start: each leg's (Distance), plus the penalty of every chosen candidate
 function Solver.Cost(start, route)
 	local cost, previous = 0, start
 	for _, node in ipairs(route) do
@@ -91,11 +111,12 @@ end
 
 --[[
 	Cheapest insertion: of every node whose required nodes are in, every candidate and every place it may
-	go, adds the one that lengthens the route least, until all are in
+	go, adds the one that lengthens the route least, until all are in. From an empty route, or from route,
+	a start already made (WarmRoute) with placed the set of its nodes, adding only the rest
 ]]
-local function Construct(start, nodes, yield)
-	local route, placed = {}, {}
-	for _ = 1, #nodes do
+local function Construct(start, nodes, yield, route, placed)
+	route, placed = route or {}, placed or {}
+	for _ = 1, #nodes - #route do
 		local positions = Positions(route)
 		local bestDelta, bestNode, bestChoice, bestSlot
 		for _, node in ipairs(nodes) do
@@ -361,9 +382,9 @@ end
 	The throws come from a fixed seed, so the same quests always give the same route, and the route
 	doesn't flicker between equally good answers each time it's worked out again
 ]]
-local function Shake(start, route, yield)
+local function Shake(start, route, yield, most)
 	local count = #route
-	if count < 3 then
+	if count < 3 or most == 0 then
 		return route
 	end
 
@@ -382,7 +403,7 @@ local function Shake(start, route, yield)
 	end
 
 	-- Each shake costs more the longer the route, so a long one gets fewer
-	local shakes = math.min(SHAKES, math.max(MIN_SHAKES, math.floor(SHAKE_WORK / count)))
+	local shakes = math.min(most or SHAKES, SHAKES, math.max(MIN_SHAKES, math.floor(SHAKE_WORK / count)))
 	local best, bestCost, bestChoices = route, Solver.Cost(start, route), SaveChoices(route)
 	for _ = 1, shakes do
 		local trial = Copy(best)
@@ -407,11 +428,177 @@ local function Shake(start, route, yield)
 	return best
 end
 
+--------------------------------------------------------------------------------
+-- Keeping a camp whole
+--------------------------------------------------------------------------------
+
+local function Yards(a, b)
+	local dx, dy = a.x - b.x, a.y - b.y
+	return sqrt(dx * dx + dy * dy)
+end
+
+--[[
+	Whether the node at index splits a camp: the places either side of it within CAMP_SPAN of each other,
+	and going out to it and back more than CAMP_SPAN out of the way, and more than twice the walk it
+	interrupts, so a place of the camp's own between two others never counts
+]]
+local function SplitsCamp(start, route, index)
+	local previous = index == 1 and start or Point(route[index - 1])
+	local nextNode = route[index + 1]
+	if not nextNode then
+		return false
+	end
+	local point, nextPoint = Point(route[index]), Point(nextNode)
+	local leg = Yards(previous, nextPoint)
+	local detour = Yards(previous, point) + Yards(point, nextPoint) - leg
+	return leg <= CAMP_SPAN and detour > CAMP_SPAN and detour > 2 * leg
+end
+
+--[[
+	The route never leaves a camp half done to come back to it: a node between two places within CAMP_SPAN
+	of each other, when the trip out to it and back is more than that out of the way, a turn-in in town
+	between two camps of mobs in the hills, moves to where it costs least without splitting one, nowhere before what it waits on or
+	after what waits on it. The shortest route in yards will do it now and then, when the walk out and back
+	is only a little shorter than going on and coming to it later, and nothing reads worse on the map.
+	Where no other place will do, it stays
+]]
+local function KeepCampsWhole(start, route, yield)
+	for _ = 1, #route do
+		local moved = false
+		for index = 1, #route do
+			if SplitsCamp(start, route, index) then
+				local node = table.remove(route, index)
+				local positions = Positions(route)
+				local firstSlot, lastSlot = FirstSlot(node, positions), #route + 1
+				for _, other in ipairs(route) do
+					for _, required in ipairs(other.requires or {}) do
+						if required == node then
+							lastSlot = math.min(lastSlot, positions[other])
+						end
+					end
+				end
+				local point, bestSlot, bestCost = Point(node), nil, nil
+				for slot = firstSlot, lastSlot do
+					table.insert(route, slot, node)
+					if not SplitsCamp(start, route, slot) then
+						local previous = slot == 1 and start or Point(route[slot - 1])
+						local nextNode = route[slot + 1]
+						local cost = Distance(previous, point)
+						if nextNode then
+							local nextPoint = Point(nextNode)
+							cost = cost + Distance(point, nextPoint) - Distance(previous, nextPoint)
+						end
+						if not bestCost or cost < bestCost then
+							bestSlot, bestCost = slot, cost
+						end
+					end
+					table.remove(route, slot)
+				end
+				table.insert(route, bestSlot or index, node)
+				moved = bestSlot ~= nil and bestSlot ~= index
+				if moved then
+					break
+				end
+			end
+		end
+		yield()
+		if not moved then
+			break
+		end
+	end
+	return route
+end
+
+--------------------------------------------------------------------------------
+-- Starting from the last route
+--------------------------------------------------------------------------------
+
+--[[
+	What Solve needs of a route to start the next one from it: its nodes' keys in order, and the place each
+	was chosen at
+]]
+function Solver.Snapshot(route)
+	local keys, points = {}, {}
+	for index, node in ipairs(route) do
+		if node.key then
+			keys[index] = node.key
+			local point = Point(node)
+			points[node.key] = point and { x = point.x, y = point.y } or nil
+		end
+	end
+	return { keys = keys, points = points }
+end
+
+-- The candidate nearest a place, nil when there's none within WARM_REACH of it
+local function NearestCandidate(node, place)
+	local best, bestSquared
+	for choice, candidate in ipairs(node.candidates) do
+		local dx, dy = candidate.x - place.x, candidate.y - place.y
+		local squared = dx * dx + dy * dy
+		if not bestSquared or squared < bestSquared then
+			best, bestSquared = choice, squared
+		end
+	end
+	return bestSquared and bestSquared <= WARM_REACH * WARM_REACH and best or nil
+end
+
+--[[
+	The last route (previous, a Snapshot) as the start of this one: its nodes still here, in its order, each
+	at the candidate nearest where it was. A node whose required nodes aren't all in yet waits, and goes in
+	as soon as they are; one still waiting at the end, and every node new since, Construct adds. Returns the
+	route and the set of its nodes
+]]
+local function WarmRoute(nodes, previous)
+	local byKey = {}
+	for _, node in ipairs(nodes) do
+		if node.key then
+			byKey[node.key] = node
+		end
+	end
+	local route, placed, waiting = {}, {}, {}
+	local function Place(node)
+		local place = previous.points[node.key]
+		node.choice = place and NearestCandidate(node, place) or node.choice
+		route[#route + 1] = node
+		placed[node] = true
+	end
+	for index = 1, #previous.keys do
+		local node = byKey[previous.keys[index]]
+		if node and not placed[node] then
+			if IsReady(node, placed) then
+				Place(node)
+				-- Whatever was waiting on it, and on those, goes in now, in the order it came
+				local placedOne = true
+				while placedOne do
+					placedOne = false
+					for position, other in ipairs(waiting) do
+						if IsReady(other, placed) then
+							table.remove(waiting, position)
+							Place(other)
+							placedOne = true
+							break
+						end
+					end
+				end
+			else
+				waiting[#waiting + 1] = node
+			end
+		end
+	end
+	return route, placed
+end
+
 --[[
 	The nodes in route order, each with node.choice set to the candidate it uses, and the route's cost.
-	start is { x, y }. Nodes with no candidates are left out
+	start is { x, y }. Nodes with no candidates are left out.
+
+	With previous, the last route's Snapshot, it starts from that route (WarmRoute), adds only what's new,
+	and shakes it at most WARM_SHAKES times rather than up to SHAKES: between two plans little changes, an
+	objective done or a quest taken, and the last route was shaken already. Played through eight zones
+	offline, a plan took about 40% less time for 1% more walking, within what cold plans vary by, and the
+	route doesn't reshuffle between equally good answers
 ]]
-function Solver.Solve(start, nodes, yield)
+function Solver.Solve(start, nodes, yield, previous)
 	yield = yield or NoYield
 	local usable = {}
 	for _, node in ipairs(nodes) do
@@ -438,7 +625,13 @@ function Solver.Solve(start, nodes, yield)
 		end
 	end
 
-	local route = LocalSearch(start, Construct(start, usable, yield), yield)
-	route = Shake(start, route, yield)
+	local route
+	if previous then
+		route = LocalSearch(start, Construct(start, usable, yield, WarmRoute(usable, previous)), yield)
+		route = KeepCampsWhole(start, Shake(start, route, yield, WARM_SHAKES), yield)
+	else
+		route = LocalSearch(start, Construct(start, usable, yield), yield)
+		route = KeepCampsWhole(start, Shake(start, route, yield), yield)
+	end
 	return route, Solver.Cost(start, route)
 end

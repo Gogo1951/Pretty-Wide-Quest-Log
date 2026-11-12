@@ -141,9 +141,8 @@ function ns.OptionsQuestRouteToggle(order, width)
 	)
 end
 
--- A Quality of Life setting takes effect at once: the quest giver window, and the dungeon quests' checks
+-- A Quality of Life setting takes effect at once: the dungeon quests' checks
 function ns.ApplyQualityOfLifeSettings()
-	ns.ApplyQuestGiverCleanup()
 	if ns.dungeonQuests then
 		ns.dungeonQuests.Watch()
 	end

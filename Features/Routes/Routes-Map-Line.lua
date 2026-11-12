@@ -1,13 +1,14 @@
-local _, ns = ...
+local ADDON_NAME, ns = ...
 
 --[[
 	Routes: the route's line on the world map, a line of small dots marching from the player through every
-	waypoint (Routes-Map.lua draws it)
+	waypoint (Routes-Map.lua draws it). While joining up with the group (Routes-Group-Up.lua) it runs to the
+	join-up spot first, and on from there
 ]]
 
 local routes = ns.routes
 
-local DOT_TEXTURE = "Interface\\AddOns\\Pretty-Wide-Quest-Log\\Includes\\Images\\Route-Dot"
+local DOT_TEXTURE = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Route-Dot"
 local LINE_WIDTH = ns.LAYOUT.SPACE.NEAR -- On screen, whatever the zoom; the dot art is three quarters of it across
 local DOT_SPACING = ns.LAYOUT.SPACE.GROUP -- On screen: one dot and its gap
 local UPDATE_INTERVAL = 0.05 -- Seconds between moves of the ants and the player's end of the line
@@ -49,43 +50,83 @@ function linePinMixin:HideLeg(leg)
 	leg.length = nil
 end
 
+-- A leg's color, as see-through as the lineOpacity setting, and its width
+function linePinMixin:DressLeg(leg)
+	local red, green, blue = ns.GetColorRGB("ROUTE_LINE")
+	leg.line:SetVertexColor(red, green, blue, routes.Settings().lineOpacity)
+	leg.line:SetThickness(LINE_WIDTH / self:CanvasScale())
+end
+
+-- Every leg's width, the join-up leg's too (PlacePlayerLeg)
 function linePinMixin:ApplyWidths()
-	local scale = self:CanvasScale()
+	local thickness = LINE_WIDTH / self:CanvasScale()
 	for _, leg in ipairs(self.legs) do
-		leg.line:SetThickness(LINE_WIDTH / scale)
+		leg.line:SetThickness(thickness)
+	end
+	if self.meetLeg then
+		self.meetLeg.line:SetThickness(thickness)
 	end
 end
 
--- Slides the dot art along every leg, by the time, so they march toward the next stop
+local function MarchLeg(leg, scale, phase)
+	if leg.length then
+		local dots = leg.length * scale / DOT_SPACING
+		leg.line:SetTexCoord(-phase, dots - phase, 0, 1)
+	end
+end
+
+-- Slides the dot art along every leg, the join-up leg too, by the time, so they march toward the next stop
 function linePinMixin:MarchAnts()
 	local scale = self:CanvasScale()
 	local phase = (GetTime() * (self.speed or 0)) % 1
 	for _, leg in ipairs(self.legs) do
-		if leg.length then
-			local dots = leg.length * scale / DOT_SPACING
-			leg.line:SetTexCoord(-phase, dots - phase, 0, 1)
-		end
+		MarchLeg(leg, scale, phase)
+	end
+	if self.meetLeg then
+		MarchLeg(self.meetLeg, scale, phase)
 	end
 end
 
-local playerPosition = {}
+-- One table each, reused: these run many times a second while the map is open
+local playerPosition, meetPosition = {}, {}
 
--- The player's end of the first leg moves with the player
+-- A place in world yards on this pin's map, into the table given, or nothing off its continent
+function linePinMixin:MapPoint(into, x, y, instance)
+	local hereBeDragons = routes.HereBeDragons()
+	if not (hereBeDragons and x) then
+		return nil
+	end
+	local mapX, mapY = hereBeDragons:GetZoneCoordinatesFromWorldInstance(x, y, instance, self.mapID, true)
+	if not (mapX and mapY) then
+		return nil
+	end
+	into.x, into.y = mapX, mapY
+	return into
+end
+
+--[[
+	The player's end of the first leg moves with the player. While joining up, the first leg runs from the
+	join-up spot instead, as it moves, and the join-up leg from the player to it
+]]
 function linePinMixin:PlacePlayerLeg()
 	local leg, first = self.legs[1], self.positions[1]
-	local x, y, instance = routes.PlayerPosition()
-	local hereBeDragons = routes.HereBeDragons()
-	local mapX, mapY
-	if first and hereBeDragons and x then
-		mapX, mapY = hereBeDragons:GetZoneCoordinatesFromWorldInstance(x, y, instance, self.mapID, true)
-	end
-	-- One table, reused: this runs many times a second while the map is open
-	local player = mapX and mapY and playerPosition
-	if player then
-		player.x, player.y = mapX, mapY
+	local player = first and self:MapPoint(playerPosition, routes.PlayerPosition())
+	local target = routes.groupUpTarget
+	local meet = player and target and self:MapPoint(meetPosition, target.x, target.y, target.instance)
+	if meet then
+		if not self.meetLeg then
+			self.meetLeg = self:NewLeg()
+			self:DressLeg(self.meetLeg) -- Made between draws, so it takes the line's look now
+		end
+		self:PlaceLeg(self.meetLeg, player, meet)
+		self:PlaceLeg(leg, meet, first)
+	elseif player then
 		self:PlaceLeg(leg, player, first)
 	else
 		self:HideLeg(leg)
+	end
+	if self.meetLeg and not meet then
+		self:HideLeg(self.meetLeg)
 	end
 end
 
@@ -113,12 +154,15 @@ function linePinMixin:Draw(mapID, positions)
 	end
 	if needed > 0 then
 		self:PlacePlayerLeg()
+	elseif self.meetLeg then
+		self:HideLeg(self.meetLeg)
 	end
-	local red, green, blue = ns.GetColorRGB("ROUTE_LINE") -- As see-through as the lineOpacity setting
 	for _, leg in ipairs(self.legs) do
-		leg.line:SetVertexColor(red, green, blue, settings.lineOpacity)
+		self:DressLeg(leg)
 	end
-	self:ApplyWidths()
+	if self.meetLeg then
+		self:DressLeg(self.meetLeg)
+	end
 	self:MarchAnts()
 end
 

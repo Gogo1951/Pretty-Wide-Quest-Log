@@ -78,10 +78,17 @@ function ns.ShowVoiceOverButton(row, questID)
 	button:ClearAllPoints()
 	button:SetPoint("LEFT", row, "LEFT", LAYOUT.QUEST_TEXT_X, 0)
 
-	-- Grayed out for a quest no sound pack has a reading of
-	overlay:BindPlayButton(button, questID, ns.GetQuestTitleByID(questID) or "")
-	local sound = { event = voiceOver.Enums.SoundEvent.QuestAccept, questID = questID }
-	button:SetEnabled(voiceOver.DataModules:PrepareSound(sound) and true or false)
+	--[[
+		Bound once per quest, again only while its title hasn't loaded, and grayed out for a quest no sound
+		pack has a reading of
+	]]
+	local title = ns.GetQuestTitleByID(questID)
+	if button.boundQuestID ~= questID or not button.boundTitle then
+		overlay:BindPlayButton(button, questID, title or "")
+		local sound = { event = voiceOver.Enums.SoundEvent.QuestAccept, questID = questID }
+		button:SetEnabled(voiceOver.DataModules:PrepareSound(sound) and true or false)
+		button.boundQuestID, button.boundTitle = questID, title
+	end
 	overlay:SetPlayButtonState(button)
 
 	button.row = row

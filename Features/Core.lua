@@ -45,11 +45,16 @@ local EVENTS = {
 	{ "PLAYER_REGEN_DISABLED", "OnPlayerRegenDisabled" },
 	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled" },
 	{ "UPDATE_BINDINGS", "OnUpdateBindings" },
+	{ "UPDATE_BINDINGS", "OnUpdateBindings", "keyBindings" },
 	{ "CHAT_MSG_SYSTEM", "OnChatMsgSystem" },
 	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld" },
 	{ "GROUP_JOINED", "OnGroupJoined" },
 	{ "GROUP_LEFT", "OnGroupLeft" },
 	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "dungeonQuests" },
+	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld", "zoneShareOffer" },
+	{ "GROUP_JOINED", "OnGroupJoined", "zoneShareOffer" },
+	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "zoneShareOffer" },
+	{ "GROUP_LEFT", "OnGroupLeft", "zoneShareOffer" },
 	{ "GROUP_JOINED", "OnGroupJoined", "shareReminders" },
 	{ "GROUP_LEFT", "OnGroupLeft", "shareReminders" },
 	{ "PLAYER_LOGIN", "OnPlayerLogin", "routes" },
@@ -64,11 +69,14 @@ local EVENTS = {
 	{ "ADDON_LOADED", "OnAddonLoaded", "routesMap" },
 	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "routes" },
 	{ "GROUP_LEFT", "OnGroupLeft", "routes" },
+	{ "TAXIMAP_OPENED", "OnTaximapOpened", "routes" },
+	{ "UI_INFO_MESSAGE", "OnUiInfoMessage", "routes" },
 	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "routesArrow" },
 	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld", "routesArrow" },
 	{ "ZONE_CHANGED_NEW_AREA", "OnZoneChangedNewArea", "routesArrow" },
+	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld", "routesGroupUp" },
 	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questMap" },
-	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questLogApi" },
+	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "shareNeeds" },
 	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "questLogWindow" },
 	{ "PLAYER_REGEN_ENABLED", "OnPlayerRegenEnabled", "routesItems" },
 	{ "BAG_UPDATE_DELAYED", "OnBagUpdateDelayed", "routesItems" },
@@ -169,7 +177,24 @@ end
 -- Saved Variables
 --------------------------------------------------------------------------------
 
+--[[
+	The quest giver window cleanup moved from the Quality of Life panel, where its switch also needed
+	Quality of Life's, to the NPC Dialogue panel, where it stands alone. A profile that had Quality of Life
+	off had the cleanup off too, so it keeps it off, checked once for each profile
+]]
+local function MoveQuestGiverCleanup(profile)
+	if profile.giverCleanupMoved then
+		return
+	end
+	if profile.enableQualityOfLife == false then
+		profile.giverCleanup = false
+	end
+	profile.giverCleanupMoved = true
+end
+
 function ns:ApplyProfile()
+	MoveQuestGiverCleanup(ns.db.profile)
+	ns.SyncFonts()
 	ns.ApplyQuestGiverCleanup()
 	if ns.wideQuestLogActive then
 		ns.RefreshQuestLog()
@@ -262,6 +287,9 @@ function ns:OnAddonLoaded(name)
 
 	ns.db = LibStub("AceDB-3.0"):New(ns.SAVED_VARIABLES_NAME, ns.DATABASE_DEFAULTS, true)
 	PruneOtherClientCharacters()
+	MoveQuestGiverCleanup(ns.db.profile)
+	-- The fonts made as the files loaded take the saved font settings before anything is laid out
+	ns.SyncFonts()
 	for _, message in ipairs({ "OnProfileChanged", "OnProfileReset", "OnProfileCopied" }) do
 		ns.db.RegisterCallback(ns, message, "ApplyProfile")
 	end

@@ -1,4 +1,4 @@
-local _, ns = ...
+local ADDON_NAME, ns = ...
 
 --[[
 	Routes: the Quest Arrow, as TomTom's does it, pointing at the first stop on the route with a task left
@@ -13,7 +13,9 @@ local _, ns = ...
 	to the next stop, all the way to one that's one place (an NPC, an object, the corpse), and becomes a
 	blue eye that breathes within 10 yards of it, "You're There".
 
-	In an area (within routes.AREA_REACH of an objective's spawns) it tells working from passing through.
+	Heading for an area, it points at the camp's nearest spawn and counts down to its edge, routes.AREA_REACH
+	short of it, where the eye takes over. In an area (within routes.AREA_REACH of an objective's spawns) it
+	tells working from passing through.
 	The objectives of the waypoint the route sent the player to, or one pinned there for being worked,
 	are "work here": the eye, "Current Objective Area", over a note, "Finish Here Before Moving On" where
 	one of them can be done nowhere else or "More Along the Route" where the route passes more of each,
@@ -41,8 +43,8 @@ local L = ns.L
 local routesArrow = {}
 ns.routesArrow = routesArrow
 
-local ARROW_TEXTURE = "Interface\\AddOns\\Pretty-Wide-Quest-Log\\Includes\\Images\\Route-Arrow"
-local EYE_TEXTURE = "Interface\\AddOns\\Pretty-Wide-Quest-Log\\Includes\\Images\\Route-Eye"
+local ARROW_TEXTURE = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Route-Arrow"
+local EYE_TEXTURE = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Route-Eye"
 local ARROW_SIZE = 64 -- The texture's own size, drawn pixel for pixel; on the doubling scale like the spacing
 local WIDTH = 512 -- Widest the quest list gets before its lines are cut short
 local TURN_INTERVAL = 0.03 -- Seconds between turns of the arrow
@@ -65,12 +67,13 @@ local FACING_TRUST = math.rad(60) -- Moving within this of their facing, the fac
 local SPOT_REACH = 10 -- Yards from one place (a chest, an NPC) that count as there: the eye instead of the arrow
 local BREATH_PERIOD = 2.5 -- Seconds for the eye to grow and shrink again
 local BREATH_GROWTH = 0.3 -- How much bigger the eye gets at the top of a breath
-local NEXT_ARROW_SIZE = 32 -- The Next Objective's arrow, left of its lines: half the big one
+local NEXT_ARROW_SIZE = 16 -- The Next Objective's arrow, left of its lines: a quarter of the big one
 local DIM_ALPHA = 0.72 -- What's on the way and what's next, behind what to do here
 local SPACE = ns.LAYOUT.SPACE
 
 local Survey = routes.ArrowSurvey
 local NearestPlace = routes.ArrowNearestPlace
+local NearestSpawn = routes.ArrowNearestSpawn
 
 local frame = CreateFrame("Button", "PrettyWideQuestLogRouteArrow", UIParent)
 frame:SetWidth(WIDTH)
@@ -207,22 +210,46 @@ frame:SetScript("OnHide", function()
 	routes.HideArrowMenu()
 end)
 
-frame:SetScript("OnDragStart", function(self)
+local function StartDrag()
 	if routes.Settings().lockArrow then
 		return
 	end
 	routes.HideArrowMenu()
-	self.moving = true
-	self:StartMoving()
-end)
-frame:SetScript("OnDragStop", function(self)
-	if not self.moving then
+	frame.moving = true
+	frame:StartMoving()
+end
+
+local function StopDrag()
+	if not frame.moving then
 		return
 	end
-	self.moving = nil
-	self:StopMovingOrSizing()
+	frame.moving = nil
+	frame:StopMovingOrSizing()
 	HoldByTop()
+end
+
+frame:SetScript("OnDragStart", StartDrag)
+frame:SetScript("OnDragStop", StopDrag)
+
+--[[
+	A drag begun on the menu's Drag row: the arrow moves with the mouse as if it had been dragged itself. The
+	menu hides as the drag starts, taking the row and its OnDragStop with it, so the button coming up ends it
+]]
+local dragWatcher = CreateFrame("Frame")
+dragWatcher:Hide()
+dragWatcher:SetScript("OnUpdate", function(self)
+	if not frame.moving or not IsMouseButtonDown("LeftButton") then
+		self:Hide()
+		StopDrag()
+	end
 end)
+
+function routes.DragArrowFromMenu()
+	StartDrag()
+	if frame.moving then
+		dragWatcher:Show()
+	end
+end
 
 --------------------------------------------------------------------------------
 -- Pointing
@@ -311,6 +338,79 @@ local here, destination, afterDestination, passing
 local areaNote -- Under "Current Objective Area": finish here, or more along the route
 local listed, listedNext -- What the list under the arrow shows, and its Next Objective
 local nextShown = false -- Whether the list laid out the Next Objective, so Point turns its arrow
+local listedMeet -- The party member the list was written for, while grouping up
+
+--[[
+	Which of a stop's places is nearest, for the arrow and the Next Objective's arrow: worked out again as the
+	distance is rewritten (TEXT_INTERVAL) or the stop changes, not each turn
+]]
+local aimedAt, aimedPlace, aimedTask, aimedSpawnX, aimedSpawnY
+local nextAimedAt, nextAimedPlace
+
+-- The Next Objective's arrow, turned and colored as the big one would be, and its distance
+local function PointNext(hereBeDragons, x, y, instance, facing, heading, rewrite)
+	if not (nextShown and listedNext and listedNext.instance == instance) then
+		return
+	end
+	if rewrite or nextAimedAt ~= listedNext then
+		nextAimedAt = listedNext
+		nextAimedPlace = listedNext.corpse and listedNext or NearestPlace(listedNext, x, y) or listedNext
+	end
+	local place = nextAimedPlace
+	local nextAngle, nextYards = hereBeDragons:GetWorldVector(instance, x, y, place.x, place.y)
+	if nextAngle then
+		nextArrow:SetRotation(nextAngle - facing)
+		nextArrow:SetVertexColor(Shade(nextAngle - heading))
+		if rewrite then
+			local text = routes.Settings().showDistance and routes.YardsText(nextYards) or ""
+			if text ~= nextDistance:GetText() then
+				nextDistance:SetText(text)
+			end
+		end
+	end
+end
+
+--[[
+	Joining up: the arrow points to the party member, or the middle of everyone, as it moves, with "Join Up
+	with Group" under it, and with showNextObjective the route's next waypoint dimmed below as the Next
+	Objective, where the group goes once together. Nothing on the menu's Ignore rows is at the arrow, and
+	right-click does nothing while joining up (routes.IgnoreArrowObjective)
+]]
+local function PointToMember(meet, survey, rewrite, hereBeDragons, x, y, instance, facing)
+	local nextStop = routes.Settings().showNextObjective and (here or destination) or nil
+	routes.arrowTarget, routes.arrowNext = nil, nextStop
+	if survey or meet ~= listedMeet or nextStop ~= listedNext then
+		listed, listedNext, listedMeet = nil, nextStop, meet
+		nextShown = routes.ListArrowQuests(nil, nil, nil, nextStop, meet)
+	end
+	if eyeLabel or showingEye then
+		eyeLabel, showingEye, rewrite = nil, false, true
+		arrow:SetTexture(ARROW_TEXTURE)
+		arrow:SetSize(ARROW_SIZE, ARROW_SIZE)
+	end
+	if not (hereBeDragons and x and facing and instance == meet.instance) then
+		arrow:Hide()
+		away:Hide()
+		distance:SetText("")
+		return
+	end
+	away:Hide()
+	arrow:Show()
+	local now = GetTime()
+	NoteMovement(now, x, y, instance)
+	local heading = ColorHeading(TravelHeading(hereBeDragons, now, x, y, instance), facing)
+	PointNext(hereBeDragons, x, y, instance, facing, heading, rewrite)
+	local angle, yards = hereBeDragons:GetWorldVector(instance, x, y, meet.x, meet.y)
+	if not angle then
+		return
+	end
+	arrow:SetRotation(angle - facing)
+	arrow:SetVertexColor(Shade(angle - heading))
+	if rewrite then
+		distance:SetText(routes.Settings().showDistance and routes.YardsText(yards) or "")
+		distance:SetTextColor(ns.GetColorRGB("HELP"))
+	end
+end
 
 local function Point(self, elapsed)
 	sinceTurn, sinceText, sinceList = sinceTurn + elapsed, sinceText + elapsed, sinceList + elapsed
@@ -324,13 +424,14 @@ local function Point(self, elapsed)
 	end
 
 	local stop = routes.stops[1]
-	if not stop then
+	local meet = routes.groupUpTarget -- Where to join up with the group first (Routes-Group-Up.lua)
+	if not (stop or meet) then
 		return
 	end
 	local hereBeDragons = routes.HereBeDragons()
 	local x, y, instance = routes.PlayerPosition()
 	local facing = GetPlayerFacing()
-	local located = hereBeDragons and x and facing and instance == stop.instance
+	local located = hereBeDragons and x and facing and stop and instance == stop.instance
 	-- Once a second: what's around, where next, and the counts, which change only as the player works
 	local survey = sinceList >= LIST_INTERVAL
 	if survey then
@@ -342,6 +443,9 @@ local function Point(self, elapsed)
 		end
 	end
 	destination = destination or (not here and stop) or nil
+	if meet then
+		return PointToMember(meet, survey, rewrite, hereBeDragons, x, y, instance, facing)
+	end
 
 	--[[
 		Working an area: the eye, listing it, and with showNextObjective the next destination under it.
@@ -355,8 +459,8 @@ local function Point(self, elapsed)
 		nextStop = nil
 	end
 	routes.arrowTarget, routes.arrowNext = view, nextStop -- What the menu's rows ignore
-	if survey or view ~= listed or nextStop ~= listedNext then
-		listed, listedNext = view, nextStop
+	if survey or view ~= listed or nextStop ~= listedNext or listedMeet then
+		listed, listedNext, listedMeet = view, nextStop, nil
 		nextShown = routes.ListArrowQuests(view, here and areaNote or nil, passing, nextStop)
 	end
 	if not located then
@@ -371,29 +475,35 @@ local function Point(self, elapsed)
 	NoteMovement(now, x, y, instance)
 	local heading = ColorHeading(TravelHeading(hereBeDragons, now, x, y, instance), facing)
 
-	-- The Next Objective's arrow, turned and colored as the big one would be, and its distance
-	if nextShown and listedNext then
-		local place = listedNext.corpse and listedNext or NearestPlace(listedNext, x, y) or listedNext
-		local nextAngle, nextYards = hereBeDragons:GetWorldVector(instance, x, y, place.x, place.y)
-		if nextAngle then
-			nextArrow:SetRotation(nextAngle - facing)
-			nextArrow:SetVertexColor(Shade(nextAngle - heading))
-			if rewrite then
-				local text = routes.Settings().showDistance and routes.YardsText(nextYards) or ""
-				if text ~= nextDistance:GetText() then
-					nextDistance:SetText(text)
-				end
+	PointNext(hereBeDragons, x, y, instance, facing, heading, rewrite)
+
+	local angle, yards
+	if not label then
+		if rewrite or aimedAt ~= view then
+			aimedAt, aimedPlace, aimedTask = view, nil, nil
+			if not view.corpse then
+				aimedPlace, aimedTask = NearestPlace(view, x, y)
+			end
+			local place = aimedPlace or view
+			--[[
+				To an area: at its nearest spawn, counting down to where the eye takes over, routes.AREA_REACH
+				short of it, rather than to the middle of the camp, which the eye shows well before reaching
+			]]
+			aimedSpawnX, aimedSpawnY = nil, nil
+			if aimedTask and place ~= view and routes.IsAreaPoint(place) then
+				aimedSpawnX, aimedSpawnY = NearestSpawn(aimedTask, place, x, y)
 			end
 		end
-	end
-
-	local target, angle, yards = view, nil, nil
-	if not label then
-		if not view.corpse then
-			target = NearestPlace(view, x, y) or view
-		end
+		local target = aimedPlace or view
 		angle, yards = hereBeDragons:GetWorldVector(instance, x, y, target.x, target.y)
 		local isArea = target ~= view and routes.IsAreaPoint(target)
+		local spawnX, spawnY = aimedSpawnX, aimedSpawnY
+		if spawnX then
+			local spawnAngle, spawnYards = hereBeDragons:GetWorldVector(instance, x, y, spawnX, spawnY)
+			if spawnAngle then
+				angle, yards = spawnAngle, math.max(0, spawnYards - routes.AREA_REACH)
+			end
+		end
 		-- At one place: the eye too, there's nowhere left to point
 		if not (isArea or view.corpse) and yards <= SPOT_REACH then
 			label = L["ROUTES_ARRIVED"]
@@ -431,110 +541,11 @@ local function Point(self, elapsed)
 	if rewrite then
 		local yardsText = routes.Settings().showDistance and routes.YardsText(yards) or ""
 		distance:SetText(arrived and L["ROUTES_ARRIVED"] or yardsText)
-		distance:SetTextColor(ns.GetColorRGB(arrived and "INFO" or view.corpse and "ARROW_GHOST_TEXT" or "HELP"))
+		distance:SetTextColor(ns.GetColorRGB(arrived and "INFO" or "HELP"))
 	end
 end
 
 frame:SetScript("OnUpdate", Point)
-
---------------------------------------------------------------------------------
--- Shade on hover
---------------------------------------------------------------------------------
-
---[[
-	A soft dark wash behind the arrow, its list and its item buttons while the mouse is on them or their
-	menu, so the text reads over bright ground, gone again when the mouse leaves. No box or edge: easing
-	out from the edges of what it covers to nothing SHADE_FADE past them, the same on every side, with
-	round corners. Nine pieces of one soft round texture: its quarters at the corners, a strip through its
-	middle along each side, and its solid middle stretched over the rest
-]]
-local SHADE_TEXTURE = "Interface\\AddOns\\Pretty-Wide-Quest-Log\\Includes\\Images\\Route-Shade"
-local SHADE_ALPHA = 0.4 -- How dark the middle gets
-local SHADE_FADE_SECONDS = 0.15 -- To come in or go
-local SHADE_FADE = 2 * SPACE.SECTION -- From the edges of what it covers out to nothing: 64, on the doubling scale
--- The arrow's art sits inside its square: the eye 10 below its top, the arrow pointing ahead 6
-local ART_TOP = SPACE.NEAR
-
--- Each piece: which column and row of the 3 x 3, and the part of the texture it shows
-local SHADE_PIECES = {
-	{ 1, 1, 0, 0.5, 0, 0.5 },
-	{ 2, 1, 0.5, 0.5, 0, 0.5 },
-	{ 3, 1, 0.5, 1, 0, 0.5 },
-	{ 1, 2, 0, 0.5, 0.5, 0.5 },
-	{ 2, 2, 0.5, 0.5, 0.5, 0.5 },
-	{ 3, 2, 0.5, 1, 0.5, 0.5 },
-	{ 1, 3, 0, 0.5, 0.5, 1 },
-	{ 2, 3, 0.5, 0.5, 0.5, 1 },
-	{ 3, 3, 0.5, 1, 0.5, 1 },
-}
-
-local shade = {}
-for i, piece in ipairs(SHADE_PIECES) do
-	local texture = frame:CreateTexture(nil, "BACKGROUND")
-	texture:SetTexture(SHADE_TEXTURE)
-	texture:SetTexCoord(piece[3], piece[4], piece[5], piece[6])
-	texture:SetVertexColor(0, 0, 0)
-	texture:SetAlpha(0)
-	texture.column, texture.row = piece[1], piece[2]
-	shade[i] = texture
-end
-
-local shadeAlpha, shadeLeft, shadeRight, shadeBottom = 0, nil, nil, nil
-
---[[
-	Round what shows, in the arrow's units from its top left: the list (centered, frame.hitInset in from
-	each side), the arrow's art above it, and the item buttons to its left
-]]
-local function PlaceShade()
-	local inset = frame.hitInset or 0
-	local left, right = inset, WIDTH - inset
-	local top, bottom = ART_TOP, frame:GetHeight()
-	-- Called in full: "routes.ArrowItemBounds and routes.ArrowItemBounds()" would keep only its first value
-	local itemLeft, itemBottom = routes.ArrowItemBounds()
-	if itemLeft then
-		left = math.min(left, itemLeft)
-		bottom = math.max(bottom, itemBottom)
-	end
-	if left == shadeLeft and right == shadeRight and bottom == shadeBottom then
-		return
-	end
-	shadeLeft, shadeRight, shadeBottom = left, right, bottom
-	-- Where each column and row starts and ends: the fade, the solid middle, the fade
-	local xs = { left - SHADE_FADE, left, right, right + SHADE_FADE }
-	local ys = { top - SHADE_FADE, top, bottom, bottom + SHADE_FADE }
-	for _, texture in ipairs(shade) do
-		local column, row = texture.column, texture.row
-		texture:ClearAllPoints()
-		texture:SetPoint("TOPLEFT", frame, "TOPLEFT", xs[column], -ys[row])
-		texture:SetPoint("BOTTOMRIGHT", frame, "TOPLEFT", xs[column + 1], -ys[row + 1])
-	end
-end
-
-local function SetShadeAlpha(alpha)
-	shadeAlpha = alpha
-	for _, texture in ipairs(shade) do
-		texture:SetAlpha(alpha * SHADE_ALPHA)
-	end
-end
-
-frame:HookScript("OnUpdate", function(_, elapsed)
-	local over = routes.IsMouseOverArrow() or (routes.IsArrowMenuShown and routes.IsArrowMenuShown())
-	local target = over and 1 or 0
-	if shadeAlpha == 0 and target == 0 then
-		return
-	end
-	-- The list and buttons change as the player works, so the shade follows them while showing
-	PlaceShade()
-	if shadeAlpha ~= target then
-		local step = elapsed / SHADE_FADE_SECONDS
-		SetShadeAlpha(
-			target > shadeAlpha and math.min(target, shadeAlpha + step) or math.max(target, shadeAlpha - step)
-		)
-	end
-end)
-frame:HookScript("OnHide", function()
-	SetShadeAlpha(0)
-end)
 
 --------------------------------------------------------------------------------
 -- Showing it
@@ -553,7 +564,9 @@ local appliedScale
 
 local function Refresh()
 	local settings = routes.Settings()
-	local shown = settings.showArrow and routes.stops[1] ~= nil and not IsAway(settings)
+	local shown = settings.showArrow
+		and (routes.stops[1] ~= nil or routes.groupUpTarget ~= nil)
+		and not IsAway(settings)
 	if appliedScale ~= settings.arrowScale then
 		appliedScale = settings.arrowScale
 		frame:SetScale(settings.arrowScale)
@@ -567,6 +580,13 @@ local function Refresh()
 	end
 	if shown then
 		sinceTurn, sinceText, sinceList = TURN_INTERVAL, TEXT_INTERVAL, LIST_INTERVAL -- Draws the new stop at once
+	end
+end
+
+-- Whether there's a party member to head to changed (Routes-Group-Up.lua)
+function routes.RefreshArrow()
+	if loggedIn then
+		Refresh()
 	end
 end
 

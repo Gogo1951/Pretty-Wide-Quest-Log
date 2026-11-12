@@ -43,12 +43,18 @@ function ns.RememberBlizzardStyle(region)
 	end
 	local file, size, flags = region:GetFont()
 	blizzardStyle[region] = {
-		fontObject = region:GetFontObject(),
+		fontObject = ns.FontBase(region:GetFontObject()),
 		file = file,
 		size = size,
 		flags = flags,
 		spacing = region:GetSpacing(),
 	}
+end
+
+-- The font file Blizzard gave a remembered FontString, whatever it draws with since
+function ns.BlizzardFontFile(region)
+	local style = blizzardStyle[region]
+	return style and style.file
 end
 
 --[[
@@ -73,11 +79,19 @@ end
 
 --[[
 	Sets a FontString of quest text LAYOUT.LINE_SPACING between lines, and with sectionHeading true gives
-	it the section heading font first
+	it the section heading font first. Given a font area (Fonts.lua), the font is the area's copy: of the
+	section heading font, or of the font Blizzard gave it (remembered, or the one it has)
 ]]
-function ns.StyleQuestText(region, sectionHeading)
-	if sectionHeading and region:GetFontObject() ~= sectionHeadingFont then
-		SetFontObjectKeepingColor(region, sectionHeadingFont)
+function ns.StyleQuestText(region, sectionHeading, area)
+	local font
+	if sectionHeading then
+		font = area and ns.AreaFont(area, sectionHeadingFont) or sectionHeadingFont
+	elseif area then
+		local style = blizzardStyle[region]
+		font = ns.AreaFont(area, style and style.fontObject or region:GetFontObject())
+	end
+	if font and region:GetFontObject() ~= font then
+		SetFontObjectKeepingColor(region, font)
 	end
 	region:SetSpacing(ns.LAYOUT.LINE_SPACING)
 end
@@ -121,7 +135,7 @@ end
 
 local function StyleQuestInfoPiece(region, sectionHeading)
 	ns.RememberBlizzardStyle(region)
-	ns.StyleQuestText(region, sectionHeading)
+	ns.StyleQuestText(region, sectionHeading, "dialogue")
 end
 
 function ns.StyleQuestInfo()

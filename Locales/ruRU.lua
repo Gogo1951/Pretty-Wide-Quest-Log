@@ -15,6 +15,11 @@ L["CHAT_LOADED"] =
 	"Версия %s. Параметры (в том числе возможность отключить это сообщение) находятся в разделе Настройки > Модификации > Pretty Wide Quest Log. Нравится этот аддон? Расскажите о нём другу, добавьте его в избранное на CurseForge или поставьте ему Star на GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] =
 	"В целях безопасности окно настроек нельзя открыть во время боя."
+L["CHAT_KEY_BINDINGS_IN_COMBAT"] =
+	"В целях безопасности окно назначения клавиш нельзя открыть во время боя."
+-- TRANSLATORS: the first %s is the game menu's Options label, the second its Key Bindings label, both from the client
+L["KEY_BINDINGS_LOCATION"] =
+	"Откройте игровое меню, выберите %s, затем %s и найдите раздел Pretty Wide Quest Log."
 L["CHAT_QUESTIE_MISSING_FEATURES"] =
 	"Без Questie карта заданий показывает меньше, а цепочки заданий и итог Сдача скрыты. Включите Questie в списке модификаций, чтобы их увидеть."
 L["CHAT_PREDECESSOR_LOADED"] =
@@ -35,7 +40,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Заменяет журнал заданий Blizzard широким, с картой рядом. Вступает в силу после перезагрузки интерфейса."
 L["ENABLE_QUALITY_OF_LIFE"] = "Включить удобные функции"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	'Упорядочивает окно заданий НИП и помогает группе получить ваши задания: темп передачи, шёпот, если передача кого-то не достигла, а также объявление и передача заданий подземелья. Кнопка "Поделиться заданиями" у зоны в журнале заданий работает и при выключенном параметре.'
+	'Помогает группе получить ваши задания: темп передачи, шёпот тем, до кого передача не дошла, а также объявление и передача заданий подземелья. Кнопка "Поделиться заданиями" у зоны в журнале заданий работает и при выключенном параметре.'
 L["ENABLE_WAYPOINT_MARKERS"] = "Включить Метки путевых точек"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Собирает значки заданий для каждой цели на карте зоны в одну метку, путевую точку, там, где больше всего её существ или предметов, и ставит по метке на каждое место сдачи. Наведите курсор на метку, чтобы увидеть значки, которые она заменяет."
@@ -49,12 +54,18 @@ L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Параметр Включить широкий журнал заданий вступит в силу после перезагрузки интерфейса, которую предложат при закрытии окна настроек."
 L["RELOAD_PROMPT"] =
 	"Pretty Wide Quest Log сменит журнал заданий после перезагрузки интерфейса. Перезагрузить сейчас?"
+L["OPTIONS_KEY_BINDINGS_HEADER"] = "Назначение клавиш"
+L["OPTIONS_KEY_SET"] = "Назначить клавишу"
+L["OPTIONS_KEY_SET_DESCRIPTION"] =
+	"Открывает окно назначения клавиш игры, где у Pretty Wide Quest Log есть свой раздел."
+L["OPTIONS_KEY_BINDING_USE_QUEST_ITEM_DESCRIPTION"] =
+	'Использует предмет с первой кнопки "Использовать предмет" у Стрелки заданий, как при щелчке по ней, в том числе в бою.'
 L["OPTIONS_COMMANDS_HEADER"] = "/Команды"
 L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Открывает окно настроек этого аддона."
 
 --------------------------------------------------------------------------------
--- Options: Quest Log Panel
+-- Options: Wide Quest Log Panels
 --------------------------------------------------------------------------------
 
 L["TAB_WIDE_QUEST_LOG"] = "Широкий журнал заданий"
@@ -64,7 +75,7 @@ L["QUEST_LOG_SORTING_HEADER"] = "Сортировка"
 L["QUEST_LOG_SORTING_DESCRIPTION"] = "Выберите порядок зон и заданий в них."
 L["QUEST_LOG_ROWS_HEADER"] = "Строки заданий"
 L["QUEST_LOG_ROWS_DESCRIPTION"] = "Выберите, что показывать в каждой строке."
-L["QUEST_LOG_WINDOW_MAP_HEADER"] = "Окно и карта"
+L["TAB_WINDOW_MAP"] = "Окно и карта"
 L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] =
 	"Подгоните размер окна и карты под свой экран и выберите их поведение."
 L["ZONE_ORDER"] = "Порядок зон"
@@ -123,14 +134,24 @@ L["HANDY_CLICK_MENU"] = "Правый щелчок по заданию"
 L["HANDY_CLICK_MENU_DESCRIPTION"] = "Отслеживать, поделиться или отказаться."
 L["HANDY_CLICK_ID"] = "Щелчок по ID задания"
 L["HANDY_CLICK_ID_DESCRIPTION"] = "Получить ссылку на Wowhead."
+L["QUEST_LOG_SUB_PANELS_DESCRIPTION"] =
+	"Его параметры находятся на панелях под этой: Список заданий, Подробности задания, Окно и карта, Диалог с НИП."
+L["NEEDS_WIDE_QUEST_LOG"] =
+	'Эти параметры относятся к широкому журналу заданий. Чтобы ими пользоваться, включите параметр "Включить широкий журнал заданий" на панели Широкий журнал заданий.'
+L["TAB_QUEST_LIST"] = "Список заданий"
+L["TAB_QUEST_LIST_DESCRIPTION"] =
+	"Ваши задания, сгруппированные по зонам, в левой части журнала заданий."
+L["TAB_QUEST_DETAILS"] = "Подробности задания"
+L["TAB_QUEST_DETAILS_DESCRIPTION"] =
+	"Подробности выбранного задания на пергаменте рядом со списком заданий."
 
 --------------------------------------------------------------------------------
--- Options: Quality of Life Panel
+-- Options: NPC Dialogue Panel
 --------------------------------------------------------------------------------
 
-L["TAB_QUALITY_OF_LIFE"] = "Удобные функции"
-L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Небольшие помощники вне самого журнала заданий: для окна заданий НИП, для передачи заданий группе и для подземелий."
+L["TAB_NPC_DIALOGUE"] = "Диалог с НИП"
+L["TAB_NPC_DIALOGUE_DESCRIPTION"] =
+	"Окна, которые открывает НИП, когда вы с ним говорите: окно заданий НИП и окно диалога. Эти параметры работают и с широким журналом заданий, и без него."
 L["QUEST_GIVERS_HEADER"] = "НИП с заданиями"
 L["QUEST_GIVERS_DESCRIPTION"] =
 	"Окно, которое открывает НИП, где вы берёте и сдаёте задания."
@@ -140,6 +161,55 @@ L["GIVER_CLEANUP_DESCRIPTION"] =
 -- TRANSLATORS: %s is a level tag such as [40D], as in SHOW_QUEST_LEVELS_DESCRIPTION
 L["GIVER_LEVELS_DESCRIPTION"] =
 	"Добавляет метки уровня из журнала заданий, например %s, в список заданий НИП."
+L["FONT_DIALOGUE_NEEDS_CLEANUP"] =
+	'Шрифт входит в параметр "Улучшенное окно заданий НИП", поэтому тот должен быть включён.'
+
+--------------------------------------------------------------------------------
+-- Options: Font Sections
+--------------------------------------------------------------------------------
+
+L["FONT_HEADER"] = "Шрифт"
+L["FONT_LIST_DESCRIPTION"] = "Шрифт названий зон и заданий в списке заданий."
+L["FONT_DETAILS_DESCRIPTION"] =
+	"Шрифт подробностей задания: название, заголовки и текст задания."
+L["FONT_DIALOGUE_DESCRIPTION"] =
+	"Шрифт окна заданий НИП и окна диалога: название, заголовки и текст задания."
+L["FONT_WINDOW_DESCRIPTION"] =
+	'Шрифт заголовка окна, счётчика заданий и строки "Сдача".'
+L["FONT_FACE"] = "Шрифт"
+L["FONT_FACE_DESCRIPTION"] =
+	'Начертание. Вариант "Как в игре" следует шрифту игры и любому аддону, который его меняет. Шрифты, добавленные через SharedMedia, тоже есть в списке.'
+L["FONT_GAME_DEFAULT"] = "Как в игре"
+L["FONT_GAME_STANDARD"] = "Обычный текст"
+L["FONT_GAME_NAMES"] = "Имена персонажей"
+L["FONT_GAME_DAMAGE"] = "Числа урона"
+L["FONT_SIZE"] = "Размер"
+L["FONT_SIZE_DESCRIPTION"] =
+	"Увеличивает или уменьшает текст на заданное число пунктов относительно размера в игре. 0 оставляет размер как в игре."
+L["FONT_OUTLINE"] = "Контур"
+L["FONT_OUTLINE_DESCRIPTION"] =
+	'Чёрный контур вокруг каждой буквы. Вариант "Как в игре" сохраняет контур, который есть у шрифта игры, а "Нет" убирает его.'
+L["FONT_OUTLINE_DEFAULT"] = "Как в игре"
+L["FONT_OUTLINE_NONE"] = "Нет"
+L["FONT_OUTLINE_THIN"] = "Тонкий"
+L["FONT_OUTLINE_THICK"] = "Толстый"
+L["FONT_SHADOW"] = "Тень текста"
+L["FONT_SHADOW_DESCRIPTION"] =
+	"Сохраняет тень за текстом, которая есть у шрифта игры. Выключите, чтобы убрать тень: это помогает, если шрифт выглядит размытым или смазанным."
+L["FONT_SLUG"] = "Более чёткий текст (Slug)"
+L["FONT_SLUG_DESCRIPTION"] =
+	"Рисует текст новым движком отрисовки Slug от Blizzard, чтобы буквы были чётче при любом размере. Slug не умеет рисовать толстый контур и тень, поэтому текст с любым из них рисуется обычным способом."
+L["FONT_RESET_BUTTON"] = "Сбросить шрифт"
+L["FONT_RESET_DESCRIPTION"] =
+	"Возвращает параметры этого шрифта к значениям по умолчанию."
+
+--------------------------------------------------------------------------------
+-- Options: Quality of Life Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUALITY_OF_LIFE"] = "Удобные функции"
+L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
+	"Небольшие помощники вне самого журнала заданий: для передачи заданий группе и для подземелий."
 L["QUEST_SHARING_HEADER"] = "Передача заданий"
 L["QUEST_SHARING_INTRO"] =
 	'Наведите курсор на название зоны в журнале заданий и нажмите "Поделиться заданиями", чтобы по очереди предложить группе все её задания, которыми можно поделиться. Эти параметры задают темп и то, что происходит, если кто-то пропустит задание.'
@@ -151,6 +221,10 @@ L["SHARE_INTERVAL_DESCRIPTION"] =
 L["SHARE_WHISPERS"] = "Шептать, если передача не удалась"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Если участник группы занят, слишком далеко или его журнал заданий заполнен, ему отправляется шёпот с названием задания, которое вы пытались передать, и просьбой напомнить вам. Ничего не отправляется, если задание ему недоступно, он уже выполняет его или уже выполнил."
+L["ZONE_SHARE_OFFERS"] =
+	"Предлагать задания моей зоны новым участникам группы"
+L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
+	"Когда вы вступаете в группу или кто-то вступает в вашу, ждёт 20 секунд, пока Questie обменяется журналами заданий, а затем шёпотом сообщает каждому участнику группы в вашей зоне, сколько ваших заданий с целями там у него нет, и спрашивает, нужны ли они ему. Учитываются только задания, которыми можно поделиться. Участникам, чьи задания не видны (нет Questie, вне досягаемости), и тем, у кого уже есть все, ничего не отправляется. Каждого участника спрашивают один раз за группу и никогда в подземелье или рейдовой группе."
 L["SAMPLE_EXAMPLE"] = "Пример: %s"
 L["SAMPLE_QUEST_LOADING"] = "Загрузка ID задания: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Задания подземелий"
@@ -161,32 +235,51 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Сообщает группе, какие ваши задания ещё нужно выполнить в подземелье, куда вы только что вошли, чтобы все знали, на что обратить внимание. Задания, готовые к сдаче, не упоминаются."
 L["DUNGEON_SHARE"] = "Автоматическая передача заданий подземелья"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Передаёт каждое задание этого подземелья, которое игра позволяет передать, в темпе, заданном в разделе Передача заданий, как только все будут в зоне досягаемости (или через минуту; в WoW Forever сразу). Каждый член группы получает их один раз за подземелье, поэтому тот, кто присоединится позже, тоже их получит, а выход и повторный вход ничего не передают. При включённом параметре Шептать, если передача не удалась, тот, кто пропустит передачу, получит шёпот и сможет попросить ещё раз."
+	'Передаёт каждое задание этого подземелья, которое игра позволяет передать и которого ещё нет у кого-то в группе, в темпе, заданном в разделе Передача заданий, как только все будут в зоне досягаемости (или через минуту; в WoW Forever сразу). Каждый участник группы получает их один раз за подземелье, поэтому тот, кто присоединится позже, тоже их получит, а выход и повторный вход ничего не передают. При включённом параметре "Шептать, если передача не удалась" тот, до кого передача не дошла, получит шёпот и сможет попросить ещё раз.'
 
 --------------------------------------------------------------------------------
--- Options: Waypoint Markers Panel
+-- Options: Maps & Objectives Panels
 --------------------------------------------------------------------------------
 
-L["TAB_WAYPOINT_MARKERS"] = "Метки путевых точек"
+L["TAB_MAPS_OBJECTIVES"] = "Карты и цели"
 L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Одна метка на карте зоны для каждой цели и места сдачи вместо россыпи значков заданий."
-L["ROUTES_MAP_HEADER"] = "Карта зоны"
-L["ROUTES_MAP_DESCRIPTION"] =
-	"Как открывается карта зоны, пока на ней показан маршрут."
+L["MAPS_SUB_PANELS_DESCRIPTION"] =
+	"Параметры каждой карты находятся на панелях под этой: Миникарта, Карта зоны, Карта континента и мира."
+L["MAPS_NEED_MARKERS"] =
+	'Метки видны, только пока включён параметр "Включить Метки путевых точек".'
+L["TAB_MINIMAP"] = "Миникарта"
+L["TAB_MINIMAP_DESCRIPTION"] =
+	"Значки Questie на миникарте точно показывают, где что появляется и где это добыть, поэтому они остаются всегда. Метки маршрута могут показываться рядом с ними."
+L["SHOW_MINIMAP_MARKERS"] = "Показывать метки путевых точек на миникарте"
+L["SHOW_MINIMAP_MARKERS_DESCRIPTION"] =
+	"Ставит на миникарту маленькую метку для каждой путевой точки маршрута рядом со значками Questie. Наведите курсор на метку, чтобы увидеть её задания."
+L["MINIMAP_MARKER_SIZE_DESCRIPTION"] =
+	"Насколько крупные метки маршрута на миникарте."
+L["TAB_ZONE_MAP"] = "Карта зоны"
+L["TAB_ZONE_MAP_DESCRIPTION"] =
+	"Карта зоны, на которой маршрут проходит между метками путевых точек."
 L["FULL_SIZE_MAP"] = "Открывать карту зоны в полном размере"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"Открывает карту зоны развёрнутой, как это делает её собственная кнопка развёртывания, чтобы маршруту хватало места. Если вы уменьшите карту, в следующий раз она снова откроется в полном размере."
 L["HIDE_QUESTIE_ICONS"] = "Скрывать значки заданий на маршруте"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
 	"Для всего, что есть на маршруте, скрывает значки Questie на карте, а также маркеры заданий и области целей Blizzard, чтобы их заменили метки маршрута. Также скрывает бледные значки Questie для целей участников группы. Наведите курсор на метку, чтобы увидеть значки Questie."
-L["ROUTES_MARKERS_HEADER"] = "Метки"
-L["ROUTES_MARKERS_DESCRIPTION"] = "Метки для каждой путевой точки маршрута."
 L["MARKER_SIZE"] = "Размер меток"
 L["MARKER_SIZE_DESCRIPTION"] = "Насколько крупные метки маршрута на карте зоны."
 L["MARKER_SIZE_SMALL"] = "Маленький"
 L["MARKER_SIZE_MEDIUM"] = "Средний"
 L["MARKER_SIZE_LARGE"] = "Большой"
 L["MARKER_SIZE_HUGE"] = "Огромный"
+L["TAB_WIDE_MAP"] = "Карта континента и мира"
+L["TAB_WIDE_MAP_DESCRIPTION"] =
+	"Карты, на которых сразу много зон: каждая цель и каждая сдача задания получает там одну метку поменьше."
+L["SHOW_WIDE_MAP_MARKERS"] =
+	"Показывать метки путевых точек на картах континента и мира"
+L["SHOW_WIDE_MAP_MARKERS_DESCRIPTION"] =
+	"Ставит на карты континента и мира метку для каждой цели и сдачи задания вместо значков Questie. Выключите, чтобы видеть там значки Questie."
+L["WIDE_MAP_MARKER_SIZE_DESCRIPTION"] =
+	"Насколько крупные метки маршрута на картах континента и мира. Каждый размер там меньше, чем на карте зоны, так как эти карты вмещают много зон."
 
 --------------------------------------------------------------------------------
 -- Options: Quest Route Panel
@@ -213,6 +306,9 @@ L["ROUTES_PARTY_DESCRIPTION"] = "Что ваша группа добавляет
 L["PARTY_QUESTS"] = "Учитывать задания участников группы"
 L["PARTY_QUESTS_DESCRIPTION"] =
 	"В группе маршрут и Стрелка заданий учитывают и задания, которые есть у участников группы, но нет у вас, и показывают их так же, как ваши. Чтобы делиться ими, Questie нужен у обеих сторон. Их задания подземелий не учитываются, так как их цели находятся внутри подземелья."
+L["GROUP_UP"] = "Сбор группы"
+L["GROUP_UP_DESCRIPTION"] =
+	'В группе, когда кто-то в вашей зоне находится за пределами вашей миникарты, Стрелка заданий показывает "Сбор группы" и указывает на него или на середину между всеми, а карта мира отмечает это место, чтобы вы выполняли задания вместе.'
 
 --------------------------------------------------------------------------------
 -- Options: Quest Arrow Panel
@@ -250,17 +346,21 @@ L["QUESTS_LISTED_DESCRIPTION"] =
 	'Сколько заданий самое большее Стрелка заданий перечисляет под собой для одной путевой точки. Остальные считаются отдельной строкой, например "%s".'
 L["SHOW_ITEM_BUTTONS"] = "Показывать кнопки предметов заданий"
 L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
-	"Ставит кнопку рядом с каждым заданием в списке Стрелки заданий, для которого есть предмет, например чтобы его бросить, посадить или использовать на цели. Нажмите кнопку, чтобы использовать предмет, или назначьте клавишу для команды Использовать предмет задания в разделе Назначение клавиш, чтобы использовать первый из них. В бою кнопки остаются на месте, пока бой не закончится."
--- TRANSLATORS: also a switch on the Quest Arrow's menu
+	'Ставит кнопку рядом с каждым заданием в списке Стрелки заданий, для которого нужно использовать предмет, например бросить его, посадить или применить на цель. Нажмите кнопку, чтобы использовать предмет, или назначьте клавишу для команды "Использовать предмет задания" в разделе Назначение клавиш на панели Pretty Wide Quest Log, чтобы использовать первый из них. В бою кнопки остаются на месте, пока бой не закончится.'
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_NEXT_OBJECTIVE
 L["SHOW_NEXT_OBJECTIVE"] = "Показывать следующую цель"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'Когда показана "%s", ниже приглушённо выводится "%s": маленькая стрелка к следующей путевой точке и то, что там нужно сделать.'
--- TRANSLATORS: also a switch on the Quest Arrow's menu
-L["SHOW_UPCOMING_TURN_INS"] = "Показывать будущие сдачи"
-L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
-	"Добавляет сдачу каждого задания в маршрут ещё до выполнения его целей, с серым вопросительным знаком Questie, чтобы было видно, где вы его сдадите. Если выключено, сдача появляется в маршруте, когда задание выполнено."
--- TRANSLATORS: also a switch on the Quest Arrow's menu
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
+L["PREDICTIVE_ROUTES"] = "Прогнозируемые маршруты заданий"
+L["PREDICTIVE_ROUTES_DESCRIPTION"] =
+	"Планирует задания, которые можно выполнить в этой зоне, где бы ни стоял тот, кто их выдаёт, а не только поблизости: их цели, сдачу и задания, которые идут следом. Затем маршрут собирает всё нужное для части зоны до того, как вы туда отправитесь, так что идти туда придётся лишь раз. Цепочка обрывается на первом задании, ведущем в другую зону. Цели ещё не взятого задания отмечены серой меткой. Сдача каждого задания тоже показывается заранее, серым вопросительным знаком Questie."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
+L["SHOW_FLIGHT_PATHS"] = "Показывать неоткрытые пути полёта как цели"
+L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
+	"Добавляет в маршрут распорядителей полётов вашей зоны, чей путь полёта у вас ещё не открыт, со значком распорядителя полётов. Если у персонажа уже были пути полёта, откройте один раз любую карту полётов, чтобы маршрут узнал, какие у вас есть; до этого ни один не добавляется."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
 L["SHOW_LOCAL_QUESTS"] = "Показывать доступные задания поблизости как цели"
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
@@ -270,8 +370,7 @@ L["LOCAL_QUESTS_DESCRIPTION"] =
 	"К каким заданиям поблизости ведёт стрелка заданий. Пропущенное может всё равно отображаться на карте мира, без линии маршрута к нему."
 L["LOCAL_QUEST_RANGE"] = "Радиус поиска"
 L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
-	"На скольких метрах от вас может стоять тот, кто даёт задание, чтобы оно учитывалось. Меньше 400 — и того, мимо кого вы прошли между расчётами маршрута, можно пропустить."
-L["LOCAL_QUESTS_WHAT_COUNTS"] = "Что учитывается"
+	"На скольких метрах от вас может стоять тот, кто даёт задание, чтобы оно учитывалось. Если меньше 400, того, мимо кого вы прошли между расчётами маршрута, можно пропустить."
 L["LOCAL_ESCORT_QUESTS"] = "Задания сопровождения"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"Задания, где вы охраняете NPC в пути; они требуют времени и часто группы. Их метка на карте зелёная."
@@ -283,11 +382,15 @@ L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"Задания, у которых цель или сдача есть только за пределами вашей зоны, например отправляющие в следующий город."
 L["LOCAL_QUEST_LEVEL"] = "Минимальный уровень задания"
 L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	"Задания ниже этого цвета сложности не учитываются. «Настройка Questie» оставляет задания, которые Questie показывает на своей карте."
+	'Задания ниже этого цвета сложности не учитываются. "Настройка Questie" оставляет задания, которые Questie показывает на своей карте.'
+-- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
 L["LOCAL_CHOICE_ROUTE"] = "На маршруте"
+-- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
 L["LOCAL_CHOICE_MAP"] = "Только карта"
+-- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
 L["LOCAL_CHOICE_OFF"] = "Не учитывать"
 L["LOCAL_LEVEL_QUESTIE"] = "Настройка Questie"
+-- TRANSLATORS: quest difficulty colors, green being a few levels below the player
 L["LOCAL_LEVEL_GREEN"] = "Зелёные и выше"
 L["LOCAL_LEVEL_YELLOW"] = "Жёлтые и выше"
 L["QUEST_ARROW_HIDING_HEADER"] = "Скрытие"
@@ -375,7 +478,7 @@ L["RESIZE_TOOLTIP"] = "Перетащите, чтобы изменить раз�
 
 L["SHARE_QUESTS"] = "Поделиться заданиями"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
-	"Предлагает группе задания этой зоны, которые игра позволяет передать, по одному каждые %d сек."
+	"Предлагает группе задания этой зоны, которые игра позволяет передать и которых ещё нет у кого-то из группы, по одному каждые %d сек."
 -- TRANSLATORS: %s is a quest's name
 L["CHAT_SHARING_AFTER_COMBAT"] = "Задание %s будет передано после окончания боя."
 -- TRANSLATORS: %s is the zone
@@ -386,6 +489,9 @@ L["CHAT_SHARING_ZONE"] =
 -- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_NONE"] =
 	"Ни одним из ваших заданий из зоны %s нельзя поделиться."
+-- TRANSLATORS: %s is the zone
+L["CHAT_SHARING_ZONE_PARTY_HAS"] =
+	"У вашей группы уже есть все ваши задания из зоны %s."
 
 --------------------------------------------------------------------------------
 -- Waypoint Markers, Quest Route and the Quest Arrow
@@ -415,9 +521,21 @@ L["ROUTES_TURN_IN_QUEST"] = "Сдать: %s"
 L["ROUTES_PICK_UP"] = "Взять задание"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Взять: %s"
+L["ROUTES_FLIGHT_PATH"] = "Открыть путь полёта"
+-- TRANSLATORS: %s is the flight master's name, such as "Devrak"
+L["ROUTES_FLIGHT_PATH_FROM"] = "Открыть путь полёта: %s"
+-- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Задание сопровождения, не на маршруте"
 L["ROUTES_OFF_ROUTE_GROUP"] = "Групповое задание, не на маршруте"
 L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Ведёт в другую зону, не на маршруте"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
+L["ROUTES_AFTER_PICK_UP"] = "После того как возьмёте: %s"
+-- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
+L["ROUTES_AFTER_TURN_IN"] = "После того как сдадите: %s"
+-- TRANSLATORS: as ROUTES_AFTER_PICK_UP, for a party member's quest planned ahead, one you don't have
+L["ROUTES_AFTER_PARTY_PICK_UP"] = "После того как группа возьмёт: %s"
+-- TRANSLATORS: as ROUTES_AFTER_TURN_IN, for a party member's quest
+L["ROUTES_AFTER_PARTY_TURN_IN"] = "После того как группа сдаст: %s"
 L["ROUTES_CORPSE"] = "Вернитесь к своему телу"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Ищите"
@@ -446,7 +564,8 @@ L["ROUTES_MEMBER_LEFT_CLEARED"] =
 	"Группу покинули: %s. Игнорируемые для них цели снова на маршруте."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Игнорировать"
-L["ROUTES_MENU_SECTION_SHOWN"] = "Что показывать"
+L["ROUTES_MENU_SECTION_ROUTE"] = "Маршрут"
+L["ROUTES_MENU_SECTION_SHOW"] = "Показывать"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "Далее"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
@@ -457,9 +576,12 @@ L["ROUTES_MENU_IGNORED"] = "Игнорируемые"
 L["ROUTES_MENU_TURN_IN"] = "Сдача: %s"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_PICK_UP"] = "Взятие: %s"
--- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_SHOWN; Next Objective is ROUTES_NEXT_OBJECTIVE
-L["ROUTES_MENU_SHOWN_TURN_INS"] = "Будущие сдачи"
+-- TRANSLATORS: %s is the flight master's name, such as "Devrak"
+L["ROUTES_MENU_FLIGHT_PATH"] = "Путь полёта: %s"
+-- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
+L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Прогнозируемые маршруты заданий"
 L["ROUTES_MENU_SHOWN_LOCAL"] = "Доступные задания поблизости"
+L["ROUTES_MENU_SHOWN_FLIGHTS"] = "Пути полёта"
 L["ROUTES_MENU_SHOWN_PARTY"] = "Цели группы"
 L["ROUTES_MENU_ON"] = "Вкл."
 L["ROUTES_MENU_OFF"] = "Выкл."
@@ -479,6 +601,8 @@ L["ROUTES_UNIGNORED"] = "%s: снова на маршруте."
 L["ROUTES_MEMBER_IGNORED"] = "Цели участника %s убраны с маршрута."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_INCLUDED"] = "Цели участника %s снова на маршруте."
+-- TRANSLATORS: on the Quest Arrow and the world map's marker, while it points to where to join up with your party
+L["ROUTES_GROUP_UP"] = "Сбор группы"
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players
@@ -491,6 +615,10 @@ L["ROUTES_MEMBER_INCLUDED"] = "Цели участника %s снова на м
 L["WHISPER_SHARE_FAILED"] =
 	"Не вышло передать %s. Нужно задание? Напиши, как сможешь, передам снова"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "И %s тоже"
+L["ZONE_SHARE_OFFER"] =
+	"У меня есть задания (%d) в зоне %s, которых у тебя нет. Попробовать поделиться ими?"
+L["ZONE_SHARE_OFFER_ONE"] =
+	"У меня есть 1 задание в зоне %s, которого у тебя нет. Попробовать поделиться им?"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "Мои задания здесь (%d): %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "Моё задание здесь: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Ещё мои задания здесь: %s"

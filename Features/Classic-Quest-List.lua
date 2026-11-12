@@ -75,7 +75,11 @@ ns.AddWideQuestLogPart(function()
 	-- Row Style
 	--------------------------------------------------------------------------------
 
-	-- Level and type before each title, and the tracking mark, drawn in Blizzard's check, in a slot in front of it
+	--[[
+		Level and type before each title, and the tracking mark, drawn in Blizzard's check, in a slot in front
+		of it. Every shown row takes the quest list's copies of its fonts here (Fonts.lua), whatever the order,
+		since Blizzard's QuestLog_Update sets its own fonts on each row first
+	]]
 	local function StyleQuestRows(order)
 		local entryCount = GetNumQuestLogEntries()
 		local offset = FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
@@ -84,7 +88,11 @@ ns.AddWideQuestLogPart(function()
 			local row, index = _G["QuestLogTitle" .. i], ns.ClassicEntryAt(order, offset + i)
 			local text, check = row.Text, _G["QuestLogTitle" .. i .. "Check"]
 			local title, level, _, isHeader, _, _, _, questID = GetQuestLogTitle(index)
+			local tag = _G["QuestLogTitle" .. i .. "Tag"]
 
+			ns.SetButtonAreaFonts(row, "list")
+			ns.SetAreaFont(tag, "list")
+			ns.SetAreaFont(_G["QuestLogTitle" .. i .. "GroupMates"], "list")
 			ns.UpdateZoneShareButton(row, isHeader and title)
 			row.plainTitle = not isHeader and title or nil
 			if isHeader then
@@ -104,7 +112,6 @@ ns.AddWideQuestLogPart(function()
 					Blizzard sized the title for its old position and cut it short there, so measure it
 					whole, then shorten it to clear the tag ("(Complete)", "(Elite)", ...) if it has to
 				]]
-				local tag = _G["QuestLogTitle" .. i .. "Tag"]
 				local tagWidth = (tag and tag:IsShown() and (tag:GetText() or "") ~= "")
 						and (tag:GetStringWidth() + LAYOUT.SPACE.NEAR)
 					or LAYOUT.SPACE.TIGHT
@@ -154,7 +161,9 @@ ns.AddWideQuestLogPart(function()
 		return indexes
 	end
 
+	-- The order the last update built: nil both before the first update and when it's Blizzard's own
 	local currentOrder
+	local listUpdated = false -- Whether an update has built the rows yet, which currentOrder can't say
 	trackButton:SetScript("OnClick", function(self)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		local indexes = ListedIndexes(currentOrder)
@@ -212,6 +221,7 @@ ns.AddWideQuestLogPart(function()
 			QuestLog_Update()
 			return
 		end
+		listUpdated = true
 		ns.RedrawClassicRows(currentOrder)
 		rows.PositionRows(currentOrder)
 		ns.MatchVoiceOverButtons(currentOrder)
@@ -247,7 +257,7 @@ ns.AddWideQuestLogPart(function()
 		which rewrites the rows' titles after it (Classic-VoiceOver.lua). Nothing before the first update
 	]]
 	function ns.RestyleClassicQuestRows()
-		if not (currentOrder and QuestLogFrame:IsShown()) then
+		if not (listUpdated and QuestLogFrame:IsShown()) then
 			return
 		end
 		ns.MatchVoiceOverButtons(currentOrder)

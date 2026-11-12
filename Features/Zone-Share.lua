@@ -15,9 +15,10 @@ local LAYOUT = ns.LAYOUT
 ]]
 local button = CreateFrame("Button", nil, UIParent, "UIPanelButtonTemplate")
 button:SetHeight(LAYOUT.ZONE_SHARE_BUTTON_HEIGHT)
-button:SetNormalFontObject(GameFontNormalSmall)
-button:SetHighlightFontObject(GameFontHighlightSmall)
-button:SetDisabledFontObject(GameFontDisableSmall)
+-- In the quest list's copies of the fonts (Fonts.lua), as it sits on the list's zone names
+button:SetNormalFontObject(ns.AreaFont("list", "GameFontNormalSmall"))
+button:SetHighlightFontObject(ns.AreaFont("list", "GameFontHighlightSmall"))
+button:SetDisabledFontObject(ns.AreaFont("list", "GameFontDisableSmall"))
 button:SetText(L["SHARE_QUESTS"])
 button:Hide()
 ns.zoneShareButton = button -- Skinned by Classic-ElvUI.lua
@@ -38,11 +39,19 @@ button:SetScript("OnUpdate", function(self)
 	end
 end)
 
--- Shares only the zone's quests the game lets you share, one every ns.GetShareInterval() seconds
+--[[
+	Shares only the zone's quests the game lets you share that someone in the group doesn't have yet
+	(ns.PartyNeedsQuest), one every ns.GetShareInterval() seconds. When everyone has them all, it says so
+]]
 button:SetScript("OnClick", function(self)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	local zoneTitle = self.zoneTitle
-	local questIDs = ns.ShareableZoneQuests(zoneTitle)
+	local shareable = ns.ShareableZoneQuests(zoneTitle)
+	local questIDs = #shareable > 0 and ns.QuestsPartyNeeds(shareable) or shareable
+	if #questIDs == 0 and #shareable > 0 then
+		ns:PrintMessage(L["CHAT_SHARING_ZONE_PARTY_HAS"]:format(zoneTitle))
+		return
+	end
 	ns:PrintMessage(ns.BuildSharePrint(#questIDs, zoneTitle))
 	if #questIDs == 0 then
 		return

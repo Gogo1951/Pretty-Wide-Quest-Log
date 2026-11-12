@@ -170,7 +170,7 @@ ns.DiagnosticsStrings = {
 	SAVED_TITLE = "Saved Variables",
 	SAVED_DESCRIPTION = "Prints "
 		.. TITLE
-		.. "'s saved settings, the quest log window's saved size and position, and the Quest Arrow's saved spot as readable text.",
+		.. "'s saved settings, the quest log window's saved size and position, the Quest Arrow's saved spot, and each character's route ignores and flight paths as readable text.",
 	LIBS_TITLE = "Library Versions",
 	LIBS_DESCRIPTION = "Lists the version of every library " .. TITLE .. " loaded.",
 	LOCALE_TITLE = "Locale Context",
@@ -320,19 +320,19 @@ local function ReadScanTooltip(kind, id)
 	return lines
 end
 
-local GetTooltipLines = TOOLTIP_DATA_GETTERS and ReadTooltipData or ReadScanTooltip
+ns.GetTooltipLines = TOOLTIP_DATA_GETTERS and ReadTooltipData or ReadScanTooltip
 
 --------------------------------------------------------------------------------
 -- Tooltip Lines
 --------------------------------------------------------------------------------
 
 --[[
-    An item's or spell's tooltip lines through GetTooltipLines, protected,
+    An item's or spell's tooltip lines through ns.GetTooltipLines, protected,
     because one id the client chokes on must not end a run of a thousand. A
     throw comes back as its message, so the caller can report it.
 ]]
 local function TooltipLines(kind, id)
-	local ok, lines = pcall(GetTooltipLines, kind, id)
+	local ok, lines = pcall(ns.GetTooltipLines, kind, id)
 	if ok then
 		return lines, nil
 	end

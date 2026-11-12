@@ -38,13 +38,24 @@ end
 
 --[[
 	A message for other players, not yet sent: the add-on's marker, the body from L[formatKey], then its
-	short name. WoW Forever blocks raid-marker tokens in chat, so the marker is left off there. Bodies can
-	carry quest links, so pipes are kept: stripping them would break the links
+	short name. WoW Forever blocks raid-marker tokens in group and channel chat but allows them in whispers
+	(as Good to Go found), so there the marker leads whispers only. Bodies can carry quest links, so pipes
+	are kept: stripping them would break the links
 ]]
-function ns:BuildAnnounceMessage(formatKey, ...)
+local function BuildSent(isWhisper, formatKey, ...)
 	local body = L[formatKey]:format(...)
-	local marker = ns.FLAVOR ~= "Camelot" and (ns.TARGET_MARKER .. " ") or ""
+	local marker = (ns.FLAVOR ~= "Camelot" or isWhisper) and (ns.TARGET_MARKER .. " ") or ""
 	return marker .. body .. " // " .. L["ADDON_SHORT_NAME"]
+end
+
+-- For group chat: no marker on WoW Forever
+function ns:BuildAnnounceMessage(formatKey, ...)
+	return BuildSent(false, formatKey, ...)
+end
+
+-- For a whisper: the marker on every client, WoW Forever included
+function ns:BuildWhisperMessage(formatKey, ...)
+	return BuildSent(true, formatKey, ...)
 end
 
 -- The group's chat: instance group, then raid, then party; nil while solo, so ns:Announce sends nothing
@@ -63,7 +74,7 @@ function ns:Announce(channel, target, formatKey, ...)
 	if not channel then
 		return
 	end
-	local message = ns:BuildAnnounceMessage(formatKey, ...)
+	local message = BuildSent(channel == "WHISPER", formatKey, ...)
 	if not message then
 		return
 	end
@@ -123,11 +134,28 @@ end
 -- How the whisper names a quest
 function ns.ShareWhisperQuestReference(whisperKey, questID, title)
 	return ns.FittingQuestReference(function(reference)
-		return ns:BuildAnnounceMessage(whisperKey, reference)
+		return ns:BuildWhisperMessage(whisperKey, reference)
 	end, questID, title)
 end
 
 -- The whisper for a quest, as sent
 function ns.BuildShareWhisper(whisperKey, questID, title)
-	return ns:BuildAnnounceMessage(whisperKey, ns.ShareWhisperQuestReference(whisperKey, questID, title))
+	return ns:BuildWhisperMessage(whisperKey, ns.ShareWhisperQuestReference(whisperKey, questID, title))
+end
+
+--------------------------------------------------------------------------------
+-- Zone Share Offer
+--------------------------------------------------------------------------------
+
+-- The whisper offering count quests in a zone (Zone-Share-Offer.lua): its locale key, then what fills it
+function ns.ZoneShareOfferFormat(count, zoneName)
+	if count == 1 then
+		return "ZONE_SHARE_OFFER_ONE", zoneName
+	end
+	return "ZONE_SHARE_OFFER", count, zoneName
+end
+
+-- The whisper offering count quests in a zone, as sent; Options shows it as its Example
+function ns.BuildZoneShareOffer(count, zoneName)
+	return ns:BuildWhisperMessage(ns.ZoneShareOfferFormat(count, zoneName))
 end

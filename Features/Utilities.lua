@@ -99,11 +99,7 @@ end
 -- VoiceOver
 --------------------------------------------------------------------------------
 
---[[
-	VoiceOver puts a play button in front of quest titles in the quest log, and so does Spoken Quests, its
-	fork, which keeps the VoiceOver global. Returns that global while either is loaded with its quest log
-	part switched on, else nil. rawget, as the global falls back to _G for anything it doesn't hold itself
-]]
+-- Whether VoiceOver or Spoken Quests, by any of the folder names they ship under, is loaded
 local function IsVoiceOverLoaded()
 	for _, name in ipairs(ns.VOICEOVER_ADDON_NAMES) do
 		if C_AddOns.IsAddOnLoaded(name) then
@@ -113,6 +109,11 @@ local function IsVoiceOverLoaded()
 	return false
 end
 
+--[[
+	VoiceOver puts a play button in front of quest titles in the quest log, and so does Spoken Quests, its
+	fork, which keeps the VoiceOver global. Returns that global while either is loaded with its quest log
+	part switched on, else nil. rawget, as the global falls back to _G for anything it doesn't hold itself
+]]
 function ns.GetVoiceOver()
 	if not IsVoiceOverLoaded() then
 		return nil

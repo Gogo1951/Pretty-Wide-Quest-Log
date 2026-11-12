@@ -124,7 +124,7 @@ ns.AddWideQuestLogPart(function()
 		tag:SetText(questTag and ("(" .. questTag .. ")") or "")
 
 		local color = isHeader and QuestDifficultyColors.header or GetQuestDifficultyColor(level)
-		row:SetNormalFontObject(color.font)
+		row:SetNormalFontObject(color.font) -- The list's copies of the fonts go on in StyleQuestRows (Classic-Quest-List.lua)
 		tag:SetTextColor(color.r, color.g, color.b)
 		groupMates:SetTextColor(color.r, color.g, color.b)
 		row.r, row.g, row.b = color.r, color.g, color.b

@@ -188,7 +188,7 @@ end
 --[[
 	Each whisper built for that quest, as sent (with Questie's link where it fits), and its byte length
 	against the chat limit; SHORTENED where even the bracketed title had to be cut. Then each message of
-	the dungeon announcement, OVER past the limit. Builds strings only
+	the dungeon announcement and the zone offer whisper, OVER past the limit. Builds strings only
 ]]
 function ns:BuildMessageLengthReport()
 	local lines = { GetClientHeader(), "" }
@@ -205,7 +205,7 @@ function ns:BuildMessageLengthReport()
 	lines[#lines + 1] = ""
 	for _, key in ipairs(SHARE_WHISPER_KEYS) do
 		local sent = ns.BuildShareWhisper(key, questID, title)
-		local bracketed = ns:BuildAnnounceMessage(key, "[" .. title .. "]")
+		local bracketed = ns:BuildWhisperMessage(key, "[" .. title .. "]")
 		local linked = sent:find("|H", 1, true) ~= nil
 		local status = (not linked and #bracketed > ns.CHAT_MESSAGE_MAX_LENGTH) and "SHORTENED" or "OK"
 		lines[#lines + 1] = string.format(
@@ -231,5 +231,13 @@ function ns:BuildMessageLengthReport()
 		)
 		lines[#lines + 1] = "    " .. ShownText(message)
 	end
+
+	-- The zone offer whisper for the current zone, with a two-digit count
+	local zone = ns.CurrentZone and ns.CurrentZone()
+	local offer = ns.BuildZoneShareOffer(25, zone and zone.name or GetRealZoneText())
+	lines[#lines + 1] = ""
+	lines[#lines + 1] =
+		string.format("[%s] ZONE_SHARE_OFFER: %d bytes", #offer > ns.CHAT_MESSAGE_MAX_LENGTH and "OVER" or "OK", #offer)
+	lines[#lines + 1] = "    " .. ShownText(offer)
 	return table.concat(lines, "\n")
 end

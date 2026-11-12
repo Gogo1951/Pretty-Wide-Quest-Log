@@ -3,8 +3,10 @@ local _, ns = ...
 --[[
 	Routes: what the player has started and what goes first. Each objective's progress and the camps worked
 	and left (routes.NoteProgress, routes.NoteLeftCamps), whether the player is in an objective's area
-	(routes.InArea), and the node the route pins first: the one being worked on, a done quest's turn-in
-	close by, or a timed or escort quest (routes.PinEngaged), with the signatures that say when that changes
+	(routes.InArea), and the node the route pins first: the one being worked on, or a timed or escort quest
+	(routes.PinEngaged), with the signatures that say when that changes. Then, once the route is solved, a
+	done quest's turn-in close by brought forward where it doesn't pull the player out of work they'd come
+	back to (routes.BringTurnInsForward)
 ]]
 
 local routes = ns.routes
@@ -13,7 +15,8 @@ local QuestLog = routes.QuestLog
 local ForEachObjective = routes.ForEachObjective
 local BlobKey = routes.BlobKey
 
-local TURN_IN_REACH = 400 -- Yards to a done quest's turn-in that put it ahead of more questing
+local TURN_IN_REACH = 300 -- Yards from where the player is to a done quest's turn-in that can bring it forward
+local TURN_IN_SLACK = 100 -- Yards out of the way a turn-in brought forward may always cost
 local WORKING_WINDOW = 180 -- Seconds after an objective's count last went up that the player counts as working on it
 local WORKING_REACH = 400 -- Yards past the edge of its blob the player can be and still be working on it
 
@@ -86,34 +89,25 @@ end
 --[[
 	The blob of a node the player is in, nearest first, or nothing. In its area (routes.InArea), the
 	nearest of its blobs; else, for a place such as a turn-in NPC, inside the blob, until
-	routes.AREA_GRACE past its edge. An objective whose count went up in the last WORKING_WINDOW counts
-	within WORKING_REACH: the player is working on it, even walking between its spread-out spawns. Any
-	node counts, but a turn-in planned ahead, which waits on its objectives and IsPinnable turns down
+	routes.AREA_GRACE past its edge. An area's blob is a circle round its spawns' middle, often well past
+	the spawns themselves, so for an area only routes.InArea's measure from the spawns counts, as the
+	Quest Arrow's does. An objective whose count went up in the last WORKING_WINDOW counts within
+	WORKING_REACH: the player is working on it, even walking between its spread-out spawns. Any node
+	counts, but a turn-in planned ahead, which waits on its objectives and IsPinnable turns down
 ]]
 local function EngagedBlob(node, x, y, wasEngaged)
 	local inArea = routes.InArea(node, x, y, wasEngaged)
-	local margin = wasEngaged and routes.AREA_GRACE or 0
+	local isArea = node.spawns and node.spawns.count > 1
+	local margin = not isArea and (wasEngaged and routes.AREA_GRACE or 0) or nil
 	if IsWorkingOn(node) then
-		margin = math.max(margin, WORKING_REACH)
+		margin = math.max(margin or 0, WORKING_REACH)
 	end
 	local best, bestDistance
 	for _, blob in ipairs(node.blobs or {}) do
 		local dx, dy = blob.x - x, blob.y - y
 		local distance = math.sqrt(dx * dx + dy * dy)
-		if (inArea or distance <= blob.radius + margin) and (not bestDistance or distance < bestDistance) then
-			best, bestDistance = blob, distance
-		end
-	end
-	return best
-end
-
--- The candidate of a node nearest a point, within reach, or nothing
-local function NearestWithin(node, x, y, reach)
-	local best, bestDistance
-	for _, blob in ipairs(node.blobs or {}) do
-		local dx, dy = blob.x - x, blob.y - y
-		local distance = math.sqrt(dx * dx + dy * dy)
-		if distance <= reach and (not bestDistance or distance < bestDistance) then
+		local within = inArea or (margin and distance <= blob.radius + margin)
+		if within and (not bestDistance or distance < bestDistance) then
 			best, bestDistance = blob, distance
 		end
 	end
@@ -173,16 +167,42 @@ local function DestinationKeys()
 end
 
 --[[
-	Whether a node the player is in may be pinned first. An objective spread over an area is pinned only
-	when the player was sent there (the last plan's waypoint), is already pinned there, or is working it
-	(its count went up lately); riding through an objective planned elsewhere doesn't take over the route,
-	the Quest Arrow lists it under While You're Here instead. A rider is pinned only where it was sent, as
-	what drops on the way isn't working it. One place (an NPC, a chest), a timed or escort quest's node,
-	and the first plan in a zone pin whenever the player is in them
+	Where the last plan does each task, by key: the blob it chose (BlobKey), for telling a camp the route
+	was coming back to from one it planned elsewhere
 ]]
-local function IsPinnable(node, wasPinned, destination)
+local function PlannedPlaces()
+	local places = {}
+	for _, stop in ipairs(routes.stops or {}) do
+		for _, task in ipairs(stop.tasks) do
+			local point = task.key and task.candidates and task.candidates[task.choice or 1]
+			if point then
+				places[task.key] = BlobKey(point)
+			end
+		end
+	end
+	return places
+end
+
+--[[
+	Whether a node the player is in may be pinned first. An objective spread over an area is pinned when
+	the player was sent there (the last plan's waypoint), is already pinned there, is working it (its
+	count went up lately), or has walked into the very camp the route planned it at further on: the route
+	was coming back here, so it's done now, not after a trip elsewhere and back. Riding through a camp of
+	an objective planned elsewhere doesn't take over the route; the Quest Arrow lists it under While
+	You're Here instead. A rider is pinned only where it was sent, as what drops on the way isn't working
+	it. One place (an NPC, a chest), a timed or escort quest's node, and the first plan in a zone pin
+	whenever the player is in them
+]]
+local function IsPinnable(node, wasPinned, destination, planned, blob)
 	-- A turn-in planned ahead waits on its objectives, so standing at its NPC can't put it first
 	if node.kind == "turnIn" and not node.ready then
+		return false
+	end
+	--[[
+		Nor can anything of a quest not taken yet (Routes-Chains.lua): its objectives wait on its pick-up, and
+		a follow-up's pick-up on the turn-in that unlocks it
+	]]
+	if node.predicted then
 		return false
 	end
 	if node.urgent or not (node.spawns and node.spawns.count > 1) or routes.start == nil then
@@ -191,7 +211,10 @@ local function IsPinnable(node, wasPinned, destination)
 	if wasPinned or destination[node.key] then
 		return true
 	end
-	return not node.rider and IsWorkingOn(node)
+	if node.rider then
+		return false
+	end
+	return IsWorkingOn(node) or (blob ~= nil and planned[node.key] == BlobKey(blob))
 end
 
 -- Every node not in the set waits on every node in it
@@ -213,29 +236,7 @@ local function WaitOn(nodes, set, members)
 	end
 end
 
---[[
-	What goes first on the route, ahead of the rest, which waits on it. First of all:
-
-	Every timed or escort quest (node.urgent), its objectives then its turn-in, or once done, its turn-in. A timer won't
-	wait while the route sends the player around the zone, nor will an escorted NPC, so nothing else is
-	planned until they're all done. With more than one, the quest whose turn-in is nearest goes first,
-	then the next nearest, each waiting on the one before; one turned in outside the zone goes last. Of
-	these, only their own nodes are pinned to the blob the player is in. A failed one is Questie's -1 and
-	isn't on the route at all.
-
-	Otherwise every objective or turn-in whose blob the player is in and may be pinned (IsPinnable: sent
-	there, or working it), at that blob, so the route finishes the camp the player is working before it
-	sends them anywhere else, even where the shortest trip would come back to it later or a denser camp
-	elsewhere has the same mobs. Each such node gets that blob as its only candidate.
-
-	Then, but for a timed or escort quest, every done quest turned in within TURN_IN_REACH, at the place nearest. The
-	shortest trip would often save it for last, but a turn-in usually opens the next quest in its chain,
-	and that's worth a short walk now. One across the zone still waits until the route passes it.
-
-	Returns the nodes pinned to the blob the player is in, by key, each { blob, collected }: the blob and
-	the objective's count when first pinned. They become routes.engaged when the plan is drawn, for the
-	next plan, for noticing the player walking into or out of one, and for routes.NoteLeftCamps
-]]
+-- Whether any node is a timed or escort quest's (node.urgent)
 local function IsHurrying(nodes)
 	for _, node in ipairs(nodes) do
 		if node.urgent then
@@ -268,16 +269,38 @@ local function UrgentQuests(nodes)
 	return quests
 end
 
+--[[
+	What goes first on the route, ahead of the rest, which waits on it. First of all:
+
+	Every timed or escort quest (node.urgent), its objectives then its turn-in, or once done, its turn-in.
+	A timer won't wait while the route sends the player around the zone, nor will an escorted NPC, so
+	nothing else is planned until they're all done. With more than one, the quest whose turn-in is nearest goes first,
+	then the next nearest, each waiting on the one before; one turned in outside the zone goes last. Of
+	these, only their own nodes are pinned to the blob the player is in. A failed one is Questie's -1 and
+	isn't on the route at all.
+
+	Otherwise every objective or turn-in whose blob the player is in and may be pinned (IsPinnable: sent
+	there, or working it), at that blob, so the route finishes the camp the player is working before it
+	sends them anywhere else, even where the shortest trip would come back to it later or a denser camp
+	elsewhere has the same mobs. Each such node gets that blob as its only candidate.
+
+	A done quest's turn-in close by isn't pinned here: whether it goes ahead depends on where the rest of
+	the route goes, so routes.BringTurnInsForward decides once it's solved.
+
+	Returns the nodes pinned to the blob the player is in, by key, each { blob, collected }: the blob and
+	the objective's count when first pinned. They become routes.engaged when the plan is drawn, for the
+	next plan, for noticing the player walking into or out of one, and for routes.NoteLeftCamps
+]]
 function routes.PinEngaged(nodes, start)
 	local engaged, first, isFirst = {}, {}, {}
 	local previous = routes.engaged or {}
-	local destination = DestinationKeys()
+	local destination, planned = DestinationKeys(), PlannedPlaces()
 	local hurrying = IsHurrying(nodes)
 	for _, node in ipairs(nodes) do
 		-- During a timed or escort quest only its own nodes are pinned to the blob the player is in
 		local wasPinned = previous[node.key]
 		local blob = (node.urgent or not hurrying) and EngagedBlob(node, start.x, start.y, wasPinned)
-		if blob and not IsPinnable(node, wasPinned, destination) then
+		if blob and not IsPinnable(node, wasPinned, destination, planned, blob) then
 			blob = nil
 		end
 		node.inArea = nil
@@ -311,27 +334,96 @@ function routes.PinEngaged(nodes, start)
 		return engaged
 	end
 
-	local turnIns, isTurnIn = {}, {}
-	for _, node in ipairs(nodes) do
-		local blob = node.ready and not isFirst[node] and NearestWithin(node, start.x, start.y, TURN_IN_REACH)
-		if blob then
-			blob.penalty = 0
-			node.candidates = { blob }
-			turnIns[#turnIns + 1] = node
-			isTurnIn[node] = true
-		end
-	end
-
-	-- The nearby turn-ins after what's first, everything else after both
+	-- Everything else after what's first
 	for node in pairs(isFirst) do
 		before[node] = true
 	end
 	WaitOn(nodes, before, first)
-	for node in pairs(isTurnIn) do
-		before[node] = true
-	end
-	WaitOn(nodes, before, turnIns)
 	return engaged
+end
+
+--------------------------------------------------------------------------------
+-- Turning in on the way
+--------------------------------------------------------------------------------
+
+local function Yards(a, b)
+	local dx, dy = a.x - b.x, a.y - b.y
+	return math.sqrt(dx * dx + dy * dy)
+end
+
+local function Point(node)
+	return node.candidates[node.choice or 1]
+end
+
+local function IndexOf(list, value)
+	for index, item in ipairs(list) do
+		if item == value then
+			return index
+		end
+	end
+end
+
+-- The candidate of a node nearest a point, and the yards to it
+local function NearestCandidate(node, from)
+	local best, bestYards
+	for index, candidate in ipairs(node.candidates) do
+		local yards = Yards(from, candidate)
+		if not bestYards or yards < bestYards then
+			best, bestYards = index, yards
+		end
+	end
+	return best, bestYards
+end
+
+--[[
+	A done quest's turn-in, moved up the solved route to the first place it's worth handing in on the way:
+	a turn-in usually opens the next quest in its chain, which the shortest trip, saving it for last,
+	doesn't weigh. Moved in place, in order, each ready turn-in in turn, nowhere before what it waits on (a
+	camp pinned first, a timed or escort quest).
+
+	Worth it where the player will be within TURN_IN_REACH of it, and the walk there and on to where the
+	route goes next costs no more out of the way than that next leg itself, or TURN_IN_SLACK, whichever is
+	more. So between camps, with the next one far off, a turn-in close by goes first; but in the middle of
+	a camp, with more to do a few steps on, it waits until the camp is done, rather than sending the player
+	out to the NPC and back. Further off, it stays where the route has it, last with the quests handed in
+	at the same place
+]]
+function routes.BringTurnInsForward(order, start)
+	if IsHurrying(order) then
+		return
+	end
+	local turnIns = {}
+	for _, node in ipairs(order) do
+		if node.kind == "turnIn" and node.ready then
+			turnIns[#turnIns + 1] = node
+		end
+	end
+	for _, turnIn in ipairs(turnIns) do
+		local from = IndexOf(order, turnIn)
+		table.remove(order, from)
+		local first = 1
+		for _, required in ipairs(turnIn.requires or {}) do
+			local position = IndexOf(order, required)
+			if position and position + 1 > first then
+				first = position + 1
+			end
+		end
+		local slot
+		for at = first, from - 1 do
+			local previous = at == 1 and start or Point(order[at - 1])
+			local choice, yards = NearestCandidate(turnIn, previous)
+			if yards <= TURN_IN_REACH then
+				local nextPoint = Point(order[at])
+				local leg = Yards(previous, nextPoint)
+				local detour = yards + Yards(turnIn.candidates[choice], nextPoint) - leg
+				if detour <= math.max(TURN_IN_SLACK, leg) then
+					turnIn.choice, slot = choice, at
+					break
+				end
+			end
+		end
+		table.insert(order, slot or from, turnIn)
+	end
 end
 
 --[[
@@ -343,12 +435,13 @@ function routes.EngagedSignature(nodes)
 	local keys = {}
 	if x and nodes then
 		local hurrying = IsHurrying(nodes)
-		local destination = DestinationKeys()
+		local destination, planned = DestinationKeys(), PlannedPlaces()
 		for _, node in ipairs(nodes) do
 			-- During a timed or escort quest, walking through a camp of another quest's doesn't change the route
 			local counts = node.urgent or not hurrying
 			local wasPinned = routes.engaged and routes.engaged[node.key]
-			if counts and EngagedBlob(node, x, y, wasPinned) and IsPinnable(node, wasPinned, destination) then
+			local blob = counts and EngagedBlob(node, x, y, wasPinned)
+			if blob and IsPinnable(node, wasPinned, destination, planned, blob) then
 				keys[#keys + 1] = node.key
 			end
 		end

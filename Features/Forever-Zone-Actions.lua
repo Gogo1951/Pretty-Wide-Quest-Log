@@ -70,6 +70,17 @@ function ns.LogQuests()
 	return quests
 end
 
+-- Of questIDs, those someone among units (every other group member when none are given) still needs (ns.PartyNeedsQuest), in the same order
+function ns.QuestsPartyNeeds(questIDs, units)
+	local needed = {}
+	for _, questID in ipairs(questIDs) do
+		if ns.PartyNeedsQuest(questID, nil, units) then
+			needed[#needed + 1] = questID
+		end
+	end
+	return needed
+end
+
 --------------------------------------------------------------------------------
 -- Acting on Quests
 --------------------------------------------------------------------------------
@@ -87,20 +98,30 @@ end
 
 --[[
 	Shares each quest, ns.GetShareInterval() apart as it was when the run began; the game reports each
-	result in chat. ns.sharingQuests is set until the last one goes, so a second run can't start alongside;
-	each share runs through securecall, so one that errors is reported and the run still reaches its end.
-	WoW Forever blocks QuestLogPushQuest in combat, so a share due then waits, checking every interval,
-	until combat ends; the run picks up where it stopped. Leaving the group ends the run
+	result in chat. A quest is asked about again at its turn, and one everyone among units (every other
+	group member when none are given) has by then is passed over without waiting, so a quest picked up
+	from someone else meanwhile isn't offered again. ns.sharingQuests is set until the last one goes, so a
+	second run can't start alongside; each share runs through securecall, so one that errors is reported
+	and the run still reaches its end. WoW Forever blocks QuestLogPushQuest in combat, so a share due then
+	waits, checking every interval, until combat ends; the run picks up where it stopped. Leaving the
+	group ends the run
 ]]
-local function ShareOne(questID)
-	if questID and C_QuestLog.GetLogIndexForQuestID(questID) and C_QuestLog.IsPushableQuest(questID) then
+local function ShareOne(questID, units)
+	if
+		questID
+		and C_QuestLog.GetLogIndexForQuestID(questID)
+		and C_QuestLog.IsPushableQuest(questID)
+		and ns.PartyNeedsQuest(questID, nil, units)
+	then
 		ns.SelectQuest(questID)
 		ns.TrackerTaintStep("QuestLogPushQuest", QuestLogPushQuest)
 		RestoreSelection()
+		return true
 	end
+	return false
 end
 
-function ns.ShareQuests(questIDs)
+function ns.ShareQuests(questIDs, units)
 	ns.sharingQuests = true
 	local interval = ns.GetShareInterval()
 	local function Share(position)
@@ -114,13 +135,16 @@ function ns.ShareQuests(questIDs)
 			end)
 			return
 		end
-		securecall(ShareOne, questIDs[position])
-		if position < #questIDs then
+		-- An error inside returns nothing, which counts as shared, so the pace holds
+		local shared = securecall(ShareOne, questIDs[position], units) ~= false
+		if position >= #questIDs then
+			ns.sharingQuests = nil
+		elseif shared then
 			C_Timer.After(interval, function()
 				Share(position + 1)
 			end)
 		else
-			ns.sharingQuests = nil
+			Share(position + 1)
 		end
 	end
 	Share(1)

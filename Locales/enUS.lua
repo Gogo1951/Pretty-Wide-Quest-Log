@@ -14,6 +14,9 @@ L["LIST_SEPARATOR"] = ", "
 L["CHAT_LOADED"] =
 	"Version %s. Settings (including the option to disable this message) are under Options > AddOns > Pretty Wide Quest Log. Enjoying this add-on? Tell a friend, Favorite it on CurseForge, or Star it on GitHub. (="
 L["CHAT_OPTIONS_IN_COMBAT"] = "As a safety precaution, the Options Interface cannot be opened during combat."
+L["CHAT_KEY_BINDINGS_IN_COMBAT"] = "As a safety precaution, the game's Key Bindings cannot be opened during combat."
+-- TRANSLATORS: the first %s is the game menu's Options label, the second its Key Bindings label, both from the client
+L["KEY_BINDINGS_LOCATION"] = "Open the game menu, then %s, then %s, and find the Pretty Wide Quest Log section."
 L["CHAT_QUESTIE_MISSING_FEATURES"] =
 	"Without Questie, the quest map shows less, and quest chains and the Turn-In total stay hidden. Turn on Questie in the AddOns list to see them."
 L["CHAT_PREDECESSOR_LOADED"] =
@@ -33,7 +36,7 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 	"Swaps Blizzard's quest log for the wide one, with the map beside it. Takes effect after a reload."
 L["ENABLE_QUALITY_OF_LIFE"] = "Enable Quality of Life"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
-	"Tidies the quest giver window and helps your party get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. A zone's Share Quests button in the quest log works with this off too."
+	"Helps your party get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. A zone's Share Quests button in the quest log works with this off too."
 L["ENABLE_WAYPOINT_MARKERS"] = "Enable Waypoint Markers"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Gathers each objective's quest icons on the zone map into one marker, a waypoint, where most of its mobs or objects are, with one for each turn-in too. Hover a marker to see the icons it stands in for."
@@ -46,12 +49,17 @@ L["FEATURE_QUEST_ARROW_DESCRIPTION"] =
 L["FEATURE_QUEST_LOG_RELOAD_PENDING"] =
 	"Enable Wide Quest Log takes effect after a reload, offered when you close the Options Interface."
 L["RELOAD_PROMPT"] = "Pretty Wide Quest Log switches quest logs after a reload. Reload now?"
+L["OPTIONS_KEY_BINDINGS_HEADER"] = "Key Bindings"
+L["OPTIONS_KEY_SET"] = "Set Key"
+L["OPTIONS_KEY_SET_DESCRIPTION"] = "Opens the game's Key Bindings, where Pretty Wide Quest Log has its own section."
+L["OPTIONS_KEY_BINDING_USE_QUEST_ITEM_DESCRIPTION"] =
+	"Uses the item on the Quest Arrow's first Use Item button, the same as clicking it, in combat too."
 L["OPTIONS_COMMANDS_HEADER"] = "/Commands"
 L["OPTIONS_COMMAND"] = "/pwql"
 L["OPTIONS_COMMAND_DESCRIPTION"] = "Opens the Options Interface for this add-on."
 
 --------------------------------------------------------------------------------
--- Options: Quest Log Panel
+-- Options: Wide Quest Log Panels
 --------------------------------------------------------------------------------
 
 L["TAB_WIDE_QUEST_LOG"] = "Wide Quest Log"
@@ -61,7 +69,7 @@ L["QUEST_LOG_SORTING_HEADER"] = "Sorting"
 L["QUEST_LOG_SORTING_DESCRIPTION"] = "Choose the order of your zones and the quests under them."
 L["QUEST_LOG_ROWS_HEADER"] = "Quest Rows"
 L["QUEST_LOG_ROWS_DESCRIPTION"] = "Choose what each row shows."
-L["QUEST_LOG_WINDOW_MAP_HEADER"] = "Window & Map"
+L["TAB_WINDOW_MAP"] = "Window & Map"
 L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"] = "Size the window and map to fit your screen, and choose how they behave."
 L["ZONE_ORDER"] = "Zone Order"
 L["ZONE_ORDER_DESCRIPTION"] = "Changes the order of the zones in the quest list."
@@ -112,14 +120,22 @@ L["HANDY_CLICK_MENU"] = "Right-Click a Quest"
 L["HANDY_CLICK_MENU_DESCRIPTION"] = "Track it, share it, or abandon it."
 L["HANDY_CLICK_ID"] = "Click a Quest ID"
 L["HANDY_CLICK_ID_DESCRIPTION"] = "Get its Wowhead link."
+L["QUEST_LOG_SUB_PANELS_DESCRIPTION"] =
+	"Its settings are on the panels under this one: Quest List, Quest Details, Window & Map, and NPC Dialogue."
+L["NEEDS_WIDE_QUEST_LOG"] =
+	"These settings are for the wide quest log. Turn on Enable Wide Quest Log on the Wide Quest Log panel to use them."
+L["TAB_QUEST_LIST"] = "Quest List"
+L["TAB_QUEST_LIST_DESCRIPTION"] = "Your quests, listed by zone down the left side of the quest log."
+L["TAB_QUEST_DETAILS"] = "Quest Details"
+L["TAB_QUEST_DETAILS_DESCRIPTION"] = "The selected quest's details, on the parchment beside the quest list."
 
 --------------------------------------------------------------------------------
--- Options: Quality of Life Panel
+-- Options: NPC Dialogue Panel
 --------------------------------------------------------------------------------
 
-L["TAB_QUALITY_OF_LIFE"] = "Quality of Life"
-L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
-	"Small helpers outside the quest log itself: for the quest giver window, for sharing quests with your party, and for dungeons."
+L["TAB_NPC_DIALOGUE"] = "NPC Dialogue"
+L["TAB_NPC_DIALOGUE_DESCRIPTION"] =
+	"The windows an NPC opens when you talk to them: the quest giver window and the gossip window. These settings work with or without the wide quest log."
 L["QUEST_GIVERS_HEADER"] = "Quest Givers"
 L["QUEST_GIVERS_DESCRIPTION"] = "The window a quest giver opens, where you pick up quests and turn them in."
 L["GIVER_CLEANUP"] = "Quest Giver Window Cleanup"
@@ -127,6 +143,51 @@ L["GIVER_CLEANUP_DESCRIPTION"] =
 	"Lays out the quest giver window's text like the quest log's, with the same headings and line spacing, and shows the quest ID, linked to Wowhead, under the quest."
 -- TRANSLATORS: %s is a level tag such as [40D], as in SHOW_QUEST_LEVELS_DESCRIPTION
 L["GIVER_LEVELS_DESCRIPTION"] = "Adds the quest log's level tags, like %s, to a quest giver's list of quests."
+L["FONT_DIALOGUE_NEEDS_CLEANUP"] = "The font is part of Quest Giver Window Cleanup, so it needs that turned on."
+
+--------------------------------------------------------------------------------
+-- Options: Font Sections
+--------------------------------------------------------------------------------
+
+L["FONT_HEADER"] = "Font"
+L["FONT_LIST_DESCRIPTION"] = "The font of the zone names and quests in the quest list."
+L["FONT_DETAILS_DESCRIPTION"] = "The font of the quest details: the title, the headings, and the quest text."
+L["FONT_DIALOGUE_DESCRIPTION"] =
+	"The font of the quest giver and gossip windows: the title, the headings, and the quest text."
+L["FONT_WINDOW_DESCRIPTION"] = "The font of the window's title, the quest count, and the Turn-In line."
+L["FONT_FACE"] = "Font"
+L["FONT_FACE_DESCRIPTION"] =
+	"The typeface. Game Default follows the game's font, and any add-on that changes it. Fonts added through SharedMedia are listed too."
+L["FONT_GAME_DEFAULT"] = "Game Default"
+L["FONT_GAME_STANDARD"] = "Standard Text"
+L["FONT_GAME_NAMES"] = "Character Names"
+L["FONT_GAME_DAMAGE"] = "Damage Numbers"
+L["FONT_SIZE"] = "Size"
+L["FONT_SIZE_DESCRIPTION"] =
+	"Makes the text bigger or smaller, in points from the game's size. 0 keeps the game's size."
+L["FONT_OUTLINE"] = "Outline"
+L["FONT_OUTLINE_DESCRIPTION"] =
+	"A black outline around each letter. Game Default keeps whatever outline the game's font has, and None takes it away."
+L["FONT_OUTLINE_DEFAULT"] = "Game Default"
+L["FONT_OUTLINE_NONE"] = "None"
+L["FONT_OUTLINE_THIN"] = "Thin"
+L["FONT_OUTLINE_THICK"] = "Thick"
+L["FONT_SHADOW"] = "Text Shadow"
+L["FONT_SHADOW_DESCRIPTION"] =
+	"Keeps the drop shadow the game's font has behind the text. Turn it off to take the shadow away, which helps a font that looks blurry or smudged."
+L["FONT_SLUG"] = "Sharper Text (Slug)"
+L["FONT_SLUG_DESCRIPTION"] =
+	"Draws the text with Blizzard's newer Slug renderer, for crisper letters at any size. Slug can't draw a thick outline or a shadow, so text with either is drawn the usual way."
+L["FONT_RESET_BUTTON"] = "Reset Font"
+L["FONT_RESET_DESCRIPTION"] = "Puts this font's settings back to their defaults."
+
+--------------------------------------------------------------------------------
+-- Options: Quality of Life Panel
+--------------------------------------------------------------------------------
+
+L["TAB_QUALITY_OF_LIFE"] = "Quality of Life"
+L["TAB_QUALITY_OF_LIFE_DESCRIPTION"] =
+	"Small helpers outside the quest log itself: for sharing quests with your party and for dungeons."
 L["QUEST_SHARING_HEADER"] = "Quest Sharing"
 L["QUEST_SHARING_INTRO"] =
 	"Hover a zone name in the quest log and click Share Quests to offer your party all of its quests you can share, one after another. These settings control the pace and what happens when someone misses one."
@@ -138,6 +199,9 @@ L["SHARE_INTERVAL_DESCRIPTION"] =
 L["SHARE_WHISPERS"] = "Whisper When a Share Fails"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"When a party member is busy, too far away, or has a full quest log, whispers them which quest you tried to share and asks them to remind you. Nothing is sent when they aren't eligible for the quest, are already on it, or have done it."
+L["ZONE_SHARE_OFFERS"] = "Offer My Zone's Quests to New Party Members"
+L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
+	"When you join a party, or someone joins yours, waits 20 seconds for Questie to swap quest logs, then whispers each party member in your zone how many of your quests with objectives there they don't have and asks whether they'd like them. Only quests you can share count. Members whose quests can't be seen (no Questie, out of range) and those who already have them all aren't whispered. Each member is asked once per group, never in a dungeon or a raid group."
 L["SAMPLE_EXAMPLE"] = "Example: %s"
 L["SAMPLE_QUEST_LOADING"] = "Loading Quest ID: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Dungeon Quests"
@@ -148,31 +212,47 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Tells your party which of your quests still need doing in the dungeon you just entered, so everyone knows what to look out for. Quests ready to turn in are left out."
 L["DUNGEON_SHARE"] = "Automatic Dungeon Quest Sharing"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Shares every quest for the dungeon that the game lets you share, at the pace set under Quest Sharing, once everyone is in range (or after a minute; right away on WoW Forever). Each party member gets them once per dungeon, so someone who joins later gets them too, and zoning out and back in shares nothing. With Whisper When a Share Fails on, anyone a share misses is whispered so they can ask again."
+	"Shares every quest for the dungeon that the game lets you share and someone in your party doesn't have yet, at the pace set under Quest Sharing, once everyone is in range (or after a minute; right away on WoW Forever). Each party member gets them once per dungeon, so someone who joins later gets them too, and zoning out and back in shares nothing. With Whisper When a Share Fails on, anyone a share misses is whispered so they can ask again."
 
 --------------------------------------------------------------------------------
--- Options: Waypoint Markers Panel
+-- Options: Maps & Objectives Panels
 --------------------------------------------------------------------------------
 
-L["TAB_WAYPOINT_MARKERS"] = "Waypoint Markers"
+L["TAB_MAPS_OBJECTIVES"] = "Maps & Objectives"
 L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"One marker on the zone map for each objective and turn-in, in place of a cluster of quest icons."
-L["ROUTES_MAP_HEADER"] = "Zone Map"
-L["ROUTES_MAP_DESCRIPTION"] = "How the zone map opens while it shows the route."
+L["MAPS_SUB_PANELS_DESCRIPTION"] =
+	"Each map's settings are on the panels under this one: Mini-map, Zone Map, and Continent & World Map."
+L["MAPS_NEED_MARKERS"] = "The markers show only while Enable Waypoint Markers is on."
+L["TAB_MINIMAP"] = "Mini-map"
+L["TAB_MINIMAP_DESCRIPTION"] =
+	"Questie's icons on the mini-map show exactly where things spawn and where to loot them, so they always stay. The route's markers can show beside them."
+L["SHOW_MINIMAP_MARKERS"] = "Show Waypoint Markers on the Mini-map"
+L["SHOW_MINIMAP_MARKERS_DESCRIPTION"] =
+	"Puts a small marker on the mini-map for each waypoint on the route, beside Questie's icons. Hover one to see its quests."
+L["MINIMAP_MARKER_SIZE_DESCRIPTION"] = "How big the route's markers are on the mini-map."
+L["TAB_ZONE_MAP"] = "Zone Map"
+L["TAB_ZONE_MAP_DESCRIPTION"] = "The map of a zone, where the route runs between its waypoint markers."
 L["FULL_SIZE_MAP"] = "Open the Zone Map Full Size"
 L["FULL_SIZE_MAP_DESCRIPTION"] =
 	"Opens the zone map maximized, as its own maximize button does, so the route has room. If you shrink the map, it opens full size again next time."
 L["HIDE_QUESTIE_ICONS"] = "Hide Quest Icons on the Route"
 L["HIDE_QUESTIE_ICONS_DESCRIPTION"] =
 	"Hides Questie's map icons, and Blizzard's quest markers and objective areas, for what's on the route, so the route's markers stand in for them. Questie's faded icons for party members' objectives are hidden too. Hover a marker to see Questie's icons."
-L["ROUTES_MARKERS_HEADER"] = "Markers"
-L["ROUTES_MARKERS_DESCRIPTION"] = "The markers for each waypoint on the route."
 L["MARKER_SIZE"] = "Marker Size"
 L["MARKER_SIZE_DESCRIPTION"] = "How big the route's markers are on the zone map."
 L["MARKER_SIZE_SMALL"] = "Small"
 L["MARKER_SIZE_MEDIUM"] = "Medium"
 L["MARKER_SIZE_LARGE"] = "Large"
 L["MARKER_SIZE_HUGE"] = "Huge"
+L["TAB_WIDE_MAP"] = "Continent & World Map"
+L["TAB_WIDE_MAP_DESCRIPTION"] =
+	"Maps that hold many zones at once, where each objective and turn-in gets one smaller marker."
+L["SHOW_WIDE_MAP_MARKERS"] = "Show Waypoint Markers on Continent and World Maps"
+L["SHOW_WIDE_MAP_MARKERS_DESCRIPTION"] =
+	"Puts a marker on the continent and world maps for each objective and turn-in, in place of Questie's icons. Turn it off to see Questie's icons there instead."
+L["WIDE_MAP_MARKER_SIZE_DESCRIPTION"] =
+	"How big the route's markers are on the continent and world maps. Each size is smaller there than on the zone map, as these maps hold many zones."
 
 --------------------------------------------------------------------------------
 -- Options: Quest Route Panel
@@ -198,6 +278,9 @@ L["ROUTES_PARTY_DESCRIPTION"] = "What your party adds to the route."
 L["PARTY_QUESTS"] = "Include Party Members' Quests"
 L["PARTY_QUESTS_DESCRIPTION"] =
 	"In a party, the route and the Quest Arrow also take in quests your party members have and you don't, shown just like your own. It needs Questie on both ends to share them. Their dungeon quests are left out, as the objectives are inside the dungeon."
+L["GROUP_UP"] = "Group Up"
+L["GROUP_UP_DESCRIPTION"] =
+	"In a party, when anyone in your zone is off your mini-map, the Quest Arrow says Group Up and points to them, or to the middle of everyone, and the world map marks the spot, so you can quest together."
 
 --------------------------------------------------------------------------------
 -- Options: Quest Arrow Panel
@@ -229,17 +312,21 @@ L["QUESTS_LISTED_DESCRIPTION"] =
 	'The most quests the Quest Arrow lists under itself for one waypoint. Any more are counted on a line of their own, such as "%s".'
 L["SHOW_ITEM_BUTTONS"] = "Show Quest Item Buttons"
 L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
-	"Puts a button beside each quest the Quest Arrow lists that has an item to use, such as one to throw, plant, or use on a target. Click it to use the item, or set a key for Use Quest Item in the game's Key Bindings to use the first one. In combat the buttons stay where they are until it ends."
--- TRANSLATORS: also a switch on the Quest Arrow's menu
+	"Puts a button beside each quest the Quest Arrow lists that has an item to use, such as one to throw, plant, or use on a target. Click it to use the item, or set a key for Use Quest Item under Key Bindings on the Pretty Wide Quest Log panel to use the first one. In combat the buttons stay where they are until it ends."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_NEXT_OBJECTIVE
 L["SHOW_NEXT_OBJECTIVE"] = "Show Next Objective"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'At a "%s", lists "%s" under it, dimmed: a small arrow to the waypoint after, and what\'s to do there.'
--- TRANSLATORS: also a switch on the Quest Arrow's menu
-L["SHOW_UPCOMING_TURN_INS"] = "Show Future Turn-Ins"
-L["SHOW_UPCOMING_TURN_INS_DESCRIPTION"] =
-	"Puts each quest's turn-in on the route before its objectives are done, marked with Questie's gray question mark, so you can see where you'll hand it in. Turned off, a turn-in joins the route once the quest is complete."
--- TRANSLATORS: also a switch on the Quest Arrow's menu
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
+L["PREDICTIVE_ROUTES"] = "Predictive Questing Routes"
+L["PREDICTIVE_ROUTES_DESCRIPTION"] =
+	"Plans quests you can finish in this zone from wherever their giver stands, not only nearby: their objectives, their turn-in, and the quests that follow them. The route then picks up everything for a part of the zone before you go there, so you only go once. A chain stops at the first quest that leads to another zone. Objectives of a quest you haven't picked up yet have a gray marker. Each quest's turn-in shows before it's done too, marked with Questie's gray question mark."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
+L["SHOW_FLIGHT_PATHS"] = "Show Undiscovered Flight Paths as Objectives"
+L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
+	"Adds to the route each flight master in your zone whose flight path you don't have yet, marked with the flight master icon. On a character that already had flight paths, open any flight map once so the route knows which ones you have; until then none are added."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
 L["SHOW_LOCAL_QUESTS"] = "Show Available Local Quests as Objectives"
 -- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
 L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
@@ -250,8 +337,6 @@ L["LOCAL_QUESTS_DESCRIPTION"] =
 L["LOCAL_QUEST_RANGE"] = "Search Range"
 L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"How many yards from you a quest giver can be and still count. Under 400, a giver you walk past between the route's plans can be missed."
--- TRANSLATORS: heads the rows that choose which kinds of nearby quests go on the route
-L["LOCAL_QUESTS_WHAT_COUNTS"] = "What Counts"
 L["LOCAL_ESCORT_QUESTS"] = "Escort Quests"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"Quests where you protect an NPC along the way, which take time and often a group. Their marker on the map is green."
@@ -352,7 +437,7 @@ L["RESIZE_TOOLTIP"] = "Drag to resize the quest log."
 
 L["SHARE_QUESTS"] = "Share Quests"
 L["SHARE_ZONE_QUESTS_TOOLTIP"] =
-	"Offers your party the quests in this zone the game lets you share, one every %d seconds."
+	"Offers your party the quests in this zone the game lets you share and someone doesn't have yet, one every %d seconds."
 -- TRANSLATORS: %s is a quest's name
 L["CHAT_SHARING_AFTER_COMBAT"] = "Sharing %s when combat ends."
 -- TRANSLATORS: %s is the zone
@@ -361,6 +446,8 @@ L["CHAT_SHARING_ZONE_ONE"] = "Sharing 1 quest from %s."
 L["CHAT_SHARING_ZONE"] = "Sharing %d quests from %s, one every %d seconds."
 -- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_NONE"] = "None of your quests from %s can be shared."
+-- TRANSLATORS: %s is the zone
+L["CHAT_SHARING_ZONE_PARTY_HAS"] = "Your party already has all your quests from %s."
 
 --------------------------------------------------------------------------------
 -- Waypoint Markers, Quest Route and the Quest Arrow
@@ -390,10 +477,21 @@ L["ROUTES_TURN_IN_QUEST"] = "Turn in %s"
 L["ROUTES_PICK_UP"] = "Pick up Quest"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "Pick up %s"
+L["ROUTES_FLIGHT_PATH"] = "Get Flight Path"
+-- TRANSLATORS: %s is the flight master's name, such as "Devrak"
+L["ROUTES_FLIGHT_PATH_FROM"] = "Get the Flight Path From %s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Escort Quest, Not on the Route"
 L["ROUTES_OFF_ROUTE_GROUP"] = "Group Quest, Not on the Route"
 L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Leads to Another Zone, Not on the Route"
+-- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
+L["ROUTES_AFTER_PICK_UP"] = "After You Pick up %s"
+-- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
+L["ROUTES_AFTER_TURN_IN"] = "After You Turn in %s"
+-- TRANSLATORS: as ROUTES_AFTER_PICK_UP, for a party member's quest planned ahead, one you don't have
+L["ROUTES_AFTER_PARTY_PICK_UP"] = "After Your Party Picks up %s"
+-- TRANSLATORS: as ROUTES_AFTER_TURN_IN, for a party member's quest
+L["ROUTES_AFTER_PARTY_TURN_IN"] = "After Your Party Turns in %s"
 L["ROUTES_CORPSE"] = "Run Back to Your Corpse"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Look For"
@@ -419,7 +517,8 @@ L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: party objectives and members y
 L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s left the group: the objectives you ignored for them are back on the route."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
 L["ROUTES_MENU_SECTION_IGNORE"] = "Ignore"
-L["ROUTES_MENU_SECTION_SHOWN"] = "What is Shown"
+L["ROUTES_MENU_SECTION_ROUTE"] = "Route"
+L["ROUTES_MENU_SECTION_SHOW"] = "Show"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "Next"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
@@ -430,9 +529,12 @@ L["ROUTES_MENU_IGNORED"] = "Ignored"
 L["ROUTES_MENU_TURN_IN"] = "%s Turn-In"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_PICK_UP"] = "%s Pick-Up"
--- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_SHOWN; Next Objective is ROUTES_NEXT_OBJECTIVE
-L["ROUTES_MENU_SHOWN_TURN_INS"] = "Future Turn-Ins"
+-- TRANSLATORS: %s is the flight master's name, such as "Devrak"
+L["ROUTES_MENU_FLIGHT_PATH"] = "%s Flight Path"
+-- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
+L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Predictive Questing Routes"
 L["ROUTES_MENU_SHOWN_LOCAL"] = "Local Available Quests"
+L["ROUTES_MENU_SHOWN_FLIGHTS"] = "Flight Paths"
 L["ROUTES_MENU_SHOWN_PARTY"] = "Party Objectives"
 L["ROUTES_MENU_ON"] = "On"
 L["ROUTES_MENU_OFF"] = "Off"
@@ -451,6 +553,8 @@ L["ROUTES_UNIGNORED"] = "%s is back on the route."
 L["ROUTES_MEMBER_IGNORED"] = "Leaving %s's objectives off the route."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_INCLUDED"] = "%s's objectives are back on the route."
+-- TRANSLATORS: on the Quest Arrow and the world map's marker, while it points to where to join up with your party
+L["ROUTES_GROUP_UP"] = "Group Up"
 
 --------------------------------------------------------------------------------
 -- Messages to Other Players
@@ -463,6 +567,8 @@ L["ROUTES_MEMBER_INCLUDED"] = "%s's objectives are back on the route."
 L["WHISPER_SHARE_FAILED"] =
 	"I tried to share %s with you, but it didn't go through. If you'd like the quest, just give me a shout when you're ready and I'll share it again"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Same goes for %s"
+L["ZONE_SHARE_OFFER"] = "I have %d quests in %s that you don't have. Would you like me to try to share them?"
+L["ZONE_SHARE_OFFER_ONE"] = "I have 1 quest in %s that you don't have. Would you like me to try to share it?"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "I have %d quests to do here: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "I have 1 quest to do here: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "More quests to do here: %s"

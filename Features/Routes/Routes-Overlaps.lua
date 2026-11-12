@@ -9,8 +9,8 @@ local routes = ns.routes
 
 local Unworked = routes.Unworked
 
--- Yards from a one-place objective's spot another objective's spawns can be and still ride along: area reach plus a waypoint's merge
-local RIDE_REACH = routes.AREA_REACH + 100
+-- Yards from a one-place objective's spot another objective's spawns can be and still ride along: a short walk out and back
+local RIDE_REACH = 300
 local RIDE_RADIUS = 2 * routes.MIN_STOP_RADIUS -- Yards a rider's area reaches at least, so the arrow treats it as an area
 local SHARED_CREDIT = 300 -- Yards nearer a blob counts for each other objective done there too, the sparse penalty's scale
 
@@ -79,7 +79,8 @@ function routes.LinkOverlaps(nodes, yield)
 	end
 
 	for _, anchor in ipairs(objectives) do
-		if #anchor.blobs == 1 then
+		-- A quest not taken yet (Routes-Chains.lua) may never be, so nothing is held to its one place
+		if #anchor.blobs == 1 and not anchor.predicted then
 			local spot = anchor.blobs[1]
 			for _, other in ipairs(objectives) do
 				if other ~= anchor and not other.rider and not other.urgent and #other.blobs > 1 then

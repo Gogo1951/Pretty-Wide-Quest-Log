@@ -48,7 +48,9 @@ bookIcon:SetPoint("TOPLEFT", 4, -4)
 
 local LayoutArt = ns.CreateWindowArt(frame)
 
-local windowTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+-- The window's own lines are in the window's copies of the fonts (Fonts.lua)
+local windowTitle = frame:CreateFontString(nil, "OVERLAY")
+windowTitle:SetFontObject(ns.AreaFont("window", "GameFontHighlight"))
 windowTitle:SetPoint("TOP", 0, -17)
 windowTitle:SetText(ns.BuildWindowTitle())
 
@@ -58,7 +60,8 @@ closeButton:SetScript("OnClick", function()
 	frame:Hide()
 end)
 
-local questCountText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+local questCountText = frame:CreateFontString(nil, "OVERLAY")
+questCountText:SetFontObject(ns.AreaFont("window", "GameFontNormalSmall"))
 questCountText:SetPoint("RIGHT", frame, "TOPRIGHT", -52, -53)
 
 -- Moved by dragging its title bar

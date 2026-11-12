@@ -49,6 +49,32 @@ local function ShowNextToggle()
 	return toggle
 end
 
+--[[
+	A sub-option (Build Reference → Sub-Option Rows) of the switch above it: its silver caption and its
+	control on one indented row, which hides it, not the control
+]]
+local function SubControlRow(order, hidden, text, desc, key, control)
+	control.desc = desc
+	return ns.OptionsSubRow(order, hidden, {
+		label = ns.OptionsRowLabel(
+			ns.OptionsSubLabel(text),
+			2,
+			ns.OPTIONS_LABEL_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH,
+			nil,
+			desc
+		),
+		[key] = ns.OptionsRoutesControl(key, control, 3, nil),
+	})
+end
+
+-- A switch that's a sub-option of the switch above it, on its own indented row in silver
+local function SubToggle(key, nameKey, order, hidden)
+	local toggle = ns.OptionsRoutesToggle(key, nameKey, nameKey .. "_DESCRIPTION", 2)
+	toggle.name = ns.OptionsSubLabel(L[nameKey])
+	toggle.width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH
+	return ns.OptionsSubRow(order, hidden, { [key] = toggle })
+end
+
 --------------------------------------------------------------------------------
 -- Quest Arrow Panel
 --------------------------------------------------------------------------------
@@ -75,19 +101,16 @@ local function Choices(names)
 	return values
 end
 
--- A row of the Local Available Quests section: its caption on the left, a dropdown of choices on the right
+-- A row of the Local Available Quests section, a sub-option of its switch: a dropdown of choices
 local function LocalRow(args, key, nameKey, order, names, sorting)
-	local desc = L[nameKey .. "_DESCRIPTION"]
 	args[key .. "Space"] = ns.OptionsSpacer(order - 0.02, LocalHidden)
-	args[key .. "Label"] = ns.OptionsRowLabel(L[nameKey], order, nil, LocalHidden, desc)
-	args[key] = ns.OptionsRoutesControl(key, {
+	args[key .. "Row"] = SubControlRow(order, LocalHidden, L[nameKey], L[nameKey .. "_DESCRIPTION"], key, {
 		type = "select",
-		desc = desc,
 		values = function()
 			return Choices(names)
 		end,
 		sorting = sorting,
-	}, order + 0.01, LocalHidden)
+	})
 end
 
 -- The Local Available Quests section, between Under the Arrow and Hiding: which nearby quests count
@@ -100,18 +123,14 @@ local function AddLocalQuestsSection(args)
 	-- The same setting as the Quest Arrow menu's Local Available Quests
 	args.showLocalQuests = LocalQuestsToggle()
 	args.spaceLocalRange = ns.OptionsSpacer(29.55, LocalHidden)
-	args.localQuestRangeLabel =
-		ns.OptionsRowLabel(L["LOCAL_QUEST_RANGE"], 29.6, nil, LocalHidden, L["LOCAL_QUEST_RANGE_DESCRIPTION"])
-	args.localQuestRange = ns.OptionsRoutesControl("localQuestRange", {
-		type = "range",
-		desc = L["LOCAL_QUEST_RANGE_DESCRIPTION"],
-		min = 200,
-		max = 800,
-		step = 50,
-	}, 29.61, LocalHidden)
-	args.spaceLocalCounts = ns.OptionsSpacer(29.63, LocalHidden)
-	args.localCountsLabel =
-		ns.OptionsDesc(ns.GetColor("TITLE") .. L["LOCAL_QUESTS_WHAT_COUNTS"] .. "|r", 29.64, LocalHidden)
+	args.localQuestRangeRow = SubControlRow(
+		29.6,
+		LocalHidden,
+		L["LOCAL_QUEST_RANGE"],
+		L["LOCAL_QUEST_RANGE_DESCRIPTION"],
+		"localQuestRange",
+		{ type = "range", min = 200, max = 800, step = 50 }
+	)
 	LocalRow(args, "localEscortQuests", "LOCAL_ESCORT_QUESTS", 29.7, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
 	LocalRow(args, "localGroupQuests", "LOCAL_GROUP_QUESTS", 29.75, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
 	LocalRow(args, "localOtherZoneQuests", "LOCAL_OTHER_ZONE_QUESTS", 29.8, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
@@ -123,6 +142,21 @@ local function IgnoredPrintExample()
 	local quest = ns.SampleQuests()[1]
 	local label = L["ROUTES_MENU_TURN_IN"]:format(quest.title)
 	return ns.RenderSample("PRINT", ns.routes.BuildIgnoredMessage(label, quest.questID, quest.title))
+end
+
+-- The ignore Example, for the whole arrow rather than any one switch, so not indented under one
+local function IgnoredExample(order)
+	return {
+		type = "description",
+		name = function()
+			return ns.NoSampleQuests() and "" or IgnoredPrintExample()
+		end,
+		fontSize = "medium",
+		order = order,
+		hidden = function()
+			return ArrowHidden() or ns.NoSampleQuests()
+		end,
+	}
 end
 
 function ns.BuildQuestArrowOptions()
@@ -172,27 +206,31 @@ function ns.BuildQuestArrowOptions()
 			headerText = ns.OptionsHeader(L["QUEST_ARROW_TEXT_HEADER"], 21, ArrowHidden),
 			spaceText1 = ns.OptionsSpacer(22, ArrowHidden),
 			descText = ns.OptionsDesc(L["QUEST_ARROW_TEXT_DESCRIPTION"], 22.1, ArrowHidden),
+			spaceIgnoredExample = ns.OptionsSpacer(22.12, ArrowHidden),
+			ignoredExample = IgnoredExample(22.15),
 			spaceText2 = ns.OptionsSpacer(22.2, ArrowHidden),
 			showDistance = ShowDistanceToggle(),
 			spaceShowQuests = ns.OptionsSpacer(23.5, ArrowHidden),
 			showQuests = Toggle("showQuests", "SHOW_ARROW_QUESTS", 24, ArrowHidden),
-			ignoredExampleRow = ns.OptionsExampleRow(24.2, IgnoredPrintExample, ArrowHidden),
 			spaceQuestsListed = ns.OptionsSpacer(24.5, QuestsHidden),
-			questsListedLabel = ns.OptionsRowLabel(L["QUESTS_LISTED"], 25, nil, QuestsHidden, QUESTS_LISTED_TEXT),
-			questsListed = ns.OptionsRoutesControl("questsListed", {
-				type = "range",
-				desc = QUESTS_LISTED_TEXT,
-				min = 1,
-				max = 8,
-				step = 1,
-			}, 26, QuestsHidden),
+			questsListedRow = SubControlRow(
+				25,
+				QuestsHidden,
+				L["QUESTS_LISTED"],
+				QUESTS_LISTED_TEXT,
+				"questsListed",
+				{ type = "range", min = 1, max = 8, step = 1 }
+			),
 			spaceItemButtons = ns.OptionsSpacer(26.2, QuestsHidden),
-			showItemButtons = Toggle("showItemButtons", "SHOW_ITEM_BUTTONS", 26.3, QuestsHidden),
+			showItemButtons = SubToggle("showItemButtons", "SHOW_ITEM_BUTTONS", 26.3, QuestsHidden),
 			spaceShowNext = ns.OptionsSpacer(26.5, ArrowHidden),
 			showNextObjective = ShowNextToggle(),
-			spaceUpcomingTurnIns = ns.OptionsSpacer(27.5, ArrowHidden),
-			-- The same setting as the Quest Arrow menu's Future Turn-Ins
-			showUpcomingTurnIns = Toggle("showUpcomingTurnIns", "SHOW_UPCOMING_TURN_INS", 28, ArrowHidden),
+			spacePredictiveRoutes = ns.OptionsSpacer(27.5, ArrowHidden),
+			-- The same setting as the Quest Arrow menu's Predictive Questing Routes (Routes-Chains.lua)
+			predictiveRoutes = Toggle("predictiveRoutes", "PREDICTIVE_ROUTES", 28, ArrowHidden),
+			spaceFlightPaths = ns.OptionsSpacer(28.2, ArrowHidden),
+			-- The same setting as the Quest Arrow menu's Flight Paths
+			showFlightPaths = Toggle("showFlightPaths", "SHOW_FLIGHT_PATHS", 28.3, ArrowHidden),
 
 			spaceHiding0 = ns.OptionsSpacer(30, ArrowHidden),
 			headerHiding = ns.OptionsHeader(L["QUEST_ARROW_HIDING_HEADER"], 31, ArrowHidden),

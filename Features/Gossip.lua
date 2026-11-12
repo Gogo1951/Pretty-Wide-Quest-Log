@@ -19,7 +19,7 @@ local function StyleGossipGreeting(greetingText)
 	end
 	if ns.IsQuestGiverCleanupOn() then
 		ns.RememberBlizzardStyle(greetingText)
-		ns.StyleQuestText(greetingText)
+		ns.StyleQuestText(greetingText, false, "dialogue")
 	else
 		ns.RestoreBlizzardStyle(greetingText)
 	end

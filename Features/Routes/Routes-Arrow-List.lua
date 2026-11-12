@@ -96,9 +96,12 @@ routes.arrowTitleRows = titleRows
 	its first quest and what's to do there, as the list writes a quest. A timed quest's time left goes on
 	its own line under its title, wherever it's listed, as the quest log writes it ("28 Min 46 Sec"): blue,
 	red in its last minute. The list is written every second, so it counts down. Returns whether the Next
-	Objective is laid out, so Point turns its arrow
+	Objective is laid out, so Point turns its arrow.
+
+	Joining up (Routes-Group-Up.lua): meet is the place the arrow points to, a party member or the middle of
+	everyone, listed in place of the view as "Join Up with Group"
 ]]
-local function ListQuests(view, noteText, passing, nextStop)
+local function ListQuests(view, noteText, passing, nextStop, meet)
 	local settings = routes.Settings()
 	-- The lines first, so a second with nothing changed lays nothing out again
 	local count, texts = 0, {}
@@ -140,7 +143,9 @@ local function ListQuests(view, noteText, passing, nextStop)
 			end
 		end)
 	end
-	if settings.showQuests then
+	if meet then
+		Add("title", L["ROUTES_GROUP_UP"], ns.GetColorRGB("TITLE"))
+	elseif settings.showQuests and view then
 		AddStop(view, false)
 		if passing then
 			local red, green, blue = ns.GetColorRGB("HELP")

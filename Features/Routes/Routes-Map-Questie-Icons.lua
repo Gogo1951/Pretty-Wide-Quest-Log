@@ -31,8 +31,8 @@ local function NoteTask(task, objectives, turnIns, pickUps)
 end
 
 --[[
-	What the route and the camps stand in for: each objective on them, and each quest they turn in.
-	Questie's icons for these are hidden on every map, and lend the markers their look
+	What the route and the camps stand in for: each objective on them, each quest they turn in and each
+	they pick up. Questie's icons for these are hidden on every map, and lend the markers their look
 ]]
 local function RouteTasks()
 	local objectives, turnIns, pickUps = {}, {}, {}
@@ -73,7 +73,7 @@ end
 
 --[[
 	Questie's dimmed icons for a party member's objective, on a quest the player doesn't have. The route
-	draws the ones it plans for as red-ringed waypoints; the rest it leaves out on purpose (Include Party
+	draws the ones it plans for as white-ringed waypoints; the rest it leaves out on purpose (Include Party
 	Members' Quests off, a member turned off in the Quest Arrow's menu or away from the zone, a dungeon
 	quest), so Questie's icons for those are hidden as well rather than crowding the map
 ]]
@@ -82,25 +82,27 @@ local function IsPartyIcon(data)
 	return objective and objective.IsPartyObjective == true or false
 end
 
---[[
-	Hides the pins holding Questie's icons for what the route stands in for, and for every party member's
-	objective, but for the hovered stop's, and shows again any it hid before that no longer are. The pins
-	are HereBeDragons', which Questie never shows or hides itself, so Questie's own icon state is left
-	alone, and a pin handed out again shows on its own
-]]
 -- The sets a pin is checked against, worked out at most once a frame: Questie places pins a batch at a time
 local sets, setsTime = {}, nil
 local function Sets()
 	local now = GetTime()
 	if setsTime ~= now then
 		setsTime = now
-		sets.hide = routes.IsMapShown() and routes.Settings().hideQuestieIcons
+		-- Not on a continent's or the world's map while it has no markers to stand in for them
+		sets.hide = routes.IsMapShownOn(WorldMapFrame and WorldMapFrame:GetMapID())
+			and routes.Settings().hideQuestieIcons
 		sets.objectives, sets.turnIns, sets.pickUps = RouteTasks()
 		sets.hoveredObjectives, sets.hoveredTurnIns, sets.hoveredPickUps = HoveredTasks()
 	end
 	return sets
 end
 
+--[[
+	Hides the pins holding Questie's icons for what the route stands in for, and for every party member's
+	objective, but for the hovered stop's, and shows again any it hid before that no longer are. The pins
+	are HereBeDragons', which Questie never shows or hides itself, so Questie's own icon state is left
+	alone, and a pin handed out again shows on its own
+]]
 local function ApplyToPin(pin, current)
 	local data = pin.icon and pin.icon.data
 	local hidden = current.hide

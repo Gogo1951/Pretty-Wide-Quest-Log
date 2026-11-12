@@ -42,7 +42,7 @@ local MARK_UNTRACKED_TEXT = L["MARK_UNTRACKED_DESCRIPTION"]:format(
 	TrackingMarkIcon(ns.TRACKING_MARKS.untracked, 3)
 )
 
--- While the switch at the top of the panel is off, every setting under it is hidden
+-- While the Quest Log switch (atop the Wide Quest Log panel) is off, the settings on it and the panels under it are hidden
 local function Hidden()
 	return not ns.db.profile.enableWideQuestLog
 end
@@ -170,10 +170,31 @@ local function AddHandyClicks(args, order)
 	end
 end
 
+--[[
+	On a sub-panel, the silver line in place of its settings while the Quest Log switch (on the Wide Quest
+	Log panel) is off, or waiting for its reload
+]]
+local function NeedsWideQuestLogText()
+	if Hidden() then
+		return L["NEEDS_WIDE_QUEST_LOG"]
+	end
+	return ns.QuestLogReloadPendingText()
+end
+
+-- A sub-panel's opening: its description, then the line saying why its settings are hidden or grayed out
+local function SubPanelIntro(args, descriptionKey)
+	args.descIntro = ns.OptionsDesc(L[descriptionKey], 1)
+	args.needsWideQuestLog = ns.OptionsStatusLine(NeedsWideQuestLogText, 2)
+end
+
 --------------------------------------------------------------------------------
--- Quest Log Panel
+-- Wide Quest Log Panel
 --------------------------------------------------------------------------------
 
+--[[
+	The Quest Log switch and the clicks that are easy to miss. The settings are on the panels under this
+	one: Quest List, Quest Details, Window & Map and NPC Dialogue
+]]
 function ns.BuildQuestLogOptions()
 	local options = {
 		type = "group",
@@ -188,130 +209,8 @@ function ns.BuildQuestLogOptions()
 				3
 			),
 			reloadPending = ns.OptionsStatusLine(ns.QuestLogReloadPendingText, 4),
-
-			spaceSorting0 = ns.OptionsSpacer(5, Hidden),
-			headerSorting = ns.OptionsHeader(L["QUEST_LOG_SORTING_HEADER"], 6, Hidden),
-			spaceSorting1 = ns.OptionsSpacer(7, Hidden),
-			descSorting = ns.OptionsDesc(L["QUEST_LOG_SORTING_DESCRIPTION"], 8, Hidden),
-			spaceSorting2 = ns.OptionsSpacer(9, Hidden),
-
-			zoneSortLabel = ns.OptionsRowLabel(
-				L["ZONE_ORDER"],
-				10,
-				SORT_LABEL_WIDTH,
-				Hidden,
-				L["ZONE_ORDER_DESCRIPTION"]
-			),
-			zoneSort = SortSelect("zoneSort", "ZONE_ORDER_DESCRIPTION", {
-				LEVEL_HIGHEST_FIRST = L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"],
-				LEVEL_LOWEST_FIRST = L["SORT_AVERAGE_LEVEL_LOWEST"],
-				ALPHABETICAL = L["SORT_ALPHABETICAL"],
-			}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 11),
-			currentZoneFirstRow = SortSubOption("currentZoneFirst", "CURRENT_ZONE_FIRST", 12),
-			spaceQuestSort = ns.OptionsSpacer(13, Hidden),
-			questSortLabel = ns.OptionsRowLabel(
-				L["QUEST_ORDER"],
-				14,
-				SORT_LABEL_WIDTH,
-				Hidden,
-				L["QUEST_ORDER_DESCRIPTION"]
-			),
-			questSort = SortSelect("questSort", "QUEST_ORDER_DESCRIPTION", {
-				LEVEL_HIGHEST_FIRST = L["SORT_LEVEL_HIGHEST_DEFAULT"],
-				LEVEL_LOWEST_FIRST = L["SORT_LEVEL_LOWEST"],
-				ALPHABETICAL = L["SORT_ALPHABETICAL"],
-			}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 15),
-			completedFirstRow = SortSubOption("completedFirst", "COMPLETED_FIRST", 16),
-
-			spaceQuestRows0 = ns.OptionsSpacer(20, Hidden),
-			headerQuestRows = ns.OptionsHeader(L["QUEST_LOG_ROWS_HEADER"], 21, Hidden),
-			spaceQuestRows1 = ns.OptionsSpacer(22, Hidden),
-			descQuestRows = ns.OptionsDesc(L["QUEST_LOG_ROWS_DESCRIPTION"], 23, Hidden),
-			spaceQuestRows2 = ns.OptionsSpacer(24, Hidden),
-
-			zoneGap = QuestLogToggle("zoneGap", "ZONE_GAP", nil, 25),
-			spaceShowQuestLevels = ns.OptionsSpacer(26, Hidden),
-			showQuestLevels = QuestLogToggle(
-				"showQuestLevels",
-				"SHOW_QUEST_LEVELS",
-				L["SHOW_QUEST_LEVELS_DESCRIPTION"]:format(ns.LevelTag(40, L["QUEST_SUFFIX_DUNGEON"]))
-					.. " "
-					.. ns.QuestLevelLegend(),
-				27
-			),
-			spaceMarkUntracked = ns.OptionsSpacer(28, Hidden),
-			markUntracked = QuestLogToggle("markUntracked", "MARK_UNTRACKED", MARK_UNTRACKED_TEXT, 29),
-
-			spaceWindowMap0 = ns.OptionsSpacer(30, Hidden),
-			headerWindowMap = ns.OptionsHeader(L["QUEST_LOG_WINDOW_MAP_HEADER"], 31, Hidden),
-			spaceWindowMap1 = ns.OptionsSpacer(32, Hidden),
-			descWindowMap = ns.OptionsDesc(L["QUEST_LOG_WINDOW_MAP_DESCRIPTION"], 33, Hidden),
-			spaceWindowMap2 = ns.OptionsSpacer(34, Hidden),
-
-			closeInCombat = QuestLogToggle("closeInCombat", "CLOSE_IN_COMBAT", nil, 35),
-			spaceObjectiveAreas = ns.OptionsSpacer(36, MapHidden),
-			showObjectiveAreas = ObjectiveAreasToggle(37),
-
-			spaceWindowScale = ns.OptionsSpacer(38, Hidden),
-			windowScaleLabel = ns.OptionsRowLabel(L["WINDOW_SCALE"], 39, nil, Hidden, L["WINDOW_SCALE_DESCRIPTION"]),
-			windowScale = {
-				type = "range",
-				name = "",
-				desc = L["WINDOW_SCALE_DESCRIPTION"],
-				width = ns.OPTIONS_CONTROL_WIDTH,
-				order = 40,
-				hidden = Hidden,
-				disabled = Inactive,
-				min = 0.7,
-				max = 1.3,
-				step = 0.05,
-				isPercent = true,
-				get = function()
-					return ns.db.global.scale
-				end,
-				set = function(_, value)
-					ns.db.global.scale = value
-					ns.ApplyWindowScale()
-				end,
-			},
-			spaceMapScale = ns.OptionsSpacer(41, MapHidden),
-			mapScaleLabel = ns.OptionsRowLabel(L["MAP_SCALE"], 42, nil, MapHidden, L["MAP_SCALE_DESCRIPTION"]),
-			mapScale = {
-				type = "range",
-				name = "",
-				desc = L["MAP_SCALE_DESCRIPTION"],
-				width = ns.OPTIONS_CONTROL_WIDTH,
-				order = 43,
-				hidden = MapHidden,
-				disabled = Inactive,
-				min = 0.7,
-				max = 1.3,
-				step = 0.05,
-				isPercent = true,
-				get = function()
-					return ns.db.global.mapScale
-				end,
-				set = function(_, value)
-					ns.db.global.mapScale = value
-					ns.ApplyMapScale()
-				end,
-			},
-			spaceResetWindow = ns.OptionsSpacer(44, Hidden),
-			resetWindowIndent = ns.OptionsRowLabel(" ", 45, RESET_WINDOW_INDENT_WIDTH, Hidden),
-			resetWindow = {
-				type = "execute",
-				name = L["RESET_WINDOW_BUTTON"],
-				desc = L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_DESCRIPTION"],
-				width = RESET_WINDOW_WIDTH,
-				order = 46,
-				hidden = Hidden,
-				disabled = Inactive,
-				confirm = true,
-				confirmText = L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_CONFIRM"],
-				func = function()
-					ns.ResetWindow()
-				end,
-			},
+			spaceSubPanels = ns.OptionsSpacer(5),
+			descSubPanels = ns.OptionsDesc(L["QUEST_LOG_SUB_PANELS_DESCRIPTION"], 6),
 
 			spaceHandyClicks0 = ns.OptionsSpacer(50, Hidden),
 			headerHandyClicks = ns.OptionsHeader(L["HANDY_CLICKS_HEADER"], 51, Hidden),
@@ -320,4 +219,151 @@ function ns.BuildQuestLogOptions()
 	}
 	AddHandyClicks(options.args, 53)
 	return options
+end
+
+--------------------------------------------------------------------------------
+-- Quest List Panel
+--------------------------------------------------------------------------------
+
+function ns.BuildQuestListOptions()
+	local args = {
+		spaceSorting0 = ns.OptionsSpacer(5, Hidden),
+		headerSorting = ns.OptionsHeader(L["QUEST_LOG_SORTING_HEADER"], 6, Hidden),
+		spaceSorting1 = ns.OptionsSpacer(7, Hidden),
+		descSorting = ns.OptionsDesc(L["QUEST_LOG_SORTING_DESCRIPTION"], 8, Hidden),
+		spaceSorting2 = ns.OptionsSpacer(9, Hidden),
+
+		zoneSortLabel = ns.OptionsRowLabel(L["ZONE_ORDER"], 10, SORT_LABEL_WIDTH, Hidden, L["ZONE_ORDER_DESCRIPTION"]),
+		zoneSort = SortSelect("zoneSort", "ZONE_ORDER_DESCRIPTION", {
+			LEVEL_HIGHEST_FIRST = L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"],
+			LEVEL_LOWEST_FIRST = L["SORT_AVERAGE_LEVEL_LOWEST"],
+			ALPHABETICAL = L["SORT_ALPHABETICAL"],
+		}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 11),
+		currentZoneFirstRow = SortSubOption("currentZoneFirst", "CURRENT_ZONE_FIRST", 12),
+		spaceQuestSort = ns.OptionsSpacer(13, Hidden),
+		questSortLabel = ns.OptionsRowLabel(
+			L["QUEST_ORDER"],
+			14,
+			SORT_LABEL_WIDTH,
+			Hidden,
+			L["QUEST_ORDER_DESCRIPTION"]
+		),
+		questSort = SortSelect("questSort", "QUEST_ORDER_DESCRIPTION", {
+			LEVEL_HIGHEST_FIRST = L["SORT_LEVEL_HIGHEST_DEFAULT"],
+			LEVEL_LOWEST_FIRST = L["SORT_LEVEL_LOWEST"],
+			ALPHABETICAL = L["SORT_ALPHABETICAL"],
+		}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 15),
+		completedFirstRow = SortSubOption("completedFirst", "COMPLETED_FIRST", 16),
+
+		spaceQuestRows0 = ns.OptionsSpacer(20, Hidden),
+		headerQuestRows = ns.OptionsHeader(L["QUEST_LOG_ROWS_HEADER"], 21, Hidden),
+		spaceQuestRows1 = ns.OptionsSpacer(22, Hidden),
+		descQuestRows = ns.OptionsDesc(L["QUEST_LOG_ROWS_DESCRIPTION"], 23, Hidden),
+		spaceQuestRows2 = ns.OptionsSpacer(24, Hidden),
+
+		zoneGap = QuestLogToggle("zoneGap", "ZONE_GAP", nil, 25),
+		spaceShowQuestLevels = ns.OptionsSpacer(26, Hidden),
+		showQuestLevels = QuestLogToggle(
+			"showQuestLevels",
+			"SHOW_QUEST_LEVELS",
+			L["SHOW_QUEST_LEVELS_DESCRIPTION"]:format(ns.LevelTag(40, L["QUEST_SUFFIX_DUNGEON"]))
+				.. " "
+				.. ns.QuestLevelLegend(),
+			27
+		),
+		spaceMarkUntracked = ns.OptionsSpacer(28, Hidden),
+		markUntracked = QuestLogToggle("markUntracked", "MARK_UNTRACKED", MARK_UNTRACKED_TEXT, 29),
+	}
+	SubPanelIntro(args, "TAB_QUEST_LIST_DESCRIPTION")
+	ns.AddFontOptions(args, "list", 30, Hidden, Inactive)
+	return { type = "group", name = L["TAB_QUEST_LIST"], args = args }
+end
+
+--------------------------------------------------------------------------------
+-- Quest Details Panel
+--------------------------------------------------------------------------------
+
+function ns.BuildQuestDetailsOptions()
+	local args = {}
+	SubPanelIntro(args, "TAB_QUEST_DETAILS_DESCRIPTION")
+	ns.AddFontOptions(args, "details", 10, Hidden, Inactive)
+	return { type = "group", name = L["TAB_QUEST_DETAILS"], args = args }
+end
+
+--------------------------------------------------------------------------------
+-- Window & Map Panel
+--------------------------------------------------------------------------------
+
+function ns.BuildWindowMapOptions()
+	local args = {
+		spaceWindowMap = ns.OptionsSpacer(34, Hidden),
+
+		closeInCombat = QuestLogToggle("closeInCombat", "CLOSE_IN_COMBAT", nil, 35),
+		spaceObjectiveAreas = ns.OptionsSpacer(36, MapHidden),
+		showObjectiveAreas = ObjectiveAreasToggle(37),
+
+		spaceWindowScale = ns.OptionsSpacer(38, Hidden),
+		windowScaleLabel = ns.OptionsRowLabel(L["WINDOW_SCALE"], 39, nil, Hidden, L["WINDOW_SCALE_DESCRIPTION"]),
+		windowScale = {
+			type = "range",
+			name = "",
+			desc = L["WINDOW_SCALE_DESCRIPTION"],
+			width = ns.OPTIONS_CONTROL_WIDTH,
+			order = 40,
+			hidden = Hidden,
+			disabled = Inactive,
+			min = 0.7,
+			max = 1.3,
+			step = 0.05,
+			isPercent = true,
+			get = function()
+				return ns.db.global.scale
+			end,
+			set = function(_, value)
+				ns.db.global.scale = value
+				ns.ApplyWindowScale()
+			end,
+		},
+		spaceMapScale = ns.OptionsSpacer(41, MapHidden),
+		mapScaleLabel = ns.OptionsRowLabel(L["MAP_SCALE"], 42, nil, MapHidden, L["MAP_SCALE_DESCRIPTION"]),
+		mapScale = {
+			type = "range",
+			name = "",
+			desc = L["MAP_SCALE_DESCRIPTION"],
+			width = ns.OPTIONS_CONTROL_WIDTH,
+			order = 43,
+			hidden = MapHidden,
+			disabled = Inactive,
+			min = 0.7,
+			max = 1.3,
+			step = 0.05,
+			isPercent = true,
+			get = function()
+				return ns.db.global.mapScale
+			end,
+			set = function(_, value)
+				ns.db.global.mapScale = value
+				ns.ApplyMapScale()
+			end,
+		},
+		spaceResetWindow = ns.OptionsSpacer(44, Hidden),
+		resetWindowIndent = ns.OptionsRowLabel(" ", 45, RESET_WINDOW_INDENT_WIDTH, Hidden),
+		resetWindow = {
+			type = "execute",
+			name = L["RESET_WINDOW_BUTTON"],
+			desc = L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_DESCRIPTION"],
+			width = RESET_WINDOW_WIDTH,
+			order = 46,
+			hidden = Hidden,
+			disabled = Inactive,
+			confirm = true,
+			confirmText = L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_CONFIRM"],
+			func = function()
+				ns.ResetWindow()
+			end,
+		},
+	}
+	SubPanelIntro(args, "QUEST_LOG_WINDOW_MAP_DESCRIPTION")
+	ns.AddFontOptions(args, "window", 50, Hidden, Inactive)
+	return { type = "group", name = L["TAB_WINDOW_MAP"], args = args }
 end

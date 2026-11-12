@@ -53,11 +53,17 @@ ns.AddWideQuestLogPart(function()
 		"QuestLogSpellLearnText",
 	}) do
 		if _G[name] then
-			ns.StyleQuestText(_G[name])
+			ns.StyleQuestText(_G[name], false, "details")
 		end
 	end
-	ns.StyleQuestText(QuestLogDescriptionTitle, true)
-	ns.StyleQuestText(QuestLogRewardTitleText, true)
+	ns.StyleQuestText(QuestLogDescriptionTitle, true, "details")
+	ns.StyleQuestText(QuestLogRewardTitleText, true, "details")
+	-- The one-line pieces keep Blizzard's spacing and take the details' font (Fonts.lua)
+	for _, name in ipairs({ "QuestLogRequiredMoneyText", "QuestLogSuggestedGroupNum" }) do
+		if _G[name] then
+			ns.SetAreaFont(_G[name], "details")
+		end
+	end
 
 	-- Blizzard hangs the Description heading under whatever comes last above it each time; keep its anchor, change the gap
 	local function SpaceAboveDescription()
@@ -129,7 +135,8 @@ ns.AddWideQuestLogPart(function()
 		Blizzard hangs a spacer below the last thing in the pane, so they go inside that, made tall enough to
 		hold them
 	]]
-	local questIDText = QuestLogDetailScrollChildFrame:CreateFontString(nil, "ARTWORK", "QuestFontNormalSmall")
+	local questIDText = QuestLogDetailScrollChildFrame:CreateFontString(nil, "ARTWORK")
+	questIDText:SetFontObject(ns.AreaFont("details", "QuestFontNormalSmall"))
 	questIDText:SetJustifyH("RIGHT")
 	ns.LinkQuestIDToWowhead(QuestLogDetailScrollChildFrame, questIDText, function()
 		return select(8, GetQuestLogTitle(GetQuestLogSelection()))
@@ -187,7 +194,8 @@ ns.AddWideQuestLogPart(function()
 		The objectives hang below it while it shows, and below the title otherwise. Classic Era has no daily
 		quests, so it never shows there
 	]]
-	local dailyResetText = QuestLogDetailScrollChildFrame:CreateFontString(nil, "ARTWORK", "QuestFontNormalSmall")
+	local dailyResetText = QuestLogDetailScrollChildFrame:CreateFontString(nil, "ARTWORK")
+	dailyResetText:SetFontObject(ns.AreaFont("details", "QuestFontNormalSmall"))
 	dailyResetText:SetWidth(LAYOUT.CONTENT_WIDTH)
 	dailyResetText:SetJustifyH("LEFT")
 	dailyResetText:SetPoint("TOPLEFT", QuestLogQuestTitle, "BOTTOMLEFT", 0, -LAYOUT.TITLE_SPACE_BELOW)
@@ -202,6 +210,14 @@ ns.AddWideQuestLogPart(function()
 		local _, _, _, _, _, _, frequency = GetQuestLogTitle(GetQuestLogSelection())
 		local daily = ns.IsDailyFrequency(frequency) and GetQuestResetTime and GetQuestResetTime()
 		if daily and daily > 0 then
+			--[[
+				The description's font object brings its shadow, then its font on top, which a skin (ElvUI) may
+				have set apart from the object
+			]]
+			local fontObject = QuestLogQuestDescription:GetFontObject()
+			if fontObject then
+				dailyResetText:SetFontObject(fontObject)
+			end
 			local file, size, flags = QuestLogQuestDescription:GetFont()
 			if file and size then
 				dailyResetText:SetFont(file, size, flags)

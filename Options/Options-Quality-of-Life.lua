@@ -31,26 +31,6 @@ local function Toggle(key, nameKey, order)
 	}
 end
 
--- The quest giver window cleanup's switch, at a caption's width with its one setting beside it
-local function GiverCleanupToggle()
-	local toggle = Toggle("giverCleanup", "GIVER_CLEANUP", 15)
-	toggle.width = ns.OPTIONS_LABEL_WIDTH
-	return toggle
-end
-
--- The quest giver window cleanup's one setting, beside its switch and hidden while it's off
-local function GiverLevelsToggle()
-	local toggle = Toggle("giverLevels", "SHOW_QUEST_LEVELS", 16)
-	toggle.desc = L["GIVER_LEVELS_DESCRIPTION"]:format(ns.LevelTag(40, L["QUEST_SUFFIX_DUNGEON"]))
-		.. " "
-		.. ns.QuestLevelLegend()
-	toggle.width = ns.OPTIONS_CONTROL_WIDTH
-	toggle.hidden = function()
-		return Hidden() or not ns.db.profile.giverCleanup
-	end
-	return toggle
-end
-
 --------------------------------------------------------------------------------
 -- Example Lines
 --------------------------------------------------------------------------------
@@ -59,6 +39,12 @@ end
 local function ShareWhisperExample()
 	local quest = ns.SampleQuests()[1]
 	return ns.RenderSample("WHISPER", ns.BuildShareWhisper("WHISPER_SHARE_FAILED", quest.questID, quest.title))
+end
+
+-- The zone offer whisper, as a party member in the zone receives it
+local function ZoneShareOfferExample()
+	local zone = C_Map.GetAreaInfo(ns.SAMPLE_ZONE_AREA_ID) or tostring(ns.SAMPLE_ZONE_AREA_ID)
+	return ns.RenderSample("WHISPER", ns.BuildZoneShareOffer(#ns.SAMPLE_QUEST_IDS, zone))
 end
 
 -- The first message of the dungeon announcement, as the group reads it
@@ -102,14 +88,6 @@ function ns.BuildQualityOfLifeOptions()
 				ns.ApplyQualityOfLifeSettings
 			),
 
-			spaceQuestGivers0 = ns.OptionsSpacer(10, Hidden),
-			headerQuestGivers = ns.OptionsHeader(L["QUEST_GIVERS_HEADER"], 11, Hidden),
-			spaceQuestGivers1 = ns.OptionsSpacer(12, Hidden),
-			descQuestGivers = ns.OptionsDesc(L["QUEST_GIVERS_DESCRIPTION"], 13, Hidden),
-			spaceQuestGivers2 = ns.OptionsSpacer(14, Hidden),
-			giverCleanup = GiverCleanupToggle(),
-			giverLevels = GiverLevelsToggle(),
-
 			spaceQuestSharing0 = ns.OptionsSpacer(20, Hidden),
 			headerQuestSharing = ns.OptionsHeader(L["QUEST_SHARING_HEADER"], 21, Hidden),
 			spaceQuestSharing1 = ns.OptionsSpacer(22, Hidden),
@@ -145,6 +123,11 @@ function ns.BuildQualityOfLifeOptions()
 			shareWhispers = Toggle("shareWhispers", "SHARE_WHISPERS", 28),
 			shareWhisperExampleRow = ns.OptionsExampleRow(29, ShareWhisperExample, function()
 				return Hidden() or not ns.db.profile.shareWhispers
+			end),
+			spaceZoneShareOffer = ns.OptionsSpacer(29.2, Hidden),
+			zoneShareOffer = Toggle("zoneShareOffer", "ZONE_SHARE_OFFERS", 29.4),
+			zoneShareOfferExampleRow = ns.OptionsExampleRow(29.6, ZoneShareOfferExample, function()
+				return Hidden() or not ns.db.profile.zoneShareOffer
 			end),
 
 			spaceDungeonQuests0 = ns.OptionsSpacer(30, Hidden),

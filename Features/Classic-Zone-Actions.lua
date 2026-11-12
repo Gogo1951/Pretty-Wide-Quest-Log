@@ -131,6 +131,23 @@ function ns.LogQuests()
 	end)
 end
 
+--[[
+	Of questIDs, those someone among units (every other group member when none are given) still needs
+	(ns.PartyNeedsQuest), in the same order. Units are looked up by quest log index here, so every zone is
+	opened to find each quest
+]]
+function ns.QuestsPartyNeeds(questIDs, units)
+	return WithEveryZoneOpen(function()
+		local needed = {}
+		for _, questID in ipairs(questIDs) do
+			if ns.PartyNeedsQuest(questID, ns.GetLogIndexForQuestID(questID), units) then
+				needed[#needed + 1] = questID
+			end
+		end
+		return needed
+	end)
+end
+
 --------------------------------------------------------------------------------
 -- Acting on Quests
 --------------------------------------------------------------------------------
@@ -140,27 +157,33 @@ end
 	so it can be found, and the player's own selection is put back afterwards.
 
 	Shares each quest still in the log, wherever its zone is, ns.GetShareInterval() apart as it was when
-	the run began; the game reports each result in chat. ns.sharingQuests is set until the last one goes,
-	so a second run can't start alongside; each share runs through securecall, so one that errors is
-	reported and the run still reaches its end. A share due in combat waits, checking every interval,
-	until combat ends, and the run picks up where it stopped. Leaving the group ends the run
+	the run began; the game reports each result in chat. A quest is asked about again at its turn, and
+	one everyone among units (every other group member when none are given) has by then is passed over
+	without waiting, so a quest picked up from someone else meanwhile isn't offered again.
+	ns.sharingQuests is set until the last one goes, so a second run can't start alongside; each share
+	runs through securecall, so one that errors is reported and the run still reaches its end. A share
+	due in combat waits, checking every interval, until combat ends, and the run picks up where it
+	stopped. Leaving the group ends the run
 ]]
-local function ShareOne(questID)
-	WithEveryZoneOpen(function()
+local function ShareOne(questID, units)
+	local shared = WithEveryZoneOpen(function()
 		local index = questID and ns.GetLogIndexForQuestID(questID)
 		if index then
 			SelectQuestLogEntry(index)
-			if GetQuestLogPushable() then
+			if GetQuestLogPushable() and ns.PartyNeedsQuest(questID, index, units) then
 				QuestLogPushQuest()
+				return true
 			end
 		end
+		return false
 	end)
 	if QuestLogFrame:IsShown() then
 		QuestLog_Update()
 	end
+	return shared
 end
 
-function ns.ShareQuests(questIDs)
+function ns.ShareQuests(questIDs, units)
 	ns.sharingQuests = true
 	local interval = ns.GetShareInterval()
 	local function Share(position)
@@ -174,13 +197,16 @@ function ns.ShareQuests(questIDs)
 			end)
 			return
 		end
-		securecall(ShareOne, questIDs[position])
-		if position < #questIDs then
+		-- An error inside returns nothing, which counts as shared, so the pace holds
+		local shared = securecall(ShareOne, questIDs[position], units) ~= false
+		if position >= #questIDs then
+			ns.sharingQuests = nil
+		elseif shared then
 			C_Timer.After(interval, function()
 				Share(position + 1)
 			end)
 		else
-			ns.sharingQuests = nil
+			Share(position + 1)
 		end
 	end
 	Share(1)

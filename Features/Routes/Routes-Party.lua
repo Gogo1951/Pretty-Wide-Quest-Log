@@ -74,8 +74,9 @@ local function IsPresent(name)
 	end
 	local present = presence[name]
 	if present == nil then
-		local connected = UnitIsConnected(name)
-		present = ns.IsReadable(connected) and connected == true and not routes.IsMemberOutOfZone(name)
+		local unit = UnitFor(name)
+		local connected = unit and UnitIsConnected(unit)
+		present = unit ~= nil and ns.IsReadable(connected) and connected == true and not routes.IsUnitOutOfZone(unit)
 		presence[name] = present
 	end
 	return present
@@ -373,7 +374,7 @@ end
 --[[
 	The online party members, each { unit, name }: name as routes.UnitFullName gives it. With includeOffline,
 	the offline ones too, each with offline set. A member whose connection WoW Forever keeps secret in combat
-	counts as offline. Sorted by name
+	counts as offline, with unknown set too. Sorted by name
 ]]
 function routes.PartyMembers(includeOffline)
 	local members = {}
@@ -387,7 +388,12 @@ function routes.PartyMembers(includeOffline)
 			local connected = UnitIsConnected(unit)
 			local online = ns.IsReadable(connected) and connected == true
 			if online or includeOffline then
-				members[#members + 1] = { unit = unit, name = name, offline = not online or nil }
+				members[#members + 1] = {
+					unit = unit,
+					name = name,
+					offline = not online or nil,
+					unknown = not ns.IsReadable(connected) or nil,
+				}
 			end
 		end
 	end
@@ -430,6 +436,32 @@ function routes.PartyQuestHolders(questID)
 		end
 	end
 	return holders
+end
+
+--[[
+	The party units of the members whose shared logs have a quest: whose level, race and class say whether
+	they could take its follow-ups (Routes-Chains.lua)
+]]
+function routes.PartyQuestHolderUnits(questID)
+	local units = {}
+	local logs = RemoteLogs()
+	local players = logs and logs[questID]
+	if type(players) == "table" then
+		for name in pairs(players) do
+			local unit = type(name) == "string" and UnitFor(name)
+			if unit then
+				units[#units + 1] = unit
+			end
+		end
+	end
+	table.sort(units)
+	return units
+end
+
+-- Whether anyone in the party has shared that they have a quest, with Party Objectives on
+function routes.PartyHasQuest(questID)
+	local logs = RemoteLogs()
+	return logs ~= nil and type(logs[questID]) == "table" and next(logs[questID]) ~= nil
 end
 
 --[[
