@@ -7,7 +7,15 @@ local _, ns = ...
 
 local routes = ns.routes
 
-local QUESTIE_TEMPLATE = "HereBeDragonsPinsTemplateQuestie" -- The pins Questie's icons sit on
+--[[
+	The template of the pins Questie's icons sit on. Questie 12.8.0 names it after the addon and says so on
+	its HereBeDragons-Pins; before that it was a fixed name
+]]
+local OLD_QUESTIE_TEMPLATE = "HereBeDragonsPinsTemplateQuestie"
+local function QuestieTemplate()
+	local pins = ns.QuestieHereBeDragonsPins()
+	return pins and pins.worldmapPinTemplate or OLD_QUESTIE_TEMPLATE
+end
 
 --------------------------------------------------------------------------------
 -- Questie's icons
@@ -124,7 +132,7 @@ local function ApplyQuestieIcons()
 	end
 	setsTime = nil -- The route or the hovered marker may have changed this frame
 	local current = Sets()
-	for pin in WorldMapFrame:EnumeratePinsByTemplate(QUESTIE_TEMPLATE) do
+	for pin in WorldMapFrame:EnumeratePinsByTemplate(QuestieTemplate()) do
 		ApplyToPin(pin, current)
 	end
 end
@@ -157,7 +165,7 @@ end
 -- The texture of Questie's icon for each objective on the route, each quest's turn-in and pick-up, on the map shown
 local function QuestieTextures()
 	local byObjective, byTurnIn, byPickUp = {}, {}, {}
-	for pin in WorldMapFrame:EnumeratePinsByTemplate(QUESTIE_TEMPLATE) do
+	for pin in WorldMapFrame:EnumeratePinsByTemplate(QuestieTemplate()) do
 		local icon = pin.icon
 		local data = icon and icon.data
 		if data and icon.texture then

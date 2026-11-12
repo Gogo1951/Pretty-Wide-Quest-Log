@@ -123,7 +123,7 @@ function routes.ApplyStopLook(marker, stop, textures)
 		texture = textures.turnIns[task.questID]
 	elseif task.kind == "pickUp" then
 		texture = textures.pickUps[task.questID]
-	elseif task.kind == "flightPath" then
+	elseif task.kind == "flightPath" or task.kind == "fly" then
 		texture = routes.FLIGHT_ICON -- The minimap tracking menu's flight master icon
 	else
 		texture = textures.objectives[task.objective]

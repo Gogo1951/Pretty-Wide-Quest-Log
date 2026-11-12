@@ -259,6 +259,7 @@ function routes.Signature()
 	parts[#parts + 1] = routes.Settings().predictiveRoutes and "predictive" or "done-only"
 	parts[#parts + 1] = routes.LocalQuestSignature()
 	parts[#parts + 1] = routes.FlightPathSignature()
+	parts[#parts + 1] = routes.FlyingSignature()
 	parts[#parts + 1] = tostring(routes.PlayerZone())
 	parts[#parts + 1] = UnitIsGhost("player") and "ghost" or "alive"
 	return table.concat(parts, ";")

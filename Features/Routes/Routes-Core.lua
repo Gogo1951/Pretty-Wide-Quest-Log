@@ -131,7 +131,7 @@ end
 -- Questie's copy of HereBeDragons, for world positions and distances in yards; nil until Questie has loaded it
 local hereBeDragons
 function routes.HereBeDragons()
-	hereBeDragons = hereBeDragons or LibStub("HereBeDragonsQuestie-2.0", true)
+	hereBeDragons = hereBeDragons or ns.QuestieHereBeDragons()
 	return hereBeDragons
 end
 

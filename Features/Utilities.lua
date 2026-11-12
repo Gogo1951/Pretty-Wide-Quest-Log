@@ -77,6 +77,30 @@ function ns.ImportQuestieModule(name)
 end
 
 --[[
+	Questie's own copies of HereBeDragons and its map pins, or nil until Questie has loaded them. Questie
+	12.8.0 moved them from LibStub (HereBeDragonsQuestie-2.0, HereBeDragonsQuestie-Pins-2.0) to its own
+	modules (HBD, HBDPins). ImportModule hands back an empty table for a module it doesn't have, so a
+	function each one has is the test
+]]
+function ns.QuestieHereBeDragons()
+	local library = LibStub("HereBeDragonsQuestie-2.0", true)
+	if library then
+		return library
+	end
+	local module = ns.ImportQuestieModule("HBD")
+	return module and type(module.GetPlayerWorldPosition) == "function" and module or nil
+end
+
+function ns.QuestieHereBeDragonsPins()
+	local library = LibStub("HereBeDragonsQuestie-Pins-2.0", true)
+	if library then
+		return library
+	end
+	local module = ns.ImportQuestieModule("HBDPins")
+	return module and type(module.AddMinimapIconWorld) == "function" and module or nil
+end
+
+--[[
 	Questie's quest log, keyed by quest ID, or nil when there's none to read. Questie 12.6.3 moved it from
 	QuestiePlayer.currentQuestlog (each value the quest) to the ActiveQuests module (each value an
 	acceptance, the quest under .quest, nil for a quest Questie's database lacks). The second return says

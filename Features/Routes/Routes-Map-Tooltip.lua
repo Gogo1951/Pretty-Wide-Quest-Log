@@ -126,6 +126,8 @@ function routes.AddStopTooltip(tooltip, stop)
 		if entry.flightPath then
 			local text = string.format(L["ROUTES_FLIGHT_PATH_FROM"], entry.task.flightMaster or "")
 			tooltip:AddLine(text, ns.GetColorRGB("TITLE"))
+		elseif entry.fly then
+			tooltip:AddLine(routes.TaskText(entry.task), ns.GetColorRGB("TITLE"))
 		elseif entry.pickUp then
 			local title, red, green, blue = routes.QuestTitle(entry.task)
 			tooltip:AddLine(string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue)
