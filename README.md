@@ -25,11 +25,11 @@ Simulated runs through every quest in a zone, on foot, against the plain nearest
 | Westfall | 27 | 22% | 10 min |
 | Loch Modan | 33 | 18% | 9 min |
 
+<img width="800" alt="Pasted 2026-11-12 at 1 11 10 AM" src="https://github.com/user-attachments/assets/fe0201b0-d666-4b08-887a-04999a445db0" />
+
 ### Quest Arrow
 
 <img width="400" src="https://github.com/user-attachments/assets/345a94f6-3897-4820-8cd3-8415e1cc7d27" />
-
-<img width="800" alt="Pasted 2026-11-12 at 1 11 10 AM" src="https://github.com/user-attachments/assets/fe0201b0-d666-4b08-887a-04999a445db0" />
 
 * **Always Know Where to Go** // An arrow on screen points to the next waypoint, with the distance in yards.
 * **What to Do When You Get There** // The quests and objectives at that waypoint are listed right under it.
