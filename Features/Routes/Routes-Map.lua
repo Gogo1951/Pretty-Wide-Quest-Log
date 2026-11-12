@@ -77,7 +77,7 @@ local hereBeDragonsPins
 
 -- Questie's copies of HereBeDragons and its map pins
 local function Libraries()
-	hereBeDragonsPins = hereBeDragonsPins or LibStub("HereBeDragonsQuestie-Pins-2.0", true)
+	hereBeDragonsPins = hereBeDragonsPins or ns.QuestieHereBeDragonsPins()
 	return routes.HereBeDragons(), hereBeDragonsPins
 end
 

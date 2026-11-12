@@ -970,6 +970,14 @@ local function YesNo(value)
 	return value and "yes" or "no"
 end
 
+-- Whether Questie's copy of a map library was found, and where: LibStub before Questie 12.8.0, its own module since
+local function QuestieLibraryFound(library, libStubName)
+	if not library then
+		return "not found"
+	end
+	return LibStub(libStubName, true) and "found (LibStub)" or "found (Questie module)"
+end
+
 local function Setting(lines, label, key)
 	local value = ns.db and ns.db.profile[key]
 	lines[#lines + 1] = string.format("%s: %s", label, tostring(value))
@@ -1997,7 +2005,7 @@ local function ObjectiveAreaLines(lines, pins, questID, mapID)
 		"Questie Phasing IsSpawnVisible: %s",
 		(phasing and type(phasing.IsSpawnVisible) == "function") and "found" or "not found, so every spawn counts"
 	)
-	local zoneLibrary = LibStub("HereBeDragonsQuestie-2.0", true)
+	local zoneLibrary = ns.QuestieHereBeDragons()
 	local width, height
 	if mapID and zoneLibrary and type(zoneLibrary.GetZoneSize) == "function" then
 		width, height = zoneLibrary:GetZoneSize(mapID)
@@ -2089,12 +2097,12 @@ function ns:BuildMapContextReport()
 	end
 
 	lines[#lines + 1] = ""
-	local pinsLibrary = LibStub("HereBeDragonsQuestie-Pins-2.0", true)
+	local pinsLibrary = ns.QuestieHereBeDragonsPins()
 	lines[#lines + 1] = string.format("Questie: %s", Loaded(ns.QUESTIE_ADDON_NAME))
 	lines[#lines + 1] = string.format(
-		"Questie's map libraries: HereBeDragonsQuestie-2.0 %s, HereBeDragonsQuestie-Pins-2.0 %s",
-		LibStub("HereBeDragonsQuestie-2.0", true) and "found" or "not found",
-		pinsLibrary and "found" or "not found"
+		"Questie's map libraries: HereBeDragons %s, HereBeDragons-Pins %s",
+		QuestieLibraryFound(ns.QuestieHereBeDragons(), "HereBeDragonsQuestie-2.0"),
+		QuestieLibraryFound(pinsLibrary, "HereBeDragonsQuestie-Pins-2.0")
 	)
 	if pinsLibrary then
 		local present = 0
@@ -2514,14 +2522,14 @@ local function ZoneMapLines(lines)
 	RouteSetting(lines, "Marker size (minimap)", "minimapMarkerScale")
 	-- The minimap's markers are placed through Questie's copy of HereBeDragons-Pins (Routes-Minimap.lua)
 	lines[#lines + 1] = string.format(
-		"HereBeDragonsQuestie-Pins-2.0 for the minimap markers: %s",
-		LibStub("HereBeDragonsQuestie-Pins-2.0", true) and "found" or "not found, so none show"
+		"Questie's HereBeDragons-Pins for the minimap markers: %s",
+		ns.QuestieHereBeDragonsPins() and "found" or "not found, so none show"
 	)
 	RouteSetting(lines, "Quest Route switch (the line)", "showLine")
 	RouteSetting(lines, "Line speed", "lineSpeed")
 	RouteSetting(lines, "Line opacity", "lineOpacity")
 	-- Questie's icons the route stands in for are hidden again each time Questie redraws, through these
-	local pins = LibStub("HereBeDragonsQuestie-Pins-2.0", true)
+	local pins = ns.QuestieHereBeDragonsPins()
 	local provider = pins and pins.worldmapProvider
 	lines[#lines + 1] = string.format(
 		"Questie's world map provider RefreshAllData / HandlePin: %s",
@@ -2637,8 +2645,8 @@ function ns:BuildRoutesContextReport()
 	lines[#lines + 1] =
 		string.format("Questie started: %s", tostring(type(Questie) == "table" and Questie.started or nil))
 	lines[#lines + 1] = string.format(
-		"HereBeDragonsQuestie-2.0: %s",
-		LibStub("HereBeDragonsQuestie-2.0", true) and "found" or "not found"
+		"Questie's HereBeDragons: %s",
+		QuestieLibraryFound(ns.QuestieHereBeDragons(), "HereBeDragonsQuestie-2.0")
 	)
 	lines[#lines + 1] =
 		string.format("QuestiePlayer module: %s", ns.ImportQuestieModule("QuestiePlayer") and "found" or "not found")

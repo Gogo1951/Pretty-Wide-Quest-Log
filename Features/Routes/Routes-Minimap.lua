@@ -24,7 +24,7 @@ local markers = {} -- Every marker made, handed out again in order
 local hereBeDragonsPins
 
 local function Pins()
-	hereBeDragonsPins = hereBeDragonsPins or LibStub("HereBeDragonsQuestie-Pins-2.0", true)
+	hereBeDragonsPins = hereBeDragonsPins or ns.QuestieHereBeDragonsPins()
 	return hereBeDragonsPins
 end
 
