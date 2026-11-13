@@ -47,9 +47,15 @@ local function Rows(kind, paths)
 	return rows
 end
 
+-- A row another list already added is skipped, so an API two features share shows once
+local appended = {}
+
 local function Append(target, rows)
 	for _, row in ipairs(rows) do
-		target[#target + 1] = row
+		if not appended[row[1]] then
+			appended[row[1]] = true
+			target[#target + 1] = row
+		end
 	end
 end
 
@@ -118,8 +124,15 @@ local SHARED_FUNCTIONS = {
 	"C_QuestLog.RequestLoadQuestByID",
 	-- The name a zone offer is whispered to when the party frame has none yet (Zone-Share-Offer.lua)
 	"GetPlayerInfoByGUID",
+	-- Where the player is on the quest log's map without Questie (Player-Map-Pin.lua), and Routes' positions
+	"C_Map.GetPlayerMapPosition",
 	-- Zone Info's zone menu, solid box, columns, item rows and Ask for Shares on LFG (Zone-Info.lua, Zone-Info-Data.lua)
 	"C_Map.GetMapChildrenInfo",
+	-- Things to Bring's names, links, bag counts and icons, read with no fallback, and an item asked for while it loads
+	"C_Item.GetItemInfo",
+	"C_Item.GetItemCount",
+	"C_Item.GetItemIconByID",
+	"C_Item.RequestLoadItemDataByID",
 	"GetChannelName",
 	"CopyTable",
 	"ScrollUtil.InitScrollFrameWithScrollBar",
@@ -261,8 +274,6 @@ local TURN_IN_MONEY_ROUTE = {
 local ROUTES_FUNCTIONS = {
 	"C_Map.GetBestMapForUnit",
 	"GetPlayerFacing",
-	-- Where the player is on the quest log's map without Questie (Player-Map-Pin.lua)
-	"C_Map.GetPlayerMapPosition",
 	"UnitIsGhost",
 	"UnitOnTaxi",
 	"GetCVarBool",
@@ -284,19 +295,71 @@ local ROUTES_FUNCTIONS = {
 	"UnitGUID",
 	"GetTaxiMapID",
 	"TaxiNodePosition",
+	-- Each flight path's name on the route, read off the zone's flight paths; without it the line names the flight master
+	"C_TaxiMap.GetTaxiNodesForMap",
 }
 
 -- The fonts a tooltip's click hints are set in (Routes-Core.lua)
 local ROUTES_TABLES = {
 	"GameTooltipText",
 	"GameTooltipHeaderText",
+	-- Which flight paths a flight map shows as known and as the one you're at; without it, the usual numbers (Routes-Flights.lua)
+	"Enum.FlightPathState",
 }
 
 -- How a map from Questie's database is matched to the player's zone (Routes-Questie.lua), and an instance's map told apart (Routes-Geography.lua)
 local ROUTES_NUMBERS = {
 	"Enum.UIMapType.Micro",
-	"Enum.UIMapType.Continent",
 	"Enum.UIMapType.Dungeon",
+}
+
+--[[
+	How many quests the log takes, so pick-ups stop short of a full log: the call, the global, or Classic's 20
+	(Routes-Pick-Ups.lua); and Blizzard's quest markers and objective areas on the world map, which the route
+	hides for what it shows, each layer only where the client has it (Routes-Map-Blizzard-Quests.lua)
+]]
+local ROUTES_ROUTES = {
+	{
+		"C_QuestLog.GetMaxNumQuestsCanAccept or MAX_QUESTS",
+		function()
+			return type(Resolve("C_QuestLog.GetMaxNumQuestsCanAccept")) == "function" or tonumber(MAX_QUESTS) ~= nil
+		end,
+	},
+	{
+		"QuestDataProviderMixin or QuestBlobDataProviderMixin",
+		function()
+			return type(Resolve("QuestDataProviderMixin")) == "table"
+				or type(Resolve("QuestBlobDataProviderMixin")) == "table"
+		end,
+	},
+}
+
+--[[
+	Zone Info (Zone-Info.lua): an item's name in its quality color, Shift-click linking it in chat, and Ask for
+	Shares on LFG opening the chat box, each through whichever call the client has
+]]
+local ZONE_INFO_ROUTES = {
+	{
+		"C_Item.GetItemQualityColor or GetItemQualityColor",
+		function()
+			return type(Resolve("C_Item.GetItemQualityColor")) == "function"
+				or type(Resolve("GetItemQualityColor")) == "function"
+		end,
+	},
+	{
+		"ChatFrameUtil.InsertLink or ChatEdit_InsertLink",
+		function()
+			return type(Resolve("ChatFrameUtil.InsertLink")) == "function"
+				or type(Resolve("ChatEdit_InsertLink")) == "function"
+		end,
+	},
+	{
+		"ChatFrameUtil.OpenChat or ChatFrame_OpenChat",
+		function()
+			return type(Resolve("ChatFrameUtil.OpenChat")) == "function"
+				or type(Resolve("ChatFrame_OpenChat")) == "function"
+		end,
+	},
 }
 
 -- The timed quests that go first: WoW Forever's call by quest ID, or the older timer calls (Routes-Questie.lua)
@@ -310,18 +373,17 @@ local TIMED_QUESTS_ROUTE = {
 
 --[[
 	The Quest Arrow's Use Item buttons (Routes-Arrow-Items.lua, Routes-Arrow-Item-Choice.lua): the item calls
-	under C_Item and C_Container, which they make with no fallback, and the key binding's lookups. The
-	client's own quest item (GetQuestLogSpecialItemInfo) is only from Wrath on, so Routes Context reports
-	it rather than a row requiring it
+	under C_Item and C_Container, which they make with no fallback (the count and icon calls, which Zone
+	Info makes too, are shared rows above), and the key binding's lookups. The client's own quest item
+	(GetQuestLogSpecialItemInfo) is only from Wrath on, so Routes Context reports it rather than a row
+	requiring it
 ]]
 local ITEM_BUTTON_FUNCTIONS = {
 	"CreateFrame",
 	"GetBindingKey",
 	"GetBindingText",
 	"UnitIsFriend",
-	"C_Item.GetItemCount",
 	"C_Item.GetItemSpell",
-	"C_Item.GetItemIconByID",
 	"C_Item.IsItemInRange",
 	"C_Item.IsEquippableItem",
 	"C_Container.GetItemCooldown",
@@ -427,6 +489,8 @@ local OWN_WINDOW_FUNCTIONS = {
 	"GetQuestLogRewardMoney",
 	"GetQuestLogRewardXP",
 	"GetQuestLogItemLink",
+	-- How far Mists looks for currency rewards, whose indexes can skip; without it, only as far as the quest's count (Quest-Details-Data.lua)
+	"GetMaxRewardCurrencies",
 	"C_QuestLog.ShouldShowQuestRewards",
 	-- Reward spells, left out where the client lacks these or the spell is already known (Quest-Details-Data.lua)
 	"C_QuestInfoSystem.GetQuestRewardSpells",
@@ -616,10 +680,16 @@ local QUEST_LOOKUP_ROUTES = {
 local OWN_WINDOW_MAP_FUNCTIONS = {
 	"GetQuestUiMapID",
 	"C_QuestLog.GetQuestsOnMap",
+	-- Stops clicks on Blizzard's entrance and flight point pins, which would super-track from add-on code
+	"MapCanvasMixin.AddGlobalPinMouseActionHandler",
 }
 
 local OWN_WINDOW_MAP_TABLES = {
 	"QuestBlobDataProviderMixin",
+	"MapCanvasMixin.MouseAction",
+	-- The dungeon entrance and flight point layers, each added only where the client has it
+	"DungeonEntranceDataProviderMixin",
+	"FlightPointDataProviderMixin",
 }
 
 -- WoW Forever's next waypoint for the marker, and its takeover from Blizzard's map (Forever-Quest-Map.lua, Forever-Quest-Log-Key.lua)
@@ -640,6 +710,11 @@ Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", { "issecretvalue" }))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", GIVER_PAGE_TABLES))
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", GIVER_PAGE_FUNCTIONS))
 Append(ns.DIAGNOSTIC_API_CHECKS, { REWARDS_HEADING_ROUTE, TURN_IN_MONEY_ROUTE, KEY_BINDINGS_ROUTE })
+Append(ns.DIAGNOSTIC_API_CHECKS, ZONE_INFO_ROUTES)
+-- Zone Info's zone menu lists each continent's zones (Zone-Info-Data.lua), and Routes matches a continent's map
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "Enum.UIMapType.Continent", "Enum.UIMapType.Zone" }))
+-- How far into the quest text the quest giver window's fade starts; without it, 30 (Quest-Giver.lua)
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "QUEST_DESCRIPTION_GRADIENT_LENGTH" }))
 -- Routes is one TOC line (Routes.xml), so a release can leave it out
 if ns.routes then
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", ROUTES_FUNCTIONS))
@@ -648,6 +723,7 @@ if ns.routes then
 	-- The line that marks the flight master the player talks to as known (Routes-Flights.lua)
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "ERR_NEWTAXIPATH" }))
 	Append(ns.DIAGNOSTIC_API_CHECKS, { TIMED_QUESTS_ROUTE, ON_QUEST_ROUTE })
+	Append(ns.DIAGNOSTIC_API_CHECKS, ROUTES_ROUTES)
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", ITEM_BUTTON_FUNCTIONS))
 end
 -- The map's frame, built in Features/Quest-Map.xml, which only a client with the map lists (Quest-Map.lua)
@@ -748,7 +824,8 @@ end
 	("other"). The sample dungeon is a single area ID beside the sample quests rather than a table of its
 	own, so its source reaches it through the quest table's file and names the constant in a DATA_ column.
 	The Wowhead address and the corpse icon's coords are single settings, not tables of IDs, so each prints
-	its value itself ("value").
+	its value itself ("value"). The Game-IDs map tables hold uiMapIDs, which C_Map.GetMapInfo looks up
+	("map"); its flight master NPC IDs answer to no client lookup, so they print their row count ("other").
 ]]
 local function KeyId(id)
 	return id
@@ -768,8 +845,44 @@ local function CollectSampleAreas()
 	return rows
 end
 
+-- Each city's map and the zone map it's in, a row apiece, both carrying the pair
+local function CollectCityZoneMaps(rows)
+	local entries = {}
+	for cityID, zoneID in pairs(rows) do
+		entries[#entries + 1] = { id = cityID, key = cityID, row = zoneID }
+		entries[#entries + 1] = { id = zoneID, key = cityID, row = zoneID }
+	end
+	return entries
+end
+
 ns.DIAGNOSTIC_DATA_SOURCES = {
 	-- { label, sources = { { table, kind, rowId or collect, dataColumns } } }
+	{
+		label = "Game-IDs",
+		sources = {
+			{
+				table = "CITY_ZONE_MAP_IDS",
+				kind = "map",
+				collect = CollectCityZoneMaps,
+				dataColumns = {
+					{
+						"DATA_CITY_MAP_ID",
+						function(cityID)
+							return cityID
+						end,
+					},
+					{
+						"DATA_ZONE_MAP_ID",
+						function(_, zoneID)
+							return zoneID
+						end,
+					},
+				},
+			},
+			{ table = "WORLD_ROOT_MAP_IDS", kind = "map", rowId = ListedId },
+			{ table = "NOT_FLIGHT_PATH_NPC_IDS", kind = "other" },
+		},
+	},
 	{
 		label = "Map-Icons",
 		sources = { { table = "CORPSE_ICON_COORDS", kind = "value" } },
@@ -841,6 +954,8 @@ local SHARED_LABELS = {
 	"CANCEL",
 	"ERR_NOT_IN_GROUP",
 	"RELOADUI",
+	-- The button on the popup as Predictive Questing Routes turns on (Routes-Chains.lua)
+	"OKAY",
 	-- The zone heading for quests outside any zone in the turn-in line's tooltip, and its thousands separator
 	"OTHER",
 	"LARGE_NUMBER_SEPERATOR",
@@ -855,6 +970,8 @@ local SHARED_LABELS = {
 	"NOT_BOUND",
 	-- The menu the chat line names when Set Key can't open the Key Bindings list (Key-Bindings.lua)
 	"GAMEMENU_OPTIONS",
+	-- The zone heading in Zone Info's Quests to Pick Up for a giver with no zone (Zone-Info.lua)
+	"UNKNOWN",
 }
 
 -- The window's own text (WoW Forever and Mists)
@@ -2220,6 +2337,31 @@ function ns:BuildMapContextReport()
 	table.sort(wanted)
 	lines[#lines + 1] =
 		string.format("Zone Info pick-ups on the route: %s", #wanted > 0 and table.concat(wanted, ", ") or "(none)")
+	--[[
+		The box builds only with the wide quest log on, and its lists need Routes, Questie started with its map
+		library, Questie's database and its set of available quests; until then it reads "Reading quests..."
+		or that it needs Questie (Zone-Info.lua, Zone-Info-Data.lua's Build)
+	]]
+	local zoneInfoData = ns.zoneInfoData
+	lines[#lines + 1] = string.format("Zone Info built: %s", YesNo(ns.zoneInfo and ns.zoneInfo.built))
+	if zoneInfoData then
+		local zoneMapID = (questMap and questMap.browseMapID) or (canvas and canvas:GetMapID())
+		lines[#lines + 1] = MapLine("Zone Info zone", zoneMapID and zoneInfoData.ZoneOf(zoneMapID))
+		lines[#lines + 1] =
+			string.format("Zone Info working out a zone's lists now: %s", YesNo(zoneInfoData.IsWorking()))
+		lines[#lines + 1] =
+			string.format("Things to Bring items still loading: %d", CountKeys(zoneInfoData.pendingItems))
+	end
+	local questieDB = ns.ImportQuestieModule("QuestieDB")
+	local availableQuests = ns.ImportQuestieModule("AvailableQuests")
+	local available = availableQuests and availableQuests.__availableQuests
+	lines[#lines + 1] = string.format(
+		"Zone Info lists need: Routes %s, Questie ready for a route %s, QuestieDB queries %s, Questie's available quests %s",
+		ns.routes and "loaded" or "MISSING",
+		YesNo(ns.routes and ns.routes.IsQuestieReady()),
+		YesNo(questieDB and type(questieDB.QueryQuestSingle) == "function"),
+		type(available) == "table" and tostring(CountKeys(available)) or "not yet"
+	)
 
 	return table.concat(lines, "\n")
 end
@@ -2539,6 +2681,8 @@ local function ZoneMapLines(lines)
 		(type(Questie) == "table" and type(Questie.usedIcons) == "table") and "found" or "not found"
 	)
 	RouteSetting(lines, "Marker size (zone map)", "markerScale")
+	-- The zone map draws this many waypoints ahead, close ones counting as one, then a "…" marker; 0 is all (Routes-Map.lua)
+	RouteSetting(lines, "Waypoints shown (zone map)", "waypointsShown")
 	-- Maps & Objectives: the markers on continent and world maps, and on the minimap (Routes-Minimap.lua)
 	RouteSetting(lines, "Markers on continent and world maps", "showWideMapMarkers")
 	RouteSetting(lines, "Marker size (continent and world maps)", "wideMarkerScale")
