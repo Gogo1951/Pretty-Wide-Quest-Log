@@ -93,6 +93,10 @@ Fun fact: Questie once planned a Routes feature for TBC Classic, but it never ma
 
 <img width="800" alt="Questie Routes" src="https://github.com/user-attachments/assets/1453ba73-15ec-4aaa-b546-a351246cc8d0" />
 
+### Plan Ahead
+
+https://github.com/Gogo1951/Pretty-Wide-Quest-Log/pull/68#event-35661538125
+
 ### Quest Chains
 
 Never lose your place in a long chain again. With Questie installed, the selected quest's details list every step of its chain, checking off the ones you've turned in and highlighting the one you're on. Hover any step for Questie's tooltip on it.
