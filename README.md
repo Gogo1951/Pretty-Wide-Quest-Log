@@ -95,7 +95,9 @@ Fun fact: Questie once planned a Routes feature for TBC Classic, but it never ma
 
 ### Plan Ahead
 
-https://github.com/Gogo1951/Pretty-Wide-Quest-Log/pull/68#event-35661538125
+<img width="580" height="572" alt="image" src="https://github.com/user-attachments/assets/5631ba87-d663-4b22-9953-9995f0c21897" />
+
+With Zone Notes you'll never have to stop mid-run to go back to town.
 
 ### Quest Chains
 
