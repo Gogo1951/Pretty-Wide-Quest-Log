@@ -6,7 +6,7 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 
 ## Turns Icon Soup into an Actionable Route
 
-<img width="800" src="https://github.com/user-attachments/assets/52c31024-0ec6-4342-870c-19b3ba03c1e1" />
+<img width="800" src="https://github.com/user-attachments/assets/e3e9b517-0333-4d75-82b3-79c97cfe7241" />
 
 ## With an Easy-to-Follow Guide Arrow
 
