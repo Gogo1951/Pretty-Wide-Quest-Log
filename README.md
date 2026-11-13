@@ -4,6 +4,14 @@ Wide quest log with a quest route and quest arrow. You pick the quests, we help 
 
 **TL;DR:** Quest with confidence and speed. A clean route through every quest you picked, an arrow to follow, the quest log Blizzard should have shipped, and your whole group on the same quests without typing a word.
 
+## Turns Icon Soup into an Actionable Route
+
+<img width="800" src="https://github.com/user-attachments/assets/52c31024-0ec6-4342-870c-19b3ba03c1e1" />
+
+## With an Easy-to-Follow Guide Arrow
+
+<img width="800" src="https://github.com/user-attachments/assets/a5d6bc3a-6f05-468e-aed7-6dc9af7387c5" />
+
 ### Quest Route
 
 <img width="800" alt="README-Infographic-Routes-on-Zone-Map" src="https://github.com/user-attachments/assets/67e326f3-5914-4dde-8843-d3ed55af852a" />
