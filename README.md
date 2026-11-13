@@ -49,6 +49,8 @@ Simulated runs through every quest in a zone, on foot, against the plain nearest
 
 <img width="800" alt="README-Infographic-Wide-Quest-Log" src="https://github.com/user-attachments/assets/02b81053-ffec-4fbf-834b-fb7e855a51a6" />
 
+<img width="800" src="https://github.com/user-attachments/assets/4068cf0c-4d0e-4ddf-989b-0bf2682226ef" />
+
 * **Everything at a Glance** // Your quests by zone, the selected quest's details, and its map, side by side.
 * **Spot the Tough Ones** // Level and type tags like [40D] flag dungeon, raid, elite, group, and PvP quests before you read a word.
 * **A Map Without the Icon Soup** // The map shows only the selected quest, with one shaded area and one icon per objective.
