@@ -59,6 +59,7 @@ Data/TBC/Map-Icons-TBC.lua
 Data/TBC/Map-Reveal-TBC.lua
 Data/TBC/Quest-Tags-TBC.lua
 Data/TBC/Sample-Quests-TBC.lua
+Data/TBC/Quest-Item-Counts-TBC.lua
 Data/TBC/Wowhead-TBC.lua
 Data/Default-Settings.lua
 
@@ -110,6 +111,8 @@ Features/Questie-Map-Area-Layer.lua
 Features/Classic-Quest-Map.lua
 Features/Quest-Map-Reveal.lua
 Features/Routes/Routes.xml
+Features/Zone-Info-Data.lua
+Features/Zone-Info.lua
 Features/Classic-ElvUI.lua
 
 # Diagnostics

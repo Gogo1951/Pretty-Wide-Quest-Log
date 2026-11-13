@@ -6,7 +6,7 @@ Pretty Wide Quest Log turns the quest log into one wide window and, with Questie
 
 ## What's New
 
-1. With Questie on, press `M` in a zone with quests you haven't picked up yet; the route should send you to their givers, with gray markers on their objectives, and turning off **Predictive Questing Routes** under **Route** on the Quest Arrow's menu should take those away.
+1. With Questie on, check that **Predictive Questing Routes** under **Route** on the Quest Arrow's menu starts **Off**; turn it on, press `M` in a zone with quests you haven't picked up yet, and the route should send you to their givers, with gray markers on their objectives.
 2. Head for a camp of mobs your quest needs; the Quest Arrow should keep pointing until you're among them, and the route should finish the camp before going off to a turn-in.
 3. On a new character, follow the Quest Arrow to **Get the Flight Path From** your zone's flight master (on an older character, open any flight map once first).
 4. In a party where you both run Questie, split up far apart in the same zone; your Quest Arrows should say **Group Up** and lead you to a spot marked on the world map.
@@ -15,11 +15,12 @@ Pretty Wide Quest Log turns the quest log into one wide window and, with Questie
 7. Click **Set Key** under **Key Bindings** on the main options panel, bind **Use Quest Item**, and press it beside a Quest Arrow quest with an item to use, in combat too.
 8. Change the font in the **Font** section of **Quest List**, **Quest Details**, **Window & Map** and **NPC Dialogue**, then click **Reset Font**.
 9. Under **Maps & Objectives**, turn on **Show Waypoint Markers on the Mini-map**, and change the marker size on each map panel.
+10. With Questie on, press `L` and use the zone menu under the map to pick **Badlands** (or any zone you haven't quested in); **Quests to Pick Up** should list quests for it that start in other zones, with who gives them, and **Things to Bring** the items its quests need, with your bag count. Click a quest's **+**, then travel to its giver's zone; the Quest Arrow should send you to them.
 
 ## Everything Else
 
-10. Press `L` and change **Zone Order** and **Quest Order** under **Quest List** in the options; the list should re-sort.
-11. With Questie on, select a quest that has you kill or collect things; the map beside the log should shade each area, and a quest in a chain should list its steps.
-12. Walk into a dungeon you have quests for with a party; party chat should list them, and each member should be offered the ones they don't have.
-13. On WoW Forever and MoP Classic, press `L` in and out of combat, and open the quest log from the micro menu; it should be the wide quest log every time.
-14. Open the options with `/pwql` and from **Options > AddOns > Pretty Wide Quest Log**, then try `/pwql` in combat; it should refuse with a chat message.
+11. Press `L` and change **Zone Order** and **Quest Order** under **Quest List** in the options; the list should re-sort.
+12. With Questie on, select a quest that has you kill or collect things; the map beside the log should shade each area, and a quest in a chain should list its steps.
+13. Walk into a dungeon you have quests for with a party; party chat should list them, and each member should be offered the ones they don't have.
+14. On WoW Forever and MoP Classic, press `L` in and out of combat, and open the quest log from the micro menu; it should be the wide quest log every time.
+15. Open the options with `/pwql` and from **Options > AddOns > Pretty Wide Quest Log**, then try `/pwql` in combat; it should refuse with a chat message.

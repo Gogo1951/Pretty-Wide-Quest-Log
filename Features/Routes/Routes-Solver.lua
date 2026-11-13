@@ -103,9 +103,26 @@ local function Point(node)
 	return node.candidates[node.choice]
 end
 
--- Each node's place in the route
+local NONE = {} -- For a node that requires nothing, so the loops over requirements make no table
+
+--[[
+	Each node's place in the route. The searches ask for it thousands of times a plan, so each plan's
+	coroutine (the planner yields between frames) fills one table over and over rather than making a new
+	one each time; a coroutine done with is let go (weak keys). Each caller is done with it before the next
+	asks, and none holds it across a call that asks again
+]]
+local positionsFor = setmetatable({}, { __mode = "k" })
+local MAIN_THREAD = {}
+
 local function Positions(route)
-	local positions = {}
+	local thread = coroutine.running() or MAIN_THREAD
+	local positions = positionsFor[thread]
+	if positions then
+		wipe(positions)
+	else
+		positions = {}
+		positionsFor[thread] = positions
+	end
 	for i, node in ipairs(route) do
 		positions[node] = i
 	end
@@ -128,7 +145,7 @@ end
 --------------------------------------------------------------------------------
 
 local function IsReady(node, placed)
-	for _, required in ipairs(node.requires or {}) do
+	for _, required in ipairs(node.requires or NONE) do
 		if not placed[required] then
 			return false
 		end
@@ -139,7 +156,7 @@ end
 -- The first place a node may go: after the last node it requires
 local function FirstSlot(node, positions)
 	local slot = 1
-	for _, required in ipairs(node.requires or {}) do
+	for _, required in ipairs(node.requires or NONE) do
 		local position = positions[required]
 		if position and position + 1 > slot then
 			slot = position + 1
@@ -435,7 +452,7 @@ local function Shake(start, route, yield, most)
 
 	local dependents = {}
 	for _, node in ipairs(route) do
-		for _, required in ipairs(node.requires or {}) do
+		for _, required in ipairs(node.requires or NONE) do
 			dependents[required] = dependents[required] or {}
 			table.insert(dependents[required], node)
 		end
@@ -452,7 +469,7 @@ local function Shake(start, route, yield, most)
 			node.choice = Random(#node.candidates)
 			local positions = Positions(trial)
 			local firstSlot, lastSlot = FirstSlot(node, positions), #trial + 1
-			for _, dependent in ipairs(dependents[node] or {}) do
+			for _, dependent in ipairs(dependents[node] or NONE) do
 				lastSlot = math.min(lastSlot, positions[dependent])
 			end
 			table.insert(trial, firstSlot + Random(lastSlot - firstSlot + 1) - 1, node)
@@ -510,7 +527,7 @@ local function KeepCampsWhole(start, route, yield)
 				local positions = Positions(route)
 				local firstSlot, lastSlot = FirstSlot(node, positions), #route + 1
 				for _, other in ipairs(route) do
-					for _, required in ipairs(other.requires or {}) do
+					for _, required in ipairs(other.requires or NONE) do
 						if required == node then
 							lastSlot = math.min(lastSlot, positions[other])
 						end

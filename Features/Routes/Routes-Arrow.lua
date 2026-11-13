@@ -372,8 +372,9 @@ local function PointNext(hereBeDragons, x, y, instance, facing, heading, rewrite
 end
 
 --[[
-	The little arrow on each "Pick up" line in the list, to the quest giver, turned and colored as the big
-	one would be (Routes-Arrow-List.lua lays them out, hidden until turned here, so none shows unturned)
+	The little arrow on each quest's title in the list, to the middle of its objective area or its giver,
+	turned and colored as the big one would be (Routes-Arrow-List.lua lays them out, hidden until turned
+	here, so none shows unturned)
 ]]
 local function PointLines(hereBeDragons, x, y, instance, facing, heading)
 	for _, line in ipairs(routes.arrowPointingLines or {}) do
@@ -480,7 +481,7 @@ local function Point(self, elapsed)
 	routes.arrowTarget, routes.arrowNext = view, nextStop -- What the menu's rows ignore
 	if survey or view ~= listed or nextStop ~= listedNext or listedMeet then
 		listed, listedNext, listedMeet = view, nextStop, nil
-		nextShown = routes.ListArrowQuests(view, here and areaNote or nil, passing, nextStop)
+		nextShown = routes.ListArrowQuests(view, here and areaNote or nil, passing, nextStop, nil, not here)
 	end
 	if not located then
 		arrow:Hide()

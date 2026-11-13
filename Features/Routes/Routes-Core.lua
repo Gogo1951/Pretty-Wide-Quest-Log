@@ -82,7 +82,7 @@ end
 
 --[[
 	MIGRATION (remove after 2026-12-11): Show Future Turn-Ins (showUpcomingTurnIns) is part of Predictive
-	Questing Routes (predictiveRoutes) now, on by default, so it's dropped from the profile, and
+	Questing Routes (predictiveRoutes) now, so it's dropped from the profile, and
 	planQuestChains, from test builds
 ]]
 local function DropPredictiveSettings()

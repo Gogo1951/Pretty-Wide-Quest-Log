@@ -59,11 +59,13 @@ Data/Vanilla/Map-Icons-Vanilla.lua
 Data/Vanilla/Map-Reveal-Vanilla.lua
 Data/Vanilla/Quest-Tags-Vanilla.lua
 Data/Vanilla/Sample-Quests-Vanilla.lua
+Data/Vanilla/Quest-Item-Counts-Vanilla.lua
 Data/Vanilla/Wowhead-Vanilla.lua
 Data/Discovery/Map-Icons-Discovery.lua
 Data/Discovery/Map-Reveal-Discovery.lua
 Data/Discovery/Quest-Tags-Discovery.lua
 Data/Discovery/Sample-Quests-Discovery.lua
+Data/Discovery/Quest-Item-Counts-Discovery.lua
 Data/Discovery/Wowhead-Discovery.lua
 Data/Default-Settings.lua
 
@@ -115,6 +117,8 @@ Features/Questie-Map-Area-Layer.lua
 Features/Classic-Quest-Map.lua
 Features/Quest-Map-Reveal.lua
 Features/Routes/Routes.xml
+Features/Zone-Info-Data.lua
+Features/Zone-Info.lua
 Features/Classic-ElvUI.lua
 
 # Diagnostics

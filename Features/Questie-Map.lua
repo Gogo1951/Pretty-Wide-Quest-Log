@@ -244,14 +244,10 @@ ns.AddWideQuestLogPart(function()
 
 	local zoneChanged -- Whether ShowZone moved the map, which already redrew Questie's icons with every layer
 
-	local function ShowZone(mapID)
-		shownMapID = mapID
-		if questMap.ShowMap(mapID) then
-			zoneChanged = true
-		end
-	end
-
-	-- A quest with icons in more than one zone gets a dropdown on the map to pick between them
+	--[[
+		A quest with icons in more than one zone gets a dropdown on the map to pick between them. With Zone
+		Info on (Zone-Info.lua) it's always there, as Zone Info's zone menu too
+	]]
 	local zoneDropdown = CreateFrame("DropdownButton", nil, questMap.holder, "WowStyle2DropdownTemplate")
 	zoneDropdown:SetPoint("TOPLEFT", canvas, "TOPLEFT", ns.LAYOUT.SPACE.NEAR, -ns.LAYOUT.SPACE.NEAR)
 	zoneDropdown:SetWidth(ZONE_DROPDOWN_WIDTH)
@@ -259,17 +255,115 @@ ns.AddWideQuestLogPart(function()
 	zoneDropdown:Hide()
 	questMap.zoneDropdown = zoneDropdown
 
+	local function ZoneName(mapID)
+		local mapInfo = C_Map.GetMapInfo(mapID)
+		return mapInfo and mapInfo.name or tostring(mapID)
+	end
+
+	--[[
+		While Zone Info's menu has another zone picked (questMap.browseMapID), the map stays on it, and the
+		selected quest's icons there still draw. questMap.onZoneShown, where set, hears each zone the map is put on.
+		The dropdown names the zone shown, which one zone can be under several of Zone Info's groups at once
+	]]
+	local function ShowZone(mapID)
+		mapID = questMap.browseMapID or mapID
+		shownMapID = mapID
+		if questMap.ShowMap(mapID) then
+			zoneChanged = true
+		end
+		if zoneDropdown.OverrideText and mapID then
+			zoneDropdown:OverrideText(ZoneName(mapID))
+		end
+		if questMap.onZoneShown then
+			questMap.onZoneShown(mapID)
+		end
+	end
+
+	-- The zone the map was last put on, by the quest or by Zone Info's menu
+	function questMap.ShownZone()
+		return shownMapID
+	end
+
+	--[[
+		One of the selected quest's zones, from the dropdown or from Zone Info's menu: the map goes there and
+		stays while the quest stays selected, ending any look at another zone. Returns whether it was one
+	]]
+	function questMap.PickQuestZone(mapID)
+		if not tContains(zones, mapID) then
+			return false
+		end
+		if questMap.browseMapID and questMap.EndBrowse then
+			questMap.EndBrowse()
+		end
+		chosenMapID = mapID
+		ShowZone(mapID)
+		return true
+	end
+
+	--[[
+		The quest's zones, and with Zone Info on (questMap.AddZoneInfoMenu, Zone-Info.lua) Back to Quest while
+		it looks at another zone, This Quest over the quest's zones, then Zone Info's own groups of zones
+	]]
 	zoneDropdown:SetupMenu(function(_, rootDescription)
+		local zoneInfo = questMap.zoneInfoShown and questMap.AddZoneInfoMenu
+		if zoneInfo and questMap.browseMapID then
+			rootDescription:CreateButton(ns.L["ZONE_INFO_BACK"], function()
+				questMap.EndBrowse()
+				questMap.FollowQuest()
+			end)
+			rootDescription:CreateDivider()
+		end
+		if zoneInfo and #zones > 0 then
+			rootDescription:CreateTitle(ns.L["ZONE_INFO_MENU_QUEST"])
+		end
 		for _, mapID in ipairs(zones) do
-			local mapInfo = C_Map.GetMapInfo(mapID)
-			rootDescription:CreateRadio(mapInfo and mapInfo.name or tostring(mapID), function(data)
-				return data == shownMapID
-			end, function(data)
-				chosenMapID = data
-				ShowZone(data)
-			end, mapID)
+			rootDescription:CreateRadio(ZoneName(mapID), function(data)
+				return data == shownMapID and not questMap.browseMapID
+			end, questMap.PickQuestZone, mapID)
+		end
+		if zoneInfo then
+			questMap.AddZoneInfoMenu(rootDescription)
 		end
 	end)
+
+	--[[
+		The menu is worked out when it opens, or at once while it's open or as it comes into view, rather than
+		on every refresh: with Zone Info on it reads every available quest's zone, and the map refreshes each
+		time Questie moves an icon. The button's text is set apart (OverrideText in ShowZone)
+	]]
+	local menuStale = false
+	local function FreshenMenu()
+		if menuStale then
+			menuStale = false
+			zoneDropdown:GenerateMenu()
+		end
+	end
+	if type(zoneDropdown.OpenMenu) == "function" then
+		local OpenMenu = zoneDropdown.OpenMenu
+		zoneDropdown.OpenMenu = function(self, ...)
+			FreshenMenu()
+			return OpenMenu(self, ...)
+		end
+	end
+	local OnMouseDown = zoneDropdown:GetScript("OnMouseDown")
+	if OnMouseDown then
+		zoneDropdown:SetScript("OnMouseDown", function(self, ...)
+			FreshenMenu()
+			return OnMouseDown(self, ...)
+		end)
+	end
+	local canWait = type(zoneDropdown.OpenMenu) == "function" and type(zoneDropdown.IsMenuOpen) == "function"
+
+	-- Shown for a quest across zones, and always while Zone Info shows
+	local function UpdateZoneDropdown()
+		local wasShown = zoneDropdown:IsShown()
+		zoneDropdown:SetShown(#zones > 1 or questMap.zoneInfoShown or false)
+		menuStale = true
+		if not canWait or zoneDropdown:IsMenuOpen() or (zoneDropdown:IsShown() and not wasShown) then
+			FreshenMenu()
+		end
+	end
+	hooksecurefunc(questMap, "SetZoneInfoShown", UpdateZoneDropdown)
 
 	--[[
 		Puts the map on a quest from Questie's icons: the zone picked from the dropdown while the quest stays
@@ -280,6 +374,10 @@ ns.AddWideQuestLogPart(function()
 	function questMap.FollowQuestieQuest(questID, fallbackMapID)
 		if questID ~= shownQuestID then
 			chosenMapID = nil
+			-- Picking another quest in the log ends a look at another zone (Zone-Info.lua)
+			if questMap.browseMapID and shownQuestID ~= nil and questMap.EndBrowse then
+				questMap.EndBrowse()
+			end
 		end
 		shownQuestID = questID
 		zones = QuestZones(questID)
@@ -295,9 +393,7 @@ ns.AddWideQuestLogPart(function()
 			mapID = playerMapID
 		end
 		ShowZone(mapID)
-
-		zoneDropdown:SetShown(#zones > 1)
-		zoneDropdown:GenerateMenu()
+		UpdateZoneDropdown()
 
 		local hasIcons = #zones > 0
 		questMap.questieQuestID = hasIcons and questID or nil

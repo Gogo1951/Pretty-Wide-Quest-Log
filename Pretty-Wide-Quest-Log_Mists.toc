@@ -59,6 +59,7 @@ Data/Mists/Map-Icons-Mists.lua
 Data/Mists/Map-Reveal-Mists.lua
 Data/Mists/Quest-Tags-Mists.lua
 Data/Mists/Sample-Quests-Mists.lua
+Data/Mists/Quest-Item-Counts-Mists.lua
 Data/Mists/Wowhead-Mists.lua
 Data/Default-Settings.lua
 
@@ -115,6 +116,8 @@ Features/Questie-Map-Area-Layer.lua
 Features/Forever-Quest-Map.lua
 Features/Quest-Map-Reveal.lua
 Features/Routes/Routes.xml
+Features/Zone-Info-Data.lua
+Features/Zone-Info.lua
 Features/Mists-Quest-Portrait.lua
 
 # Diagnostics

@@ -133,6 +133,31 @@ local function ObjectiveAreasToggle(order)
 end
 
 --[[
+	Show Zone Info changes only the map and the box under it, which lay out again at once. Its lists come
+	from Questie, so without it the toggle is grayed out and its tooltip says why, as Show Objective Areas does
+]]
+local function ZoneInfoToggle(order)
+	local toggle = QuestLogToggle("showZoneInfo", "SHOW_ZONE_INFO", nil, order)
+	toggle.hidden = MapHidden
+	toggle.disabled = function()
+		return Inactive() or not QuestieLoaded()
+	end
+	toggle.desc = function()
+		if QuestieLoaded() then
+			return L["SHOW_ZONE_INFO_DESCRIPTION"]
+		end
+		return L["SHOW_ZONE_INFO_DESCRIPTION"] .. "\n" .. GetColor("OFF") .. L["NEEDS_QUESTIE_HINT"] .. "|r"
+	end
+	toggle.set = function(_, value)
+		ns.db.profile.showZoneInfo = value
+		if ns.zoneInfo.Apply then
+			ns.zoneInfo.Apply()
+		end
+	end
+	return toggle
+end
+
+--[[
 	A sub-option of the order dropdown above it, on its own indented row; the row hides it, not itself. Its
 	silver caption would stay bright on a grayed-out checkbox, so it drops the silver while grayed out
 ]]
@@ -301,6 +326,8 @@ function ns.BuildWindowMapOptions()
 		closeInCombat = QuestLogToggle("closeInCombat", "CLOSE_IN_COMBAT", nil, 35),
 		spaceObjectiveAreas = ns.OptionsSpacer(36, MapHidden),
 		showObjectiveAreas = ObjectiveAreasToggle(37),
+		spaceZoneInfo = ns.OptionsSpacer(37.1, MapHidden),
+		showZoneInfo = ZoneInfoToggle(37.2),
 
 		spaceWindowScale = ns.OptionsSpacer(38, Hidden),
 		windowScaleLabel = ns.OptionsRowLabel(L["WINDOW_SCALE"], 39, nil, Hidden, L["WINDOW_SCALE_DESCRIPTION"]),

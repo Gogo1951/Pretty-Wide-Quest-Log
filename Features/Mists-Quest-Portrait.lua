@@ -10,6 +10,7 @@ local holder = ns.questMap.holder -- The map docked to the window's right (Quest
 local MODEL_WIDTH, MODEL_HEIGHT = 198, 230 -- Blizzard's own quest giver model
 local NAME_HEIGHT = 20 -- The strip under the model the giver's name sits in
 local GAP = LAYOUT.SPACE.LINE -- Between the map and the box under it
+local SPACE_TIGHT = LAYOUT.SPACE.TIGHT -- The box's border over the map's, beside it
 local MIN_MODEL_HEIGHT = 60 -- Any less room under the map and the box hides
 -- Where the box goes beside the window while the map is closed, as Blizzard's quest log puts its own
 local BESIDE_X, BESIDE_Y = -5, -42
@@ -66,6 +67,17 @@ local function FitUnderMap()
 	return true
 end
 
+--[[
+	Beside the map's top-right corner, at Blizzard's size, while Zone Info takes the room under the map
+	(Zone-Info.lua)
+]]
+local function PlaceBesideMap()
+	box:ClearAllPoints()
+	box:SetPoint("TOPLEFT", holder, "TOPRIGHT", -SPACE_TIGHT, 0)
+	SetModelSize(MODEL_WIDTH, MODEL_HEIGHT)
+	return true
+end
+
 local function PlaceBesideWindow()
 	box:ClearAllPoints()
 	box:SetPoint("TOPLEFT", frame, "TOPRIGHT", BESIDE_X, BESIDE_Y)
@@ -116,7 +128,7 @@ local posedAs -- The giver last posed, so a refresh doesn't start the model over
 
 --[[
 	For the quest the details show, which they select first, so GetQuestLogPortraitGiver reads it. Under the
-	map while the map is open, otherwise beside the window. Nothing changes for a quest the details didn't
+	map while the map is open (beside it with Zone Info under it), otherwise beside the window. Nothing changes for a quest the details didn't
 	take (the quest giver window had the quest text), and quests with no giver to show, or an empty window, hide it
 ]]
 local function Update()
@@ -133,7 +145,8 @@ local function Update()
 	end
 	local portrait, _, name, mount, modelSceneID = GetQuestLogPortraitGiver()
 	local hasGiver = portrait and portrait ~= 0 and (not QuestLogShouldShowPortrait or QuestLogShouldShowPortrait())
-	local placed = hasGiver and (holder:IsShown() and FitUnderMap() or (not holder:IsShown() and PlaceBesideWindow()))
+	local underMap = ns.questMap.zoneInfoShown and PlaceBesideMap or FitUnderMap
+	local placed = hasGiver and (holder:IsShown() and underMap() or (not holder:IsShown() and PlaceBesideWindow()))
 	if not placed then
 		box:Hide()
 		return
@@ -173,6 +186,7 @@ end
 holder:HookScript("OnShow", RequestRefit)
 holder:HookScript("OnHide", RequestRefit)
 hooksecurefunc(ns, "ApplyMapScale", RequestRefit)
+hooksecurefunc(ns.questMap, "SetZoneInfoShown", RequestRefit)
 hooksecurefunc(ns, "OnWindowResizeStopped", RequestRefit)
 frame:HookScript("OnSizeChanged", function()
 	if frame.isResizing then

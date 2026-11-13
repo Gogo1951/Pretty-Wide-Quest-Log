@@ -464,6 +464,19 @@ function routes.PartyHasQuest(questID)
 	return logs ~= nil and type(logs[questID]) == "table" and next(logs[questID]) ~= nil
 end
 
+-- How many party members have the quest, by the same party logs (Zone-Info.lua's party count)
+function routes.PartyCountOnQuest(questID)
+	local logs = RemoteLogs()
+	local members = logs and logs[questID]
+	local count = 0
+	if type(members) == "table" then
+		for _ in pairs(members) do
+			count = count + 1
+		end
+	end
+	return count
+end
+
 --[[
 	Whether a party member (name as routes.UnitFullName gives it) has shared anything over Questie: a quest
 	in its party logs, or the class it sends with them. One without Questie shares nothing, and the game

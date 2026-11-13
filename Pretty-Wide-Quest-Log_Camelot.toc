@@ -59,6 +59,7 @@ Data/Camelot/Map-Icons-Camelot.lua
 Data/Camelot/Map-Reveal-Camelot.lua
 Data/Camelot/Quest-Tags-Camelot.lua
 Data/Camelot/Sample-Quests-Camelot.lua
+Data/Camelot/Quest-Item-Counts-Camelot.lua
 Data/Camelot/Wowhead-Camelot.lua
 Data/Default-Settings.lua
 
@@ -115,6 +116,8 @@ Features/Questie-Map-Area-Layer.lua
 Features/Forever-Quest-Map.lua
 Features/Quest-Map-Reveal.lua
 Features/Routes/Routes.xml
+Features/Zone-Info-Data.lua
+Features/Zone-Info.lua
 
 # Diagnostics
 Diagnostics/Diagnostics-Core.lua

@@ -372,6 +372,15 @@ local function FreeQuestSlots(log)
 	return math.max(0, most - taken)
 end
 
+--[[
+	Quests Zone Info's + put on the route (Zone-Info-Data.lua), quest ID to true: each is picked up from
+	anywhere in its giver's zone, whatever the settings below say, as the player asked for it
+]]
+local function WantedPickUps()
+	local data = ns.zoneInfoData
+	return data and data.WantedPickUps() or {}
+end
+
 -- A small table of a quest's name and level, for the arrow's title line, and the name
 local function QuestInfo(QuestieDB, questID)
 	local name = QueryQuest(QuestieDB, questID, "name") or tostring(questID)
@@ -398,7 +407,9 @@ routes.pickUpHelpers = {
 	With Predictive Questing Routes on (predictiveRoutes), a quest that can be done in the zone from start
 	to finish (routes.IsChainQuest) counts from anywhere in the zone, not only within the Search Range, and
 	Routes-Chains.lua plans its objectives, its turn-in and the quests that follow it. Those are returned,
-	nearest giver first. With Local Available Quests off, those are the only quests to pick up. No more
+	nearest giver first. A quest Zone Info's + asked for (task.wanted) counts from anywhere in the zone too,
+	whatever its level or kind, ahead of every other. With Local Available Quests off, those are the only
+	quests to pick up. No more
 	quests are picked up than the log has room for, nearest first
 ]]
 function routes.AddLocalQuestNodes(nodes, start, log, yield)
@@ -406,7 +417,8 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	routes.mapOnlyPickUps = mapOnly
 	local settings = routes.Settings()
 	local nearby, planChains = settings.showLocalQuests, settings.predictiveRoutes
-	if not (nearby or planChains) then
+	local wanted = WantedPickUps()
+	if not (nearby or planChains or next(wanted)) then
 		return {}
 	end
 	local available = AvailableQuestIDs()
@@ -432,11 +444,12 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 			and not skipped[key]
 			and not IsTakenOrDone(questID, log)
 			and StarterBlobs(QuestieDB, questID, start, yield)
+		local isWanted = wanted[questID] == true
 		if
 			starters
 			and #starters > 0
 			and not routes.IsInstanceQuest(questID)
-			and not IsTooLow(QuestieDB, questID, settings.localQuestLevel)
+			and (isWanted or not IsTooLow(QuestieDB, questID, settings.localQuestLevel))
 		then
 			local chained = planChains
 				and #starters > 0
@@ -447,9 +460,9 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 				Range, as taking it lets the two do it together and both get the credit
 			]]
 			local shared = routes.PartyHasQuest(questID)
-			local blobs = (chained or shared) and starters or InRange(starters, start, range)
+			local blobs = (chained or shared or isWanted) and starters or InRange(starters, start, range)
 			local handling, reason = OFF, nil
-			if chained then
+			if chained or isWanted then
 				handling = ROUTE
 			elseif (nearby or shared) and #blobs > 0 then
 				handling, reason = Handling(QuestieDB, questID, start.zone, settings, yield)
@@ -470,6 +483,7 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 					task.blobs = blobs
 					task.chained = chained or nil
 					task.shared = shared or nil
+					task.wanted = isWanted or nil
 					onRoute[#onRoute + 1] = { task = task, yards = NearestYards(blobs, start) }
 				else
 					task.offRoute = reason
@@ -485,6 +499,9 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 		tie, so the same quests always win
 	]]
 	table.sort(onRoute, function(a, b)
+		if (a.task.wanted ~= nil) ~= (b.task.wanted ~= nil) then
+			return a.task.wanted ~= nil
+		end
 		if (a.task.shared ~= nil) ~= (b.task.shared ~= nil) then
 			return a.task.shared ~= nil
 		end
@@ -503,7 +520,9 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 		local task = entry.task
 		if task.chained and #chainStarts >= routes.MAX_CHAIN_STARTS then
 			task.chained = nil
-			task.blobs = task.shared and task.blobs or nearby and InRange(task.blobs, start, range) or {}
+			task.blobs = (task.shared or task.wanted) and task.blobs
+				or nearby and InRange(task.blobs, start, range)
+				or {}
 			task.candidates = #task.blobs > 0 and Candidates(task.blobs, start, false) or nil
 		end
 		if added < free and task.candidates then
@@ -524,10 +543,17 @@ end
 ]]
 function routes.LocalQuestSignature()
 	local settings = routes.Settings()
+	local wantedIDs = {}
+	for questID in pairs(WantedPickUps()) do
+		wantedIDs[#wantedIDs + 1] = questID
+	end
+	table.sort(wantedIDs)
+	local wanted = "wanted=" .. table.concat(wantedIDs, ",")
 	if not (settings.showLocalQuests or settings.predictiveRoutes) then
-		return "no-local"
+		return "no-local:" .. wanted
 	end
 	return table.concat({
+		wanted,
 		settings.showLocalQuests and "local" or "chains-only",
 		tostring(UnitLevel("player")),
 		tostring(routes.LocalQuestRange()),
