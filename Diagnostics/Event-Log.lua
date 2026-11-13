@@ -31,10 +31,13 @@ ns.DIAGNOSTIC_EVENT_EXCLUDE = {}
     for ns:SuppressUncorrelatedMessage to classify per firing rather than drop
     wholesale. UI_INFO_MESSAGE (Routes) fires for every yellow line in the
     middle of the screen, each quest kill and item among them, and Routes acts
-    on one alone: "New flight path discovered".
+    on one alone: "New flight path discovered". GET_ITEM_INFO_RECEIVED (Zone
+    Info) fires for every item any add-on or window asks the game for, keyed by
+    item ID, and Zone Info acts only on the items it's waiting on.
 ]]
 ns.MESSAGE_ID_FILTERED_EVENTS = {
 	UI_INFO_MESSAGE = 1,
+	GET_ITEM_INFO_RECEIVED = 1,
 }
 
 --[[
@@ -85,11 +88,17 @@ end
     The firings each event's handler acts on, by the exact test it makes, so
     the filter can never drift from it: Routes-Flights.lua's OnUiInfoMessage
     matches the line against this client's own ERR_NEWTAXIPATH, resolved at
-    run time. A secret line can't be compared, so it is never one of these.
+    run time, and Zone-Info-Data.lua's ItemArrived looks the item up in the
+    items it's waiting on, which the log reads before the handler clears it. A
+    secret line can't be compared, so it is never one of these.
 ]]
 local CORRELATED_MESSAGES = {
 	UI_INFO_MESSAGE = function(_, message)
 		return ERR_NEWTAXIPATH ~= nil and IsPlain(message) and message == ERR_NEWTAXIPATH
+	end,
+	GET_ITEM_INFO_RECEIVED = function(itemID)
+		local waiting = ns.zoneInfoData and ns.zoneInfoData.pendingItems
+		return IsPlain(itemID) and type(waiting) == "table" and waiting[itemID] == true
 	end,
 }
 

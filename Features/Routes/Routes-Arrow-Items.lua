@@ -194,7 +194,8 @@ local pendingAfterCombat = false
 
 --[[
 	Puts the buttons where wanted says, against where the arrow is now. In combat it can only fade the
-	ones that no longer match and leave the rest for PLAYER_REGEN_ENABLED
+	ones holding an item their slot no longer wants; one still holding its item keeps its look where it is,
+	and the moves wait for PLAYER_REGEN_ENABLED
 ]]
 local function Sync()
 	local left, top, scale = frame:GetLeft(), frame:GetTop(), frame:GetScale()
@@ -204,13 +205,14 @@ local function Sync()
 		for index, button in ipairs(buttons) do
 			local spec = wanted[index]
 			if button.spec then
-				local matches = placeable
+				local holdsItem = spec ~= nil and button.spec.itemID == spec.itemID and button.spec.size == spec.size
+				local inPlace = placeable
 					and SameSpec(button.spec, spec)
 					and button.left == left
 					and button.top == top
 					and button.scale == scale
-				button:SetAlpha(matches and (spec.dim and DIM_ALPHA or 1) or STALE_ALPHA)
-				pendingAfterCombat = pendingAfterCombat or not matches
+				button:SetAlpha(holdsItem and (spec.dim and DIM_ALPHA or 1) or STALE_ALPHA)
+				pendingAfterCombat = pendingAfterCombat or not inPlace
 			elseif spec then
 				pendingAfterCombat = true
 			end
@@ -230,7 +232,7 @@ end
 
 --[[
 	The left and bottom edges of the buttons showing, in the arrow's own units from its left and top, or
-	nil with none: the arrow's hover shade (Routes-Arrow.lua) reaches round them
+	nil with none: the arrow's hover shade (Routes-Arrow-Shade.lua) reaches round them
 ]]
 function routes.ArrowItemBounds()
 	local left, bottom

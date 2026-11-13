@@ -45,6 +45,7 @@ ns.DATABASE_DEFAULTS = {
 			-- Waypoint Markers
 			fullSizeMap = true, -- The map opens maximized while the markers are on it
 			markerScale = 1, -- The stop markers' size on the zone map, times their 32 pixels
+			waypointsShown = 10, -- Waypoints drawn ahead on the zone map, close ones counting as one, then a "…" marker; 0 draws the whole route
 			-- Maps & Objectives: where else the markers show, each with its own size (Routes-Map.lua, Routes-Minimap.lua)
 			showWideMapMarkers = true, -- Markers on a continent's or the world's map too
 			wideMarkerScale = 1, -- Their size there, times the zone map's Medium shrunk to fit (WIDE_MAP_SCALE)

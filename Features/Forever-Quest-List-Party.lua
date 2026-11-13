@@ -40,8 +40,8 @@ local function GetPartyOnQuest(questID, questLogIndex)
 			count = count + 1
 			local name = GetUnitName(unit, true)
 			local _, class = UnitClass(unit)
-			if name and ns.IsReadable(name) then
-				local color = class and ns.IsReadable(class) and RAID_CLASS_COLORS[class]
+			if ns.IsReadable(name) and name then
+				local color = ns.IsReadable(class) and class and RAID_CLASS_COLORS[class]
 				names[#names + 1] = color and color:WrapTextInColorCode(name) or name
 			end
 		elseif unknown then

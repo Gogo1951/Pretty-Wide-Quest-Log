@@ -24,7 +24,7 @@ local ADDON_NAME, ns = ...
 	(Routes-Arrow-Survey.lua).
 
 	Under the list, dimmed, with showNextObjective, the Next Objective: the waypoint after the area, or
-	heading to a waypoint, the one after that. On the left a 32px arrow turning toward it, colored as the
+	heading to a waypoint, the one after that. On the left a 16px arrow turning toward it, colored as the
 	big one is, with how far it is under it; on the right "Next Objective", its first quest and what's to
 	do there, with counts (and in a party, who needs each).
 

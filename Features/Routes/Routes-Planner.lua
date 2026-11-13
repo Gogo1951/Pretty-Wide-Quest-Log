@@ -95,6 +95,7 @@ local function Plan()
 	local previous = lastSolve and lastSolve.zone == start.zone and lastSolve.instance == start.instance and lastSolve
 		or nil
 	start.flights = routes.KnownFlights(start, Yield) -- Flight paths as shortcuts (Routes-Flights.lua)
+	start.skippedFlights = routes.SkippedFlights() -- Fly waypoints the player ignored, walked instead
 	local solved = ns.routesSolver.Solve(start, nodes, Yield, previous)
 	local snapshot = ns.routesSolver.Snapshot(solved)
 	snapshot.zone, snapshot.instance = start.zone, start.instance

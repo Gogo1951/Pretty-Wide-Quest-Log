@@ -28,7 +28,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Registro de missões largo com rota de missões e seta de missões. Você escolhe as missões, nós ajudamos com uma rota limpa para concluí-las rápido. Níveis das missões, marcadores, recompensas, cadeias de missões, um mapa de missões e compartilhamento de missões com o grupo. Funciona com Questie, Spoken, VoiceOver e ElvUI."
+	"Registro de missões largo e assistente de missões para subir de nível: uma rota pelas missões que você escolhe, uma seta para cada ponto de passagem, níveis das missões, marcadores, recompensas, cadeias de missões, um mapa de missões e compartilhamento de missões com o grupo. Funciona com Questie, Spoken, VoiceOver e ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Ativar mensagem de boas-vindas"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Mostra a mensagem de boas-vindas do Pretty Wide Quest Log ao entrar no jogo."
 L["OPTIONS_FEATURES_HEADER"] = "Recursos"
@@ -257,6 +257,12 @@ L["MARKER_SIZE_SMALL"] = "Pequeno"
 L["MARKER_SIZE_MEDIUM"] = "Médio"
 L["MARKER_SIZE_LARGE"] = "Grande"
 L["MARKER_SIZE_HUGE"] = "Enorme"
+L["WAYPOINTS_SHOWN"] = "Pontos de passagem exibidos"
+L["WAYPOINTS_SHOWN_DESCRIPTION"] =
+	"Quanto da rota o mapa da zona desenha. A rota inteira continua planejada: depois desses pontos de passagem, um marcador … indica para onde ela segue, e passar o mouse sobre ele mostra o resto. Clicar nele mostra a rota inteira até você fechar o mapa."
+-- TRANSLATORS: a Waypoints Shown choice; %d is how many waypoints, 5, 10 or 20
+L["WAYPOINTS_SHOWN_NEXT"] = "Próximos %d"
+L["WAYPOINTS_SHOWN_ALL"] = "Rota inteira"
 L["TAB_WIDE_MAP"] = "Mapa do continente e do mundo"
 L["TAB_WIDE_MAP_DESCRIPTION"] =
 	"Mapas que mostram muitas zonas de uma vez, onde cada objetivo e cada entrega ganha um marcador menor."
@@ -286,6 +292,51 @@ L["LINE_SPEED_FAST"] = "Rápida"
 L["LINE_OPACITY"] = "Opacidade da linha"
 L["LINE_OPACITY_DESCRIPTION"] =
 	"O quanto os pontos são sólidos; quanto mais baixa, mais o mapa aparece através deles."
+L["ROUTES_PLANNING_HEADER"] = "Planejamento"
+L["ROUTES_PLANNING_DESCRIPTION"] = "O que a rota planeja além das suas próprias missões."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
+L["PREDICTIVE_ROUTES"] = "Rotas de missões preditivas"
+L["PREDICTIVE_ROUTES_DESCRIPTION"] =
+	"Planeja as missões que você pode terminar nesta zona, onde quer que esteja quem as dá, e não só por perto: os objetivos, a entrega e as missões que vêm depois delas. Assim a rota pega tudo de uma parte da zona antes de você ir até lá, e você só vai uma vez. Uma sequência para na primeira missão que leva a outra zona. Os objetivos de uma missão que você ainda não pegou têm um marcador cinza. A entrega de cada missão também aparece antes de ela estar concluída, marcada com o ponto de interrogação cinza do Questie."
+-- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+L["PREDICTIVE_ROUTES_POPUP"] =
+	"Atenção: Rotas de missões preditivas planeja a zona inteira com antecedência, então seu mapa pode parecer meio maluco. Mas há método nessa loucura! Siga a seta de missões para passar menos tempo correndo e mais tempo ganhando experiência. (="
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
+L["SHOW_FLIGHT_PATHS"] = "Mostrar rotas de voo não descobertas como objetivos"
+L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
+	"Coloca na rota cada mestre de voo da sua zona cuja rota de voo você ainda não tem, marcado com o ícone de mestre de voo. Em um personagem que já tinha rotas de voo, abra qualquer mapa de voo uma vez para a rota saber quais você tem; até lá, nenhum é adicionado."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
+L["SHOW_LOCAL_QUESTS"] = "Mostrar missões disponíveis próximas como objetivos"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"Coloca na rota as missões que você pode pegar, quando o Questie as mostra como disponíveis e um PNJ ou objeto que as inicia está a até %s de você, marcadas com o ponto de exclamação do Questie. Missões iniciadas por um item de saque e missões de masmorra e raide ficam de fora."
+L["LOCAL_QUESTS_HEADER"] = "Missões disponíveis próximas"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"Para quais missões próximas a seta de missão leva você. Uma que ela pula ainda pode aparecer no mapa-múndi, sem linha de rota até ela."
+L["LOCAL_QUEST_RANGE"] = "Raio de busca"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"A quantos metros de você quem dá a missão pode estar e ainda contar. Abaixo de 400, alguém por quem você passa entre dois cálculos da rota pode ficar de fora."
+L["LOCAL_ESCORT_QUESTS"] = "Missões de escolta"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Missões em que você protege um PNJ pelo caminho; levam tempo e muitas vezes um grupo. O marcador delas no mapa é verde."
+L["LOCAL_GROUP_QUESTS"] = "Missões de grupo e elite"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Missões que o Questie marca como elite, feitas para um grupo."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Objetivos em outra zona"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Missões com um objetivo, ou a entrega, só fora da sua zona, como uma que manda você para a próxima cidade."
+L["LOCAL_QUEST_LEVEL"] = "Nível mínimo de missão"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Missões abaixo desta cor de dificuldade ficam de fora. Configuração do Questie mantém as missões que o Questie mostra no mapa dele."
+-- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
+L["LOCAL_CHOICE_ROUTE"] = "Na rota"
+-- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
+L["LOCAL_CHOICE_MAP"] = "Só no mapa"
+-- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
+L["LOCAL_CHOICE_OFF"] = "De fora"
+L["LOCAL_LEVEL_QUESTIE"] = "Configuração do Questie"
+-- TRANSLATORS: quest difficulty colors, green being a few levels below the player
+L["LOCAL_LEVEL_GREEN"] = "Verde e acima"
+L["LOCAL_LEVEL_YELLOW"] = "Amarelo e acima"
 L["ROUTES_PARTY_HEADER"] = "Grupo"
 L["ROUTES_PARTY_DESCRIPTION"] = "O que o seu grupo acrescenta à rota."
 L["PARTY_QUESTS"] = "Incluir missões dos membros do grupo"
@@ -333,46 +384,6 @@ L["SHOW_NEXT_OBJECTIVE"] = "Mostrar próximo objetivo"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'Em "%s", lista "%s" embaixo, esmaecido: uma setinha até o ponto de passagem seguinte e o que há para fazer lá.'
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "Rotas de missões preditivas"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"Planeja as missões que você pode terminar nesta zona, onde quer que esteja quem as dá, e não só por perto: os objetivos, a entrega e as missões que vêm depois delas. Assim a rota pega tudo de uma parte da zona antes de você ir até lá, e você só vai uma vez. Uma sequência para na primeira missão que leva a outra zona. Os objetivos de uma missão que você ainda não pegou têm um marcador cinza. A entrega de cada missão também aparece antes de ela estar concluída, marcada com o ponto de interrogação cinza do Questie."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
-L["SHOW_FLIGHT_PATHS"] = "Mostrar rotas de voo não descobertas como objetivos"
-L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
-	"Coloca na rota cada mestre de voo da sua zona cuja rota de voo você ainda não tem, marcado com o ícone de mestre de voo. Em um personagem que já tinha rotas de voo, abra qualquer mapa de voo uma vez para a rota saber quais você tem; até lá, nenhum é adicionado."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "Mostrar missões disponíveis próximas como objetivos"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"Coloca na rota as missões que você pode pegar, quando o Questie as mostra como disponíveis e um PNJ ou objeto que as inicia está a até %s de você, marcadas com o ponto de exclamação do Questie. Missões iniciadas por um item de saque e missões de masmorra e raide ficam de fora."
-L["LOCAL_QUESTS_HEADER"] = "Missões disponíveis próximas"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"Para quais missões próximas a seta de missão leva você. Uma que ela pula ainda pode aparecer no mapa-múndi, sem linha de rota até ela."
-L["LOCAL_QUEST_RANGE"] = "Raio de busca"
-L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
-	"A quantos metros de você quem dá a missão pode estar e ainda contar. Abaixo de 400, alguém por quem você passa entre dois cálculos da rota pode ficar de fora."
-L["LOCAL_ESCORT_QUESTS"] = "Missões de escolta"
-L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"Missões em que você protege um PNJ pelo caminho; levam tempo e muitas vezes um grupo. O marcador delas no mapa é verde."
-L["LOCAL_GROUP_QUESTS"] = "Missões de grupo e elite"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Missões que o Questie marca como elite, feitas para um grupo."
-L["LOCAL_OTHER_ZONE_QUESTS"] = "Objetivos em outra zona"
-L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
-	"Missões com um objetivo, ou a entrega, só fora da sua zona, como uma que manda você para a próxima cidade."
-L["LOCAL_QUEST_LEVEL"] = "Nível mínimo de missão"
-L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	"Missões abaixo desta cor de dificuldade ficam de fora. Configuração do Questie mantém as missões que o Questie mostra no mapa dele."
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "Na rota"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "Só no mapa"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "De fora"
-L["LOCAL_LEVEL_QUESTIE"] = "Configuração do Questie"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "Verde e acima"
-L["LOCAL_LEVEL_YELLOW"] = "Amarelo e acima"
 L["QUEST_ARROW_HIDING_HEADER"] = "Ocultar"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Quando a Seta de missões sai do caminho."
 L["HIDE_IN_RAIDS"] = "Ocultar em grupos de raide"
@@ -440,19 +451,23 @@ L["UNTRACK_ALL"] = "Não acompanhar nenhuma"
 L["HIDE_MAP"] = "Ocultar mapa"
 L["ZONE_INFO_QUESTS"] = "Missões para pegar"
 L["ZONE_INFO_ITEMS"] = "Coisas para levar"
+-- TRANSLATORS: Zone Info's Things to Bring heading; %s is the zone the box shows, from the client
+L["ZONE_INFO_ITEMS_TO"] = "Coisas para levar para %s"
 L["ZONE_INFO_BACK"] = "Voltar à missão"
 L["ZONE_INFO_ASK"] = "Pedir compartilhamento"
 L["ZONE_INFO_ASK_DESCRIPTION"] =
 	"Escreve no seu chat as missões daqui que os jogadores podem compartilhar, no canal 4 (Procurando Grupo) se você estiver nele. Nada é enviado até você apertar Enter."
--- TRANSLATORS: %s is the names of quests, joined by commas; it's written into the chat box, never sent
+-- TRANSLATORS: %s is quest links, or names in brackets, joined by commas; it's written into the chat box, never sent
 L["ZONE_INFO_ASK_MESSAGE"] = "Alguém pode compartilhar %s?"
--- TRANSLATORS: the first %s is a quest giver's name, the second the zone they stand in
+-- TRANSLATORS: %s is a quest giver's name
 L["ZONE_INFO_GIVER"] = "Dada por %s"
+-- TRANSLATORS: where a quest giver stands: map coordinates ("55,52"), then the zone
 L["ZONE_INFO_GIVER_PLACE"] = "%s em %s"
 L["ZONE_INFO_SHAREABLE"] = "Compartilhável"
 L["ZONE_INFO_NOT_SHAREABLE"] = "Não compartilhável"
 L["ZONE_INFO_TRACK"] = "Adicionar à rota"
 L["ZONE_INFO_UNTRACK"] = "Tirar da rota"
+-- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "Necessário para"
 L["ZONE_INFO_SHIFT_CLICK"] = "Shift-clique"
 L["ZONE_INFO_LINK_ITEM"] = "Linkar no chat"
@@ -463,6 +478,8 @@ L["ZONE_INFO_MENU_AVAILABLE"] = "Mais missões para você"
 L["ZONE_INFO_NO_QUESTS"] = "Nenhuma missão de outras zonas para pegar para aqui."
 L["ZONE_INFO_NO_ITEMS"] = "Nada para comprar ou levar."
 L["ZONE_INFO_WORKING"] = "Lendo missões..."
+-- TRANSLATORS: %d is the item's ID, shown until the client has loaded the item's name
+L["ZONE_INFO_ITEM_LOADING"] = "Carregando ID do item: %d"
 L["ZONE_INFO_NEEDS_QUESTIE"] = "Ative o Questie para ver o que há aqui."
 -- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "%s XP"
@@ -521,6 +538,7 @@ L["ROUTES_PICK_UP_QUEST"] = "Pegar %s"
 L["ROUTES_FLIGHT_PATH"] = "Obter rota de voo"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_FLIGHT_PATH_FROM"] = "Obter a rota de voo com %s"
+-- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "Fale com %s para voar até %s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Missão de escolta, fora da rota"
@@ -537,6 +555,11 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "Depois que seu grupo entregar %s"
 L["ROUTES_CORPSE"] = "Volte até o seu corpo"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Procure"
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+L["ROUTES_MORE_WAYPOINT"] = "Mais 1 ponto de passagem"
+L["ROUTES_MORE_WAYPOINTS"] = "Mais %d pontos de passagem"
+L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
+	"O resto da rota, exibido enquanto você passa o mouse. Pontos de passagem exibidos, em Mapa da zona nas opções, define quantos o mapa desenha."
 L["ROUTES_CLICK_DRAG"] = "Arrastar"
 L["ROUTES_CLICK_RIGHT"] = "Clique direito"
 L["ROUTES_CLICK_MIDDLE"] = "Clique do meio"
@@ -551,6 +574,8 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorar este ponto de passagem"
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorar este objetivo"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "De volta à rota"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Redefinir esta zona"
+-- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
+L["ROUTES_CLICK_SHOW_ROUTE"] = "Mostrar a rota inteira"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Ignorando %s até você redefinir a zona."
 L["ROUTES_ZONE_RESET"] = "Zona redefinida: os objetivos ignorados aqui voltaram para a rota."
@@ -573,6 +598,7 @@ L["ROUTES_MENU_TURN_IN"] = "Entrega de %s"
 L["ROUTES_MENU_PICK_UP"] = "Coleta de %s"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_MENU_FLIGHT_PATH"] = "Rota de voo de %s"
+-- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Voo para %s"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Rotas de missões preditivas"
@@ -605,7 +631,8 @@ L["ROUTES_GROUP_UP"] = "Reagrupar"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, and each %d is how many quests
+	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"Tentei compartilhar %s com você, mas não deu certo. Se quiser a missão, me chama quando puder que eu compartilho de novo"

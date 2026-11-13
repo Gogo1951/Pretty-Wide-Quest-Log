@@ -5,10 +5,10 @@ local GetColor = ns.GetColor
 -- The Features switches, two to a line
 local FEATURE_WIDTH = ns.OPTIONS_ROW_WIDTH / 2
 
--- A key binding row: its caption, the bound key, and Set Key
-local KEY_LABEL_WIDTH = 1.9
+-- A key binding row: its caption, the bound key, and Set Key, filling the row
 local KEY_STATUS_WIDTH = 0.85
 local KEY_BUTTON_WIDTH = 0.55
+local KEY_LABEL_WIDTH = ns.OPTIONS_ROW_WIDTH - KEY_STATUS_WIDTH - KEY_BUTTON_WIDTH
 
 --------------------------------------------------------------------------------
 -- General Panel

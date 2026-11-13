@@ -27,7 +27,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Wide quest log with a quest route and quest arrow. You pick the quests, we help with a clean route to get them done fast. Quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI."
+	"Wide quest log and quest helper for leveling: a quest route through the quests you pick, a waypoint arrow, quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Enable Welcome Message"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Shows the Pretty Wide Quest Log welcome message when you log in."
 L["OPTIONS_FEATURES_HEADER"] = "Features"
@@ -248,6 +248,12 @@ L["MARKER_SIZE_SMALL"] = "Small"
 L["MARKER_SIZE_MEDIUM"] = "Medium"
 L["MARKER_SIZE_LARGE"] = "Large"
 L["MARKER_SIZE_HUGE"] = "Huge"
+L["WAYPOINTS_SHOWN"] = "Waypoints Shown"
+L["WAYPOINTS_SHOWN_DESCRIPTION"] =
+	"How much of the route the zone map draws. The whole route is still planned: past these waypoints a … marker points where it goes next, and hovering it shows the rest. Clicking it shows the whole route until you close the map."
+-- TRANSLATORS: a Waypoints Shown choice; %d is how many waypoints, 5, 10 or 20
+L["WAYPOINTS_SHOWN_NEXT"] = "Next %d"
+L["WAYPOINTS_SHOWN_ALL"] = "Whole Route"
 L["TAB_WIDE_MAP"] = "Continent & World Map"
 L["TAB_WIDE_MAP_DESCRIPTION"] =
 	"Maps that hold many zones at once, where each objective and turn-in gets one smaller marker."
@@ -276,6 +282,51 @@ L["LINE_SPEED_NORMAL"] = "Normal"
 L["LINE_SPEED_FAST"] = "Fast"
 L["LINE_OPACITY"] = "Line Opacity"
 L["LINE_OPACITY_DESCRIPTION"] = "How solid the dots are; lower lets more of the map show through."
+L["ROUTES_PLANNING_HEADER"] = "Planning"
+L["ROUTES_PLANNING_DESCRIPTION"] = "What the route plans for beyond your own quests."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
+L["PREDICTIVE_ROUTES"] = "Predictive Questing Routes"
+L["PREDICTIVE_ROUTES_DESCRIPTION"] =
+	"Plans quests you can finish in this zone from wherever their giver stands, not only nearby: their objectives, their turn-in, and the quests that follow them. The route then picks up everything for a part of the zone before you go there, so you only go once. A chain stops at the first quest that leads to another zone. Objectives of a quest you haven't picked up yet have a gray marker. Each quest's turn-in shows before it's done too, marked with Questie's gray question mark."
+-- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+L["PREDICTIVE_ROUTES_POPUP"] =
+	"Heads up: Predictive Questing Routes plans the whole zone ahead, so your map might look a little crazy. But there's a method to the madness! Follow the Quest Arrow to spend less time running and more time earning XP. (="
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
+L["SHOW_FLIGHT_PATHS"] = "Show Undiscovered Flight Paths as Objectives"
+L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
+	"Adds to the route each flight master in your zone whose flight path you don't have yet, marked with the flight master icon. On a character that already had flight paths, open any flight map once so the route knows which ones you have; until then none are added."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
+L["SHOW_LOCAL_QUESTS"] = "Show Local Available Quests as Objectives"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"Puts quests you can pick up on the route, where Questie shows them as available and an NPC or object that starts them is within %s of you, marked with Questie's exclamation mark. Quests started by an item that drops, and dungeon and raid quests, are left out."
+L["LOCAL_QUESTS_HEADER"] = "Local Available Quests"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"Which quests near you the Quest Arrow takes you to. One it skips can still show on the world map, with no route line to it."
+L["LOCAL_QUEST_RANGE"] = "Search Range"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"How many yards from you a quest giver can be and still count. Under 400, a giver you walk past between the route's plans can be missed."
+L["LOCAL_ESCORT_QUESTS"] = "Escort Quests"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Quests where you protect an NPC along the way, which take time and often a group. Their marker on the map is green."
+L["LOCAL_GROUP_QUESTS"] = "Group and Elite Quests"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quests Questie marks as elite, made for a group."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Objectives in Another Zone"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Quests with an objective, or the turn-in, only outside the zone you're in, such as one that sends you on to the next town."
+L["LOCAL_QUEST_LEVEL"] = "Lowest Quest Level"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Quests below this difficulty color are left off. Questie's Setting keeps the quests Questie shows on its map."
+-- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
+L["LOCAL_CHOICE_ROUTE"] = "On the Route"
+-- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
+L["LOCAL_CHOICE_MAP"] = "Map Only"
+-- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
+L["LOCAL_CHOICE_OFF"] = "Left Off"
+L["LOCAL_LEVEL_QUESTIE"] = "Questie's Setting"
+-- TRANSLATORS: quest difficulty colors, green being a few levels below the player
+L["LOCAL_LEVEL_GREEN"] = "Green and Higher"
+L["LOCAL_LEVEL_YELLOW"] = "Yellow and Higher"
 L["ROUTES_PARTY_HEADER"] = "Party"
 L["ROUTES_PARTY_DESCRIPTION"] = "What your party adds to the route."
 L["PARTY_QUESTS"] = "Include Party Members' Quests"
@@ -321,46 +372,6 @@ L["SHOW_NEXT_OBJECTIVE"] = "Show Next Objective"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'At a "%s", lists "%s" under it, dimmed: a small arrow to the waypoint after, and what\'s to do there.'
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "Predictive Questing Routes"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"Plans quests you can finish in this zone from wherever their giver stands, not only nearby: their objectives, their turn-in, and the quests that follow them. The route then picks up everything for a part of the zone before you go there, so you only go once. A chain stops at the first quest that leads to another zone. Objectives of a quest you haven't picked up yet have a gray marker. Each quest's turn-in shows before it's done too, marked with Questie's gray question mark."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
-L["SHOW_FLIGHT_PATHS"] = "Show Undiscovered Flight Paths as Objectives"
-L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
-	"Adds to the route each flight master in your zone whose flight path you don't have yet, marked with the flight master icon. On a character that already had flight paths, open any flight map once so the route knows which ones you have; until then none are added."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "Show Available Local Quests as Objectives"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"Puts quests you can pick up on the route, where Questie shows them as available and an NPC or object that starts them is within %s of you, marked with Questie's exclamation mark. Quests started by an item that drops, and dungeon and raid quests, are left out."
-L["LOCAL_QUESTS_HEADER"] = "Local Available Quests"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"Which quests near you the Quest Arrow takes you to. One it skips can still show on the world map, with no route line to it."
-L["LOCAL_QUEST_RANGE"] = "Search Range"
-L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
-	"How many yards from you a quest giver can be and still count. Under 400, a giver you walk past between the route's plans can be missed."
-L["LOCAL_ESCORT_QUESTS"] = "Escort Quests"
-L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"Quests where you protect an NPC along the way, which take time and often a group. Their marker on the map is green."
-L["LOCAL_GROUP_QUESTS"] = "Group and Elite Quests"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quests Questie marks as elite, made for a group."
-L["LOCAL_OTHER_ZONE_QUESTS"] = "Objectives in Another Zone"
-L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
-	"Quests with an objective, or the turn-in, only outside the zone you're in, such as one that sends you on to the next town."
-L["LOCAL_QUEST_LEVEL"] = "Lowest Quest Level"
-L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	"Quests below this difficulty color are left off. Questie's Setting keeps the quests Questie shows on its map."
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "On the Route"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "Map Only"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "Left Off"
-L["LOCAL_LEVEL_QUESTIE"] = "Questie's Setting"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "Green and Higher"
-L["LOCAL_LEVEL_YELLOW"] = "Yellow and Higher"
 L["QUEST_ARROW_HIDING_HEADER"] = "Hiding"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "When the Quest Arrow steps out of the way."
 L["HIDE_IN_RAIDS"] = "Hide in Raid Groups"
@@ -428,6 +439,8 @@ L["UNTRACK_ALL"] = "Untrack All"
 L["HIDE_MAP"] = "Hide Map"
 L["ZONE_INFO_QUESTS"] = "Quests to Pick Up"
 L["ZONE_INFO_ITEMS"] = "Things to Bring"
+-- TRANSLATORS: Zone Info's Things to Bring heading; %s is the zone the box shows, from the client
+L["ZONE_INFO_ITEMS_TO"] = "Things to Bring to %s"
 L["ZONE_INFO_BACK"] = "Back to Quest"
 L["ZONE_INFO_ASK"] = "Ask for Shares"
 L["ZONE_INFO_ASK_DESCRIPTION"] =
@@ -441,7 +454,7 @@ L["ZONE_INFO_GIVER_PLACE"] = "%s in %s"
 L["ZONE_INFO_SHAREABLE"] = "Shareable"
 L["ZONE_INFO_NOT_SHAREABLE"] = "Not Shareable"
 L["ZONE_INFO_TRACK"] = "Add to Route"
-L["ZONE_INFO_UNTRACK"] = "Take Off Route"
+L["ZONE_INFO_UNTRACK"] = "Take off Route"
 -- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "Needed For"
 L["ZONE_INFO_SHIFT_CLICK"] = "Shift-Click"
@@ -453,6 +466,8 @@ L["ZONE_INFO_MENU_AVAILABLE"] = "Most Quests for You"
 L["ZONE_INFO_NO_QUESTS"] = "No quests from other zones to pick up for here."
 L["ZONE_INFO_NO_ITEMS"] = "Nothing to buy or bring for here."
 L["ZONE_INFO_WORKING"] = "Reading quests..."
+-- TRANSLATORS: %d is the item's ID, shown until the client has loaded the item's name
+L["ZONE_INFO_ITEM_LOADING"] = "Loading Item ID: %d"
 L["ZONE_INFO_NEEDS_QUESTIE"] = "Turn on Questie to see what's here."
 -- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "%s XP"
@@ -512,7 +527,7 @@ L["ROUTES_FLIGHT_PATH"] = "Get Flight Path"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_FLIGHT_PATH_FROM"] = "Get the Flight Path From %s"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
-L["ROUTES_FLY_FROM"] = "Talk to %s to fly to %s"
+L["ROUTES_FLY_FROM"] = "Talk to %s to Fly to %s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Escort Quest, Not on the Route"
 L["ROUTES_OFF_ROUTE_GROUP"] = "Group Quest, Not on the Route"
@@ -528,6 +543,11 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "After Your Party Turns in %s"
 L["ROUTES_CORPSE"] = "Run Back to Your Corpse"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Look For"
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+L["ROUTES_MORE_WAYPOINT"] = "1 More Waypoint"
+L["ROUTES_MORE_WAYPOINTS"] = "%d More Waypoints"
+L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
+	"The rest of the route, shown while you hover. Waypoints Shown, under Zone Map in Options, sets how many the map draws."
 L["ROUTES_CLICK_DRAG"] = "Drag"
 L["ROUTES_CLICK_RIGHT"] = "Right-Click"
 L["ROUTES_CLICK_MIDDLE"] = "Middle-Click"
@@ -542,6 +562,8 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignore This Waypoint"
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignore This Objective"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Back on the Route"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Reset This Zone"
+-- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
+L["ROUTES_CLICK_SHOW_ROUTE"] = "Show the Whole Route"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Ignoring %s until you reset the zone."
 L["ROUTES_ZONE_RESET"] = "Zone reset: objectives ignored here are back on the route."
@@ -597,7 +619,8 @@ L["ROUTES_GROUP_UP"] = "Group Up"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, and each %d is how many quests
+	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"I tried to share %s with you, but it didn't go through. If you'd like the quest, just give me a shout when you're ready and I'll share it again"

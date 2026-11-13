@@ -39,7 +39,7 @@ local NEW_CHARACTER_LEVEL = 10 -- At or below, a character first seen is taken t
 	Flight masters that are no flight path to discover: the druids' own to Moonglade, Bunthen Plainswind in
 	Thunder Bluff and Silva Fil'naveth in Rut'theran Village
 ]]
-local NOT_FLIGHT_PATHS = { [11798] = true, [11800] = true }
+local NOT_FLIGHT_PATHS = ns.NOT_FLIGHT_PATH_NPC_IDS
 
 local function NoYield() end
 
@@ -440,6 +440,24 @@ function routes.KnownFlights(start, yield)
 		flight.place = placeNames[flight.npcID] or flight.name
 	end
 	return flights
+end
+
+--[[
+	The fly waypoints the player ignored (routes.AddFlightStops' "fly:from:to" keys), as flight master NPC
+	ID to a set of the ones to fly to, for the solver to walk those legs instead; nil with none
+]]
+function routes.SkippedFlights()
+	local skipped
+	for key in pairs(routes.skipped) do
+		local from, to = key:match("^fly:(%d+):(%d+)$")
+		if from then
+			skipped = skipped or {}
+			from, to = tonumber(from), tonumber(to)
+			skipped[from] = skipped[from] or {}
+			skipped[from][to] = true
+		end
+	end
+	return skipped
 end
 
 -- A waypoint at the flight master to fly from, its one task "Talk to Omusa Thunderhorn to fly to Camp Taurajo"

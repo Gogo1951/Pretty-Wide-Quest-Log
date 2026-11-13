@@ -2849,7 +2849,7 @@ ns.QUEST_ITEM_COUNTS = "\n"
 How We Got the Data
 
 Last Validated
-	2026-11-12, Season of Discovery
+	2026-11-13, Season of Discovery 1.15.9.70576
 
 Notes
 	- How many of each item a quest asks the player to bring, for Zone Info's Things to Bring column

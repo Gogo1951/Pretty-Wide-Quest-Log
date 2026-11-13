@@ -127,18 +127,41 @@ ns.AddWideQuestLogPart(function()
 		return ICON_SIZE * (data.GetIconScale and data:GetIconScale() or 1)
 	end
 
-	-- One of Questie's icons drawn again at x, y (0-1), or a marker for an area in that icon's look
-	local function AddPin(map, icon, x, y, area)
+	--[[
+		A giver's quests to pick up as the quest list names them, "[45] A Strange Request" in its level's
+		color, under the giver's name, one space in as the add-on's tooltip rows are
+	]]
+	local function ShowGiverTooltip(pin)
+		local giver = pin.giver
+		GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
+		if giver.name then
+			GameTooltip:AddLine(giver.name, ns.GetColorRGB("TITLE"))
+		end
+		for _, quest in ipairs(giver.quests) do
+			local tagID, isElite = ns.GetQuestTagByID(quest.Id)
+			local title = ns.QuestListTitle(quest.level, quest.name, ns.QuestSuffix(tagID, isElite))
+			local color = GetQuestDifficultyColor(quest.level or 0)
+			GameTooltip:AddLine(" " .. title, color.r, color.g, color.b)
+		end
+		GameTooltip:Show()
+	end
+
+	--[[
+		One of Questie's icons drawn again at x, y (0-1), a marker for an area in that icon's look, or with
+		giver a quest giver's marker in a zone looked at from Zone Info (Givers, below)
+	]]
+	local function AddPin(map, icon, x, y, area, giver)
 		local pin = map:AcquirePin(PIN_TEMPLATE)
 		pin.data = icon.data
 		pin.area = area
+		pin.giver = giver
 		local size = IconSize(icon)
 		pin:SetSize(size, size)
 		pin.Texture:SetTexture(icon.texture:GetTexture())
 		pin.Texture:SetTexCoord(icon.texture:GetTexCoord())
 		pin.Texture:SetVertexColor(icon.texture:GetVertexColor())
 		SetGlow(pin, icon, size)
-		pin:SetScript("OnEnter", questMap.ShowPinTooltip)
+		pin:SetScript("OnEnter", giver and ShowGiverTooltip or questMap.ShowPinTooltip)
 		pin:SetScript("OnLeave", GameTooltip_Hide)
 		pin:UseFrameLevelType("PIN_FRAME_LEVEL_ACTIVE_QUEST")
 		pin:ApplyFrameLevel()
@@ -159,14 +182,86 @@ ns.AddWideQuestLogPart(function()
 		end
 	end
 
-	local TURN_IN_COLOR = { ns.GetColorRGB("TITLE") } -- The gold of the turn-in's question mark
+	local TURN_IN_COLOR = { ns.GetColorRGB("TITLE") } -- The gold of the turn-in's question mark, and a giver's exclamation mark
+
+	--------------------------------------------------------------------------------
+	-- Quest givers in a zone looked at from Zone Info
+	--------------------------------------------------------------------------------
+
+	local GIVER_MERGE = 0.01 -- Givers' icons this close, as a share of the map, are one giver with one marker
+
+	local function QuestOrder(a, b)
+		if (a.level or 0) ~= (b.level or 0) then
+			return (a.level or 0) < (b.level or 0)
+		end
+		return (a.name or "") < (b.name or "")
+	end
+
+	--[[
+		While Zone Info's menu has another zone picked (questMap.browseMapID), every quest the character could
+		pick up there: Questie's own icons for its available quests on the zone's map, the same set its level,
+		faction and class filters chose for its world map, less the gray ones, as Zone Info leaves those out
+		too. Each giver is one entry, { icon, x, y, name, quests }, its quests lowest level first
+	]]
+	local function Givers(mapID)
+		local givers = {}
+		if not (hereBeDragons and hereBeDragonsPins and mapID) then
+			return givers
+		end
+		local QuestieDB = ns.ImportQuestieModule("QuestieDB")
+		local helpers = ns.routes and ns.routes.pickUpHelpers
+		local gray = {}
+		for icon, placement in pairs(hereBeDragonsPins.worldmapPins) do
+			local data = icon.data
+			if
+				placement.uiMapID == mapID
+				and data
+				and data.Type == "available"
+				and data.QuestData
+				and IsShownIcon(icon)
+			then
+				local questID = data.Id
+				if gray[questID] == nil then
+					gray[questID] = (QuestieDB and helpers and helpers.IsTooLow(QuestieDB, questID, "green")) or false
+				end
+				local x, y = hereBeDragons:GetZoneCoordinatesFromWorldInstance(
+					placement.x,
+					placement.y,
+					placement.instanceID,
+					mapID
+				)
+				if x and y and not gray[questID] then
+					local giver
+					for _, other in ipairs(givers) do
+						if math.abs(other.x - x) < GIVER_MERGE and math.abs(other.y - y) < GIVER_MERGE then
+							giver = other
+							break
+						end
+					end
+					if not giver then
+						giver = { icon = icon, x = x, y = y, name = data.Name, quests = {}, has = {} }
+						givers[#givers + 1] = giver
+					end
+					if not giver.has[questID] then
+						giver.has[questID] = true
+						giver.quests[#giver.quests + 1] = data.QuestData
+					end
+				end
+			end
+		end
+		for _, giver in ipairs(givers) do
+			table.sort(giver.quests, QuestOrder)
+		end
+		return givers
+	end
 
 	--[[
 		With Show Objective Areas on, each objective Questie has spawns for on the map is drawn as its areas
 		(Questie-Map-Areas.lua), one marker in each in the look of one of its icons there, in place of its
 		icons. The rest of the quest's icons, the turn-in among them, are drawn as Questie draws them, each
-		in a small circle of its own so it stands out as well. questMap.areaCount is how many areas and
-		circles are shaded, for the Quest Map Context report
+		in a small circle of its own so it stands out as well. In a zone looked at from Zone Info, every
+		giver of a quest to pick up there gets a marker, in a gold circle as the turn-in has, under the quest's
+		own icons. questMap.areaCount is how many areas and circles are shaded, for the Quest Map Context report
 	]]
 	local questieProvider = CreateFromMixins(MapCanvasDataProviderMixin)
 
@@ -182,6 +277,19 @@ ns.AddWideQuestLogPart(function()
 		local map = self:GetMap()
 		local mapID = map:GetMapID()
 		local showAreas = ns.db.profile.showObjectiveAreas
+		local shapes = {}
+
+		-- While browsing, the map is on the zone looked at (ShowZone, below), or the nearest map of it with art
+		self.showsGivers = questMap.browseMapID ~= nil
+		if self.showsGivers then
+			for _, giver in ipairs(Givers(mapID)) do
+				AddPin(map, giver.icon, giver.x, giver.y, nil, giver)
+				local outline = showAreas and questMap.SpotOutline(map, giver.x, giver.y, IconSize(giver.icon))
+				if outline then
+					shapes[#shapes + 1] = { color = TURN_IN_COLOR, x = giver.x, y = giver.y, outline = outline }
+				end
+			end
+		end
 
 		local icons, objectives, objectiveIcons = {}, {}, {}
 		ForEachIcon(mapID, shownQuestID, function(icon, x, y)
@@ -196,7 +304,7 @@ ns.AddWideQuestLogPart(function()
 			end
 		end)
 
-		local areasByObjective, shapes = {}, {}
+		local areasByObjective = {}
 		for _, objective in ipairs(objectives) do
 			local objectiveIconList = objectiveIcons[objective]
 			local areas = questMap.ObjectiveAreas(objective, map, IconSize(objectiveIconList[1]))
@@ -269,6 +377,10 @@ ns.AddWideQuestLogPart(function()
 		mapID = questMap.browseMapID or mapID
 		shownMapID = mapID
 		if questMap.ShowMap(mapID) then
+			zoneChanged = true
+		elseif (questMap.browseMapID ~= nil) ~= (questieProvider.showsGivers == true) then
+			-- A look at this same zone begun or ended: its givers' markers come or go with the map staying put
+			questieProvider:RefreshAllData()
 			zoneChanged = true
 		end
 		if zoneDropdown.OverrideText and mapID then

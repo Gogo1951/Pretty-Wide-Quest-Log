@@ -198,6 +198,24 @@ function ns.OptionsSubRow(order, hidden, controls)
 	return { type = "group", name = "", inline = true, order = order, hidden = hidden, args = args }
 end
 
+--[[
+	A Routes setting that's a sub-option of the switch above it: its silver caption and its control on one
+	indented row, which hides it, not the control
+]]
+function ns.OptionsRoutesSubControlRow(order, hidden, text, desc, key, control)
+	control.desc = desc
+	return ns.OptionsSubRow(order, hidden, {
+		label = ns.OptionsRowLabel(
+			ns.OptionsSubLabel(text),
+			2,
+			ns.OPTIONS_LABEL_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH,
+			nil,
+			desc
+		),
+		[key] = ns.OptionsRoutesControl(key, control, 3, nil),
+	})
+end
+
 --------------------------------------------------------------------------------
 -- Example Lines
 --------------------------------------------------------------------------------

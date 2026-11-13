@@ -16,7 +16,7 @@ ns.QUEST_TAG_SUFFIXES = {
 How We Got the Data
 
 Last Validated
-	2026-11-07, MoP Classic 5.5.4.70631
+	2026-11-13, MoP Classic 5.5.4.70631
 
 Notes
 	- The quest tags that put a letter after a quest's level, D for a dungeon, R for a raid, P for PvP, G for a

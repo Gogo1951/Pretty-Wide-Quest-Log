@@ -88,9 +88,9 @@ local function Professions()
 	return EMPTY
 end
 
-local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
-local GetItemCount = C_Item and C_Item.GetItemCount or GetItemCount
-local GetItemIcon = C_Item and C_Item.GetItemIconByID or GetItemIcon
+local GetItemInfo = C_Item.GetItemInfo
+local GetItemCount = C_Item.GetItemCount
+local GetItemIcon = C_Item.GetItemIconByID
 
 --------------------------------------------------------------------------------
 -- Zones
@@ -211,7 +211,7 @@ function data.Continents()
 	end
 	continents = {}
 	local seen, zoneSeen = {}, {}
-	for _, root in ipairs({ 946, 947 }) do -- The Cosmic map, holding Outland, and Azeroth
+	for _, root in ipairs(ns.WORLD_ROOT_MAP_IDS) do -- The Cosmic map, holding Outland, and Azeroth
 		for _, info in ipairs(C_Map.GetMapChildrenInfo(root, Enum.UIMapType.Continent, true) or EMPTY) do
 			if not seen[info.mapID] then
 				seen[info.mapID] = true
@@ -598,9 +598,9 @@ local function CountFromTable(questID, itemID)
 	return nil
 end
 
-local function ItemName(QuestieDB, itemID)
-	local name = GetItemInfo(itemID)
-	return name or Query(QuestieDB.QueryItemSingle, itemID, "name")
+-- The item's name in the client's language; nil until the client has loaded it
+local function ItemName(itemID)
+	return (GetItemInfo(itemID))
 end
 
 -- How many of the item the quest asks for: from the log, the counts table, then the quest's text; nil unknown
@@ -619,7 +619,8 @@ local function Needed(QuestieDB, questID, itemID, logQuest)
 	if listed then
 		return listed
 	end
-	return CountFromText(QuestieDB, questID, ItemName(QuestieDB, itemID))
+	-- Questie's own name for it stands in, to find in Questie's text, while the client hasn't loaded it
+	return CountFromText(QuestieDB, questID, ItemName(itemID) or Query(QuestieDB.QueryItemSingle, itemID, "name"))
 end
 
 --[[
@@ -751,9 +752,9 @@ end
 
 --[[
 	The lists for a zone, { mapID, quests, items, shareable }, or { mapID, unavailable = true } while
-	Questie or its database hasn't loaded. quests are { questID, name, level, giver, giverMapID, giverX,
-	giverY, shareable },
-	givers' zones then level then name; items { itemID, name, need, quests }, A to Z
+	Questie or its database hasn't loaded. quests are { questID, name, level, giver, giverMapID, giverZone,
+	giverX, giverY, shareable }, by givers' zones then level then name; items { itemID, name, need, quests },
+	A to Z, then the ones whose names haven't loaded, by ID
 ]]
 local function Build(mapID, yield)
 	local routes = ns.routes
@@ -894,7 +895,7 @@ local function Build(mapID, yield)
 
 	for _, item in pairs(items) do
 		item.questSeen = nil
-		item.name = ItemName(QuestieDB, item.itemID) or tostring(item.itemID)
+		item.name = ItemName(item.itemID)
 		for index, questID in ipairs(item.quests) do
 			item.quests[index] = {
 				questID = questID,
@@ -904,8 +905,15 @@ local function Build(mapID, yield)
 		end
 		result.items[#result.items + 1] = item
 	end
+	-- By name, and the ones the client hasn't loaded yet after, by ID
 	table.sort(result.items, function(a, b)
-		return a.name < b.name
+		if (a.name ~= nil) ~= (b.name ~= nil) then
+			return a.name ~= nil
+		end
+		if a.name and a.name ~= b.name then
+			return a.name < b.name
+		end
+		return a.itemID < b.itemID
 	end)
 	return result
 end

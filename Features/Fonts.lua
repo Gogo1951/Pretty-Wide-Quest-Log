@@ -178,21 +178,48 @@ end
 
 --[[
 	A change to Blizzard's font object (a skin's, a font add-on's) is copied into every area's copy of it.
-	Only Blizzard's object is hooked; the copies change only through Sync
+	So is a change to any font it inherits from: ElvUI sets SystemFont_Shadow_Med1 and the like, which
+	GameFontNormal, GameFontHighlight and GameFontNormalSmall take theirs from, and never calls SetFont on
+	those three themselves. Only Blizzard's objects are hooked; the copies change only through Sync
 ]]
 local FOLLOWED_METHODS = { "SetFont", "SetShadowColor", "SetShadowOffset" }
+local MAX_INHERIT_DEPTH = 10 -- Blizzard's chains are two or three deep; this only stops a loop
+
+local dependents = {} -- [a font Blizzard's followed fonts inherit from] = { [Blizzard's font object] = true }
+
+local function HookChanges(font, onChange)
+	for _, method in ipairs(FOLLOWED_METHODS) do
+		if font[method] then
+			hooksecurefunc(font, method, onChange)
+		end
+	end
+end
 
 local function Follow(blizzard)
 	if followed[blizzard] then
 		return
 	end
 	followed[blizzard] = true
-	for _, method in ipairs(FOLLOWED_METHODS) do
-		if blizzard[method] then
-			hooksecurefunc(blizzard, method, function()
-				SyncCopiesOf(blizzard)
+	HookChanges(blizzard, function()
+		SyncCopiesOf(blizzard)
+	end)
+
+	local parent = blizzard.GetFontObject and blizzard:GetFontObject()
+	local depth = 0
+	while parent and parent ~= blizzard and depth < MAX_INHERIT_DEPTH do
+		local fonts = dependents[parent]
+		if not fonts then
+			fonts = {}
+			dependents[parent] = fonts
+			HookChanges(parent, function()
+				for font in pairs(fonts) do
+					SyncCopiesOf(font)
+				end
 			end)
 		end
+		fonts[blizzard] = true
+		parent = parent.GetFontObject and parent:GetFontObject()
+		depth = depth + 1
 	end
 end
 

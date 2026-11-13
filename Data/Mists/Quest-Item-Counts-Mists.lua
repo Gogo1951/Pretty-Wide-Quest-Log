@@ -8,7 +8,7 @@ ns.QUEST_ITEM_COUNTS = ""
 How We Got the Data
 
 Last Validated
-	2026-11-12, Mists Classic
+	2026-11-13, MoP Classic 5.5.4.70631
 
 Notes
 	- How many of each item a quest asks the player to bring, for Zone Info's Things to Bring column

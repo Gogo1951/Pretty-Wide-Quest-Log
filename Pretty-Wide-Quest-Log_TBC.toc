@@ -1,5 +1,5 @@
 ## Title: Pretty Wide Quest Log
-## Notes: Wide quest log with a quest route and quest arrow. You pick the quests, we help with a clean route to get them done fast. Quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI.
+## Notes: Wide quest log and quest helper for leveling: a quest route through the quests you pick, a waypoint arrow, quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI.
 ## Author: Gogo1951
 
 ## IconTexture: Interface/AddOns/Pretty-Wide-Quest-Log/Includes/Images/Pretty-Wide-Quest-Log.tga
@@ -61,6 +61,7 @@ Data/TBC/Quest-Tags-TBC.lua
 Data/TBC/Sample-Quests-TBC.lua
 Data/TBC/Quest-Item-Counts-TBC.lua
 Data/TBC/Wowhead-TBC.lua
+Data/TBC/Game-IDs-TBC.lua
 Data/Default-Settings.lua
 
 # Pretty Wide Quest Log

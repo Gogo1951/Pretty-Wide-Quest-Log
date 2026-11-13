@@ -52,8 +52,27 @@ ns.AddWideQuestLogPart(function()
 		end
 	end
 
+	--[[
+		A zone change hides the layer until its textures load (Blizzard's fullUpdate), and the pin's OnUpdate
+		shows it again. A partial redraw landing before then drops that wait and leaves the layer hidden for
+		good: the whole zone bare parchment until the next zone change. This takes the wait up again over
+		what's drawn now. Returns whether it did
+	]]
+	local function KeepWaitingForLoad(pin)
+		if pin.isWaitingForLoad or pin:GetAlpha() == canvas:GetGlobalAlpha() then
+			return false
+		end
+		pin.isWaitingForLoad = true
+		for texture in pin.overlayTexturePool:EnumerateActive() do
+			pin.textureLoadGroup:AddTexture(texture)
+		end
+		return true
+	end
+
 	-- After Blizzard has drawn the explored areas, every area of the zone it skipped
 	local function RevealUnexplored(pin, fullUpdate)
+		fullUpdate = fullUpdate or KeepWaitingForLoad(pin)
+
 		local mapID = canvas:GetMapID()
 		local artID = mapID and C_Map.GetMapArtID(mapID)
 		local areas = artID and ns.MAP_REVEAL_OVERLAYS[artID]
@@ -61,11 +80,18 @@ ns.AddWideQuestLogPart(function()
 			return
 		end
 
+		local layerIndex = canvas:GetCanvasContainer():GetCurrentLayerIndex()
 		local layers = C_Map.GetMapArtLayers(mapID)
-		local layer = layers and layers[canvas:GetCanvasContainer():GetCurrentLayerIndex()]
+		local layer = layers and layers[layerIndex]
 		if not layer then
 			return
 		end
+
+		--[[
+			Blizzard notes the layer drawn only for a zone with explored areas, and redraws partially on each
+			zoom step while the note differs, so an unexplored zone's areas are noted as drawn here
+		]]
+		pin.layerIndex = layerIndex
 
 		local explored = {}
 		for _, info in ipairs(C_MapExplorationInfo.GetExploredMapTextures(mapID) or {}) do

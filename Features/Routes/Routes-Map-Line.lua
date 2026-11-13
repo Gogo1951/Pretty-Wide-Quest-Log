@@ -50,11 +50,55 @@ function linePinMixin:HideLeg(leg)
 	leg.length = nil
 end
 
--- A leg's color, as see-through as the lineOpacity setting, and its width
-function linePinMixin:DressLeg(leg)
+-- A leg's color, as see-through as the lineOpacity setting times alpha (1 if none), and its width
+function linePinMixin:DressLeg(leg, alpha)
 	local red, green, blue = ns.GetColorRGB("ROUTE_LINE")
-	leg.line:SetVertexColor(red, green, blue, routes.Settings().lineOpacity)
+	leg.line:SetVertexColor(red, green, blue, routes.Settings().lineOpacity * (alpha or 1))
 	leg.line:SetThickness(LINE_WIDTH / self:CanvasScale())
+end
+
+--[[
+	How solid leg i is: past the last waypoint shown (Waypoints Shown, Routes-Map.lua) a leg is the route's
+	hidden tail, drawn at tailAlpha, 0 until the "…" marker is hovered. The leg out of that last waypoint is
+	the stub running to the marker, and stays solid
+]]
+function linePinMixin:LegAlpha(i)
+	if self.lastShown and i > self.lastShown + 1 then
+		return self.tailAlpha
+	end
+	return 1
+end
+
+--[[
+	The leg out of the last waypoint shown: the whole leg while the tail shows, else the stub to the "…"
+	marker. Nothing to do while the whole route is drawn
+]]
+function linePinMixin:PlaceStubLeg()
+	local i = self.lastShown and self.lastShown + 1
+	local leg = i and self.legs[i]
+	local from = i and (self.landings[i - 1] or self.positions[i - 1])
+	if not (leg and from) then
+		return
+	end
+	local to = self.tailAlpha > 0 and self.positions[i] or self.stub
+	if to then
+		self:PlaceLeg(leg, from, to)
+	else
+		self:HideLeg(leg)
+	end
+end
+
+-- Hovering the "…" marker brings the tail in at alpha, and leaving it hides it again (0)
+function linePinMixin:ShowTail(alpha)
+	if not (self.lastShown and self:GetMap()) then -- Nothing hidden, or released off its map
+		return
+	end
+	self.tailAlpha = alpha
+	self:PlaceStubLeg()
+	for i, leg in ipairs(self.legs) do
+		self:DressLeg(leg, self:LegAlpha(i))
+	end
+	self:MarchAnts()
 end
 
 -- Every leg's width, the join-up leg's too (PlacePlayerLeg)
@@ -133,14 +177,20 @@ end
 --[[
 	Draws every leg: the player's to the first stop, then stop to stop. positions[i] is stop i's, or false;
 	landings[i], for a fly waypoint, where the leg after it starts, at the flight master it lands at. The
-	flight itself has no leg
+	flight itself has no leg. With lastShown, the last waypoint the map shows, the legs past it are hidden
+	and the one out of it runs only to stub, the "…" marker's place (or nowhere, if it has none)
 ]]
-function linePinMixin:Draw(mapID, positions, landings)
+function linePinMixin:Draw(mapID, positions, landings, lastShown, stub)
 	local settings = routes.Settings()
 	if not settings.showLine then
 		positions = {} -- Quest Route off, Waypoint Markers only: no legs, and nothing to follow the player with
 	end
 	self.mapID, self.positions, self.speed = mapID, positions, settings.lineSpeed
+	self.landings = landings or {}
+	if lastShown and lastShown >= #positions then
+		lastShown = nil
+	end
+	self.lastShown, self.stub, self.tailAlpha = lastShown, stub, 0
 	local needed = #positions
 	for i = #self.legs + 1, needed do
 		self.legs[i] = self:NewLeg()
@@ -161,8 +211,9 @@ function linePinMixin:Draw(mapID, positions, landings)
 	elseif self.meetLeg then
 		self:HideLeg(self.meetLeg)
 	end
-	for _, leg in ipairs(self.legs) do
-		self:DressLeg(leg)
+	self:PlaceStubLeg()
+	for i, leg in ipairs(self.legs) do
+		self:DressLeg(leg, self:LegAlpha(i))
 	end
 	if self.meetLeg then
 		self:DressLeg(self.meetLeg)

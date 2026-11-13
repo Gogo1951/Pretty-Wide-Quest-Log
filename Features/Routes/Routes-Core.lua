@@ -248,7 +248,11 @@ end
 	shows any more is cleared
 ]]
 function routes.SetSetting(key, value)
+	local was = routes.Settings()[key]
 	routes.Settings()[key] = value
+	if key == "predictiveRoutes" and value and not was then
+		StaticPopup_Show("PRETTYWIDEQUESTLOG_PREDICTIVE") -- Routes-Chains.lua
+	end
 	routes.UpdateWatcher()
 	if routes.IsWanted() then
 		Notify()

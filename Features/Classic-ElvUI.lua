@@ -10,7 +10,7 @@ local _, ns = ...
 ]]
 
 ns.AddWideQuestLogPart(function()
-	local MAP_GAP = ns.LAYOUT.SPACE.LINE -- Between the window's backdrop and the map's
+	local MAP_GAP = ns.LAYOUT.SPACE.LINE -- Between the window's backdrop and the map's, and the map's and Zone Info's
 	local MAP_INSET = ns.LAYOUT.SPACE.TIGHT -- Edge of the map's backdrop to the map inside it
 
 	local function GetSkins()
@@ -55,6 +55,13 @@ ns.AddWideQuestLogPart(function()
 		skins:HandleButton(questMap.toggleButton, true)
 		skins:HandleCloseButton(questMap.closeButton)
 		skins:HandleDropDownBox(questMap.zoneDropdown, questMap.zoneDropdown:GetWidth())
-		questMap.SetStyle({ edge = backdrop, x = MAP_GAP, top = 0, bottom = 0, inset = MAP_INSET })
+		questMap.SetStyle({
+			edge = backdrop,
+			x = MAP_GAP,
+			top = 0,
+			bottom = 0,
+			inset = MAP_INSET,
+			zoneInfoGap = MAP_GAP,
+		})
 	end)
 end)

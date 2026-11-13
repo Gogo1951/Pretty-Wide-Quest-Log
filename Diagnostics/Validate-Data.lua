@@ -35,8 +35,8 @@ local GetQuestTitle = C_QuestLog.GetTitleForQuestID or C_QuestLog.GetQuestInfo
 local RequestLoadQuest = C_QuestLog.RequestLoadQuestByID
 
 --[[
-    The spell, area and map art kinds' own reads, through _G because an add-on
-    whose data holds none of them never names them anywhere else.
+    The spell, area, map and map art kinds' own reads, through _G because an
+    add-on whose data holds none of them never names them anywhere else.
 ]]
 local GetSpellName = C_Spell.GetSpellName
 local DoesSpellExist = C_Spell.DoesSpellExist
@@ -46,6 +46,7 @@ local GetAreaInfo = type(_G.C_Map) == "table" and _G.C_Map.GetAreaInfo or nil
 local GetMapArtID = type(_G.C_Map) == "table" and _G.C_Map.GetMapArtID or nil
 local GetMapChildrenInfo = type(_G.C_Map) == "table" and _G.C_Map.GetMapChildrenInfo or nil
 local GetMapInfo = type(_G.C_Map) == "table" and _G.C_Map.GetMapInfo or nil
+local GetMapGroupID = type(_G.C_Map) == "table" and _G.C_Map.GetMapGroupID or nil
 
 --[[
     Every other reader the clients ship that answers from the id alone, one
@@ -175,9 +176,9 @@ for _, readers in ipairs({ ITEM_READERS, SPELL_READERS, QUEST_READERS }) do
 end
 
 --[[
-    The spell, area and map art kinds' reads get API Endpoints rows only when a
-    manifest source uses that kind, so an add-on never probes an API it doesn't
-    use.
+    The spell, area, map and map art kinds' reads get API Endpoints rows only
+    when a manifest source uses that kind, so an add-on never probes an API it
+    doesn't use. A read two kinds share gets one row.
 ]]
 local KIND_API_CHECKS = {
 	-- { kind, namespace or nil for a global, function }
@@ -186,6 +187,9 @@ local KIND_API_CHECKS = {
 	{ "spell", nil, "IsPlayerSpell" },
 	{ "spell", nil, "IsSpellKnown" },
 	{ "area", "C_Map", "GetAreaInfo" },
+	{ "map", "C_Map", "GetMapInfo" },
+	{ "map", "C_Map", "GetMapArtID" },
+	{ "map", "C_Map", "GetMapGroupID" },
 	{ "mapArt", "C_Map", "GetMapArtID" },
 	{ "mapArt", "C_Map", "GetMapChildrenInfo" },
 	{ "mapArt", "C_Map", "GetMapInfo" },
@@ -198,8 +202,11 @@ do
 			kindsUsed[source.kind] = true
 		end
 	end
+	local added = {}
 	for _, check in ipairs(KIND_API_CHECKS) do
-		if kindsUsed[check[1]] then
+		local key = tostring(check[2]) .. "." .. check[3]
+		if kindsUsed[check[1]] and not added[key] then
+			added[key] = true
 			AddApiCheck(check[2], check[3])
 		end
 	end
@@ -308,6 +315,19 @@ local AREA_COLUMNS = {
 	"SOURCE",
 	"AREA_ID",
 	"NAME",
+}
+
+-- A map row is a uiMapID: what C_Map.GetMapInfo says of it, then the art and the floor group it's drawn in.
+local MAP_COLUMNS = {
+	"STATUS",
+	"SOURCE",
+	"UI_MAP_ID",
+	"NAME",
+	"MAP_TYPE",
+	"PARENT_MAP_ID",
+	"FLAGS",
+	"ART_ID",
+	"GROUP_ID",
 }
 
 -- A map art row names one of the client's maps drawn on that art (MapArtIndex).
@@ -628,6 +648,54 @@ local function BuildAreaRow(status, entry, dataHeaders)
 end
 
 --[[
+    A map settles at once, as there is nothing to ask the server for: OK when
+    C_Map.GetMapInfo answers with a name, NO NAME when it answers without one,
+    and NOT ON CLIENT when this client has no such map.
+]]
+local function MapStatus(entry)
+	if type(GetMapInfo) ~= "function" then
+		entry.problem = "C_Map has no GetMapInfo"
+		return STATUS_ERROR
+	end
+	local info, problem = TryRead(GetMapInfo, entry.id)
+	if problem then
+		entry.problem = problem
+		return STATUS_ERROR
+	end
+	if type(info) ~= "table" then
+		return STATUS_NOT_ON_CLIENT
+	end
+	entry.mapInfo = info
+	return (type(info.name) == "string" and info.name ~= "") and STATUS_OK or STATUS_NO_NAME
+end
+
+local function BuildMapRow(status, entry, dataHeaders)
+	local info = entry.mapInfo or {}
+	local cells = {
+		status,
+		entry.source,
+		tostring(entry.id),
+		CellText(info.name),
+		CellText(info.mapType),
+		CellText(info.parentMapID),
+		CellText(info.flags),
+	}
+	local problem = entry.problem
+	if entry.mapInfo then
+		problem = FirstProblem(problem, AppendCall(cells, 1, GetMapArtID, entry.id))
+		problem = FirstProblem(problem, AppendCall(cells, 1, GetMapGroupID, entry.id))
+	else
+		AppendBlanks(cells, 2)
+	end
+	AppendDataCells(cells, entry, dataHeaders)
+	if problem then
+		cells[1] = STATUS_ERROR
+		cells[NAME_CELL] = CellText(problem)
+	end
+	return cells
+end
+
+--[[
     No client API looks up a map art ID, so the client's own maps answer
     instead: every art one of them is drawn on, keyed by art ID, with the
     lowest uiMapID drawn on it. The walk climbs from Azeroth to the top map and
@@ -716,6 +784,7 @@ local ROW_BUILDERS = {
 	quest = BuildQuestRow,
 	spell = BuildSpellRow,
 	area = BuildAreaRow,
+	map = BuildMapRow,
 	mapArt = BuildMapArtRow,
 }
 
@@ -1093,6 +1162,7 @@ local function FinishValidation(_, run)
 	AppendKindBlock(lines, run, "quest", JoinColumns(QUEST_COLUMNS, headers.quest or {}, QUEST_READER_COLUMNS))
 	AppendKindBlock(lines, run, "spell", JoinColumns(SPELL_COLUMNS, headers.spell or {}, EXTRA_SPELL_COLUMNS))
 	AppendKindBlock(lines, run, "area", JoinColumns(AREA_COLUMNS, headers.area or {}))
+	AppendKindBlock(lines, run, "map", JoinColumns(MAP_COLUMNS, headers.map or {}))
 	AppendKindBlock(lines, run, "mapArt", JoinColumns(MAP_ART_COLUMNS, headers.mapArt or {}))
 	AppendKindBlock(lines, run, "other", OTHER_COLUMNS)
 	AppendKindBlock(lines, run, "value", VALUE_COLUMNS)
@@ -1111,7 +1181,7 @@ local PollValidation
 
 --[[
     Opens the next batch: an item or spell id the client does not know is
-    flagged on the spot, an area or map art settles at once since there is
+    flagged on the spot, an area, map or map art settles at once since there is
     nothing to ask the server for, and everything else is requested and left
     for the polls.
 ]]
@@ -1134,6 +1204,8 @@ local function StartBatch(fileIndex, run)
 			ResolveRow(run, index, STATUS_NOT_ON_CLIENT)
 		elseif entry.kind == "area" then
 			ResolveRow(run, index, AreaName(entry.id) and STATUS_OK or STATUS_NO_NAME)
+		elseif entry.kind == "map" then
+			ResolveRow(run, index, MapStatus(entry))
 		elseif entry.kind == "mapArt" then
 			ResolveRow(run, index, MapArtStatus(entry))
 		else

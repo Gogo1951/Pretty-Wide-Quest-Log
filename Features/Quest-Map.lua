@@ -42,6 +42,7 @@ ns.AddWideQuestLogPart(function()
 		top = -9,
 		bottom = 45,
 		inset = 11, -- Edge of the map's border to the map inside it
+		zoneInfoGap = 0, -- Between the map's border and Zone Info's under it (Zone-Info.lua)
 	}
 
 	--------------------------------------------------------------------------------
@@ -100,6 +101,10 @@ ns.AddWideQuestLogPart(function()
 	-- The window's height under the map's top that the map and Zone Info share
 	function questMap.SharedHeight()
 		return style.edge:GetHeight() + style.top - style.bottom
+	end
+
+	function questMap.ZoneInfoGap()
+		return style.zoneInfoGap
 	end
 
 	-- The map art is fitted to the scroll frame's size once the new size has taken, not when it's asked for

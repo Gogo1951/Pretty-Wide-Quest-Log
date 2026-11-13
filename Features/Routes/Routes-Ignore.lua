@@ -94,6 +94,11 @@ routes.OnLogin(function()
 	end
 end)
 
+-- What ignoring a world map waypoint prints, naming what it ignored; the Maps & Objectives panel's Example draws it too
+function routes.BuildSkippedMessage(names)
+	return string.format(L["ROUTES_SKIPPED"], table.concat(names, L["LIST_SEPARATOR"]))
+end
+
 -- Leaves the stop's tasks out of the route until the zone is reset (a right-click on a world map waypoint)
 function routes.SkipStop(stop)
 	if not stop then
@@ -115,7 +120,7 @@ function routes.SkipStop(stop)
 	if #names == 0 then
 		return -- Nothing to skip: the way back to the player's corpse
 	end
-	routes.Print(string.format(L["ROUTES_SKIPPED"], table.concat(names, L["LIST_SEPARATOR"])))
+	routes.Print(routes.BuildSkippedMessage(names))
 	routes.RequestPlan()
 end
 
@@ -154,7 +159,7 @@ function routes.IgnoreTask(task)
 	Ignore(task)
 	if task.kind == "flightPath" or task.kind == "fly" then
 		-- No quest to name: "Ignoring Devrak Flight Path until you reset the zone."
-		routes.Print(string.format(L["ROUTES_SKIPPED"], routes.TaskLabel(task)))
+		routes.Print(routes.BuildSkippedMessage({ routes.TaskLabel(task) }))
 	else
 		routes.Print(
 			routes.BuildIgnoredMessage(routes.TaskLabel(task), task.questID, task.questName, IsPartyKey(task.key))
@@ -178,7 +183,8 @@ end
 	The ignore list as the Quest Arrow's menu shows it, in the order they were ignored: each { key, label }.
 	Only those still in play: a quest the player or the party still has, so a quest turned in or dropped
 	leaves it; a pick-up of a quest not yet taken or done; a party follow-up while someone it's for is in the
-	group (PruneGroupIgnores drops it once they've all gone); and flight paths not yet discovered
+	group (PruneGroupIgnores drops it once they've all gone); flight paths not yet discovered; and fly
+	waypoints, until the zone is reset
 ]]
 function routes.IgnoredTasks()
 	local log = routes.IsQuestieReady() and routes.QuestLog() or {}
@@ -186,7 +192,9 @@ function routes.IgnoredTasks()
 	local list = {}
 	for key, entry in pairs(routes.skipped) do
 		local held = entry.questID ~= nil and log[entry.questID]
-		if entry.npcID then
+		if key:find("^fly:") then
+			held = true
+		elseif entry.npcID then
 			held = not routes.IsFlightMasterKnown(entry.npcID)
 		elseif MatchesAny(key, PARTY_FOLLOW_UP_KEYS) then
 			held = true

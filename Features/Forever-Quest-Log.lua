@@ -71,10 +71,23 @@ frame:SetScript("OnDragStart", function(self)
 		self:StartMoving()
 	end
 end)
+--[[
+	Saved by its top left corner, whatever point the drag left it held by, so a change of height grows the
+	window downward from where the player put its title bar
+]]
+local function HoldByTopLeft()
+	local left, top = frame:GetLeft(), frame:GetTop()
+	if not (left and top) then
+		return
+	end
+	frame:ClearAllPoints()
+	frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top)
+	ns.db.global.point = { "TOPLEFT", "UIParent", "BOTTOMLEFT", left, top }
+end
+
 frame:SetScript("OnDragStop", function(self)
 	self:StopMovingOrSizing()
-	local point, _, relativePoint, x, y = self:GetPoint(1)
-	ns.db.global.point = { point, "UIParent", relativePoint, x, y }
+	HoldByTopLeft()
 end)
 
 --------------------------------------------------------------------------------
@@ -425,6 +438,9 @@ function ns:OnDatabaseReady()
 	if point then
 		frame:ClearAllPoints()
 		frame:SetPoint(point[1], UIParent, point[3], point[4], point[5])
+		if point[1] ~= "TOPLEFT" or point[3] ~= "BOTTOMLEFT" then -- MIGRATION (remove after 2026-12-13): spots released builds saved by other points
+			HoldByTopLeft()
+		end
 	end
 
 	local tracker = ns.ImportQuestieModule("QuestieTracker")

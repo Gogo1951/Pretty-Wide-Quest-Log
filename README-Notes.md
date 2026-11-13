@@ -28,6 +28,12 @@
 - **Instead:** The quest log window's title is the game's own Quest Log label, then the Short Name (`Quest Log // PWQL`).
 - **Why:** The window stands in for Blizzard's quest log, so its title leads with the game's own name for it.
 
+### README opens with headline screenshots
+
+- **Departs from:** README rules, Image Handling, one image per feature block and nowhere else.
+- **Instead:** Two headed screenshots, one of the route and one of the Quest Arrow, sit between the TL;DR and the first feature block, and the Quest Route block carries a second screenshot under its table.
+- **Why:** The route and the arrow sell the add-on at a glance, so they lead the page before any bullet.
+
 ### README Tips & Tricks carries pictures and a third section
 
 - **Departs from:** README rules, images living only in the feature blocks, and Tips & Tricks holding at most two sub-sections beyond the Mini-Map Button and CVar.
@@ -69,3 +75,9 @@
 - **Departs from:** SAVED VARIABLES → The Two Models, an add-on storing per-character data uses Per-Character.
 - **Instead:** Settings live on one shared profile, while the route's ignore list and the flight paths each character knows live in AceDB's per-character section, which Reset Profile doesn't clear.
 - **Why:** Every character shares the same settings, but what a character has ignored and which flight paths it knows belong to that character alone.
+
+### Prints lead with the Short Name
+
+- **Departs from:** MESSAGES, every print leads with the Full Name.
+- **Instead:** Every line printed to the player's own chat window, and every Example line drawn as one, leads with the Short Name (`PWQL // ...`).
+- **Why:** The add-on prints often while questing, and a short lead keeps those lines short.

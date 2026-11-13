@@ -2,8 +2,8 @@ local _, ns = ...
 
 --[[
 	Every client: who in the group needs a quest shared, for Share Quests, the dungeon share and the Zone
-	Share Offer to leave out those who have it, and on WoW Forever and Mists, sharing one asked for in combat
-	once combat ends
+	Share Offer to leave out those who have it, and on WoW Forever only, sharing one asked for in combat once
+	combat ends
 ]]
 
 --------------------------------------------------------------------------------
@@ -89,8 +89,9 @@ if C_QuestLog.GetInfo then
 		end
 	end
 
+	-- Mists shares in combat as it is asked, so only WoW Forever holds it
 	function ns.ShareQuest(questID)
-		if InCombatLockdown() then
+		if ns.FLAVOR == "Camelot" and InCombatLockdown() then
 			pendingShare = questID
 			ns:PrintMessage(ns.L["CHAT_SHARING_AFTER_COMBAT"]:format(C_QuestLog.GetTitleForQuestID(questID) or questID))
 			return

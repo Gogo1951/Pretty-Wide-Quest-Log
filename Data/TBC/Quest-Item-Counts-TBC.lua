@@ -3912,7 +3912,7 @@ ns.QUEST_ITEM_COUNTS = "\n"
 How We Got the Data
 
 Last Validated
-	2026-11-12, TBC Classic
+	2026-11-13, TBC Anniversary 2.5.6.70577
 
 Notes
 	- How many of each item a quest asks the player to bring, for Zone Info's Things to Bring column

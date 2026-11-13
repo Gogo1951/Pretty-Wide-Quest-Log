@@ -3,9 +3,10 @@ local _, ns = ...
 --[[
 	Routes: the route's nodes, from Questie's quest log and database. Every objective not yet done becomes
 	a node whose candidates are its blobs (Routes-Blobs.lua), and every done quest's turn-in a node too (a
-	quest not yet done isn't routed to its turn-in). A dungeon or raid quest's objectives are left out, as
-	they're inside the instance, but its turn-in is a node like any other's, where the NPC or object is out
-	in the world: one inside the instance is left out too. Routes-Solver.lua orders them; Routes-Stops.lua
+	quest not yet done has its turn-in planned ahead, shown only with Predictive Questing Routes on). A
+	dungeon or raid quest's objectives are left out, as they're inside the instance, but its turn-in is a
+	node like any other's, where the NPC or object is out in the world: one inside the instance is left out
+	too. Routes-Solver.lua orders them; Routes-Stops.lua
 	makes the stops.
 
 	Only the zone the player is in counts, with the caves and cities inside it (routes.IsInZone): an

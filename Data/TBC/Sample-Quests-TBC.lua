@@ -14,7 +14,7 @@ ns.SAMPLE_ZONE_AREA_ID = 40 -- Westfall
 How We Got the Data
 
 Last Validated
-	2026-11-07, TBC Anniversary 2.5.6.70577
+	2026-11-13, TBC Anniversary 2.5.6.70577
 
 Notes
 	- Three quests from The Deadmines, a dungeon every current client has, that the Quality of Life panel's

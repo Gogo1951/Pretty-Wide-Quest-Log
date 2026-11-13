@@ -29,6 +29,19 @@ local _, ns = ...
 local routes = ns.routes
 local helpers = routes.pickUpHelpers -- Routes-Pick-Ups.lua
 
+--[[
+	The popup each time Predictive Questing Routes turns on (routes.SetSetting), from Options or the Quest
+	Arrow's menu: the map can look wild with the whole zone planned, but following the arrow is faster
+]]
+StaticPopupDialogs.PRETTYWIDEQUESTLOG_PREDICTIVE = {
+	text = ns.L["PREDICTIVE_ROUTES_POPUP"],
+	button1 = OKAY,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,
+}
+
 local Candidates = routes.Candidates
 local QueryQuest = helpers.QueryQuest
 local QuestPlan = routes.QuestPlan -- Routes-Quest-Plans.lua
@@ -285,8 +298,8 @@ end
 
 --[[
 	Adds a pick-up's quest to nodes: a predicted objective node for each of its objectives here, waiting
-	on the pick-up, and its turn-in, waiting on them all, hidden with Predictive Questing Routes off as a turn-in
-	planned ahead is (Routes-Nodes.lua). Returns the turn-in node, nil where nothing in the zone takes it
+	on the pick-up, and its turn-in, waiting on them all. Returns the turn-in node, nil where nothing in the
+	zone takes it
 ]]
 local function PlanQuest(QuestieDB, pickUp, start, yield, nodes)
 	local plan = QuestPlan(QuestieDB, pickUp.questID, start, yield)
@@ -333,7 +346,6 @@ local function PlanQuest(QuestieDB, pickUp, start, yield, nodes)
 		quest = pickUp.quest,
 		candidates = Candidates(plan.turnIn, start, false),
 		blobs = plan.turnIn,
-		hidden = not routes.Settings().predictiveRoutes or nil,
 		requires = waits,
 		predicted = true,
 		pickUpNode = pickUp,
