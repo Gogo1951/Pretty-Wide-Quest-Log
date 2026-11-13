@@ -16,7 +16,7 @@ local WIDTH, ARROW_SIZE = layout.WIDTH, layout.ARROW_SIZE
 local NEXT_ARROW_SIZE, EYE_TEXTURE = layout.NEXT_ARROW_SIZE, layout.EYE_TEXTURE
 local ARROW_TEXTURE = layout.ARROW_TEXTURE
 local DIM_ALPHA = layout.DIM_ALPHA
-local ICON_SIZE = 16 -- The small eye beside "While You're Here", and the arrow on each pickup under it: a quarter of the big one, on the doubling scale
+local ICON_SIZE = 16 -- The small eye beside "While You're Here", and the arrow on each quest's title: a quarter of the big one, on the doubling scale
 
 --------------------------------------------------------------------------------
 -- The quests at the stop
@@ -28,7 +28,7 @@ local ICON_SIZE = 16 -- The small eye beside "While You're Here", and the arrow 
 	You're Here", "Next Objective"). Each has a left side, a count on the right where it has one, and a small icon where it has one
 ]]
 local lines = {}
-local pointing = {} -- The lines with an arrow to turn, each pickup on the way, with line.point its giver's place
+local pointing = {} -- The lines with an arrow to turn, each quest's title, with line.point where it points
 routes.arrowPointingLines = pointing -- Point turns them (Routes-Arrow.lua)
 local nextGutter = 0 -- How far the Next Objective's lines sit right of the block's edge, past its arrow and distance
 
@@ -79,7 +79,7 @@ end
 	of them. The distance line keeps its room while blank, so the list doesn't jump on arrival. The frame
 	takes the mouse only over the arrow and the block, not the empty width either side
 ]]
-local listedKey
+local listedCount, listedNote -- The last list's line count and note, which with pending tells a change
 local pending = {}
 local nextShown = false -- Whether the Next Objective is laid out, which ListQuests returns
 
@@ -103,32 +103,48 @@ routes.arrowTitleRows = titleRows
 
 	Joining up (Routes-Group-Up.lua): meet is the place the arrow points to, a party member or the middle of
 	everyone, listed in place of the view as "Join Up with Group"
+
+	underArrow: the big arrow points at the view, not the eye, so its first quest goes without a little arrow
 ]]
-local function ListQuests(view, noteText, passing, nextStop, meet)
+local function ListQuests(view, noteText, passing, nextStop, meet, underArrow)
 	local settings = routes.Settings()
-	-- The lines first, so a second with nothing changed lays nothing out again
-	local count, texts = 0, {}
+	--[[
+		The lines first, so a second with nothing changed lays nothing out again. Each line is checked
+		against the last list's line in its place, field by field, rather than written out as text to compare,
+		as this runs every second; a point counts as moved past a tenth of a yard
+	]]
+	local count, changed = 0, false
 	local function Add(kind, text, red, green, blue, right, dim, icon, isNext, questID, point)
 		count = count + 1
-		local entry = pending[count] or {}
-		pending[count] = entry
+		local entry = pending[count]
+		if not entry then
+			entry = {}
+			pending[count] = entry
+			changed = true
+		end
+		dim, isNext = dim and true or false, isNext and true or false
+		local pointX = point and math.floor(point.x * 10 + 0.5)
+		local pointY = point and math.floor(point.y * 10 + 0.5)
+		if
+			entry.kind ~= kind
+			or entry.text ~= text
+			or entry.right ~= right
+			or entry.dim ~= dim
+			or entry.icon ~= icon
+			or entry.next ~= isNext
+			or entry.questID ~= questID
+			or entry.pointX ~= pointX
+			or entry.pointY ~= pointY
+			or entry.red ~= red
+			or entry.green ~= green
+			or entry.blue ~= blue
+		then
+			changed = true
+		end
 		entry.kind, entry.text, entry.right, entry.dim, entry.icon = kind, text, right, dim, icon
 		entry.next, entry.questID, entry.point = isNext, questID, point
+		entry.pointX, entry.pointY = pointX, pointY
 		entry.red, entry.green, entry.blue = red, green, blue
-		texts[count] = string.format(
-			"%s%.2f%.2f%.2f%s|%s|%s%s%s%s%s",
-			kind,
-			red,
-			green,
-			blue,
-			text,
-			right or "",
-			dim and "dim" or "",
-			icon or "",
-			isNext and "next" or "",
-			questID or "",
-			point and string.format("@%.1f,%.1f", point.x, point.y) or ""
-		)
 	end
 	local timed = routes.TimedQuests()
 	local function AddTimer(questID, dim, isNext)
@@ -140,17 +156,21 @@ local function ListQuests(view, noteText, passing, nextStop, meet)
 		Add("timer", SecondsToTime(math.floor(seconds)), red, green, blue, nil, dim, nil, isNext)
 	end
 	--[[
-		A stop's quests; onTheWay (dimmed, under "While You're Here") gives each quest to pick up its own
-		little arrow to the giver. The stop itself has none: the big arrow already points there
+		A stop's quests, dimmed under "While You're Here" when on the way. Each quest's title has its own
+		little arrow, to the middle of its objective area, or to the giver of one to pick up
+		(routes.ForEachStopLine), so in an area with several the player sees which way each one is. Under the
+		big arrow, the first quest has none: the big arrow is its arrow. Under the eye it keeps its own
 	]]
-	local function AddStop(stop, onTheWay)
-		local dim = onTheWay
+	local function AddStop(stop, dim, skipFirst)
 		routes.ForEachStopLine(
 			stop,
 			settings.questsListed,
 			function(kind, text, red, green, blue, right, questID, point)
-				point = onTheWay and point or nil
-				Add(kind, text, red, green, blue, right, dim, point and "arrow" or nil, nil, questID, point)
+				local icon = point and "arrow" or nil
+				if skipFirst and kind == "title" then
+					icon, point, skipFirst = "blank", nil, false
+				end
+				Add(kind, text, red, green, blue, right, dim, icon, nil, questID, point)
 				if kind == "title" then
 					AddTimer(questID, dim)
 				end
@@ -160,7 +180,7 @@ local function ListQuests(view, noteText, passing, nextStop, meet)
 	if meet then
 		Add("title", L["ROUTES_GROUP_UP"], ns.GetColorRGB("TITLE"))
 	elseif settings.showQuests and view then
-		AddStop(view, false)
+		AddStop(view, false, underArrow)
 		if passing then
 			local red, green, blue = ns.GetColorRGB("HELP")
 			Add("section", L["ROUTES_WHILE_HERE"], red, green, blue, nil, true, "eye")
@@ -180,11 +200,10 @@ local function ListQuests(view, noteText, passing, nextStop, meet)
 			end
 		end)
 	end
-	local key = (noteText or "") .. "\n" .. table.concat(texts, "\n")
-	if key == listedKey then
+	if not changed and count == listedCount and noteText == listedNote then
 		return nextShown
 	end
-	listedKey = key
+	listedCount, listedNote = count, noteText
 
 	note:SetText(noteText or "")
 	note:SetTextColor(ns.GetColorRGB("HELP"))
@@ -202,6 +221,19 @@ local function ListQuests(view, noteText, passing, nextStop, meet)
 		nextColumn = math.ceil(math.max(NEXT_ARROW_SIZE, nextDistance:GetStringWidth() or 0))
 		nextGutter = nextColumn + SPACE.GROUP
 		nextDistance:SetText("")
+	end
+
+	--[[
+		The first quest under the big arrow keeps its arrow's room only when another quest's title has one,
+		so the titles stay aligned; alone it sits centered with no gap
+	]]
+	local otherArrow = false
+	for index = 1, count do
+		local entry = pending[index]
+		if entry.kind == "title" and entry.icon == "arrow" then
+			otherArrow = true
+			break
+		end
 	end
 
 	local used, blockWidth, previous = 0, 0, nil
@@ -238,7 +270,8 @@ local function ListQuests(view, noteText, passing, nextStop, meet)
 		line:SetAlpha(alpha)
 		line.count:SetAlpha(alpha)
 		line.icon:SetAlpha(alpha)
-		line.iconWidth = entry.icon and (ICON_SIZE + SPACE.LINE) or 0
+		local reserve = entry.icon and (entry.icon ~= "blank" or otherArrow)
+		line.iconWidth = reserve and (ICON_SIZE + SPACE.LINE) or 0
 		line.point = nil
 		if entry.icon == "eye" then
 			line.icon:SetTexture(EYE_TEXTURE)
@@ -246,7 +279,7 @@ local function ListQuests(view, noteText, passing, nextStop, meet)
 			line.icon:SetVertexColor(ns.GetColorRGB("INFO"))
 			line.icon:Show()
 		elseif entry.icon == "arrow" then
-			-- Hidden until Point turns it toward the giver, so it never shows pointing the wrong way
+			-- Hidden until Point turns it toward its place, so it never shows pointing the wrong way
 			line.icon:SetTexture(ARROW_TEXTURE)
 			line.icon:Hide()
 			line.point = entry.point

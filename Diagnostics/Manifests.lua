@@ -118,6 +118,13 @@ local SHARED_FUNCTIONS = {
 	"C_QuestLog.RequestLoadQuestByID",
 	-- The name a zone offer is whispered to when the party frame has none yet (Zone-Share-Offer.lua)
 	"GetPlayerInfoByGUID",
+	-- Zone Info's zone menu, solid box, columns, item rows and Ask for Shares on LFG (Zone-Info.lua, Zone-Info-Data.lua)
+	"C_Map.GetMapChildrenInfo",
+	"GetChannelName",
+	"CopyTable",
+	"ScrollUtil.InitScrollFrameWithScrollBar",
+	"IsModifiedClick",
+	"debugprofilestop",
 }
 
 -- The quest giver window's pieces, the quest text fonts, and the mixins the map's canvas is built from
@@ -770,6 +777,10 @@ ns.DIAGNOSTIC_DATA_SOURCES = {
 	{
 		label = "Map-Reveal",
 		sources = { { table = "MAP_REVEAL_OVERLAYS", kind = "mapArt", rowId = KeyId } },
+	},
+	{
+		label = "Quest-Item-Counts",
+		sources = { { table = "QUEST_ITEM_COUNTS", kind = "other" } },
 	},
 	{
 		label = "Quest-Tags",
@@ -2196,6 +2207,19 @@ function ns:BuildMapContextReport()
 	Setting(lines, "Show objective areas", "showObjectiveAreas")
 	lines[#lines + 1] = string.format("Objective areas shaded: %s", tostring(questMap and questMap.areaCount))
 	ObjectiveAreaLines(lines, pins, questID, canvas and canvas:GetMapID())
+
+	-- Zone Info under the map (Zone-Info.lua)
+	Setting(lines, "Show zone info", "showZoneInfo")
+	local zoneInfoBox = questMap and questMap.zoneInfoBox
+	lines[#lines + 1] = string.format("Zone Info: %s", zoneInfoBox and Shown(zoneInfoBox) or "(not built)")
+	lines[#lines + 1] = string.format("Zone Info browsing zone: %s", tostring(questMap and questMap.browseMapID))
+	local wanted = {}
+	for wantedID in pairs(ns.zoneInfoData and ns.zoneInfoData.WantedPickUps() or {}) do
+		wanted[#wanted + 1] = tostring(wantedID)
+	end
+	table.sort(wanted)
+	lines[#lines + 1] =
+		string.format("Zone Info pick-ups on the route: %s", #wanted > 0 and table.concat(wanted, ", ") or "(none)")
 
 	return table.concat(lines, "\n")
 end

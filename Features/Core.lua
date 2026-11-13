@@ -82,6 +82,15 @@ local EVENTS = {
 	{ "BAG_UPDATE_DELAYED", "OnBagUpdateDelayed", "routesItems" },
 	{ "BAG_UPDATE_COOLDOWN", "OnBagUpdateCooldown", "routesItems" },
 	{ "PLAYER_TARGET_CHANGED", "OnPlayerTargetChanged", "routesItems" },
+	{ "BAG_UPDATE_DELAYED", "OnBagUpdateDelayed", "zoneInfo" },
+	{ "QUEST_ACCEPTED", "OnQuestAccepted", "zoneInfo" },
+	{ "QUEST_REMOVED", "OnQuestRemoved", "zoneInfo" },
+	{ "QUEST_TURNED_IN", "OnQuestTurnedIn", "zoneInfo" },
+	{ "PLAYER_LEVEL_UP", "OnPlayerLevelUp", "zoneInfo" },
+	{ "SKILL_LINES_CHANGED", "OnSkillLinesChanged", "zoneInfo" },
+	{ "GET_ITEM_INFO_RECEIVED", "OnGetItemInfoReceived", "zoneInfo" },
+	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "zoneInfo" },
+	{ "UNIT_QUEST_LOG_CHANGED", "OnUnitQuestLogChanged", "zoneInfo" },
 }
 
 local EVENT_HANDLERS = {}
@@ -201,6 +210,9 @@ function ns:ApplyProfile()
 		if ns.hasQuestMap then
 			ns.questMap.RequestRefresh()
 		end
+		if ns.zoneInfo and ns.zoneInfo.Apply then
+			ns.zoneInfo.Apply()
+		end
 	end
 	if ns.routes then
 		ns.routes.ApplySettings()
@@ -305,6 +317,10 @@ function ns:OnAddonLoaded(name)
 
 	StartWideQuestLog()
 	RegisterLoadedEvents()
+	-- Zone Info under the map, built before the saved settings on WoW Forever and Mists (Zone-Info.lua)
+	if ns.zoneInfo and ns.zoneInfo.Apply then
+		securecall(ns.zoneInfo.Apply)
+	end
 	securecall(ns.ApplyQuestGiverCleanup)
 	if ns.OnDatabaseReady then
 		securecall(ns.OnDatabaseReady, ns)

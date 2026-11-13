@@ -741,6 +741,10 @@ local function CollectEntries(source, rows)
 end
 
 local function CountRows(rows)
+	-- A table packed into one string, a line a row (Quest-Item-Counts-{Game}.lua)
+	if type(rows) == "string" then
+		return select(2, rows:gsub("\n%d", ""))
+	end
 	local count = 0
 	for _ in pairs(rows) do
 		count = count + 1
@@ -779,7 +783,7 @@ local function CollectIds(entry)
 				local value = type(rows) == "table" and FormatTable(rows) or rows
 				values[#values + 1] = { STATUS_OK, source.table, CellText(value) }
 			end
-		elseif type(rows) ~= "table" then
+		elseif type(rows) ~= "table" and not (source.kind == "other" and type(rows) == "string") then
 			missing[#missing + 1] = source
 		elseif source.kind == "other" then
 			others[#others + 1] = { STATUS_OK, source.table, tostring(CountRows(rows)) }

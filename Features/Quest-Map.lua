@@ -30,6 +30,7 @@ ns.AddWideQuestLogPart(function()
 
 	local MAP_ASPECT = 1002 / 668 -- Width over height of Blizzard's map art
 	local HEIGHT_SHARE = 0.66 -- Of the visible window's height, from its top
+	local SPLIT_SHARE = 0.5 -- The same, with Zone Info under the map taking the rest (Zone-Info.lua)
 
 	--[[
 		Where the map sits: its left edge against the window art's right edge and its top level with the art's
@@ -65,11 +66,15 @@ ns.AddWideQuestLogPart(function()
 	-- The map always shows the whole zone. The wheel stays enabled, so it doesn't zoom the camera instead
 	canvas.ScrollContainer:SetMouseWheelZoomMode(MAP_CANVAS_MOUSE_WHEEL_ZOOM_BEHAVIOR_NONE)
 
-	-- Same proportions as Blizzard's map art, HEIGHT_SHARE as tall as the visible window
+	--[[
+		Same proportions as Blizzard's map art, HEIGHT_SHARE as tall as the visible window, or SPLIT_SHARE with
+		Zone Info under it (questMap.zoneInfoShown), which takes the height left
+	]]
 	local function LayOut()
 		holder:ClearAllPoints()
 		holder:SetPoint("TOPLEFT", style.edge, "TOPRIGHT", style.x, style.top)
-		local height = (style.edge:GetHeight() + style.top - style.bottom) * HEIGHT_SHARE
+		local share = questMap.zoneInfoShown and SPLIT_SHARE or HEIGHT_SHARE
+		local height = (style.edge:GetHeight() + style.top - style.bottom) * share
 		local mapHeight = height - 2 * style.inset
 		holder:SetSize(mapHeight * MAP_ASPECT + 2 * style.inset, height)
 
@@ -90,6 +95,11 @@ ns.AddWideQuestLogPart(function()
 			style[key] = value
 		end
 		LayOut()
+	end
+
+	-- The window's height under the map's top that the map and Zone Info share
+	function questMap.SharedHeight()
+		return style.edge:GetHeight() + style.top - style.bottom
 	end
 
 	-- The map art is fitted to the scroll frame's size once the new size has taken, not when it's asked for
@@ -215,15 +225,27 @@ ns.AddWideQuestLogPart(function()
 
 	--[[
 		Remembered across sessions; shown unless it was closed. With no quests in the log there's nothing
-		to map, so the map and its button are hidden then, leaving what was remembered as it is
+		to map, so the map and its button are hidden then, leaving what was remembered as it is; with Zone
+		Info on (questMap.zoneInfoShown), the map stays for it, on the player's zone
 	]]
 	local logEmpty = false
 
 	local function ApplyShown()
 		local shown = not ns.db.global.mapHidden
-		holder:SetShown(shown and not logEmpty)
-		toggleButton:SetShown(not logEmpty)
+		local hasUse = not logEmpty or questMap.zoneInfoShown
+		holder:SetShown(shown and hasUse)
+		toggleButton:SetShown(hasUse and true or false)
 		toggleButton:SetText(shown and L["HIDE_MAP"] or SHOW_MAP)
+	end
+
+	-- Zone Info under the map, or not: the map's height and whether an empty log keeps it (Zone-Info.lua)
+	function questMap.SetZoneInfoShown(shown)
+		shown = shown and true or false
+		if shown ~= (questMap.zoneInfoShown or false) then
+			questMap.zoneInfoShown = shown
+			LayOut()
+			ApplyShown()
+		end
 	end
 
 	-- Each client's quest list says whether the log has any quests each time it updates

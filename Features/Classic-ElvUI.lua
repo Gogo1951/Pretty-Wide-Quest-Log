@@ -45,6 +45,13 @@ ns.AddWideQuestLogPart(function()
 		questMap.holder:SetBackdrop(nil)
 		questMap.holder:SetTemplate("Transparent")
 		MakeOpaque(questMap.holder)
+		local zoneInfoBox = questMap.zoneInfoBox -- Zone-Info.lua
+		if zoneInfoBox then
+			zoneInfoBox:SetBackdrop(nil)
+			zoneInfoBox:SetTemplate("Transparent")
+			MakeOpaque(zoneInfoBox)
+			skins:HandleButton(questMap.zoneInfoAskButton, true)
+		end
 		skins:HandleButton(questMap.toggleButton, true)
 		skins:HandleCloseButton(questMap.closeButton)
 		skins:HandleDropDownBox(questMap.zoneDropdown, questMap.zoneDropdown:GetWidth())

@@ -62,6 +62,7 @@ local UNPLANNABLE = {
 	quests a frame (yield), and a plan stopped partway leaves it for the next to go on with
 ]]
 local index = { position = 0 }
+local PREREQUISITE_FIELDS = { "preQuestSingle", "preQuestGroup" }
 
 local function FollowUpIndex(QuestieDB, yield)
 	if index.done then
@@ -83,7 +84,7 @@ local function FollowUpIndex(QuestieDB, yield)
 	while index.position < #ids do
 		index.position = index.position + 1
 		local questID = ids[index.position]
-		for _, field in ipairs({ "preQuestSingle", "preQuestGroup" }) do
+		for _, field in ipairs(PREREQUISITE_FIELDS) do
 			local before = QueryQuest(QuestieDB, questID, field)
 			if type(before) == "table" then
 				for _, raw in ipairs(before) do
@@ -103,8 +104,10 @@ local function FollowUpIndex(QuestieDB, yield)
 		yield()
 	end
 	index.done = true
+	index.ids = nil -- Every quest ID, needed only while reading
 	return followUps
 end
+routes.FollowUpIndex = FollowUpIndex -- Zone Info's Things to Bring follows the same chains (Zone-Info-Data.lua)
 
 --------------------------------------------------------------------------------
 -- Which quests count

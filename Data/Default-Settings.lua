@@ -26,6 +26,7 @@ ns.DATABASE_DEFAULTS = {
 		completedFirst = true,
 		closeInCombat = false,
 		showObjectiveAreas = true,
+		showZoneInfo = true, -- Zone Info under the map (Zone-Info.lua)
 		--[[
 			Each text area's font (Fonts.lua). face: "" is the game's font, a GAME_FONTS key one of the game's
 			others, anything else a SharedMedia font by name. size: points from the game's size. outline:
@@ -61,7 +62,7 @@ ns.DATABASE_DEFAULTS = {
 			questsListed = 4, -- Quests listed at most; the rest are counted
 			showItemButtons = true, -- A Use Item button beside each listed quest with an item to use
 			showNextObjective = false, -- In an objective area, the waypoint after it, dimmed under the list
-			predictiveRoutes = true, -- Quests the zone can finish planned whole with their follow-ups, and turn-ins shown before they're done
+			predictiveRoutes = false, -- Quests the zone can finish planned whole with their follow-ups, and turn-ins shown before they're done; off, as it's a lot at first
 			showLocalQuests = true, -- Quests Questie shows as available, whose giver is nearby, as waypoints to pick up
 			showFlightPaths = true, -- Flight masters in the zone whose flight path the character doesn't have, as waypoints
 			--[[
@@ -88,5 +89,6 @@ ns.DATABASE_DEFAULTS = {
 		routesFlightMasters = {}, -- Flight masters whose flight path the character has, by NPC ID, as flight maps showed (Routes-Flights.lua)
 		zoneShareOffered = {}, -- Party members offered the zone's quests in this group, by GUID, kept through a reload (Zone-Share-Offer.lua)
 		routesFlightMapSeen = {}, -- Continents whose flight map was read (all for a new character): until then no flight path goes on the route there
+		zoneInfoWanted = {}, -- Quests Zone Info's + put on the route, by quest ID, until taken or done (Zone-Info-Data.lua)
 	},
 }

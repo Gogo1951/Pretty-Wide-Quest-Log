@@ -6,10 +6,10 @@ local GetColor = ns.GetColor
 -- Messaging
 --------------------------------------------------------------------------------
 
--- A line for the player's own chat window, as ns:PrintMessage prints it
+-- A line for the player's own chat window, as ns:PrintMessage prints it: the short name, so lines stay short
 function ns.BuildPrintLine(message)
 	return GetColor("INFO")
-		.. L["ADDON_TITLE"]
+		.. L["ADDON_SHORT_NAME"]
 		.. "|r "
 		.. GetColor("SEPARATOR")
 		.. "//"
@@ -111,6 +111,7 @@ local function QuestReferences(questID)
 	end
 	return references
 end
+ns.QuestReferences = QuestReferences -- Zone Info's Ask for Shares names its quests this way too (Zone-Info.lua)
 
 --[[
 	How a message names a quest, build(reference) being the message with it: the best way that fits the
