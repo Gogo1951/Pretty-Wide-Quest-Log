@@ -2845,7 +2845,7 @@ ns.QUEST_ITEM_COUNTS = "\n"
 How We Got the Data
 
 Last Validated
-	2026-11-12, WoW Forever
+	2026-11-13, WoW Forever 1.60.1.70938
 
 Notes
 	- How many of each item a quest asks the player to bring, for Zone Info's Things to Bring column

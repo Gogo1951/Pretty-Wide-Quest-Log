@@ -14,7 +14,7 @@ ns.SAMPLE_ZONE_AREA_ID = 40 -- Westfall
 How We Got the Data
 
 Last Validated
-	2026-11-12, WoW Forever 1.60.1.70888
+	2026-11-13, WoW Forever 1.60.1.70938
 
 Notes
 	- Three quests from The Deadmines, a dungeon every current client has, that the Quality of Life panel's
