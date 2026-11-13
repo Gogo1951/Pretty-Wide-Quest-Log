@@ -95,9 +95,9 @@ Fun fact: Questie once planned a Routes feature for TBC Classic, but it never ma
 
 ### Plan Ahead
 
-<img width="580" height="572" alt="image" src="https://github.com/user-attachments/assets/5631ba87-d663-4b22-9953-9995f0c21897" />
+With Zone Notes you'll never have to stop mid-run to go back to town. Also take advantage of unlimited quest sharing distance in Forever and ask /4 for quests you haven't picked up yet.
 
-With Zone Notes you'll never have to stop mid-run to go back to town.
+<img width="580" height="572" alt="image" src="https://github.com/user-attachments/assets/5631ba87-d663-4b22-9953-9995f0c21897" />
 
 ### Quest Chains
 
