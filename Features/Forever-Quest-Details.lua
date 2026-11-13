@@ -13,8 +13,7 @@ local WIDTH = LAYOUT.CONTENT_WIDTH
 local frame = ns.questLogFrame
 local state = ns.questLog
 
--- Money as coin icons: the C_CurrencyInfo call, or the global where a client lacks it
-local CoinText = C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
+local CoinText = ns.GetCoinTextureString
 
 --------------------------------------------------------------------------------
 -- The Pane

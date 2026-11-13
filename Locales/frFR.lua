@@ -28,7 +28,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Journal de quêtes large avec un itinéraire de quêtes et une flèche de quête. Vous choisissez les quêtes, nous vous aidons avec un itinéraire clair pour les terminer vite. Niveau des quêtes, repères, récompenses, suites de quêtes, carte de quête et partage de quêtes avec le groupe. Compatible avec Questie, Spoken, VoiceOver et ElvUI."
+	"Journal de quêtes large et assistant de quêtes pour monter de niveau : un itinéraire à travers les quêtes que vous choisissez, une flèche vers chaque point de passage, niveau des quêtes, repères, récompenses, suites de quêtes, carte de quête et partage de quêtes avec le groupe. Compatible avec Questie, Spoken, VoiceOver et ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Affiche le message de bienvenue de Pretty Wide Quest Log à la connexion."
 L["OPTIONS_FEATURES_HEADER"] = "Fonctionnalités"
@@ -260,6 +260,12 @@ L["MARKER_SIZE_SMALL"] = "Petite"
 L["MARKER_SIZE_MEDIUM"] = "Moyenne"
 L["MARKER_SIZE_LARGE"] = "Grande"
 L["MARKER_SIZE_HUGE"] = "Énorme"
+L["WAYPOINTS_SHOWN"] = "Points de passage affichés"
+L["WAYPOINTS_SHOWN_DESCRIPTION"] =
+	"La part de l'itinéraire que la carte de zone dessine. L'itinéraire complet reste planifié : après ces points de passage, un marqueur … indique où il continue, et le survoler montre le reste. Cliquer dessus affiche l'itinéraire complet jusqu'à ce que vous fermiez la carte."
+-- TRANSLATORS: a Waypoints Shown choice; %d is how many waypoints, 5, 10 or 20
+L["WAYPOINTS_SHOWN_NEXT"] = "%d suivants"
+L["WAYPOINTS_SHOWN_ALL"] = "Itinéraire complet"
 L["TAB_WIDE_MAP"] = "Carte du continent et du monde"
 L["TAB_WIDE_MAP_DESCRIPTION"] =
 	"Les cartes qui regroupent de nombreuses zones à la fois, où chaque objectif et chaque remise de quête ont un marqueur plus petit."
@@ -288,6 +294,51 @@ L["LINE_SPEED_NORMAL"] = "Normale"
 L["LINE_SPEED_FAST"] = "Rapide"
 L["LINE_OPACITY"] = "Opacité de la ligne"
 L["LINE_OPACITY_DESCRIPTION"] = "L'opacité des points ; plus elle est basse, plus la carte transparaît."
+L["ROUTES_PLANNING_HEADER"] = "Planification"
+L["ROUTES_PLANNING_DESCRIPTION"] = "Ce que l'itinéraire prévoit au-delà de vos propres quêtes."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
+L["PREDICTIVE_ROUTES"] = "Itinéraires de quête prédictifs"
+L["PREDICTIVE_ROUTES_DESCRIPTION"] =
+	"Planifie les quêtes que vous pouvez terminer dans cette zone, où que se trouve leur donneur, et pas seulement à proximité : leurs objectifs, leur remise et les quêtes qui les suivent. L'itinéraire vous fait alors prendre tout ce qu'il faut pour une partie de la zone avant de vous y mener, pour que vous n'y alliez qu'une fois. Une suite de quêtes s'arrête à la première quête qui mène à une autre zone. Les objectifs d'une quête que vous n'avez pas encore prise ont un marqueur gris. La remise de chaque quête s'affiche aussi avant qu'elle soit terminée, marquée du point d'interrogation gris de Questie."
+-- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+L["PREDICTIVE_ROUTES_POPUP"] =
+	"Attention : Itinéraires de quête prédictifs planifie toute la zone à l'avance, donc votre carte peut sembler un peu folle. Mais il y a de la méthode dans cette folie ! Suivez la flèche de quête pour passer moins de temps à courir et plus de temps à gagner de l'expérience. (="
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
+L["SHOW_FLIGHT_PATHS"] = "Afficher les trajets aériens non découverts comme objectifs"
+L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
+	"Ajoute à l'itinéraire chaque maître de vol de votre zone dont vous n'avez pas encore le trajet aérien, marqué de l'icône de maître de vol. Sur un personnage qui avait déjà des trajets aériens, ouvrez une fois n'importe quelle carte de vol pour que l'itinéraire sache lesquels vous avez ; d'ici là, aucun n'est ajouté."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
+L["SHOW_LOCAL_QUESTS"] = "Afficher les quêtes disponibles proches comme objectifs"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"Place sur l'itinéraire les quêtes que vous pouvez prendre, quand Questie les affiche comme disponibles et qu'un PNJ ou un objet qui les donne se trouve à %s ou moins, marquées du point d'exclamation de Questie. Les quêtes lancées par un objet ramassé sur un butin, et les quêtes de donjon et de raid, sont laissées de côté."
+L["LOCAL_QUESTS_HEADER"] = "Quêtes disponibles proches"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"Vers quelles quêtes proches la flèche de quête vous mène. Une quête qu'elle ignore peut quand même apparaître sur la carte du monde, sans ligne de route jusqu'à elle."
+L["LOCAL_QUEST_RANGE"] = "Rayon de recherche"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"À combien de mètres de vous un donneur de quête peut se trouver pour compter. En dessous de 400, un donneur croisé entre deux calculs de la route peut être manqué."
+L["LOCAL_ESCORT_QUESTS"] = "Quêtes d'escorte"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Quêtes où vous protégez un PNJ en chemin ; elles prennent du temps et souvent un groupe. Leur marqueur sur la carte est vert."
+L["LOCAL_GROUP_QUESTS"] = "Quêtes de groupe et élites"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quêtes que Questie marque comme élites, faites pour un groupe."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Objectifs dans une autre zone"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Quêtes dont un objectif, ou le rendu, se trouve uniquement hors de votre zone, comme une quête qui vous envoie à la ville suivante."
+L["LOCAL_QUEST_LEVEL"] = "Niveau de quête minimum"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Les quêtes sous cette couleur de difficulté sont écartées. Réglage de Questie garde les quêtes que Questie affiche sur sa carte."
+-- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
+L["LOCAL_CHOICE_ROUTE"] = "Sur la route"
+-- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
+L["LOCAL_CHOICE_MAP"] = "Carte seulement"
+-- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
+L["LOCAL_CHOICE_OFF"] = "Écartées"
+L["LOCAL_LEVEL_QUESTIE"] = "Réglage de Questie"
+-- TRANSLATORS: quest difficulty colors, green being a few levels below the player
+L["LOCAL_LEVEL_GREEN"] = "Vertes et plus"
+L["LOCAL_LEVEL_YELLOW"] = "Jaunes et plus"
 L["ROUTES_PARTY_HEADER"] = "Groupe"
 L["ROUTES_PARTY_DESCRIPTION"] = "Ce que votre groupe ajoute à l'itinéraire."
 L["PARTY_QUESTS"] = "Inclure les quêtes des membres du groupe"
@@ -335,46 +386,6 @@ L["SHOW_NEXT_OBJECTIVE"] = "Afficher l'objectif suivant"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'Dans une "%s", liste "%s" en dessous, estompé : une petite flèche vers le point de passage suivant, et ce qu\'il y a à y faire.'
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "Itinéraires de quête prédictifs"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"Planifie les quêtes que vous pouvez terminer dans cette zone, où que se trouve leur donneur, et pas seulement à proximité : leurs objectifs, leur remise et les quêtes qui les suivent. L'itinéraire vous fait alors prendre tout ce qu'il faut pour une partie de la zone avant de vous y mener, pour que vous n'y alliez qu'une fois. Une suite de quêtes s'arrête à la première quête qui mène à une autre zone. Les objectifs d'une quête que vous n'avez pas encore prise ont un marqueur gris. La remise de chaque quête s'affiche aussi avant qu'elle soit terminée, marquée du point d'interrogation gris de Questie."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
-L["SHOW_FLIGHT_PATHS"] = "Afficher les trajets aériens non découverts comme objectifs"
-L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
-	"Ajoute à l'itinéraire chaque maître de vol de votre zone dont vous n'avez pas encore le trajet aérien, marqué de l'icône de maître de vol. Sur un personnage qui avait déjà des trajets aériens, ouvrez une fois n'importe quelle carte de vol pour que l'itinéraire sache lesquels vous avez ; d'ici là, aucun n'est ajouté."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "Afficher les quêtes disponibles proches comme objectifs"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"Place sur l'itinéraire les quêtes que vous pouvez prendre, quand Questie les affiche comme disponibles et qu'un PNJ ou un objet qui les donne se trouve à %s ou moins, marquées du point d'exclamation de Questie. Les quêtes lancées par un objet ramassé sur un butin, et les quêtes de donjon et de raid, sont laissées de côté."
-L["LOCAL_QUESTS_HEADER"] = "Quêtes disponibles proches"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"Vers quelles quêtes proches la flèche de quête vous mène. Une quête qu'elle ignore peut quand même apparaître sur la carte du monde, sans ligne de route jusqu'à elle."
-L["LOCAL_QUEST_RANGE"] = "Rayon de recherche"
-L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
-	"À combien de mètres de vous un donneur de quête peut se trouver pour compter. En dessous de 400, un donneur croisé entre deux calculs de la route peut être manqué."
-L["LOCAL_ESCORT_QUESTS"] = "Quêtes d'escorte"
-L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"Quêtes où vous protégez un PNJ en chemin ; elles prennent du temps et souvent un groupe. Leur marqueur sur la carte est vert."
-L["LOCAL_GROUP_QUESTS"] = "Quêtes de groupe et élites"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quêtes que Questie marque comme élites, faites pour un groupe."
-L["LOCAL_OTHER_ZONE_QUESTS"] = "Objectifs dans une autre zone"
-L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
-	"Quêtes dont un objectif, ou le rendu, se trouve uniquement hors de votre zone, comme une quête qui vous envoie à la ville suivante."
-L["LOCAL_QUEST_LEVEL"] = "Niveau de quête minimum"
-L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	"Les quêtes sous cette couleur de difficulté sont écartées. Réglage de Questie garde les quêtes que Questie affiche sur sa carte."
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "Sur la route"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "Carte seulement"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "Écartées"
-L["LOCAL_LEVEL_QUESTIE"] = "Réglage de Questie"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "Vertes et plus"
-L["LOCAL_LEVEL_YELLOW"] = "Jaunes et plus"
 L["QUEST_ARROW_HIDING_HEADER"] = "Masquage"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Quand la Flèche de quête s'écarte."
 L["HIDE_IN_RAIDS"] = "Masquer en groupe de raid"
@@ -443,19 +454,23 @@ L["UNTRACK_ALL"] = "Ne rien suivre"
 L["HIDE_MAP"] = "Masquer la carte"
 L["ZONE_INFO_QUESTS"] = "Quêtes à prendre"
 L["ZONE_INFO_ITEMS"] = "À apporter"
+-- TRANSLATORS: Zone Info's Things to Bring heading; %s is the zone the box shows, from the client
+L["ZONE_INFO_ITEMS_TO"] = "À apporter pour %s"
 L["ZONE_INFO_BACK"] = "Retour à la quête"
 L["ZONE_INFO_ASK"] = "Demander un partage"
 L["ZONE_INFO_ASK_DESCRIPTION"] =
 	"Écrit dans votre fenêtre de discussion les quêtes d'ici que les joueurs peuvent partager, sur le canal 4 (Recherche de groupe) si vous y êtes. Rien n'est envoyé avant que vous appuyiez sur Entrée."
--- TRANSLATORS: %s is the names of quests, joined by commas; it's written into the chat box, never sent
+-- TRANSLATORS: %s is quest links, or names in brackets, joined by commas; it's written into the chat box, never sent
 L["ZONE_INFO_ASK_MESSAGE"] = "Quelqu'un peut partager %s ?"
--- TRANSLATORS: the first %s is a quest giver's name, the second the zone they stand in
+-- TRANSLATORS: %s is a quest giver's name
 L["ZONE_INFO_GIVER"] = "Donnée par %s"
+-- TRANSLATORS: where a quest giver stands: map coordinates ("55,52"), then the zone
 L["ZONE_INFO_GIVER_PLACE"] = "%s (%s)"
 L["ZONE_INFO_SHAREABLE"] = "Partageable"
 L["ZONE_INFO_NOT_SHAREABLE"] = "Non partageable"
 L["ZONE_INFO_TRACK"] = "Ajouter à l'itinéraire"
 L["ZONE_INFO_UNTRACK"] = "Retirer de l'itinéraire"
+-- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "Requis pour"
 L["ZONE_INFO_SHIFT_CLICK"] = "Maj-clic"
 L["ZONE_INFO_LINK_ITEM"] = "Lier dans la discussion"
@@ -466,6 +481,8 @@ L["ZONE_INFO_MENU_AVAILABLE"] = "Le plus de quêtes pour vous"
 L["ZONE_INFO_NO_QUESTS"] = "Aucune quête d'une autre zone à prendre pour ici."
 L["ZONE_INFO_NO_ITEMS"] = "Rien à acheter ni à apporter."
 L["ZONE_INFO_WORKING"] = "Lecture des quêtes..."
+-- TRANSLATORS: %d is the item's ID, shown until the client has loaded the item's name
+L["ZONE_INFO_ITEM_LOADING"] = "Chargement de l'ID d'objet : %d"
 L["ZONE_INFO_NEEDS_QUESTIE"] = "Activez Questie pour voir ce qu'il y a ici."
 -- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "%s XP"
@@ -524,6 +541,7 @@ L["ROUTES_PICK_UP_QUEST"] = "Prendre %s"
 L["ROUTES_FLIGHT_PATH"] = "Obtenir le trajet aérien"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_FLIGHT_PATH_FROM"] = "Obtenir le trajet aérien auprès de %s"
+-- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "Parlez à %s pour voler vers %s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Quête d'escorte, hors de la route"
@@ -540,6 +558,11 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "Après que votre groupe a rendu %s"
 L["ROUTES_CORPSE"] = "Retournez à votre cadavre"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Cherchez"
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+L["ROUTES_MORE_WAYPOINT"] = "1 point de passage de plus"
+L["ROUTES_MORE_WAYPOINTS"] = "%d points de passage de plus"
+L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
+	"Le reste de l'itinéraire, affiché tant que vous survolez. Points de passage affichés, sous Carte de zone dans les options, règle combien la carte en dessine."
 L["ROUTES_CLICK_DRAG"] = "Glisser"
 L["ROUTES_CLICK_RIGHT"] = "Clic droit"
 L["ROUTES_CLICK_MIDDLE"] = "Clic milieu"
@@ -554,6 +577,8 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorer ce point de passage"
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorer cet objectif"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Remettre sur l'itinéraire"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Réinitialiser cette zone"
+-- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
+L["ROUTES_CLICK_SHOW_ROUTE"] = "Afficher l'itinéraire complet"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "L'itinéraire ignore %s jusqu'à ce que vous réinitialisiez la zone."
 L["ROUTES_ZONE_RESET"] = "Zone réinitialisée : les objectifs ignorés ici sont de retour sur l'itinéraire."
@@ -578,6 +603,7 @@ L["ROUTES_MENU_TURN_IN"] = "Remise de %s"
 L["ROUTES_MENU_PICK_UP"] = "Prise de %s"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_MENU_FLIGHT_PATH"] = "Trajet aérien de %s"
+-- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Vol vers %s"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Itinéraires de quête prédictifs"
@@ -611,7 +637,8 @@ L["ROUTES_GROUP_UP"] = "Se regrouper"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, and each %d is how many quests
+	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"J'ai essayé de partager %s avec toi, mais ça n'a pas marché. Si la quête t'intéresse, fais-moi signe quand tu peux et je te la repartage"

@@ -47,6 +47,9 @@ function ns.FormatNumber(number)
 	return table.concat(groups, THOUSANDS_SEPARATOR)
 end
 
+-- Money as coin icons: the C_CurrencyInfo call, or the global where a client lacks it; nil on neither
+ns.GetCoinTextureString = C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
+
 --------------------------------------------------------------------------------
 -- Secret Values
 --------------------------------------------------------------------------------

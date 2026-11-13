@@ -28,7 +28,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"Breites Questlog mit Questroute und Questpfeil. Du wählst die Quests, wir helfen dir mit einer sauberen Route, um sie schnell zu erledigen. Queststufen, Kürzel, Belohnungen, Questreihen, eine Questkarte und Quests mit der Gruppe teilen. Funktioniert mit Questie, Spoken, VoiceOver und ElvUI."
+	"Breites Questlog und Questhelfer zum Leveln: eine Questroute durch die Quests, die du wählst, ein Wegpunkt-Pfeil, Queststufen, Kürzel, Belohnungen, Questreihen, eine Questkarte und Quests mit der Gruppe teilen. Funktioniert mit Questie, Spoken, VoiceOver und ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Willkommensnachricht aktivieren"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "Zeigt beim Einloggen die Willkommensnachricht von Pretty Wide Quest Log."
 L["OPTIONS_FEATURES_HEADER"] = "Funktionen"
@@ -256,6 +256,12 @@ L["MARKER_SIZE_SMALL"] = "Klein"
 L["MARKER_SIZE_MEDIUM"] = "Mittel"
 L["MARKER_SIZE_LARGE"] = "Groß"
 L["MARKER_SIZE_HUGE"] = "Riesig"
+L["WAYPOINTS_SHOWN"] = "Angezeigte Wegpunkte"
+L["WAYPOINTS_SHOWN_DESCRIPTION"] =
+	"Wie viel der Route die Zonenkarte zeichnet. Die ganze Route wird weiterhin geplant: Nach diesen Wegpunkten zeigt eine …-Markierung, wohin es weitergeht, und wenn du darauf zeigst, siehst du den Rest. Ein Klick darauf zeigt die ganze Route, bis du die Karte schließt."
+-- TRANSLATORS: a Waypoints Shown choice; %d is how many waypoints, 5, 10 or 20
+L["WAYPOINTS_SHOWN_NEXT"] = "Nächste %d"
+L["WAYPOINTS_SHOWN_ALL"] = "Ganze Route"
 L["TAB_WIDE_MAP"] = "Kontinent- & Weltkarte"
 L["TAB_WIDE_MAP_DESCRIPTION"] =
 	"Karten, die viele Zonen auf einmal zeigen und auf denen jedes Ziel und jede Abgabe eine einzelne, kleinere Markierung bekommt."
@@ -284,6 +290,51 @@ L["LINE_SPEED_NORMAL"] = "Normal"
 L["LINE_SPEED_FAST"] = "Schnell"
 L["LINE_OPACITY"] = "Deckkraft der Linie"
 L["LINE_OPACITY_DESCRIPTION"] = "Wie deckend die Punkte sind; je niedriger, desto mehr von der Karte scheint durch."
+L["ROUTES_PLANNING_HEADER"] = "Planung"
+L["ROUTES_PLANNING_DESCRIPTION"] = "Was die Route über deine eigenen Quests hinaus einplant."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
+L["PREDICTIVE_ROUTES"] = "Vorausschauende Questrouten"
+L["PREDICTIVE_ROUTES_DESCRIPTION"] =
+	"Plant Quests, die du in dieser Zone abschließen kannst, egal wo ihr Questgeber steht, nicht nur in der Nähe: ihre Ziele, ihre Abgabe und die Quests, die darauf folgen. Die Route lässt dich dann alles für einen Teil der Zone annehmen, bevor du dorthin gehst, sodass du nur einmal hin musst. Eine Questreihe endet bei der ersten Quest, die in eine andere Zone führt. Ziele einer Quest, die du noch nicht angenommen hast, haben eine graue Markierung. Auch die Abgabe jeder Quest wird schon vor dem Abschluss angezeigt, markiert mit Questies grauem Fragezeichen."
+-- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+L["PREDICTIVE_ROUTES_POPUP"] =
+	"Achtung: Vorausschauende Questrouten plant die ganze Zone im Voraus, deshalb kann deine Karte etwas verrückt aussehen. Aber der Wahnsinn hat Methode! Folge dem Questpfeil, dann läufst du weniger und sammelst mehr EP. (="
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
+L["SHOW_FLIGHT_PATHS"] = "Unentdeckte Flugrouten als Ziele anzeigen"
+L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
+	"Fügt der Route jeden Flugmeister in deiner Zone hinzu, dessen Flugroute du noch nicht hast, markiert mit dem Flugmeister-Symbol. Hatte dein Charakter schon Flugrouten, öffne einmal irgendeine Flugkarte, damit die Route weiß, welche du hast; bis dahin werden keine hinzugefügt."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
+L["SHOW_LOCAL_QUESTS"] = "Verfügbare Quests in der Nähe als Ziele anzeigen"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"Setzt Quests, die du annehmen kannst, auf die Route, wenn Questie sie als verfügbar zeigt und ein NSC oder Objekt, das sie vergibt, höchstens %s entfernt ist, markiert mit Questies Ausrufezeichen. Quests, die ein erbeuteter Gegenstand startet, sowie Dungeon- und Schlachtzugsquests bleiben außen vor."
+L["LOCAL_QUESTS_HEADER"] = "Verfügbare Quests in der Nähe"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"Zu welchen Quests in deiner Nähe dich der Questpfeil führt. Eine übersprungene kann trotzdem auf der Weltkarte erscheinen, ohne Routenlinie dorthin."
+L["LOCAL_QUEST_RANGE"] = "Suchradius"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"Wie viele Meter ein Questgeber von dir entfernt sein darf, um noch zu zählen. Unter 400 kann ein Questgeber, an dem du zwischen zwei Routenplanungen vorbeiläufst, übersehen werden."
+L["LOCAL_ESCORT_QUESTS"] = "Eskortquests"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"Quests, bei denen du unterwegs einen NSC beschützt; sie brauchen Zeit und oft eine Gruppe. Ihre Markierung auf der Karte ist grün."
+L["LOCAL_GROUP_QUESTS"] = "Gruppen- und Elitequests"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quests, die Questie als Elite kennzeichnet, gedacht für eine Gruppe."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Ziele in einer anderen Zone"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"Quests mit einem Ziel oder der Abgabe nur außerhalb deiner Zone, etwa eine, die dich in die nächste Stadt schickt."
+L["LOCAL_QUEST_LEVEL"] = "Niedrigste Queststufe"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"Quests unter dieser Schwierigkeitsfarbe bleiben außen vor. Questies Einstellung behält die Quests, die Questie auf seiner Karte zeigt."
+-- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
+L["LOCAL_CHOICE_ROUTE"] = "Auf der Route"
+-- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
+L["LOCAL_CHOICE_MAP"] = "Nur Karte"
+-- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
+L["LOCAL_CHOICE_OFF"] = "Ausgelassen"
+L["LOCAL_LEVEL_QUESTIE"] = "Questies Einstellung"
+-- TRANSLATORS: quest difficulty colors, green being a few levels below the player
+L["LOCAL_LEVEL_GREEN"] = "Grün und höher"
+L["LOCAL_LEVEL_YELLOW"] = "Gelb und höher"
 L["ROUTES_PARTY_HEADER"] = "Gruppe"
 L["ROUTES_PARTY_DESCRIPTION"] = "Was deine Gruppe zur Route beiträgt."
 L["PARTY_QUESTS"] = "Quests von Gruppenmitgliedern einbeziehen"
@@ -332,46 +383,6 @@ L["SHOW_NEXT_OBJECTIVE"] = "Nächstes Ziel anzeigen"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'Zeigt bei "%s" gedimmt "%s" darunter an: einen kleinen Pfeil zum darauffolgenden Wegpunkt und was dort zu tun ist.'
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "Vorausschauende Questrouten"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"Plant Quests, die du in dieser Zone abschließen kannst, egal wo ihr Questgeber steht, nicht nur in der Nähe: ihre Ziele, ihre Abgabe und die Quests, die darauf folgen. Die Route lässt dich dann alles für einen Teil der Zone annehmen, bevor du dorthin gehst, sodass du nur einmal hin musst. Eine Questreihe endet bei der ersten Quest, die in eine andere Zone führt. Ziele einer Quest, die du noch nicht angenommen hast, haben eine graue Markierung. Auch die Abgabe jeder Quest wird schon vor dem Abschluss angezeigt, markiert mit Questies grauem Fragezeichen."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
-L["SHOW_FLIGHT_PATHS"] = "Unentdeckte Flugrouten als Ziele anzeigen"
-L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
-	"Fügt der Route jeden Flugmeister in deiner Zone hinzu, dessen Flugroute du noch nicht hast, markiert mit dem Flugmeister-Symbol. Hatte dein Charakter schon Flugrouten, öffne einmal irgendeine Flugkarte, damit die Route weiß, welche du hast; bis dahin werden keine hinzugefügt."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "Verfügbare Quests in der Nähe als Ziele anzeigen"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"Setzt Quests, die du annehmen kannst, auf die Route, wenn Questie sie als verfügbar zeigt und ein NSC oder Objekt, das sie vergibt, höchstens %s entfernt ist, markiert mit Questies Ausrufezeichen. Quests, die ein erbeuteter Gegenstand startet, sowie Dungeon- und Schlachtzugsquests bleiben außen vor."
-L["LOCAL_QUESTS_HEADER"] = "Verfügbare Quests in der Nähe"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"Zu welchen Quests in deiner Nähe dich der Questpfeil führt. Eine übersprungene kann trotzdem auf der Weltkarte erscheinen, ohne Routenlinie dorthin."
-L["LOCAL_QUEST_RANGE"] = "Suchradius"
-L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
-	"Wie viele Meter ein Questgeber von dir entfernt sein darf, um noch zu zählen. Unter 400 kann ein Questgeber, an dem du zwischen zwei Routenplanungen vorbeiläufst, übersehen werden."
-L["LOCAL_ESCORT_QUESTS"] = "Eskortquests"
-L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"Quests, bei denen du unterwegs einen NSC beschützt; sie brauchen Zeit und oft eine Gruppe. Ihre Markierung auf der Karte ist grün."
-L["LOCAL_GROUP_QUESTS"] = "Gruppen- und Elitequests"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quests, die Questie als Elite kennzeichnet, gedacht für eine Gruppe."
-L["LOCAL_OTHER_ZONE_QUESTS"] = "Ziele in einer anderen Zone"
-L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
-	"Quests mit einem Ziel oder der Abgabe nur außerhalb deiner Zone, etwa eine, die dich in die nächste Stadt schickt."
-L["LOCAL_QUEST_LEVEL"] = "Niedrigste Queststufe"
-L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	"Quests unter dieser Schwierigkeitsfarbe bleiben außen vor. Questies Einstellung behält die Quests, die Questie auf seiner Karte zeigt."
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "Auf der Route"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "Nur Karte"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "Ausgelassen"
-L["LOCAL_LEVEL_QUESTIE"] = "Questies Einstellung"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "Grün und höher"
-L["LOCAL_LEVEL_YELLOW"] = "Gelb und höher"
 L["QUEST_ARROW_HIDING_HEADER"] = "Ausblenden"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "Wann der Questpfeil aus dem Weg geht."
 L["HIDE_IN_RAIDS"] = "In Schlachtzugsgruppen ausblenden"
@@ -439,19 +450,23 @@ L["UNTRACK_ALL"] = "Keine verfolgen"
 L["HIDE_MAP"] = "Karte verbergen"
 L["ZONE_INFO_QUESTS"] = "Quests zum Annehmen"
 L["ZONE_INFO_ITEMS"] = "Mitzubringen"
+-- TRANSLATORS: Zone Info's Things to Bring heading; %s is the zone the box shows, from the client
+L["ZONE_INFO_ITEMS_TO"] = "Mitzubringen für %s"
 L["ZONE_INFO_BACK"] = "Zurück zur Quest"
 L["ZONE_INFO_ASK"] = "Nach Teilen fragen"
 L["ZONE_INFO_ASK_DESCRIPTION"] =
 	"Schreibt die Quests hier, die Spieler teilen können, in dein Chatfenster, in Kanal 4 (Suche nach Gruppe), wenn du darin bist. Gesendet wird erst, wenn du Enter drückst."
--- TRANSLATORS: %s is the names of quests, joined by commas; it's written into the chat box, never sent
+-- TRANSLATORS: %s is quest links, or names in brackets, joined by commas; it's written into the chat box, never sent
 L["ZONE_INFO_ASK_MESSAGE"] = "Kann jemand %s teilen?"
--- TRANSLATORS: the first %s is a quest giver's name, the second the zone they stand in
+-- TRANSLATORS: %s is a quest giver's name
 L["ZONE_INFO_GIVER"] = "Questgeber: %s"
+-- TRANSLATORS: where a quest giver stands: map coordinates ("55,52"), then the zone
 L["ZONE_INFO_GIVER_PLACE"] = "%s in %s"
 L["ZONE_INFO_SHAREABLE"] = "Teilbar"
 L["ZONE_INFO_NOT_SHAREABLE"] = "Nicht teilbar"
 L["ZONE_INFO_TRACK"] = "Zur Route hinzufügen"
 L["ZONE_INFO_UNTRACK"] = "Von der Route nehmen"
+-- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "Benötigt für"
 L["ZONE_INFO_SHIFT_CLICK"] = "Umschalt-Klick"
 L["ZONE_INFO_LINK_ITEM"] = "Im Chat verlinken"
@@ -462,6 +477,8 @@ L["ZONE_INFO_MENU_AVAILABLE"] = "Die meisten Quests für dich"
 L["ZONE_INFO_NO_QUESTS"] = "Keine Quests aus anderen Zonen für hier."
 L["ZONE_INFO_NO_ITEMS"] = "Nichts zu kaufen oder mitzubringen."
 L["ZONE_INFO_WORKING"] = "Quests werden gelesen..."
+-- TRANSLATORS: %d is the item's ID, shown until the client has loaded the item's name
+L["ZONE_INFO_ITEM_LOADING"] = "Lade Gegenstands-ID: %d"
 L["ZONE_INFO_NEEDS_QUESTIE"] = "Aktiviere Questie, um zu sehen, was es hier gibt."
 -- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "%s EP"
@@ -520,6 +537,7 @@ L["ROUTES_PICK_UP_QUEST"] = "%s annehmen"
 L["ROUTES_FLIGHT_PATH"] = "Flugroute holen"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_FLIGHT_PATH_FROM"] = "Flugroute bei %s holen"
+-- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "Sprich mit %s, um nach %s zu fliegen"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Eskortquest, nicht auf der Route"
@@ -536,6 +554,11 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "Nachdem deine Gruppe %s abgegeben hat"
 L["ROUTES_CORPSE"] = "Lauf zurück zu deinem Leichnam"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Suche nach"
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+L["ROUTES_MORE_WAYPOINT"] = "1 weiterer Wegpunkt"
+L["ROUTES_MORE_WAYPOINTS"] = "%d weitere Wegpunkte"
+L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
+	"Der Rest der Route, angezeigt, solange du darauf zeigst. Angezeigte Wegpunkte unter Zonenkarte in den Optionen legt fest, wie viele die Karte zeichnet."
 L["ROUTES_CLICK_DRAG"] = "Ziehen"
 L["ROUTES_CLICK_RIGHT"] = "Rechtsklick"
 L["ROUTES_CLICK_MIDDLE"] = "Mittelklick"
@@ -550,6 +573,8 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Diesen Wegpunkt ignorieren"
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Dieses Ziel ignorieren"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Wieder auf die Route"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Diese Zone zurücksetzen"
+-- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
+L["ROUTES_CLICK_SHOW_ROUTE"] = "Ganze Route zeigen"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Die Route ignoriert %s, bis du die Zone zurücksetzt."
 L["ROUTES_ZONE_RESET"] = "Zone zurückgesetzt: hier ignorierte Ziele sind wieder auf der Route."
@@ -573,6 +598,7 @@ L["ROUTES_MENU_TURN_IN"] = "Abgabe von %s"
 L["ROUTES_MENU_PICK_UP"] = "Annahme von %s"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_MENU_FLIGHT_PATH"] = "Flugroute bei %s"
+-- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Flug nach %s"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Vorausschauende Questrouten"
@@ -606,7 +632,8 @@ L["ROUTES_GROUP_UP"] = "Zur Gruppe aufschließen"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, and each %d is how many quests
+	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"Ich wollte %s mit dir teilen, aber es hat nicht geklappt. Wenn du die Quest möchtest, sag einfach Bescheid, sobald du bereit bist, dann teile ich sie noch mal"

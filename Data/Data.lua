@@ -61,6 +61,7 @@ ns.PALETTE = {
 	ROUTE_ESCORT = "33CC33", -- Green: An Escort Quest's Pick-Up Marker, One to Leave for Later
 	ROUTE_PREDICTED = "808080", -- Gray: A Marker's Disc for an Objective of a Quest Not Picked Up Yet
 	ROUTE_FLIGHT = "33CC33", -- Green: A Flight Path's Marker, a Flight Master Not Yet Talked To
+	ROUTE_MORE = "FFFFFF", -- White: The "…" Marker's Fill Where the Zone Map Stops Drawing the Route, Its Ring and Dots the Line's
 	QUEST_TIMER_LOW = "FF3333", -- Red: A Timed Quest's Last Minute on the Quest Arrow
 	PARCHMENT_GAIN = "1D6B1D", -- Deep Green: A Skin's Experience Share, Read on the Parchment
 }
@@ -324,8 +325,8 @@ LAYOUT.MINIMUM_BOTTOM_CLAMP = SPACE.GROUP
 --------------------------------------------------------------------------------
 
 --[[
-	Leads every message the add-on sends to other players (the master list's Target marker column), except
-	on WoW Forever, which blocks raid-marker tokens in chat
+	Leads every message the add-on sends to other players (the master list's Target marker column). WoW
+	Forever blocks raid-marker tokens in group chat, so group messages drop it there; whispers keep it
 ]]
 ns.TARGET_MARKER = "{rt3}"
 

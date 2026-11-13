@@ -112,8 +112,9 @@ end
 	What the buttons should be now, each { itemID, size, x, top, dim }: x from the arrow frame's left and
 	top down from its top, in its own units. In front of each quest's title, outside the list: the first
 	button's right edge SPACE.GROUP before the block's left edge, a second item SPACE.NEAR further left,
-	tops level with the title's. The block's left edge doesn't move with title or count widths, so the
-	buttons hold still. A party member's quest has none, as only the player's bags count
+	tops level with the title's. The block's left edge follows its widest line, so the buttons move with it,
+	out of combat only (Routes-Arrow-Items.lua). A party member's quest has none, as only the player's bags
+	count
 ]]
 local function Wanted()
 	local wanted = {}

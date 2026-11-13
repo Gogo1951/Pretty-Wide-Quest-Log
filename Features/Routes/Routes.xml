@@ -90,6 +90,14 @@
 		</Layers>
 	</Frame>
 
+	<!--
+		Where the zone map stops drawing the route (Waypoints Shown): a white pill with three dots, its
+		parts made in Routes-Map.lua as it's first acquired. Hovering it brings in the rest of the route
+	-->
+	<Frame name="PrettyWideQuestLogRouteMorePinTemplate" mixin="PrettyWideQuestLogRoutePinMixin" enableMouse="true" virtual="true">
+		<Size x="40" y="20"/>
+	</Frame>
+
 	<Script file="Routes-Arrow-Survey.lua"/>
 	<Script file="Routes-Arrow.lua"/>
 	<Script file="Routes-Arrow-List.lua"/>

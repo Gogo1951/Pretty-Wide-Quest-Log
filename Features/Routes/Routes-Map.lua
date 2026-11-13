@@ -1,4 +1,4 @@
-local _, ns = ...
+local ADDON_NAME, ns = ...
 
 --[[
 	Routes: the route on the world map, as sketched in Questie issues #2498 and #2500. A
@@ -7,7 +7,8 @@ local _, ns = ...
 	Questie's icon for the objective on it, in place of Questie's icon on every spawn, which are hidden
 	for the objectives on the route. Hovering a marker brings back Questie's icons for its objectives,
 	every place they can be done, and lists its quests. Drawn through a data provider, as Questie and HandyNotes draw theirs, on
-	whatever map the world map shows, zone or continent
+	whatever map the world map shows, zone or continent. The whole route is planned, but the zone map draws
+	only the next few waypoints (Waypoints Shown) and then a "…" marker; hovering it brings in the rest
 ]]
 
 local routes = ns.routes
@@ -33,6 +34,18 @@ local WIDE_MAP_SCALE = 0.6 -- Markers on a continent's or the world's map at Med
 local QUESTIE_LEVEL = "PIN_FRAME_LEVEL_AREA_POI" -- Where HereBeDragons-Pins puts Questie's icons
 
 --[[
+	Waypoints Shown: the "…" marker where the zone map stops drawing the route, on the first hidden waypoint
+	and over every marker. A pill MORE_HEIGHT tall and twice as wide at Medium, never nearer the last waypoint
+	shown than MORE_GAP, middle to middle, so neither covers the other. Hovering it draws the rest of the
+	route at TAIL_ALPHA
+]]
+local MORE_TEMPLATE = "PrettyWideQuestLogRouteMorePinTemplate"
+local MORE_HEIGHT = 20
+local MORE_GAP = 40
+local TAIL_ALPHA = 0.5
+local IMAGES = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\"
+
+--[[
 	The mixin of the route's pin templates in Routes.xml, which load after this file. The map canvas lets right
 	clicks pass through every pin it makes, with SetPassThroughButtons, which WoW blocks in combat: opening the
 	map in combat then blames this addon. The stop pins take their own right clicks (skipping the stop) and the
@@ -42,15 +55,17 @@ PrettyWideQuestLogRoutePinMixin = CreateFromMixins(MapCanvasPinMixin)
 function PrettyWideQuestLogRoutePinMixin.SetPassThroughButtons() end
 
 --[[
-	Where the route's pins sit among the world map's layers, by the level Blizzard gave Questie's layer: the line
-	just under Questie's icons, camps just over them and the waypoints over the camps. Each pin works out its own
-	level rather than the route adding layers to the map's list: adding one moves Blizzard's layers above or below
-	it, which rewrites their levels from add-on code for the rest of the session. Every Blizzard pin reads those
-	levels as it's placed, so each was then set up tainted, and a click or hover on one of Blizzard's quest
-	markers marked the objective tracker dirty as add-on code, an error in combat (GitHub #23). On WoW Forever's
-	map the levels either side of Questie's belong to layers it never draws (dragonriding races, gossip, debug)
+	Where the route's pins sit among the world map's layers, by the level Blizzard gave Questie's layer: the
+	line just under Questie's icons, camps just over them and the waypoints over the camps. Adding a layer to
+	the map's list moves Blizzard's layers above or below it, which rewrites their levels from add-on code for
+	the rest of the session. Every Blizzard pin reads those levels as it's placed, so each is then set up
+	tainted, and a click or hover on one of Blizzard's quest markers marks the objective tracker dirty as
+	add-on code, an error in combat (GitHub #23). So each pin works out its own level, and the route adds no
+	layers. On WoW Forever's map the levels either side of Questie's belong to layers it never draws
+	(dragonriding races, gossip, debug)
 ]]
-local LEVEL_OFFSETS = { [LINE_LEVEL] = -1, [CAMP_LEVEL] = 1, [STOP_LEVEL] = 2 }
+local MORE_LEVEL = "PIN_FRAME_LEVEL_PWQL_ROUTE_MORE" -- The "…" marker, over everything, the waypoints too
+local LEVEL_OFFSETS = { [LINE_LEVEL] = -1, [CAMP_LEVEL] = 1, [STOP_LEVEL] = 2, [MORE_LEVEL] = 3 }
 local ABOVE_EVERY_LAYER = 2 -- On a map without Questie's layer, the line, camps and waypoints go over every layer
 
 function PrettyWideQuestLogRoutePinMixin:ApplyFrameLevel()
@@ -193,8 +208,28 @@ local function OnStopMouseUp(pin, button)
 	end
 end
 
--- A waypoint's marker, or a camp's: dim for one in the route's zone the route doesn't go to
-local function AddStopPin(map, stop, position, textures, dim)
+--[[
+	A marker's size on a map, times its size at Medium. Keeps its size on screen as the map zooms, as
+	Questie's pins do (HereBeDragons-Pins scales them the same). The markerScale setting (wideMarkerScale on
+	a continent's or the world's map) sizes the marker itself: SetScalingLimits' first number only sets how
+	fast a pin grows as the map zooms in, not how big it is. Classic Era and TBC draw their full-size map at
+	about 1.8 times the UI's scale, so a size in the map's scale draws a marker that much bigger there. The
+	size is in the rest of the UI's scale, so a marker looks the same size on every client
+]]
+local function MarkerSize(map)
+	local settings = routes.Settings()
+	local size = settings.markerScale
+	if IsWideMap(map:GetMapID()) then
+		size = settings.wideMarkerScale * WIDE_MAP_SCALE -- Its own size there (Maps & Objectives)
+	end
+	return size * UIParent:GetEffectiveScale() / map:GetEffectiveScale()
+end
+
+--[[
+	A waypoint's marker, or a camp's: dim for one in the route's zone the route doesn't go to. One in the
+	route's hidden tail (Waypoints Shown) is placed but unseen and takes no mouse, till the "…" marker is hovered
+]]
+local function AddStopPin(map, stop, position, textures, dim, tail)
 	local pin = map:AcquirePin(STOP_TEMPLATE)
 	if not pin.routeReady then
 		pin.routeReady = true
@@ -202,30 +237,184 @@ local function AddStopPin(map, stop, position, textures, dim)
 		pin:SetScript("OnLeave", OnStopLeave)
 		pin:SetScript("OnMouseUp", OnStopMouseUp)
 	end
-	--[[
-		Keeps its size on screen as the map zooms, as Questie's pins do (HereBeDragons-Pins scales them the
-		same). The markerScale setting (wideMarkerScale on a continent's or the world's map) sizes the marker itself: SetScalingLimits' first number only sets how
-		fast a pin grows as the map zooms in, not how big it is. The size is in the rest of the UI's scale,
-		not the map's, so a marker looks the same size on every client: Classic Era and TBC draw their
-		full-size map at about 1.8 times the UI's scale, which drew markers that much bigger there
-	]]
 	pin:SetScalingLimits(1, 1.0, 1.2)
-	local settings = routes.Settings()
-	local size = settings.markerScale
-	if IsWideMap(map:GetMapID()) then
-		size = settings.wideMarkerScale * WIDE_MAP_SCALE -- Its own size there (Maps & Objectives)
-	end
-	size = size * UIParent:GetEffectiveScale() / map:GetEffectiveScale()
+	local size = MarkerSize(map)
 	pin:SetSize(STOP_SIZE * size, STOP_SIZE * size)
 	pin.Icon:SetSize(STOP_ICON_SIZE * size, STOP_ICON_SIZE * size)
 	pin.stop = stop
 	routes.ApplyStopLook(pin, stop, textures)
 
-	pin:SetAlpha(dim and CAMP_ALPHA or 1) -- Pins are handed out again, so every one is set
+	-- Pins are handed out again, so every one is set
+	pin:SetAlpha(tail and 0 or dim and CAMP_ALPHA or 1)
+	pin:EnableMouse(not tail)
 	pin:UseFrameLevelType(stop.camp and CAMP_LEVEL or STOP_LEVEL)
 	pin:ApplyFrameLevel()
 	pin:SetPosition(position.x, position.y)
 	pin:ApplyCurrentScale()
+	return pin
+end
+
+--------------------------------------------------------------------------------
+-- Waypoints Shown: the "…" marker and the route's hidden tail
+--------------------------------------------------------------------------------
+
+-- The tail's markers and the line, from the last draw, for the "…" marker's hover
+local tailPins = {}
+local routeLine
+-- Clicking the "…" marker draws the whole route till the map closes
+local wholeRouteShown = false
+
+-- The last waypoint the zone map draws, by the Waypoints Shown setting: the whole route at 0, or once the "…" is clicked
+local function LastShown(stops)
+	local limit = routes.Settings().waypointsShown or 0
+	if limit <= 0 or wholeRouteShown then
+		return #stops
+	end
+	return math.min(limit, #stops)
+end
+
+local function ShowTail(alpha)
+	for _, pin in ipairs(tailPins) do
+		pin:SetAlpha(alpha)
+	end
+	if routeLine then
+		routeLine:ShowTail(alpha)
+	end
+end
+
+local function OnMoreEnter(pin)
+	ShowTail(TAIL_ALPHA)
+	GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
+	local hidden = pin.hidden or 0
+	local title = hidden == 1 and L["ROUTES_MORE_WAYPOINT"] or L["ROUTES_MORE_WAYPOINTS"]:format(hidden)
+	GameTooltip:AddLine(title, ns.GetColorRGB("TITLE"))
+	GameTooltip:AddLine(L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"], ns.GetColorRGB("HELP"))
+	routes.AddClickHints(GameTooltip, { { L["ROUTES_CLICK"], L["ROUTES_CLICK_SHOW_ROUTE"] } })
+	GameTooltip:Show()
+end
+
+local function OnMoreLeave()
+	ShowTail(0)
+	GameTooltip:Hide()
+end
+
+-- Clicking it draws the whole route, every marker hoverable, the "…" gone, till the map closes
+local function OnMoreMouseUp(_, button)
+	if button ~= "LeftButton" then
+		return
+	end
+	OnMoreLeave()
+	wholeRouteShown = true
+	if provider then
+		provider:RefreshAllData()
+	end
+end
+
+-- One half of a pill, or its middle stretched between them, from a disc's art
+local function PillPart(pin, file, subLevel, left, right)
+	local texture = pin:CreateTexture(nil, "ARTWORK", nil, subLevel)
+	texture:SetTexture(file)
+	texture:SetTexCoord(left, right, 0, 1)
+	return texture
+end
+
+--[[
+	A pill from the waypoint's disc art cut in half, its middle the disc's middle column stretched across: a
+	white fill and the line's dark ring and three dots, so it reads as part of the line, not a waypoint
+]]
+local function BuildMorePin(pin)
+	pin.caps, pin.dots = {}, {}
+	local layers = {
+		{ IMAGES .. "Route-Stop-Fill", 0, { ns.GetColorRGB("ROUTE_MORE") } },
+		{ IMAGES .. "Route-Stop-Ring", 1, { ns.GetColorRGB("ROUTE_LINE") } },
+	}
+	for _, layer in ipairs(layers) do
+		local file, subLevel, color = layer[1], layer[2], layer[3]
+		local left = PillPart(pin, file, subLevel, 0, 0.5)
+		left:SetPoint("TOPLEFT")
+		left:SetPoint("BOTTOMLEFT")
+		local right = PillPart(pin, file, subLevel, 0.5, 1)
+		right:SetPoint("TOPRIGHT")
+		right:SetPoint("BOTTOMRIGHT")
+		local middle = PillPart(pin, file, subLevel, 0.49, 0.51)
+		middle:SetPoint("TOPLEFT", left, "TOPRIGHT")
+		middle:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT")
+		for _, texture in ipairs({ left, right, middle }) do
+			texture:SetVertexColor(unpack(color))
+		end
+		table.insert(pin.caps, left)
+		table.insert(pin.caps, right)
+	end
+	for i = 1, 3 do
+		local dot = pin:CreateTexture(nil, "ARTWORK", nil, 2)
+		dot:SetTexture(IMAGES .. "Route-Stop-Fill")
+		dot:SetVertexColor(ns.GetColorRGB("ROUTE_LINE"))
+		pin.dots[i] = dot
+	end
+	pin:SetScript("OnEnter", OnMoreEnter)
+	pin:SetScript("OnLeave", OnMoreLeave)
+	pin:SetScript("OnMouseUp", OnMoreMouseUp)
+end
+
+--[[
+	The "…" marker where the first hidden waypoint is, so the route runs on to where it really goes next. One
+	that close to the last waypoint shown would cover it, so it's pushed out along that leg to MORE_GAP on
+	screen. With the next waypoint off this map, just right of the last one shown; with that off it too,
+	nothing. Returns where it sits, for the line's stub
+]]
+local function AddMorePin(map, from, to, hidden)
+	if not IsOnMap(to) then
+		to = nil
+	end
+	if not IsOnMap(from) then
+		from = nil
+	end
+	local anchor = to or from
+	if not anchor then
+		return nil
+	end
+	local pin = map:AcquirePin(MORE_TEMPLATE)
+	if not pin.caps then
+		BuildMorePin(pin)
+	end
+	pin:SetScalingLimits(1, 1.0, 1.2) -- As a waypoint's (AddStopPin)
+	local size = MarkerSize(map)
+	local height = MORE_HEIGHT * size
+	pin:SetSize(height * 2, height)
+	for _, cap in ipairs(pin.caps) do
+		cap:SetWidth(height / 2)
+	end
+	for i, dot in ipairs(pin.dots) do
+		dot:SetSize(height * 0.2, height * 0.2)
+		dot:ClearAllPoints()
+		dot:SetPoint("CENTER", (i - 2) * height * 0.4, 0)
+	end
+	pin.hidden = hidden
+	pin:UseFrameLevelType(MORE_LEVEL)
+	pin:ApplyFrameLevel()
+	pin:SetPosition(anchor.x, anchor.y)
+	pin:ApplyCurrentScale()
+	if not from then
+		return { x = to.x, y = to.y }
+	end
+
+	-- MORE_GAP on screen, in the canvas's pixels at this zoom
+	local width, canvasHeight = map:GetCanvas():GetSize()
+	local gap = MORE_GAP * size * pin:GetScale()
+	local place
+	if to then
+		local dx, dy = (to.x - from.x) * width, (to.y - from.y) * canvasHeight
+		local length = math.sqrt(dx * dx + dy * dy)
+		if length >= gap then
+			place = { x = to.x, y = to.y }
+		elseif length > 0 then
+			local share = gap / length
+			place = { x = from.x + (to.x - from.x) * share, y = from.y + (to.y - from.y) * share }
+		end
+	end
+	place = place or { x = from.x + gap / width, y = from.y }
+	pin:SetPosition(place.x, place.y)
+	return place
 end
 
 --------------------------------------------------------------------------------
@@ -235,23 +424,40 @@ end
 local providerMixin = CreateFromMixins(MapCanvasDataProviderMixin)
 
 function providerMixin:RemoveAllData()
+	--[[
+		Forgotten before the pins go: releasing the "…" marker under the mouse hides it, and its OnLeave would
+		reach a line pin already released, off any map
+	]]
+	wipe(tailPins)
+	routeLine = nil
 	local map = self:GetMap()
 	map:RemoveAllPinsByTemplate(LINE_TEMPLATE)
 	map:RemoveAllPinsByTemplate(STOP_TEMPLATE)
+	map:RemoveAllPinsByTemplate(MORE_TEMPLATE)
 	map:RemoveAllPinsByTemplate(routes.MEET_TEMPLATE) -- Routes-Map-Meet.lua
 	routes.hoveredStop = nil -- Its pin is gone, and the mouse may never leave it
 end
 
--- The line and the waypoints, on a map of the route's zone
+--[[
+	The line and the waypoints, on a map of the route's zone. Past the last one Waypoints Shown lets it draw,
+	a "…" marker, and the rest placed unseen for its hover
+]]
 local function DrawRoute(map, mapID, textures)
+	local stops = routes.stops
 	local positions, landings = {}, {}
-	for i, stop in ipairs(routes.stops) do
+	for i, stop in ipairs(stops) do
 		positions[i] = MapPosition(mapID, stop.x, stop.y, stop.instance) or false
 		-- A fly waypoint: the leg after it runs from the flight master it lands at (Routes-Flights.lua)
 		local landing = stop.landing
 		if landing then
 			landings[i] = MapPosition(mapID, landing.x, landing.y, stop.instance)
 		end
+	end
+
+	local lastShown, stub = LastShown(stops), nil
+	if lastShown < #stops then
+		local from = landings[lastShown] or positions[lastShown]
+		stub = AddMorePin(map, from, positions[lastShown + 1] or nil, #stops - lastShown)
 	end
 
 	-- No line pin, and so nothing running each frame, while Quest Route is off or there's no leg to draw
@@ -266,12 +472,17 @@ local function DrawRoute(map, mapID, textures)
 		pin:ApplyFrameLevel()
 		pin:SetSize(map:GetCanvas():GetSize())
 		pin:SetPosition(0.5, 0.5)
-		pin:Draw(mapID, positions, landings)
+		pin:Draw(mapID, positions, landings, lastShown, stub)
+		routeLine = pin
 	end
 
-	for i, stop in ipairs(routes.stops) do
+	for i, stop in ipairs(stops) do
 		if IsOnMap(positions[i]) then
-			AddStopPin(map, stop, positions[i], textures)
+			local tail = i > lastShown
+			local pin = AddStopPin(map, stop, positions[i], textures, nil, tail)
+			if tail then
+				tailPins[#tailPins + 1] = pin
+			end
 		end
 	end
 end
@@ -421,6 +632,10 @@ local function AddToWorldMap()
 		return
 	end
 	WorldMapFrame:HookScript("OnHide", KeepFullSize)
+	-- A click on the "…" marker shows the whole route only while the map stays open
+	WorldMapFrame:HookScript("OnHide", function()
+		wholeRouteShown = false
+	end)
 	provider = CreateFromMixins(providerMixin)
 	WorldMapFrame:AddDataProvider(provider)
 	HookBlizzardQuests(WorldMapFrame) -- Blizzard's quest markers and objective areas, hidden for the route too

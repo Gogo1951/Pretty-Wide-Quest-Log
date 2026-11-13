@@ -47,7 +47,12 @@ ns.AddWideQuestLogPart(function()
 		local entries, byName = {}, {}
 		for other in canvas:EnumeratePinsByTemplate(PIN_TEMPLATE) do
 			local otherX, otherY = other:GetPosition()
-			if math.abs(otherX - x) < CLUSTER_DISTANCE and math.abs(otherY - y) < CLUSTER_DISTANCE then
+			-- A quest giver's marker in a zone looked at from Zone Info has its own tooltip (Questie-Map.lua)
+			if
+				not other.giver
+				and math.abs(otherX - x) < CLUSTER_DISTANCE
+				and math.abs(otherY - y) < CLUSTER_DISTANCE
+			then
 				local objective = ObjectiveRow(other.data)
 				for _, name in ipairs(other.area and other.area.names or { other.data.Name or "" }) do
 					local entry = byName[name]

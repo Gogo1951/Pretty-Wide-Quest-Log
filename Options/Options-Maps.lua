@@ -44,7 +44,7 @@ local function SkippedExample(order)
 			end
 			local quest = ns.SampleQuests()[1]
 			local link = ns.routes.QuestLink(quest.questID, quest.title)
-			return ns.RenderSample("PRINT", string.format(L["ROUTES_SKIPPED"], link))
+			return ns.RenderSample("PRINT", ns.routes.BuildSkippedMessage({ link }))
 		end,
 		fontSize = "medium",
 		order = order,
@@ -151,6 +151,9 @@ end
 -- Zone Map Panel
 --------------------------------------------------------------------------------
 
+-- Waypoints Shown's choices: the next 5, 10 or 20, or the whole route (0)
+local WAYPOINTS_SHOWN_ORDER = { 5, 10, 20, 0 }
+
 -- Marker Size is times the markers' 32 pixels and the icon on them (STOP_SIZE in Routes-Map.lua)
 function ns.BuildZoneMapOptions()
 	local options = Panel("TAB_ZONE_MAP", "TAB_ZONE_MAP_DESCRIPTION")
@@ -159,6 +162,24 @@ function ns.BuildZoneMapOptions()
 	args.spaceQuestieIcons = ns.OptionsSpacer(10.5, MarkersHidden)
 	args.hideQuestieIcons = Toggle("hideQuestieIcons", "HIDE_QUESTIE_ICONS", 11, MarkersHidden)
 	AddSizeRow(args, "markerScale", L["MARKER_SIZE_DESCRIPTION"], 12, MarkersHidden)
+	-- How much of the route the zone map draws before its "…" marker (Routes-Map.lua)
+	args.waypointsShownSpace = ns.OptionsSpacer(12.98, MarkersHidden)
+	args.waypointsShownLabel =
+		ns.OptionsRowLabel(L["WAYPOINTS_SHOWN"], 13, nil, MarkersHidden, L["WAYPOINTS_SHOWN_DESCRIPTION"])
+	args.waypointsShown = ns.OptionsRoutesControl("waypointsShown", {
+		type = "select",
+		desc = L["WAYPOINTS_SHOWN_DESCRIPTION"],
+		values = function()
+			local values = { [0] = L["WAYPOINTS_SHOWN_ALL"] }
+			for _, count in ipairs(WAYPOINTS_SHOWN_ORDER) do
+				if count > 0 then
+					values[count] = L["WAYPOINTS_SHOWN_NEXT"]:format(count)
+				end
+			end
+			return values
+		end,
+		sorting = WAYPOINTS_SHOWN_ORDER,
+	}, 13.01, MarkersHidden)
 	return options
 end
 

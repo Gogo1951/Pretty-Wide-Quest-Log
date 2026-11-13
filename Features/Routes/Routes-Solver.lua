@@ -29,7 +29,8 @@ local _, ns = ...
 	(start.flights, Routes-Flights.lua), a flight takes no time. A leg costs the shorter of walking it and
 	walking from its start to the nearest such flight master, flying, and walking on from the flight master
 	nearest its end, plus FLIGHT_COST. The nearest at each end is always the best pair, so a leg stays a
-	lookup however many flight masters there are
+	lookup however many flight masters there are. A flight the player ignored (start.skippedFlights) is
+	walked instead
 ]]
 
 local Solver = {}
@@ -63,6 +64,9 @@ local sqrt = math.sqrt
 ]]
 local flights, flightPlan = nil, 0
 
+-- The flights the player ignored, from flight master NPC ID to a set of the ones to fly to, or nil
+local skippedFlights = nil
+
 -- Yards from a place to the nearest flight master it can fly from, and which: worked out once a plan
 local function FlightYards(point)
 	if point.flightPlan ~= flightPlan then
@@ -79,13 +83,24 @@ local function FlightYards(point)
 	return point.flightYards, point.flightIndex
 end
 
+-- Whether the plan may fly between two of its flight masters, by index: two different ones, not ignored
+local function CanFly(from, to)
+	if from == to then
+		return false
+	end
+	local skippedFrom = skippedFlights and skippedFlights[flights[from].npcID]
+	return not (skippedFrom and skippedFrom[flights[to].npcID])
+end
+
 -- What a leg costs: its yards, walked or partly flown, plus a share of TRIP_COST for setting off somewhere else
 local function Distance(a, b)
 	local dx, dy = a.x - b.x, a.y - b.y
 	local yards = sqrt(dx * dx + dy * dy)
 	if flights then
-		local flown = FlightYards(a) + FlightYards(b) + FLIGHT_COST
-		if flown < yards then
+		local fromYards, from = FlightYards(a)
+		local toYards, to = FlightYards(b)
+		local flown = fromYards + toYards + FLIGHT_COST
+		if flown < yards and CanFly(from, to) then
 			yards = flown
 		end
 	end
@@ -657,6 +672,7 @@ end
 function Solver.Solve(start, nodes, yield, previous)
 	yield = yield or NoYield
 	flights = start.flights
+	skippedFlights = start.skippedFlights
 	flightPlan = flightPlan + 1
 	local usable = {}
 	for _, node in ipairs(nodes) do
@@ -696,7 +712,7 @@ end
 
 --[[
 	Where a leg between two places flies, as the last plan weighed it (Distance): the flight master to fly
-	from and the one to fly to, or nothing where walking is shorter
+	from and the one to fly to, or nothing where walking is shorter or the flight was ignored
 ]]
 function Solver.FlightLeg(a, b)
 	if not flights then
@@ -705,7 +721,7 @@ function Solver.FlightLeg(a, b)
 	local fromYards, from = FlightYards(a)
 	local toYards, to = FlightYards(b)
 	local dx, dy = a.x - b.x, a.y - b.y
-	if from ~= to and fromYards + toYards + FLIGHT_COST < sqrt(dx * dx + dy * dy) then
+	if CanFly(from, to) and fromYards + toYards + FLIGHT_COST < sqrt(dx * dx + dy * dy) then
 		return flights[from], flights[to]
 	end
 end

@@ -187,9 +187,10 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-	The quest giver window cleanup moved from the Quality of Life panel, where its switch also needed
-	Quality of Life's, to the NPC Dialogue panel, where it stands alone. A profile that had Quality of Life
-	off had the cleanup off too, so it keeps it off, checked once for each profile
+	MIGRATION (remove after 2026-12-12): the quest giver window cleanup moved from the Quality of Life
+	panel, where its switch also needed Quality of Life's, to the NPC Dialogue panel, where it stands alone.
+	A profile that had Quality of Life off had the cleanup off too, so it keeps it off, checked once for
+	each profile. On removal, giverCleanupMoved is set to nil on every profile in its place
 ]]
 local function MoveQuestGiverCleanup(profile)
 	if profile.giverCleanupMoved then
@@ -202,7 +203,7 @@ local function MoveQuestGiverCleanup(profile)
 end
 
 function ns:ApplyProfile()
-	MoveQuestGiverCleanup(ns.db.profile)
+	MoveQuestGiverCleanup(ns.db.profile) -- MIGRATION (remove after 2026-12-12)
 	ns.SyncFonts()
 	ns.ApplyQuestGiverCleanup()
 	if ns.wideQuestLogActive then
@@ -299,7 +300,7 @@ function ns:OnAddonLoaded(name)
 
 	ns.db = LibStub("AceDB-3.0"):New(ns.SAVED_VARIABLES_NAME, ns.DATABASE_DEFAULTS, true)
 	PruneOtherClientCharacters()
-	MoveQuestGiverCleanup(ns.db.profile)
+	MoveQuestGiverCleanup(ns.db.profile) -- MIGRATION (remove after 2026-12-12)
 	-- The fonts made as the files loaded take the saved font settings before anything is laid out
 	ns.SyncFonts()
 	for _, message in ipairs({ "OnProfileChanged", "OnProfileReset", "OnProfileCopied" }) do

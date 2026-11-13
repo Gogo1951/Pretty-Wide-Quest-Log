@@ -141,7 +141,7 @@ local function PartyMembers()
 	for index = 1, GetNumSubgroupMembers() do
 		local unit = "party" .. index
 		local guid, connected = UnitGUID(unit), UnitIsConnected(unit)
-		if guid and ns.IsReadable(guid, connected) and connected then
+		if ns.IsReadable(guid, connected) and guid and connected then
 			members[guid] = { unit = unit, inRange = IsInRange(unit) }
 		end
 	end

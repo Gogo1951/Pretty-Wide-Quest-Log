@@ -71,7 +71,7 @@ if C_QuestLog.GetInfo then
 	ns.IsPushableQuest = C_QuestLog.IsPushableQuest
 	ns.CanAbandonQuest = C_QuestLog.CanAbandonQuest
 
-	-- Sharing a quest, held until combat ends while in combat: ns.ShareQuest in Share-Needs.lua
+	-- Sharing a quest, held until combat ends while in combat on WoW Forever: ns.ShareQuest in Share-Needs.lua
 
 	-- Asks whether to abandon the quest, as the game's own Abandon button does
 	function ns.AskToAbandonQuest(questID)

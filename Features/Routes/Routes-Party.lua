@@ -236,8 +236,9 @@ end
 
 --[[
 	Whether a party unit's Questie has shared that it has a quest, for the quest list's party count
-	(Forever-Quest-List.lua): the game only says so for members in range, Questie's shares reach any distance.
-	Whatever the partyQuests setting, which is about routes
+	(Forever-Quest-List-Party.lua), Share-Needs.lua, Zone-Share-Offer.lua and routes.PartyCountOnQuest: the
+	game only says so for members in range, Questie's shares reach any distance. Whatever the partyQuests
+	setting, which is about routes
 ]]
 function routes.QuestieHasUnitOnQuest(unit, questID)
 	local QuestieComms = ns.ImportQuestieModule("QuestieComms")
@@ -405,14 +406,19 @@ end
 
 --[[
 	Everyone else in the group, offline ones too, as a set of short names (Ambiguate's), for telling who left.
-	Nothing while any member's name is still unknown, as just after a roster change, so nobody reads as gone
+	Nothing while any member's name is still unknown, as just after a roster change, or while WoW Forever keeps
+	who is who secret in combat, so nobody reads as gone
 ]]
 function routes.GroupNames()
 	local names = {}
 	local raid = IsInRaid()
 	for i = 1, raid and 40 or 4 do
 		local unit = (raid and "raid" or "party") .. i
-		if UnitExists(unit) and not UnitIsUnit(unit, "player") then
+		local isPlayer = UnitExists(unit) and UnitIsUnit(unit, "player")
+		if not ns.IsReadable(isPlayer) then
+			return nil
+		end
+		if UnitExists(unit) and not isPlayer then
 			local name = routes.UnitFullName(unit)
 			if not name or name == UNKNOWNOBJECT then
 				return nil
@@ -464,13 +470,14 @@ function routes.PartyHasQuest(questID)
 	return logs ~= nil and type(logs[questID]) == "table" and next(logs[questID]) ~= nil
 end
 
--- How many party members have the quest, by the same party logs (Zone-Info.lua's party count)
+--[[
+	How many members of the party now have the quest, by Questie's shares (Zone-Info.lua's party count), as
+	the quest list counts them: whatever the partyQuests setting, and nobody who has left
+]]
 function routes.PartyCountOnQuest(questID)
-	local logs = RemoteLogs()
-	local members = logs and logs[questID]
 	local count = 0
-	if type(members) == "table" then
-		for _ in pairs(members) do
+	for i = 1, GetNumSubgroupMembers() do
+		if routes.QuestieHasUnitOnQuest("party" .. i, questID) then
 			count = count + 1
 		end
 	end

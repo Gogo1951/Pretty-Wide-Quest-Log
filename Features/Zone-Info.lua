@@ -38,7 +38,7 @@ ns.AddWideQuestLogPart(function()
 	]]
 	local MARGIN = SPACE.GROUP
 	local QUEST_SHARE = 2 / 3 -- Of the box's width, for Quests to Pick Up; Things to Bring takes the rest
-	local ITEM_EXTRA = SPACE.GROUP -- And this much more to Things to Bring, so an item's name and count fit
+	local ITEM_EXTRA = SPACE.GROUP + SPACE.SECTION -- And this much more to Things to Bring, so an item's name and count fit
 	local LEFT_IN = MARGIN - LAYOUT.CHECK_X
 	local RIGHT_IN = MARGIN - LAYOUT.ROW_PADDING
 	local TOP_IN = MARGIN - SPACE.LINE -- A title's text sits about this far down its row
@@ -47,7 +47,7 @@ ns.AddWideQuestLogPart(function()
 	local REFRESH_DELAY = 1 -- Seconds after the quest log or the bags change, so a burst of events works it out once
 	local AVAILABLE_DELAY = 3 -- After a level or a new profession, once Questie has worked out its available quests again
 	local STARTING_DELAY = 2 -- Between asks while Questie is still starting up after login
-	local LFG_CHANNEL = 4 -- Ask for Shares writes here, where players look for groups, when the character is in it
+	local LFG_CHANNEL = 4 -- Ask for Shares writes to chat channel 4, where the LFG channel usually sits
 
 	local ROW_HIGHLIGHT = "Interface\\QuestFrame\\UI-QuestLogTitleHighlight"
 	local PLUS_TEXTURE = "Interface\\Buttons\\UI-PlusButton-Up" -- A zone heading's collapse button, as the list's
@@ -72,17 +72,21 @@ ns.AddWideQuestLogPart(function()
 	box:SetBackdrop(backdrop)
 	box:SetBackdropColor(0, 0, 0, 1)
 	box:EnableMouse(true)
-	box:SetPoint("TOPLEFT", holder, "BOTTOMLEFT")
-	box:SetPoint("TOPRIGHT", holder, "BOTTOMRIGHT")
 	box:Hide()
 	questMap.zoneInfoBox = box -- For a skin that draws the map its own way (Classic-ElvUI.lua)
 	local inset = backdrop.insets.left
 
-	-- The window's height under the map's top, less the map's
+	-- The style's gap under the map, then the window's height under the map's top less the map's and the gap
 	local function FitHeight()
-		box:SetHeight(math.max(1, questMap.SharedHeight() - holder:GetHeight()))
+		local gap = questMap.ZoneInfoGap()
+		box:ClearAllPoints()
+		box:SetPoint("TOPLEFT", holder, "BOTTOMLEFT", 0, -gap)
+		box:SetPoint("TOPRIGHT", holder, "BOTTOMRIGHT", 0, -gap)
+		box:SetHeight(math.max(1, questMap.SharedHeight() - holder:GetHeight() - gap))
 	end
+	FitHeight()
 	holder:HookScript("OnSizeChanged", FitHeight)
+	hooksecurefunc(questMap, "SetStyle", FitHeight) -- A new gap with the map's size unchanged
 
 	local content = CreateFrame("Frame", nil, box)
 	content:SetPoint("TOPLEFT", inset, -inset)
@@ -384,8 +388,8 @@ ns.AddWideQuestLogPart(function()
 		row.Icon:SetTexture(data.ItemIcon(item.itemID) or 134400) -- The question mark, until the icon loads
 		row.Icon:SetVertexColor(1, 1, 1)
 		row.Icon:Show()
-		local name = data.GetItemInfo(item.itemID)
-		row.Text:SetText(name or item.name)
+		local name = data.GetItemInfo(item.itemID) or item.name
+		row.Text:SetText(name or L["ZONE_INFO_ITEM_LOADING"]:format(item.itemID))
 		SetItemCount(row)
 		FitText(row, LAYOUT.QUEST_TEXT_X)
 		ColorRow(row, row:IsMouseOver())
@@ -533,6 +537,26 @@ ns.AddWideQuestLogPart(function()
 		column.title:SetText(label .. ns.GetColor("TEXT") .. " (" .. count .. ")|r")
 	end
 
+	--[[
+		Things to Bring names the zone the box shows; a long zone name in a narrow column gives up its last
+		letters for an ellipsis before the count would, so the count always shows
+	]]
+	local function FitItemTitle()
+		local title = itemColumn.title
+		local zone, count = itemColumn.zone, itemColumn.count or 0
+		if not zone then
+			SetTitle(itemColumn, L["ZONE_INFO_ITEMS"], count)
+			return
+		end
+		local shown = zone
+		SetTitle(itemColumn, L["ZONE_INFO_ITEMS_TO"]:format(shown), count)
+		while title:IsTruncated() and shown ~= "" do
+			shown = shown:gsub("[%z\1-\127\192-\255][\128-\191]*$", "")
+			SetTitle(itemColumn, L["ZONE_INFO_ITEMS_TO"]:format(shown .. "…"), count)
+		end
+	end
+	itemColumn:HookScript("OnSizeChanged", FitItemTitle)
+
 	-- The quests under the zone each giver stands in, as the quest list puts its quests under their zones
 	function DrawQuests(result)
 		local quests = result and result.quests or {}
@@ -573,12 +597,19 @@ ns.AddWideQuestLogPart(function()
 			SetItemRow(PlaceRow(itemColumn, index, (index - 1) * ROW_HEIGHT, ROW_HEIGHT), item)
 		end
 		FinishColumn(itemColumn, #items, #items * ROW_HEIGHT)
-		SetTitle(itemColumn, L["ZONE_INFO_ITEMS"], #items)
+		itemColumn.zone = current.mapID and data.ZoneName(current.mapID) or nil
+		itemColumn.count = #items
+		FitItemTitle()
 	end
 
 	local function SetMessage(column, message)
 		column.empty:SetText(message or "")
 		column.empty:SetShown(message ~= nil)
+	end
+
+	-- Questie is loaded but hasn't finished starting up after login
+	local function IsQuestieStarting()
+		return type(Questie) == "table" and Questie.started ~= true
 	end
 
 	local function Draw()
@@ -593,8 +624,11 @@ ns.AddWideQuestLogPart(function()
 			return
 		end
 		if result.unavailable then
-			-- Questie still starting up reads as working out the lists, which ask again until it's done
-			local starting = Questie ~= nil
+			--[[
+				Questie still starting up reads as working out the lists, which ask again until it's done; once
+				it has started, the lists stay unavailable, so it reads as Questie being needed
+			]]
+			local starting = IsQuestieStarting()
 			DrawQuests(nil)
 			DrawItems(nil)
 			SetMessage(questColumn, starting and L["ZONE_INFO_WORKING"] or L["ZONE_INFO_NEEDS_QUESTIE"])
@@ -637,7 +671,7 @@ ns.AddWideQuestLogPart(function()
 				current.result = result
 				Draw()
 				-- Opened before Questie finished starting up: ask again, rather than wait for a quest to change
-				if result.unavailable and Questie ~= nil then
+				if result.unavailable and IsQuestieStarting() then
 					RequestRefresh(STARTING_DELAY)
 				end
 			end
@@ -744,7 +778,10 @@ ns.AddWideQuestLogPart(function()
 	-- Ask for Shares
 	--------------------------------------------------------------------------------
 
-	-- "/4 " while the character is in the LFG channel, which the chat box reads as a switch to it; else nothing
+	--[[
+		"/4 " while the character has a chat channel 4, where the LFG channel usually sits, which the chat box
+		reads as a switch to it; else nothing
+	]]
 	local function ChannelPrefix()
 		local channel = GetChannelName and GetChannelName(LFG_CHANNEL)
 		if channel and channel > 0 then
@@ -754,38 +791,7 @@ ns.AddWideQuestLogPart(function()
 	end
 
 	--[[
-		Each quest as the announcements name one (Announcements.lua): Questie's quest link, then Questie's
-		bracketed text, then its title in brackets; the first that still fits the chat limit. Stops at the first
-		quest none of them fits for, so the message is never cut short mid-name
-	]]
-	local function AskMessage(quests, room)
-		local references = {}
-		local function Message(list)
-			return L["ZONE_INFO_ASK_MESSAGE"]:format(table.concat(list, ", "))
-		end
-		for _, quest in ipairs(quests) do
-			if quest.shareable and PartyCount(quest.questID) == 0 then
-				local choices = ns.QuestReferences and ns.QuestReferences(quest.questID) or {}
-				choices[#choices + 1] = "[" .. quest.name .. "]"
-				local fitted
-				for _, reference in ipairs(choices) do
-					references[#references + 1] = reference
-					if #Message(references) <= room then
-						fitted = true
-						break
-					end
-					references[#references] = nil
-				end
-				if not fitted then
-					break
-				end
-			end
-		end
-		return #references > 0 and Message(references) or nil
-	end
-
-	--[[
-		Writes the shareable quests into the chat box on the LFG channel, never sending it: the player edits
+		Writes the shareable quests into the chat box on chat channel 4, never sending it: the player edits
 		it, or picks another channel, and presses Enter themselves
 	]]
 	askButton:SetScript("OnClick", function()
@@ -796,7 +802,7 @@ ns.AddWideQuestLogPart(function()
 			return
 		end
 		local prefix = ChannelPrefix()
-		local message = AskMessage(result.quests, ns.CHAT_MESSAGE_MAX_LENGTH - #prefix)
+		local message = ns.BuildAskForSharesMessage(result.quests, ns.CHAT_MESSAGE_MAX_LENGTH - #prefix, PartyCount)
 		if message then
 			openChat(prefix .. message)
 		end
@@ -839,7 +845,10 @@ ns.AddWideQuestLogPart(function()
 			Draw()
 		end
 	end
-	-- Turned on once the saved settings load (Core.lua): on WoW Forever and Mists this runs before they have
+	--[[
+		Apply runs once the saved settings load (Core.lua), never here: on WoW Forever and Mists this runs
+		before they have loaded.
+	]]
 end)
 
 -- The bags changed: the counts alone

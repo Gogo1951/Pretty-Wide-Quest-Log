@@ -17,31 +17,6 @@ local _, ns = ...
 --------------------------------------------------------------------------------
 
 --[[
-	A party member's name as a whisper takes it, exactly as Good to Go's Rank Watch whispers do: GetUnitName
-	with the realm, which on WoW Forever is the whole name, first name and surname ("Snaptrap Mchunter"),
-	as the first name alone reaches no one, and elsewhere the name, with the realm when it's another. The
-	GUID's record stands in when the unit's name can't be read
-]]
-local function WhisperTarget(unit)
-	local name = GetUnitName(unit, true)
-	if ns.IsReadable(name) and type(name) == "string" and name ~= "" and name ~= UNKNOWNOBJECT then
-		return name
-	end
-	local guid = UnitGUID(unit)
-	if not (guid and ns.IsReadable(guid)) then
-		return nil
-	end
-	local _, _, _, _, _, guidName, realm = GetPlayerInfoByGUID(guid)
-	if not (ns.IsReadable(guidName, realm) and type(guidName) == "string" and guidName ~= "") then
-		return nil
-	end
-	if type(realm) == "string" and realm ~= "" then
-		return guidName .. "-" .. realm
-	end
-	return guidName
-end
-
---[[
 	How many of the zone's quests the member doesn't have, or nil when their quests can't be seen: the
 	game answers only while they're close enough to see (as the quest list's party icons take it), and
 	their Questie only once it has shared something. Quests they've already done count too, as nothing
@@ -105,7 +80,7 @@ local function Offer(unit, check)
 	elseif count == 0 then
 		return "done", "has every quest you could share in " .. zone.name
 	end
-	local target = WhisperTarget(unit)
+	local target = ns.WhisperTarget(unit)
 	if not target then
 		return "wait", "their name can't be read"
 	end
@@ -131,7 +106,7 @@ local function PartyUnits()
 	for index = 1, GetNumSubgroupMembers() do
 		local unit = "party" .. index
 		local guid = UnitGUID(unit)
-		if guid and ns.IsReadable(guid) then
+		if ns.IsReadable(guid) and guid then
 			units[guid] = unit
 		end
 	end

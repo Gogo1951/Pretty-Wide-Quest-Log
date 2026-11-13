@@ -28,7 +28,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"附任務路線與任務箭頭的寬版任務日誌。你挑選任務，我們幫你規劃一條清楚的路線，快速完成。任務等級、標籤、獎勵、任務鏈、任務地圖，以及與隊伍分享任務。相容 Questie、Spoken、VoiceOver 和 ElvUI。"
+	"寬版任務日誌與升級任務助手：一條串起你所選任務的任務路線、一個指向路徑點的箭頭，還有任務等級、標籤、獎勵、任務鏈、任務地圖，以及與隊伍分享任務。相容 Questie、Spoken、VoiceOver 和 ElvUI。"
 L["ENABLE_WELCOME_MESSAGE"] = "啟用歡迎訊息"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "登入時顯示 Pretty Wide Quest Log 的歡迎訊息。"
 L["OPTIONS_FEATURES_HEADER"] = "功能"
@@ -247,6 +247,12 @@ L["MARKER_SIZE_SMALL"] = "小"
 L["MARKER_SIZE_MEDIUM"] = "中"
 L["MARKER_SIZE_LARGE"] = "大"
 L["MARKER_SIZE_HUGE"] = "特大"
+L["WAYPOINTS_SHOWN"] = "顯示的路徑點"
+L["WAYPOINTS_SHOWN_DESCRIPTION"] =
+	"區域地圖繪製多少路線。完整路線仍會規劃：在這些路徑點之後，一個 … 標記指向路線的下一步，滑鼠懸停即可看到其餘部分。點擊它會顯示完整路線，直到你關閉地圖。"
+-- TRANSLATORS: a Waypoints Shown choice; %d is how many waypoints, 5, 10 or 20
+L["WAYPOINTS_SHOWN_NEXT"] = "接下來 %d 個"
+L["WAYPOINTS_SHOWN_ALL"] = "完整路線"
 L["TAB_WIDE_MAP"] = "大陸與世界地圖"
 L["TAB_WIDE_MAP_DESCRIPTION"] =
 	"同時包含許多區域的地圖，每個目標和回報地點在這裡各有一個較小的標記。"
@@ -275,6 +281,51 @@ L["LINE_SPEED_NORMAL"] = "正常"
 L["LINE_SPEED_FAST"] = "快"
 L["LINE_OPACITY"] = "線條不透明度"
 L["LINE_OPACITY_DESCRIPTION"] = "圓點的不透明程度；越低，透出的地圖越多。"
+L["ROUTES_PLANNING_HEADER"] = "規劃"
+L["ROUTES_PLANNING_DESCRIPTION"] = "路線在你自己的任務之外還會規劃的內容。"
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
+L["PREDICTIVE_ROUTES"] = "預測任務路線"
+L["PREDICTIVE_ROUTES_DESCRIPTION"] =
+	"規劃你能在本區域完成的任務，無論任務發布者在哪裡，而不只是附近的：包括它們的目標、回報，以及後續任務。路線會在你前往區域的某一部分之前，先接好那裡需要的所有任務，這樣你只需去一次。任務鏈會在第一個通往其他區域的任務處停止。尚未接受的任務，其目標以灰色標記顯示。每個任務的回報地點也會在完成前顯示，並以 Questie 的灰色問號標出。"
+-- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+L["PREDICTIVE_ROUTES_POPUP"] =
+	"提示：預測任務路線會提前規劃整個區域，所以你的地圖看起來可能有點亂。但亂中有序！跟著任務箭頭走，少跑路，多拿經驗。(="
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
+L["SHOW_FLIGHT_PATHS"] = "將未發現的飛行點顯示為目標"
+L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
+	"把你所在區域中你還沒取得其飛行點的每位飛行管理員加入路線，並以飛行管理員圖示標出。如果角色之前已經擁有飛行點，請先開啟任意飛行地圖一次，讓路線知道你擁有哪些；在此之前不會加入任何飛行點。"
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
+L["SHOW_LOCAL_QUESTS"] = "將附近可接任務顯示為目標"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"把你能接的任務加入路線：Questie 顯示為可接，且發布任務的 NPC 或物件在 %s以內，並以 Questie 的驚嘆號標出。由掉落物品開始的任務以及地城和團隊副本任務不會加入。"
+L["LOCAL_QUESTS_HEADER"] = "附近可接任務"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"任務箭頭會帶你去哪些附近的任務。被跳過的任務仍可顯示在世界地圖上，但沒有路線連到那裡。"
+L["LOCAL_QUEST_RANGE"] = "搜尋範圍"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"發布任務者離你多少碼以內才算數。低於 400 時，在兩次路線規劃之間路過的任務發布者可能會被漏掉。"
+L["LOCAL_ESCORT_QUESTS"] = "護送任務"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"需要一路保護 NPC 的任務，耗時且常需隊伍。它們在地圖上的標記為綠色。"
+L["LOCAL_GROUP_QUESTS"] = "團隊和精英任務"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Questie 標為精英、適合組隊的任務。"
+L["LOCAL_OTHER_ZONE_QUESTS"] = "目標在其他區域"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"有目標或交任務地點只在你所在區域之外的任務，例如讓你前往下一個城鎮的任務。"
+L["LOCAL_QUEST_LEVEL"] = "最低任務等級"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	'低於此難度顏色的任務不計入。"Questie 設定"保留 Questie 在其地圖上顯示的任務。'
+-- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
+L["LOCAL_CHOICE_ROUTE"] = "加入路線"
+-- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
+L["LOCAL_CHOICE_MAP"] = "僅地圖"
+-- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
+L["LOCAL_CHOICE_OFF"] = "不計入"
+L["LOCAL_LEVEL_QUESTIE"] = "Questie 設定"
+-- TRANSLATORS: quest difficulty colors, green being a few levels below the player
+L["LOCAL_LEVEL_GREEN"] = "綠色及以上"
+L["LOCAL_LEVEL_YELLOW"] = "黃色及以上"
 L["ROUTES_PARTY_HEADER"] = "隊伍"
 L["ROUTES_PARTY_DESCRIPTION"] = "你的隊伍為路線增加的內容。"
 L["PARTY_QUESTS"] = "包含隊友的任務"
@@ -322,46 +373,6 @@ L["SHOW_NEXT_OBJECTIVE"] = "顯示下一個目標"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'在"%s"時，於其下方以暗色列出"%s"：一個指向再下一個路徑點的小箭頭，以及在那裡要做的事。'
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "預測任務路線"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"規劃你能在本區域完成的任務，無論任務發布者在哪裡，而不只是附近的：包括它們的目標、回報，以及後續任務。路線會在你前往區域的某一部分之前，先接好那裡需要的所有任務，這樣你只需去一次。任務鏈會在第一個通往其他區域的任務處停止。尚未接受的任務，其目標以灰色標記顯示。每個任務的回報地點也會在完成前顯示，並以 Questie 的灰色問號標出。"
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
-L["SHOW_FLIGHT_PATHS"] = "將未發現的飛行點顯示為目標"
-L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
-	"把你所在區域中你還沒取得其飛行點的每位飛行管理員加入路線，並以飛行管理員圖示標出。如果角色之前已經擁有飛行點，請先開啟任意飛行地圖一次，讓路線知道你擁有哪些；在此之前不會加入任何飛行點。"
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "將附近可接任務顯示為目標"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"把你能接的任務加入路線：Questie 顯示為可接，且發布任務的 NPC 或物件在 %s以內，並以 Questie 的驚嘆號標出。由掉落物品開始的任務以及地城和團隊副本任務不會加入。"
-L["LOCAL_QUESTS_HEADER"] = "附近可接任務"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"任務箭頭會帶你去哪些附近的任務。被跳過的任務仍可顯示在世界地圖上，但沒有路線連到那裡。"
-L["LOCAL_QUEST_RANGE"] = "搜尋範圍"
-L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
-	"發布任務者離你多少碼以內才算數。低於 400 時，在兩次路線規劃之間路過的任務發布者可能會被漏掉。"
-L["LOCAL_ESCORT_QUESTS"] = "護送任務"
-L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"需要一路保護 NPC 的任務，耗時且常需隊伍。它們在地圖上的標記為綠色。"
-L["LOCAL_GROUP_QUESTS"] = "團隊和精英任務"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Questie 標為精英、適合組隊的任務。"
-L["LOCAL_OTHER_ZONE_QUESTS"] = "目標在其他區域"
-L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
-	"有目標或交任務地點只在你所在區域之外的任務，例如讓你前往下一個城鎮的任務。"
-L["LOCAL_QUEST_LEVEL"] = "最低任務等級"
-L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	'低於此難度顏色的任務不計入。"Questie 設定"保留 Questie 在其地圖上顯示的任務。'
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "加入路線"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "僅地圖"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "不計入"
-L["LOCAL_LEVEL_QUESTIE"] = "Questie 設定"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "綠色及以上"
-L["LOCAL_LEVEL_YELLOW"] = "黃色及以上"
 L["QUEST_ARROW_HIDING_HEADER"] = "隱藏"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "任務箭頭何時自動隱藏。"
 L["HIDE_IN_RAIDS"] = "在團隊中隱藏"
@@ -429,19 +440,23 @@ L["UNTRACK_ALL"] = "全部取消追蹤"
 L["HIDE_MAP"] = "隱藏地圖"
 L["ZONE_INFO_QUESTS"] = "可接任務"
 L["ZONE_INFO_ITEMS"] = "需要帶的東西"
+-- TRANSLATORS: Zone Info's Things to Bring heading; %s is the zone the box shows, from the client
+L["ZONE_INFO_ITEMS_TO"] = "帶到%s的東西"
 L["ZONE_INFO_BACK"] = "返回任務"
 L["ZONE_INFO_ASK"] = "請求分享"
 L["ZONE_INFO_ASK_DESCRIPTION"] =
 	"把這裡可分享的任務寫進你的聊天框；若你在 4 號頻道（尋求組隊），就寫在該頻道。按 Enter 前不會送出任何內容。"
--- TRANSLATORS: %s is the names of quests, joined by commas; it's written into the chat box, never sent
+-- TRANSLATORS: %s is quest links, or names in brackets, joined by commas; it's written into the chat box, never sent
 L["ZONE_INFO_ASK_MESSAGE"] = "有人能分享%s嗎？"
--- TRANSLATORS: the first %s is a quest giver's name, the second the zone they stand in
+-- TRANSLATORS: %s is a quest giver's name
 L["ZONE_INFO_GIVER"] = "發布者：%s"
+-- TRANSLATORS: where a quest giver stands: map coordinates ("55,52"), then the zone
 L["ZONE_INFO_GIVER_PLACE"] = "%s，%s"
 L["ZONE_INFO_SHAREABLE"] = "可分享"
 L["ZONE_INFO_NOT_SHAREABLE"] = "不可分享"
 L["ZONE_INFO_TRACK"] = "加入路線"
 L["ZONE_INFO_UNTRACK"] = "移出路線"
+-- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "需要它的任務"
 L["ZONE_INFO_SHIFT_CLICK"] = "Shift-點擊"
 L["ZONE_INFO_LINK_ITEM"] = "在聊天中連結"
@@ -452,6 +467,8 @@ L["ZONE_INFO_MENU_AVAILABLE"] = "適合你的任務最多"
 L["ZONE_INFO_NO_QUESTS"] = "沒有可在其他區域為這裡接取的任務。"
 L["ZONE_INFO_NO_ITEMS"] = "沒有需要購買或帶上的東西。"
 L["ZONE_INFO_WORKING"] = "正在讀取任務..."
+-- TRANSLATORS: %d is the item's ID, shown until the client has loaded the item's name
+L["ZONE_INFO_ITEM_LOADING"] = "正在載入物品ID：%d"
 L["ZONE_INFO_NEEDS_QUESTIE"] = "啟用 Questie 以查看這裡的內容。"
 -- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "%s 經驗"
@@ -510,6 +527,7 @@ L["ROUTES_PICK_UP_QUEST"] = "接受 %s"
 L["ROUTES_FLIGHT_PATH"] = "取得飛行點"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_FLIGHT_PATH_FROM"] = "從%s處取得飛行點"
+-- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "與%s交談，飛往%s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "護送任務，不在路線上"
@@ -526,6 +544,11 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "隊友回報 %s 後"
 L["ROUTES_CORPSE"] = "跑回你的屍體處"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "尋找"
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+L["ROUTES_MORE_WAYPOINT"] = "還有 1 個路徑點"
+L["ROUTES_MORE_WAYPOINTS"] = "還有 %d 個路徑點"
+L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
+	"懸停時顯示的其餘路線。在選項的區域地圖中，用「顯示的路徑點」設定地圖繪製多少個。"
 L["ROUTES_CLICK_DRAG"] = "拖曳"
 L["ROUTES_CLICK_RIGHT"] = "右鍵點擊"
 L["ROUTES_CLICK_MIDDLE"] = "中鍵點擊"
@@ -540,6 +563,8 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "忽略此路徑點"
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "忽略此目標"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "放回路線"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "重設此區域"
+-- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
+L["ROUTES_CLICK_SHOW_ROUTE"] = "顯示完整路線"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "忽略 %s，直到重設區域。"
 L["ROUTES_ZONE_RESET"] = "區域已重設：在此忽略的目標已回到路線上。"
@@ -562,6 +587,7 @@ L["ROUTES_MENU_TURN_IN"] = "回報 %s"
 L["ROUTES_MENU_PICK_UP"] = "接受 %s"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_MENU_FLIGHT_PATH"] = "%s飛行點"
+-- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "飛往%s"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "預測任務路線"
@@ -594,7 +620,8 @@ L["ROUTES_GROUP_UP"] = "與隊伍會合"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, and each %d is how many quests
+	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"我剛才想把 %s 分享給你，但沒成功。如果需要，等你準備好時叫我一聲，我再分享一次"

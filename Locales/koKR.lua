@@ -29,7 +29,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 --------------------------------------------------------------------------------
 
 L["OPTIONS_DESCRIPTION"] =
-	"퀘스트 경로와 퀘스트 화살표를 갖춘 넓은 퀘스트 목록입니다. 퀘스트는 직접 고르고, 빠르게 끝낼 깔끔한 경로는 저희가 도와드립니다. 퀘스트 레벨, 태그, 보상, 연계 퀘스트, 퀘스트 지도, 파티 퀘스트 공유를 지원합니다. Questie, Spoken, VoiceOver, ElvUI와 함께 작동합니다."
+	"레벨업을 위한 넓은 퀘스트 목록이자 퀘스트 도우미입니다. 직접 고른 퀘스트를 잇는 퀘스트 경로, 경유지 화살표, 퀘스트 레벨, 태그, 보상, 연계 퀘스트, 퀘스트 지도, 파티 퀘스트 공유를 지원합니다. Questie, Spoken, VoiceOver, ElvUI와 함께 작동합니다."
 L["ENABLE_WELCOME_MESSAGE"] = "환영 메시지 사용"
 L["ENABLE_WELCOME_MESSAGE_DESCRIPTION"] = "접속할 때 Pretty Wide Quest Log 환영 메시지를 표시합니다."
 L["OPTIONS_FEATURES_HEADER"] = "기능"
@@ -263,6 +263,12 @@ L["MARKER_SIZE_SMALL"] = "작게"
 L["MARKER_SIZE_MEDIUM"] = "보통"
 L["MARKER_SIZE_LARGE"] = "크게"
 L["MARKER_SIZE_HUGE"] = "아주 크게"
+L["WAYPOINTS_SHOWN"] = "표시할 경유지"
+L["WAYPOINTS_SHOWN_DESCRIPTION"] =
+	"지역 지도에 경로를 얼마나 그릴지 정합니다. 전체 경로는 계속 계획됩니다. 이 경유지들 다음에는 … 표식이 다음 방향을 가리키고, 마우스를 올리면 나머지가 보입니다. 클릭하면 지도를 닫을 때까지 전체 경로가 보입니다."
+-- TRANSLATORS: a Waypoints Shown choice; %d is how many waypoints, 5, 10 or 20
+L["WAYPOINTS_SHOWN_NEXT"] = "다음 %d개"
+L["WAYPOINTS_SHOWN_ALL"] = "전체 경로"
 L["TAB_WIDE_MAP"] = "대륙 및 세계 지도"
 L["TAB_WIDE_MAP_DESCRIPTION"] =
 	"여러 지역을 한 번에 담는 지도로, 각 목표와 완료 보고마다 더 작은 표식이 하나씩 표시됩니다."
@@ -292,6 +298,51 @@ L["LINE_SPEED_FAST"] = "빠르게"
 L["LINE_OPACITY"] = "경로선 불투명도"
 L["LINE_OPACITY_DESCRIPTION"] =
 	"점이 얼마나 진하게 보이는지 정합니다. 낮을수록 지도가 더 많이 비쳐 보입니다."
+L["ROUTES_PLANNING_HEADER"] = "계획"
+L["ROUTES_PLANNING_DESCRIPTION"] = "경로가 내 퀘스트 외에 함께 계획하는 것입니다."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
+L["PREDICTIVE_ROUTES"] = "예측 퀘스트 경로"
+L["PREDICTIVE_ROUTES_DESCRIPTION"] =
+	"근처뿐 아니라 퀘스트를 주는 NPC가 어디에 있든, 이 지역에서 끝낼 수 있는 퀘스트를 미리 계획합니다. 목표, 완료 보고, 이어지는 퀘스트까지 포함됩니다. 경로는 지역의 한 구역에 가기 전에 그곳에 필요한 퀘스트를 모두 받게 하므로 한 번만 가면 됩니다. 연계 퀘스트는 다른 지역으로 이어지는 첫 퀘스트에서 멈춥니다. 아직 받지 않은 퀘스트의 목표는 회색 표식으로 표시됩니다. 각 퀘스트의 완료 보고 위치도 완료 전부터 Questie의 회색 물음표로 표시됩니다."
+-- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+L["PREDICTIVE_ROUTES_POPUP"] =
+	"알림: 예측 퀘스트 경로는 지역 전체를 미리 계획하므로 지도가 좀 복잡해 보일 수 있습니다. 하지만 다 이유가 있습니다! 퀘스트 화살표를 따라가면 달리는 시간은 줄고 경험치를 얻는 시간은 늘어납니다. (="
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
+L["SHOW_FLIGHT_PATHS"] = "발견하지 않은 비행 경로를 목표로 표시"
+L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
+	"현재 지역에서 아직 비행 경로를 얻지 않은 비행 조련사를 경로에 추가하고 비행 조련사 아이콘으로 표시합니다. 이미 비행 경로를 가진 캐릭터라면 아무 비행 지도나 한 번 열어 내가 가진 비행 경로를 경로가 알 수 있게 하세요. 그 전까지는 아무것도 추가되지 않습니다."
+-- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
+L["SHOW_LOCAL_QUESTS"] = "주변의 받을 수 있는 퀘스트를 목표로 표시"
+-- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
+L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
+	"Questie가 받을 수 있다고 표시하고, 퀘스트를 주는 NPC나 물체가 %s 이내에 있는 퀘스트를 경로에 넣고 Questie의 느낌표로 표시합니다. 전리품 아이템으로 시작하는 퀘스트와 던전 및 공격대 퀘스트는 제외됩니다."
+L["LOCAL_QUESTS_HEADER"] = "주변의 받을 수 있는 퀘스트"
+L["LOCAL_QUESTS_DESCRIPTION"] =
+	"퀘스트 화살표가 주변의 어떤 퀘스트로 안내할지 정합니다. 건너뛴 퀘스트도 경로 선 없이 세계 지도에 표시될 수 있습니다."
+L["LOCAL_QUEST_RANGE"] = "검색 범위"
+L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
+	"퀘스트를 주는 대상이 몇 미터 안에 있어야 포함되는지 정합니다. 400 미만이면 경로를 다시 계산하는 사이에 지나친 대상을 놓칠 수 있습니다."
+L["LOCAL_ESCORT_QUESTS"] = "호위 퀘스트"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
+	"가는 길에 NPC를 지켜야 하는 퀘스트로, 시간이 걸리고 파티가 필요한 경우가 많습니다. 지도 표식은 초록색입니다."
+L["LOCAL_GROUP_QUESTS"] = "파티 및 정예 퀘스트"
+L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Questie가 정예로 표시한, 파티용 퀘스트입니다."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "다른 지역의 목표"
+L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
+	"목표나 보고 장소가 현재 지역 밖에만 있는 퀘스트입니다. 다음 마을로 보내는 퀘스트 등이 해당합니다."
+L["LOCAL_QUEST_LEVEL"] = "최저 퀘스트 레벨"
+L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
+	"이 난이도 색보다 낮은 퀘스트는 제외됩니다. Questie 설정은 Questie가 지도에 표시하는 퀘스트를 그대로 둡니다."
+-- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
+L["LOCAL_CHOICE_ROUTE"] = "경로에 포함"
+-- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
+L["LOCAL_CHOICE_MAP"] = "지도에만"
+-- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
+L["LOCAL_CHOICE_OFF"] = "제외"
+L["LOCAL_LEVEL_QUESTIE"] = "Questie 설정"
+-- TRANSLATORS: quest difficulty colors, green being a few levels below the player
+L["LOCAL_LEVEL_GREEN"] = "초록색 이상"
+L["LOCAL_LEVEL_YELLOW"] = "노란색 이상"
 L["ROUTES_PARTY_HEADER"] = "파티"
 L["ROUTES_PARTY_DESCRIPTION"] = "파티가 경로에 더하는 것입니다."
 L["PARTY_QUESTS"] = "파티원의 퀘스트 포함"
@@ -339,46 +390,6 @@ L["SHOW_NEXT_OBJECTIVE"] = "다음 목표 표시"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
 L["SHOW_NEXT_OBJECTIVE_DESCRIPTION"] =
 	'"%s"일 때 그 아래에 "%s" 줄을 흐리게 표시해, 그다음 경유지를 가리키는 작은 화살표와 그곳에서 할 일을 보여 줍니다.'
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "예측 퀘스트 경로"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"근처뿐 아니라 퀘스트를 주는 NPC가 어디에 있든, 이 지역에서 끝낼 수 있는 퀘스트를 미리 계획합니다. 목표, 완료 보고, 이어지는 퀘스트까지 포함됩니다. 경로는 지역의 한 구역에 가기 전에 그곳에 필요한 퀘스트를 모두 받게 하므로 한 번만 가면 됩니다. 연계 퀘스트는 다른 지역으로 이어지는 첫 퀘스트에서 멈춥니다. 아직 받지 않은 퀘스트의 목표는 회색 표식으로 표시됩니다. 각 퀘스트의 완료 보고 위치도 완료 전부터 Questie의 회색 물음표로 표시됩니다."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
-L["SHOW_FLIGHT_PATHS"] = "발견하지 않은 비행 경로를 목표로 표시"
-L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
-	"현재 지역에서 아직 비행 경로를 얻지 않은 비행 조련사를 경로에 추가하고 비행 조련사 아이콘으로 표시합니다. 이미 비행 경로를 가진 캐릭터라면 아무 비행 지도나 한 번 열어 내가 가진 비행 경로를 경로가 알 수 있게 하세요. 그 전까지는 아무것도 추가되지 않습니다."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "주변의 받을 수 있는 퀘스트를 목표로 표시"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"Questie가 받을 수 있다고 표시하고, 퀘스트를 주는 NPC나 물체가 %s 이내에 있는 퀘스트를 경로에 넣고 Questie의 느낌표로 표시합니다. 전리품 아이템으로 시작하는 퀘스트와 던전 및 공격대 퀘스트는 제외됩니다."
-L["LOCAL_QUESTS_HEADER"] = "주변의 받을 수 있는 퀘스트"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"퀘스트 화살표가 주변의 어떤 퀘스트로 안내할지 정합니다. 건너뛴 퀘스트도 경로 선 없이 세계 지도에 표시될 수 있습니다."
-L["LOCAL_QUEST_RANGE"] = "검색 범위"
-L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
-	"퀘스트를 주는 대상이 몇 미터 안에 있어야 포함되는지 정합니다. 400 미만이면 경로를 다시 계산하는 사이에 지나친 대상을 놓칠 수 있습니다."
-L["LOCAL_ESCORT_QUESTS"] = "호위 퀘스트"
-L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"가는 길에 NPC를 지켜야 하는 퀘스트로, 시간이 걸리고 파티가 필요한 경우가 많습니다. 지도 표식은 초록색입니다."
-L["LOCAL_GROUP_QUESTS"] = "파티 및 정예 퀘스트"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Questie가 정예로 표시한, 파티용 퀘스트입니다."
-L["LOCAL_OTHER_ZONE_QUESTS"] = "다른 지역의 목표"
-L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
-	"목표나 보고 장소가 현재 지역 밖에만 있는 퀘스트입니다. 다음 마을로 보내는 퀘스트 등이 해당합니다."
-L["LOCAL_QUEST_LEVEL"] = "최저 퀘스트 레벨"
-L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	"이 난이도 색보다 낮은 퀘스트는 제외됩니다. Questie 설정은 Questie가 지도에 표시하는 퀘스트를 그대로 둡니다."
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "경로에 포함"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "지도에만"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "제외"
-L["LOCAL_LEVEL_QUESTIE"] = "Questie 설정"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "초록색 이상"
-L["LOCAL_LEVEL_YELLOW"] = "노란색 이상"
 L["QUEST_ARROW_HIDING_HEADER"] = "숨기기"
 L["QUEST_ARROW_HIDING_DESCRIPTION"] = "퀘스트 화살표를 숨기는 경우입니다."
 L["HIDE_IN_RAIDS"] = "공격대에서 숨기기"
@@ -447,19 +458,23 @@ L["UNTRACK_ALL"] = "모두 추적 해제"
 L["HIDE_MAP"] = "지도 숨기기"
 L["ZONE_INFO_QUESTS"] = "받을 수 있는 퀘스트"
 L["ZONE_INFO_ITEMS"] = "챙겨 갈 것"
+-- TRANSLATORS: Zone Info's Things to Bring heading; %s is the zone the box shows, from the client
+L["ZONE_INFO_ITEMS_TO"] = "%s에 챙겨 갈 것"
 L["ZONE_INFO_BACK"] = "퀘스트로 돌아가기"
 L["ZONE_INFO_ASK"] = "공유 요청"
 L["ZONE_INFO_ASK_DESCRIPTION"] =
 	"이곳에서 공유할 수 있는 퀘스트를 대화창에 적어 둡니다. 4번 채널(파티 찾기)에 들어가 있으면 그 채널로 적습니다. Enter를 누르기 전에는 아무것도 보내지 않습니다."
--- TRANSLATORS: %s is the names of quests, joined by commas; it's written into the chat box, never sent
+-- TRANSLATORS: %s is quest links, or names in brackets, joined by commas; it's written into the chat box, never sent
 L["ZONE_INFO_ASK_MESSAGE"] = "%s 공유해 주실 분 있나요?"
--- TRANSLATORS: the first %s is a quest giver's name, the second the zone they stand in
+-- TRANSLATORS: %s is a quest giver's name
 L["ZONE_INFO_GIVER"] = "제공: %s"
+-- TRANSLATORS: where a quest giver stands: map coordinates ("55,52"), then the zone
 L["ZONE_INFO_GIVER_PLACE"] = "%s - %s"
 L["ZONE_INFO_SHAREABLE"] = "공유 가능"
 L["ZONE_INFO_NOT_SHAREABLE"] = "공유 불가"
 L["ZONE_INFO_TRACK"] = "경로에 추가"
 L["ZONE_INFO_UNTRACK"] = "경로에서 빼기"
+-- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "필요한 퀘스트"
 L["ZONE_INFO_SHIFT_CLICK"] = "Shift-클릭"
 L["ZONE_INFO_LINK_ITEM"] = "대화창에 링크"
@@ -470,6 +485,8 @@ L["ZONE_INFO_MENU_AVAILABLE"] = "퀘스트가 가장 많은 곳"
 L["ZONE_INFO_NO_QUESTS"] = "이곳을 위해 다른 지역에서 받을 퀘스트가 없습니다."
 L["ZONE_INFO_NO_ITEMS"] = "사거나 챙겨 갈 것이 없습니다."
 L["ZONE_INFO_WORKING"] = "퀘스트 읽는 중..."
+-- TRANSLATORS: %d is the item's ID, shown until the client has loaded the item's name
+L["ZONE_INFO_ITEM_LOADING"] = "아이템 ID 불러오는 중: %d"
 L["ZONE_INFO_NEEDS_QUESTIE"] = "Questie를 켜면 이곳의 정보를 볼 수 있습니다."
 -- TRANSLATORS: %s is an amount of experience with its thousands separators, such as "12,345"
 L["TURN_IN_XP"] = "경험치 %s"
@@ -528,6 +545,7 @@ L["ROUTES_PICK_UP_QUEST"] = "%s 받기"
 L["ROUTES_FLIGHT_PATH"] = "비행 경로 얻기"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_FLIGHT_PATH_FROM"] = "%s에게서 비행 경로 얻기"
+-- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "%s에게 말을 걸어 %s(으)로 비행하기"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "호위 퀘스트, 경로에 없음"
@@ -544,6 +562,11 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "파티원이 %s 완료 보고 후"
 L["ROUTES_CORPSE"] = "내 시체로 달려가세요"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "찾을 대상"
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+L["ROUTES_MORE_WAYPOINT"] = "경유지 1개 더"
+L["ROUTES_MORE_WAYPOINTS"] = "경유지 %d개 더"
+L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
+	"마우스를 올린 동안 보이는 나머지 경로입니다. 설정의 지역 지도에 있는 표시할 경유지에서 지도에 그릴 수를 정합니다."
 L["ROUTES_CLICK_DRAG"] = "끌기"
 L["ROUTES_CLICK_RIGHT"] = "오른쪽 클릭"
 L["ROUTES_CLICK_MIDDLE"] = "가운데 클릭"
@@ -558,6 +581,8 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "이 경유지 무시"
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "이 목표 무시"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "다시 경로에 포함"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "이 지역 초기화"
+-- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
+L["ROUTES_CLICK_SHOW_ROUTE"] = "전체 경로 표시"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "지역을 초기화할 때까지 %s 항목을 무시합니다."
 L["ROUTES_ZONE_RESET"] = "지역 초기화: 이곳에서 무시한 목표가 다시 경로에 포함되었습니다."
@@ -582,6 +607,7 @@ L["ROUTES_MENU_TURN_IN"] = "%s 완료 보고"
 L["ROUTES_MENU_PICK_UP"] = "%s 받기"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
 L["ROUTES_MENU_FLIGHT_PATH"] = "%s 비행 경로"
+-- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "%s(으)로 비행"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "예측 퀘스트 경로"
@@ -615,7 +641,8 @@ L["ROUTES_GROUP_UP"] = "파티와 합류"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, and each %d is how many quests
+	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"%s 퀘스트를 공유하려고 했는데 전달되지 않았어요. 필요하면 준비됐을 때 말해 주세요. 다시 공유해 드릴게요"

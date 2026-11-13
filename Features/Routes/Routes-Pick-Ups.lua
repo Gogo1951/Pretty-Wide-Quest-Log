@@ -408,9 +408,9 @@ routes.pickUpHelpers = {
 	to finish (routes.IsChainQuest) counts from anywhere in the zone, not only within the Search Range, and
 	Routes-Chains.lua plans its objectives, its turn-in and the quests that follow it. Those are returned,
 	nearest giver first. A quest Zone Info's + asked for (task.wanted) counts from anywhere in the zone too,
-	whatever its level or kind, ahead of every other. With Local Available Quests off, those are the only
-	quests to pick up. No more
-	quests are picked up than the log has room for, nearest first
+	whatever its level or kind, ahead of every other. A quest someone in the party has (Party Objectives on)
+	counts from anywhere in the zone as well. With Local Available Quests off, those are the only quests to
+	pick up. No more quests are picked up than the log has room for, nearest first
 ]]
 function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	local mapOnly = {}
@@ -418,7 +418,7 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	local settings = routes.Settings()
 	local nearby, planChains = settings.showLocalQuests, settings.predictiveRoutes
 	local wanted = WantedPickUps()
-	if not (nearby or planChains or next(wanted)) then
+	if not (nearby or planChains or next(wanted) or routes.ShowsParty()) then
 		return {}
 	end
 	local available = AvailableQuestIDs()
@@ -495,8 +495,8 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	end
 
 	--[[
-		Only as many as the log takes: the party's quests first, then nearest giver first; the quest ID breaks a
-		tie, so the same quests always win
+		Only as many as the log takes: the wanted quests first, then the party's, then nearest giver first; the
+		quest ID breaks a tie, so the same quests always win
 	]]
 	table.sort(onRoute, function(a, b)
 		if (a.task.wanted ~= nil) ~= (b.task.wanted ~= nil) then

@@ -88,6 +88,24 @@ local function InPartyOnly()
 	return instanceType ~= "pvp" and instanceType ~= "arena"
 end
 
+--[[
+	The party unit a share result names: the result may give the first name alone, which on WoW Forever
+	reaches no one, so the whisper goes to the name ns.WhisperTarget gives that member
+]]
+local function PartyUnitNamed(name)
+	local short = Ambiguate(name, "short")
+	for index = 1, GetNumSubgroupMembers() do
+		local unit = "party" .. index
+		local full, first = GetUnitName(unit, true), UnitName(unit)
+		if
+			ns.IsReadable(full, first)
+			and (full == name or first == name or (full and Ambiguate(full, "short") == short))
+		then
+			return unit
+		end
+	end
+end
+
 function ns:OnChatMsgSystem(message)
 	-- During chat lockdown on WoW Forever the system message is secret and can't be read
 	if C_ChatInfo.InChatMessagingLockdown() then
@@ -103,11 +121,16 @@ function ns:OnChatMsgSystem(message)
 	for _, pattern in ipairs(resultPatterns) do
 		local name = message:match(pattern)
 		if name and not whispered[name] then
+			local unit = PartyUnitNamed(name)
+			local target = unit and ns.WhisperTarget(unit)
+			if not target then
+				return
+			end
 			whispered[name] = true
 			local whisperKey = told[name] and "WHISPER_SHARE_FAILED_AGAIN" or "WHISPER_SHARE_FAILED"
 			told[name] = true
 			local reference = ns.ShareWhisperQuestReference(whisperKey, lastShare.questID, lastShare.title)
-			ns:Announce("WHISPER", name, whisperKey, reference)
+			ns:Announce("WHISPER", target, whisperKey, reference)
 			return
 		end
 	end

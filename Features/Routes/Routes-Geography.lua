@@ -135,34 +135,11 @@ local function IsWithinByParents(mapID, zone)
 end
 
 --[[
-	The zone each city on a map of its own is in, city map ID to zone map ID. The game files these cities
-	under the continent, not the zone, so their parents don't say. Only the zone named here counts: Thunder
-	Bluff is in Mulgore, not the Barrens, though the Barrens' map reaches over it. Classic Era, TBC and WoW
-	Forever share map IDs; Mists has its own
+	The zone each city on a map of its own is in (ns.CITY_ZONE_MAP_IDS, the flavor's Game-IDs file). The game
+	files these cities under the continent, not the zone, so their parents don't say. Only the zone named
+	there counts: Thunder Bluff is in Mulgore, not the Barrens, though the Barrens' map reaches over it
 ]]
-local CITY_ZONES = {
-	-- Classic Era, TBC and WoW Forever
-	[1453] = 1429, -- Stormwind City: Elwynn Forest
-	[1454] = 1411, -- Orgrimmar: Durotar
-	[1455] = 1426, -- Ironforge: Dun Morogh
-	[1456] = 1412, -- Thunder Bluff: Mulgore
-	[1457] = 1438, -- Darnassus: Teldrassil
-	[1458] = 1420, -- Undercity: Tirisfal Glades
-	[1947] = 1943, -- The Exodar: Azuremyst Isle
-	[1954] = 1941, -- Silvermoon City: Eversong Woods
-	[1955] = 1952, -- Shattrath City: Terokkar Forest
-	-- Mists
-	[84] = 37, -- Stormwind City: Elwynn Forest
-	[85] = 1, -- Orgrimmar: Durotar
-	[87] = 27, -- Ironforge: Dun Morogh
-	[88] = 7, -- Thunder Bluff: Mulgore
-	[89] = 57, -- Darnassus: Teldrassil
-	[90] = 18, -- Undercity: Tirisfal Glades
-	[998] = 18, -- Undercity: Tirisfal Glades
-	[103] = 97, -- The Exodar: Azuremyst Isle
-	[110] = 94, -- Silvermoon City: Eversong Woods
-	[111] = 108, -- Shattrath City: Terokkar Forest
-}
+local CITY_ZONES = ns.CITY_ZONE_MAP_IDS
 
 --[[
 	Whether a map from Questie's database is the zone or inside it: a micro map (a cave, a building), or a

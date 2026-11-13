@@ -69,6 +69,31 @@ function ns:GetGroupChatChannel()
 	end
 end
 
+--[[
+	A party member's name as a whisper takes it, exactly as Good to Go's Rank Watch whispers do: GetUnitName
+	with the realm, which on WoW Forever is the whole name, first name and surname ("Snaptrap Mchunter"),
+	as the first name alone reaches no one, and elsewhere the name, with the realm when it's another. The
+	GUID's record stands in when the unit's name can't be read
+]]
+function ns.WhisperTarget(unit)
+	local name = GetUnitName(unit, true)
+	if ns.IsReadable(name) and type(name) == "string" and name ~= "" and name ~= UNKNOWNOBJECT then
+		return name
+	end
+	local guid = UnitGUID(unit)
+	if not (ns.IsReadable(guid) and guid) then
+		return nil
+	end
+	local _, _, _, _, _, guidName, realm = GetPlayerInfoByGUID(guid)
+	if not (ns.IsReadable(guidName, realm) and type(guidName) == "string" and guidName ~= "") then
+		return nil
+	end
+	if type(realm) == "string" and realm ~= "" then
+		return guidName .. "-" .. realm
+	end
+	return guidName
+end
+
 -- Builds the message and sends it; nothing is sent without a channel or a message
 function ns:Announce(channel, target, formatKey, ...)
 	if not channel then
@@ -111,7 +136,6 @@ local function QuestReferences(questID)
 	end
 	return references
 end
-ns.QuestReferences = QuestReferences -- Zone Info's Ask for Shares names its quests this way too (Zone-Info.lua)
 
 --[[
 	How a message names a quest, build(reference) being the message with it: the best way that fits the
@@ -142,6 +166,42 @@ end
 -- The whisper for a quest, as sent
 function ns.BuildShareWhisper(whisperKey, questID, title)
 	return ns:BuildWhisperMessage(whisperKey, ns.ShareWhisperQuestReference(whisperKey, questID, title))
+end
+
+--------------------------------------------------------------------------------
+-- Ask for Shares
+--------------------------------------------------------------------------------
+
+--[[
+	Zone Info's Ask for Shares line (Zone-Info.lua), at most room bytes: each shareable quest nobody in the
+	party has (partyCount), named as the announcements name one: Questie's quest link, then Questie's
+	bracketed text, then its title in brackets; the first that still fits. Stops at the first quest none of
+	them fits for, so the message is never cut short mid-name. nil with none
+]]
+function ns.BuildAskForSharesMessage(quests, room, partyCount)
+	local references = {}
+	local function Message(list)
+		return L["ZONE_INFO_ASK_MESSAGE"]:format(table.concat(list, ", "))
+	end
+	for _, quest in ipairs(quests) do
+		if quest.shareable and partyCount(quest.questID) == 0 then
+			local choices = QuestReferences(quest.questID)
+			choices[#choices + 1] = "[" .. quest.name .. "]"
+			local fitted
+			for _, reference in ipairs(choices) do
+				references[#references + 1] = reference
+				if #Message(references) <= room then
+					fitted = true
+					break
+				end
+				references[#references] = nil
+			end
+			if not fitted then
+				break
+			end
+		end
+	end
+	return #references > 0 and Message(references) or nil
 end
 
 --------------------------------------------------------------------------------

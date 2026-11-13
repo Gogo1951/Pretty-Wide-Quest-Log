@@ -25,8 +25,8 @@ end
 
 --[[
 	Blizzard's explored areas, fog, quest objective area, dungeon entrances and flight points. The
-	entrances and flight points are Blizzard's own pins with Blizzard's own mouse handling, their names on
-	hover. The explored areas and fog take no mouse, and the objective area shows only a tooltip on hover.
+	entrances and flight points are Blizzard's own pins, their names on hover; clicks on them do nothing
+	(below). The explored areas and fog take no mouse, and the objective area shows only a tooltip on hover.
 	The objective area draws the shown quest when Questie has no icons for it (below)
 ]]
 local providers = {}
@@ -47,6 +47,21 @@ AddProvider(FogOfWarFrameMixin and FogOfWarDataProviderMixin)
 local blobProvider = AddProvider(QuestBlobDataProviderMixin)
 AddProvider(DungeonEntranceDataProviderMixin)
 AddProvider(FlightPointDataProviderMixin)
+
+--[[
+	A left-click on an entrance or flight point super-tracks it (C_SuperTrack), and a right-click on an
+	entrance opens the Adventure Guide. On this map those pins are add-on code, so the click would fire
+	SUPER_TRACKING_CHANGED from inside it: Blizzard's objective tracker would mark itself dirty tainted and
+	carry the taint until a reload, erroring on secret auras in combat and in instances (GitHub #23). The
+	canvas asks its pin click handlers before a pin's own click action, and true stops it. This map's own
+	pins take no clicks, so every pin click on it is stopped
+]]
+local PIN_CLICK = MapCanvasMixin.MouseAction and MapCanvasMixin.MouseAction.Click
+if PIN_CLICK and canvas.AddGlobalPinMouseActionHandler then
+	canvas:AddGlobalPinMouseActionHandler(function(_, mouseAction)
+		return mouseAction == PIN_CLICK
+	end)
+end
 
 --[[
 	A stopgap until Questie has icons for every quest: Blizzard draws objective areas only while the

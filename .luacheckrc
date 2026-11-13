@@ -86,9 +86,6 @@ read_globals = {
 	"GetBindingText",
 	"GetCoinTextureString",
 	"geterrorhandler",
-	"GetItemCount",
-	"GetItemIcon",
-	"GetItemInfo",
 	"GetItemQualityColor",
 	"GetMaterialTextColors",
 	"GetMaxRewardCurrencies",
@@ -204,6 +201,7 @@ read_globals = {
 	"MoneyFrame_Update",
 	"NORMAL_FONT_COLOR",
 	"OBJECTIVES_WATCH_TOO_MANY",
+	"OKAY",
 	"OTHER",
 	"PARENS_TEMPLATE",
 	"PlaySound",
@@ -375,6 +373,6 @@ globals = {
 	SlashCmdList = { fields = { "PRETTYWIDEQUESTLOGOPTIONS" } }, -- a field, so only the add-on's own slash entry is writable
 	"QUESTS_DISPLAYED", -- Classic: more list rows in a taller quest log
 	StaticPopupDialogs = {
-		fields = { "PRETTYWIDEQUESTLOG_RELOAD", "PRETTYWIDEQUESTLOG_WOWHEAD" },
+		fields = { "PRETTYWIDEQUESTLOG_RELOAD", "PRETTYWIDEQUESTLOG_WOWHEAD", "PRETTYWIDEQUESTLOG_PREDICTIVE" },
 	}, -- the add-on's popups
 }

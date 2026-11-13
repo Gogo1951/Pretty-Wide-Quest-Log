@@ -26,7 +26,7 @@ local function PlayerMapPosition(mapID)
 	local hereBeDragons = routes and routes.HereBeDragons()
 	if hereBeDragons then
 		local x, y, instance = routes.PlayerPosition()
-		if x and ns.IsReadable(x, y, instance) then
+		if ns.IsReadable(x, y, instance) and x then
 			local mapX, mapY = hereBeDragons:GetZoneCoordinatesFromWorldInstance(x, y, instance, mapID, true)
 			if mapX and mapY then
 				return mapX, mapY
@@ -49,7 +49,7 @@ local function PlacePlayer(pin)
 		x, y = PlayerMapPosition(mapID)
 	end
 	local facing = GetPlayerFacing()
-	if not (x and y) or x < 0 or x > 1 or y < 0 or y > 1 or not (facing and ns.IsReadable(facing)) then
+	if not (x and y) or x < 0 or x > 1 or y < 0 or y > 1 or not (ns.IsReadable(facing) and facing) then
 		pin.Arrow:Hide()
 		return
 	end
