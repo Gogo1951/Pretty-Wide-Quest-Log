@@ -1,26 +1,26 @@
 # Pretty Wide Quest Log // Test Plan
 
-Pretty Wide Quest Log turns the quest log into one wide window and, with Questie on, draws a route on the zone map with a Quest Arrow to follow. This time we most want you to try routes that plan quests before you pick them up, and questing with a party.
+Pretty Wide Quest Log turns the quest log into one wide window and, with Questie on, draws a route on the zone map with a Quest Arrow to follow. This time we most want you to try the shorter route on the zone map, looking at other zones from the quest log, and the quest log on WoW Forever and MoP Classic.
 
 **Play on Classic Era, Season of Discovery, WoW Forever, TBC Anniversary, and MoP Classic.** If something looks wrong, tell us the check number and what you saw on [Discord](https://discord.gg/eh8hKq992Q).
 
 ## What's New
 
-1. With Questie on, check that **Predictive Questing Routes** under **Route** on the Quest Arrow's menu starts **Off**; turn it on, press `M` in a zone with quests you haven't picked up yet, and the route should send you to their givers, with gray markers on their objectives.
-2. Head for a camp of mobs your quest needs; the Quest Arrow should keep pointing until you're among them, and the route should finish the camp before going off to a turn-in.
-3. On a new character, follow the Quest Arrow to **Get the Flight Path From** your zone's flight master (on an older character, open any flight map once first).
-4. In a party where you both run Questie, split up far apart in the same zone; your Quest Arrows should say **Group Up** and lead you to a spot marked on the world map.
-5. With Questie on, have a friend in your zone who also runs Questie join your party; about 20 seconds later they should get one whisper offering your quests there that they don't have.
-6. In a party, hover a zone in the quest log and click **Share Quests**; quests everyone already has should be skipped.
-7. Click **Set Key** under **Key Bindings** on the main options panel, bind **Use Quest Item**, and press it beside a Quest Arrow quest with an item to use, in combat too.
-8. Change the font in the **Font** section of **Quest List**, **Quest Details**, **Window & Map** and **NPC Dialogue**, then click **Reset Font**.
-9. Under **Maps & Objectives**, turn on **Show Waypoint Markers on the Mini-map**, and change the marker size on each map panel.
-10. With Questie on, press `L` and use the zone menu under the map to pick **Badlands** (or any zone you haven't quested in); **Quests to Pick Up** should list quests for it that start in other zones, with who gives them, and **Things to Bring** the items its quests need, with your bag count. Click a quest's **+**, then travel to its giver's zone; the Quest Arrow should send you to them.
+1. With Questie on, press **M** in a zone with lots of quests; the route should end at a **…** marker that shows the rest of it while you hover, and all of it once you click.
+2. Under **Maps & Objectives > Zone Map** in the options, set **Waypoints Shown** to **Next 5**, then to **Whole Route**.
+3. Turn on **Predictive Questing Routes** under **Planning** on the **Quest Route** options panel, then off and on again from the Quest Arrow's menu; a heads-up popup should show each time.
+4. When the Quest Arrow says **Talk to … to Fly to …**, hover it and click that flight under **Ignore**; the route should walk you there instead.
+5. With Questie on, press **L** and pick another zone in the zone menu under the map; **Things to Bring** should name that zone, and hovering a quest giver on the map should list their quests.
+6. On WoW Forever, share a quest with a party member who is too far away; they should get a whisper from you.
+7. On WoW Forever and MoP Classic, click a flight point or dungeon entrance on the map beside the quest log, then get into a fight; no error should pop up.
+8. On WoW Forever and MoP Classic, move the quest log, then drag its bottom-right grip to make it taller; its title bar should stay where you put it.
+9. Ride into a zone you haven't explored with the quest log open; the map beside it should show the whole zone.
+10. With ElvUI on Classic Era or TBC Anniversary, the quest log's text should use ElvUI's font, with a small gap between the map and **Zone Info** under it.
 
 ## Everything Else
 
-11. Press `L` and change **Zone Order** and **Quest Order** under **Quest List** in the options; the list should re-sort.
+11. Press **L** and change **Zone Order** and **Quest Order** under **Quest List** in the options; the list should re-sort.
 12. With Questie on, select a quest that has you kill or collect things; the map beside the log should shade each area, and a quest in a chain should list its steps.
-13. Walk into a dungeon you have quests for with a party; party chat should list them, and each member should be offered the ones they don't have.
-14. On WoW Forever and MoP Classic, press `L` in and out of combat, and open the quest log from the micro menu; it should be the wide quest log every time.
+13. With Questie on, follow the Quest Arrow through a zone's quests, turn-ins included.
+14. On WoW Forever and MoP Classic, press **L**, use a Quest Arrow item button, and share a quest, all **in combat**; WoW Forever should share it once combat ends, MoP Classic right away.
 15. Open the options with `/pwql` and from **Options > AddOns > Pretty Wide Quest Log**, then try `/pwql` in combat; it should refuse with a chat message.

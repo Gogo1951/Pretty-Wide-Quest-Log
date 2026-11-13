@@ -1,6 +1,6 @@
 # Pretty Wide Quest Log (PWQL)
 
-Wide quest log with a quest route and quest arrow. You pick the quests, we help with a clean route to get them done fast. Quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI.
+Wide quest log and quest helper for leveling: a quest route through the quests you pick, a waypoint arrow, quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI.
 
 **TL;DR:** Quest with confidence and speed. A clean route through every quest you picked, an arrow to follow, the quest log Blizzard should have shipped, and your whole group on the same quests without typing a word.
 
@@ -42,16 +42,16 @@ Simulated runs through every quest in a zone, on foot, against the plain nearest
 * **Always Know Where to Go** // An arrow on screen points to the next waypoint, with the distance in yards.
 * **What to Do When You Get There** // The quests and objectives at that waypoint are listed right under it.
 * **Quest Items One Click Away** // A quest with an item to use gets a button beside it, or set one key for Use Quest Item.
-* **Pick Up Flight Paths on the Way** // Flight masters you haven't met yet join the route, so you never miss a flight path.
+* **Flight Paths, Found and Flown** // Flight masters you haven't met join the route, and the arrow sends you through the ones you know when flying beats running.
 * **Out of the Way When It Should Be** // It hides in raids and instances, and you choose what it shows, how big it is, and where it sits.
 
 ### Wide Quest Log
 
 <img width="800" src="https://github.com/user-attachments/assets/4068cf0c-4d0e-4ddf-989b-0bf2682226ef" />
 
-* **Everything at a Glance** // Your quests by zone, the selected quest's details, and its map, side by side.
+* **Everything at a Glance** // Your quests by zone, the selected quest's details, and its map side by side, with one shaded area per objective instead of icon soup.
 * **Spot the Tough Ones** // Level and type tags like [40D] flag dungeon, raid, elite, group, and PvP quests before you read a word.
-* **A Map Without the Icon Soup** // The map shows only the selected quest, with one shaded area and one icon per objective.
+* **Ready for the Next Zone** // Under the map, see the quests from other towns you can pick up for that zone, and the items its quests will ask you to bring.
 * **Quest Givers Match** // Quest giver windows get the same clean layout, level tags, and a quest ID that links to Wowhead.
 * **Read It Your Way** // Pick the font, size, outline, and shadow for the quest log and NPC dialogue, SharedMedia fonts included, and sort zones and quests how you like.
 
@@ -159,8 +159,8 @@ Spoken and VoiceOver keep their play buttons on your quest list, so the narratio
 
 ### 🔴 Alternatives
 
+* AnacondaGaming's [ForeverQuest](https://www.curseforge.com/wow/addons/foreverquest)
 * Kerzo's [Kerzo Classic Quest Log](https://www.curseforge.com/wow/addons/kerzo-classic-quest-log)
 * JugoBetrugoTV's [Quest Master - Forever](https://www.curseforge.com/wow/addons/quest-master)
-* DonCoohd's [Questdon: Quest & Dungeon Helper](https://www.curseforge.com/wow/addons/questdon)
 * guardycmw's [Questie Automatic Arrow](https://www.curseforge.com/wow/addons/questie-automatic-arrow)
 * bitekenny's [StBu MasterQuestLog | The Burning Crusade](https://www.curseforge.com/wow/addons/stbu-masterquestlog)
