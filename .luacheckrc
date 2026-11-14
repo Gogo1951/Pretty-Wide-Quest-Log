@@ -205,6 +205,7 @@ read_globals = {
 	"OTHER",
 	"PARENS_TEMPLATE",
 	"PlaySound",
+	"PlaySoundFile",
 	"POIButtonHighlightManager",
 	"PrettyWideQuestLogMapFrame",
 	"QUEST_FRAME_MODEL_SCENE_ID",

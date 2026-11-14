@@ -61,7 +61,7 @@ Simulated runs through every quest in a zone, on foot, against the plain nearest
 
 * **Dungeon Quests, Sorted** // Walk into a dungeon and your party hears which of your quests are inside, then gets every one they're missing.
 * **A Whole Zone in One Click** // Share all of a zone's quests from the quest log, skipping any your whole party already has.
-* **Welcome to the Party** // Join a group, or have someone join yours, and party members in your zone are offered your quests they don't have yet.
+* **Welcome to the Party** // Join a group, or have someone join yours, and you hear a ping and see how many of your quests in the zone the new members could use, ready for Share Quests.
 * **Nobody Gets Left Behind** // Anyone a share misses gets a friendly whisper so they can ask again.
 * **Your Call** // Each helper has its own switch, and you set the pace between shares.
 

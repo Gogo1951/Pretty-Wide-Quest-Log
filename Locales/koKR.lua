@@ -217,9 +217,13 @@ L["SHARE_INTERVAL_DESCRIPTION"] =
 L["SHARE_WHISPERS"] = "공유 실패 시 귓속말"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"파티원이 다른 일을 하고 있거나, 너무 멀리 있거나, 퀘스트 목록이 가득 찼을 때 공유하려던 퀘스트를 귓속말로 알려 주고 다시 말해 달라고 부탁합니다. 파티원이 퀘스트를 받을 자격이 없거나, 이미 진행 중이거나, 이미 완료했다면 아무것도 보내지 않습니다."
-L["ZONE_SHARE_OFFERS"] = "새 파티원에게 내 지역 퀘스트 제안"
+L["ZONE_SHARE_OFFERS"] = "새 파티원에게 내 지역 퀘스트가 없을 때 알림"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"파티에 들어가거나 누군가 내 파티에 들어오면 Questie가 퀘스트 목록을 주고받도록 20초 기다린 뒤, 내 지역에 있는 각 파티원에게 그곳에 목표가 있는 내 퀘스트 중 그 사람에게 없는 퀘스트 수를 귓속말로 알리고 받고 싶은지 묻습니다. 공유할 수 있는 퀘스트만 셉니다. 퀘스트를 확인할 수 없는 파티원(Questie 없음, 거리 밖)과 이미 모두 가진 파티원에게는 귓속말을 보내지 않습니다. 각 파티원에게는 파티마다 한 번만 묻고, 던전이나 공격대에서는 묻지 않습니다."
+	"파티에 들어가거나 누군가 내 파티에 들어오면 Questie가 퀘스트 목록을 주고받도록 20초 기다린 뒤, 내 지역에 목표가 있는 내 퀘스트 중 새 파티원에게 없는 퀘스트 수를 대화창에 알려 주어 퀘스트 공유를 누를 수 있게 합니다. 공유할 수 있는 퀘스트만 세며, 여러 명에게 없어도 한 번만 셉니다. 누구에게도 메시지를 보내지 않습니다. 퀘스트를 확인할 수 없는 파티원(Questie 없음, 거리 밖)은 세지 않습니다. 누군가 들어올 때마다 한 번 알리며, 던전이나 공격대에서는 알리지 않습니다."
+L["ZONE_SHARE_OFFERS_SOUND"] = "소리 재생"
+L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] =
+	"대화창이 바쁠 때를 위해 알림과 함께 경고음을 재생합니다."
+L["ZONE_SHARE_SOUND_PREVIEW"] = "클릭하면 경고음을 들어 볼 수 있습니다."
 L["SAMPLE_EXAMPLE"] = "예시: %s"
 L["SAMPLE_QUEST_LOADING"] = "퀘스트 ID 불러오는 중: %d"
 L["DUNGEON_QUESTS_HEADER"] = "던전 퀘스트"
@@ -513,6 +517,11 @@ L["CHAT_SHARING_ZONE"] = "퀘스트 %d개를 공유합니다 (%s), %d초마다 �
 L["CHAT_SHARING_ZONE_NONE"] = "%s의 퀘스트 중 공유할 수 있는 퀘스트가 없습니다."
 -- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_PARTY_HAS"] = "파티원 모두가 %s의 내 퀘스트를 이미 가지고 있습니다."
+-- TRANSLATORS: %s is the zone; printed when new party members are missing 1 of your quests there
+L["CHAT_ZONE_SHARE_NOTICE_ONE"] =
+	"파티에 필요할 수 있는 공유 가능한 퀘스트 1개가 %s에 있습니다."
+-- TRANSLATORS: %d is how many quests, %s is the zone; printed when new party members are missing them
+L["CHAT_ZONE_SHARE_NOTICE"] = "파티에 필요할 수 있는 공유 가능한 퀘스트 %d개가 %s에 있습니다."
 
 --------------------------------------------------------------------------------
 -- Waypoint Markers, Quest Route and the Quest Arrow
@@ -641,14 +650,12 @@ L["ROUTES_GROUP_UP"] = "파티와 합류"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	each %s is a quest link or a list of them,
 	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"%s 퀘스트를 공유하려고 했는데 전달되지 않았어요. 필요하면 준비됐을 때 말해 주세요. 다시 공유해 드릴게요"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 퀘스트도 마찬가지예요"
-L["ZONE_SHARE_OFFER"] = "제게 %d개의 %s 퀘스트가 있는데 아직 없으시네요. 공유해 볼까요?"
-L["ZONE_SHARE_OFFER_ONE"] = "제게 %s 퀘스트가 1개 있는데 아직 없으시네요. 공유해 볼까요?"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "여기서 할 퀘스트가 %d개 있어요: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "여기서 할 퀘스트가 1개 있어요: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "여기서 할 퀘스트가 더 있어요: %s"

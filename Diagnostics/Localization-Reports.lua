@@ -231,13 +231,5 @@ function ns:BuildMessageLengthReport()
 		)
 		lines[#lines + 1] = "    " .. ShownText(message)
 	end
-
-	-- The zone offer whisper for the current zone, with a two-digit count
-	local zone = ns.CurrentZone and ns.CurrentZone()
-	local offer = ns.BuildZoneShareOffer(25, zone and zone.name or GetRealZoneText())
-	lines[#lines + 1] = ""
-	lines[#lines + 1] =
-		string.format("[%s] ZONE_SHARE_OFFER: %d bytes", #offer > ns.CHAT_MESSAGE_MAX_LENGTH and "OVER" or "OK", #offer)
-	lines[#lines + 1] = "    " .. ShownText(offer)
 	return table.concat(lines, "\n")
 end

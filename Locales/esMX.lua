@@ -215,9 +215,12 @@ L["SHARE_INTERVAL_DESCRIPTION"] =
 L["SHARE_WHISPERS"] = "Susurrar cuando falle un envío"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Cuando un miembro del grupo está ocupado, demasiado lejos o tiene el registro de misiones lleno, le susurra qué misión intentaste compartir y le pide que te lo recuerde. No se envía nada si no cumple los requisitos de la misión, ya la tiene o ya la completó."
-L["ZONE_SHARE_OFFERS"] = "Ofrecer las misiones de mi zona a los nuevos miembros del grupo"
+L["ZONE_SHARE_OFFERS"] = "Avisarme cuando a los nuevos miembros del grupo les falten misiones de mi zona"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"Cuando te unes a un grupo, o alguien se une al tuyo, espera 20 segundos a que Questie intercambie los registros de misiones y luego susurra a cada miembro del grupo que esté en tu zona cuántas de tus misiones con objetivos ahí no tiene, y le pregunta si las quiere. Solo cuentan las misiones que puedes compartir. No se susurra a los miembros cuyas misiones no se pueden ver (sin Questie, fuera de alcance) ni a quienes ya las tienen todas. Se pregunta a cada miembro una vez por grupo, y nunca en un calabozo ni en un grupo de banda."
+	"Cuando te unes a un grupo, o alguien se une al tuyo, espera 20 segundos a que Questie intercambie los registros de misiones y luego te dice en el chat cuántas de tus misiones con objetivos en tu zona les faltan a los nuevos miembros, para que puedas hacer clic en Compartir misiones. Solo cuentan las misiones que puedes compartir, cada una una sola vez aunque les falte a varios. No se envía nada a nadie. No se cuentan los miembros cuyas misiones no se pueden ver (sin Questie, fuera de alcance). Una vez cada vez que alguien se une, nunca en una calabozo ni en un grupo de banda."
+L["ZONE_SHARE_OFFERS_SOUND"] = "Reproducir sonido"
+L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] = "Reproduce un aviso junto al mensaje, para cuando el chat está muy movido."
+L["ZONE_SHARE_SOUND_PREVIEW"] = "Haz clic para oír el aviso."
 L["SAMPLE_EXAMPLE"] = "Ejemplo: %s"
 L["SAMPLE_QUEST_LOADING"] = "Cargando ID de misión: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Misiones de calabozo"
@@ -510,6 +513,10 @@ L["CHAT_SHARING_ZONE"] = "Compartiendo %d misiones de %s, una cada %d segundos."
 L["CHAT_SHARING_ZONE_NONE"] = "No puedes compartir ninguna de tus misiones de %s."
 -- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_PARTY_HAS"] = "Tu grupo ya tiene todas tus misiones de %s."
+-- TRANSLATORS: %s is the zone; printed when new party members are missing 1 of your quests there
+L["CHAT_ZONE_SHARE_NOTICE_ONE"] = "Tienes 1 misión compartible en %s que tu grupo podría necesitar."
+-- TRANSLATORS: %d is how many quests, %s is the zone; printed when new party members are missing them
+L["CHAT_ZONE_SHARE_NOTICE"] = "Tienes %d misiones compartibles en %s que tu grupo podría necesitar."
 
 --------------------------------------------------------------------------------
 -- Waypoint Markers, Quest Route and the Quest Arrow
@@ -636,14 +643,12 @@ L["ROUTES_GROUP_UP"] = "Reunirse con el grupo"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	each %s is a quest link or a list of them,
 	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"Intenté compartir %s contigo, pero no funcionó. Si quieres la misión, avísame cuando puedas y te la vuelvo a compartir"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Lo mismo con %s"
-L["ZONE_SHARE_OFFER"] = "Tengo %d misiones en %s que no tienes. ¿Quieres que intente compartírtelas?"
-L["ZONE_SHARE_OFFER_ONE"] = "Tengo 1 misión en %s que no tienes. ¿Quieres que intente compartírtela?"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "Tengo %d misiones por hacer aquí: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "Tengo 1 misión por hacer aquí: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Más misiones por hacer aquí: %s"

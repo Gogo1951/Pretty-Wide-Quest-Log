@@ -14,6 +14,7 @@ ns.DATABASE_DEFAULTS = {
 		shareInterval = 3,
 		shareWhispers = true,
 		zoneShareOffer = true,
+		zoneShareOfferSound = true,
 		dungeonAnnounce = true,
 		dungeonShare = true,
 		enableWideQuestLog = true,
