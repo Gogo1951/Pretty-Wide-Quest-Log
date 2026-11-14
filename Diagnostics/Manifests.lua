@@ -1956,13 +1956,14 @@ function ns:BuildSharingContextReport()
 	lines[#lines + 1] = ""
 	Setting(lines, "Quality of Life switch", "enableQualityOfLife")
 	Setting(lines, "Whisper when a share fails", "shareWhispers")
-	Setting(lines, "Offer zone quests on joining", "zoneShareOffer")
-	-- Each party member's zone offer: due, done or waiting, and why the last try did what it did (Zone-Share-Offer.lua)
+	Setting(lines, "Tell me when new members are missing zone quests", "zoneShareOffer")
+	Setting(lines, "Zone quests notice sound", "zoneShareOfferSound")
+	-- Each party member's zone check: due, done or waiting, and why the last try did what it did (Zone-Share-Offer.lua)
 	if ns.ZoneShareOfferStatus then
 		local members, ready, checking = ns.ZoneShareOfferStatus()
 		local zone = ns.CurrentZone()
 		lines[#lines + 1] = string.format(
-			"Zone offer: ready %s, checking %s, your zone %s",
+			"Zone check: ready %s, checking %s, your zone %s",
 			YesNo(ready),
 			YesNo(checking),
 			zone and string.format("%s (%s)", zone.name, tostring(zone.zoneMapID)) or "unknown"

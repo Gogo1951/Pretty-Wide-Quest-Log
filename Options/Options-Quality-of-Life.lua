@@ -41,10 +41,49 @@ local function ShareWhisperExample()
 	return ns.RenderSample("WHISPER", ns.BuildShareWhisper("WHISPER_SHARE_FAILED", quest.questID, quest.title))
 end
 
--- The zone offer whisper, as a party member in the zone receives it
+-- The notice that new party members are missing your zone's quests, as your chat window shows it
 local function ZoneShareOfferExample()
 	local zone = C_Map.GetAreaInfo(ns.SAMPLE_ZONE_AREA_ID) or tostring(ns.SAMPLE_ZONE_AREA_ID)
-	return ns.RenderSample("WHISPER", ns.BuildZoneShareOffer(#ns.SAMPLE_QUEST_IDS, zone))
+	return ns.RenderSample("PRINT", ns.BuildZoneShareNotice(#ns.SAMPLE_QUEST_IDS, zone))
+end
+
+local function ZoneShareOfferOff()
+	return Hidden() or not ns.db.profile.zoneShareOffer
+end
+
+--[[
+	The notice's sound, on an indented row under its toggle (Build Reference → Sub-Option Rows), with the
+	client's voice-chat speaker beside it to hear it before turning it on, as Good to Go's restock reminder
+	does. An execute with an image renders as an icon, so its label rides in desc
+]]
+local function ZoneShareSoundRow(order)
+	return ns.OptionsSubRow(order, ZoneShareOfferOff, {
+		sound = {
+			type = "toggle",
+			name = ns.OptionsSubLabel(L["ZONE_SHARE_OFFERS_SOUND"]),
+			desc = L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"],
+			order = 2,
+			get = function()
+				return ns.db.profile.zoneShareOfferSound
+			end,
+			set = function(_, value)
+				ns.db.profile.zoneShareOfferSound = value
+			end,
+		},
+		preview = {
+			type = "execute",
+			name = "",
+			desc = L["ZONE_SHARE_SOUND_PREVIEW"],
+			image = "Interface\\Common\\VoiceChat-Speaker",
+			imageWidth = 16,
+			imageHeight = 16,
+			width = 0.15,
+			order = 3,
+			func = function()
+				ns.PlayZoneShareAlert()
+			end,
+		},
+	})
 end
 
 -- The first message of the dungeon announcement, as the group reads it
@@ -126,9 +165,8 @@ function ns.BuildQualityOfLifeOptions()
 			end),
 			spaceZoneShareOffer = ns.OptionsSpacer(29.2, Hidden),
 			zoneShareOffer = Toggle("zoneShareOffer", "ZONE_SHARE_OFFERS", 29.4),
-			zoneShareOfferExampleRow = ns.OptionsExampleRow(29.6, ZoneShareOfferExample, function()
-				return Hidden() or not ns.db.profile.zoneShareOffer
-			end),
+			zoneShareOfferSoundRow = ZoneShareSoundRow(29.5),
+			zoneShareOfferExampleRow = ns.OptionsExampleRow(29.6, ZoneShareOfferExample, ZoneShareOfferOff),
 
 			spaceDungeonQuests0 = ns.OptionsSpacer(30, Hidden),
 			headerDungeonQuests = ns.OptionsHeader(L["DUNGEON_QUESTS_HEADER"], 31, Hidden),

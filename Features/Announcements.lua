@@ -205,18 +205,13 @@ function ns.BuildAskForSharesMessage(quests, room, partyCount)
 end
 
 --------------------------------------------------------------------------------
--- Zone Share Offer
+-- Zone Share Notice
 --------------------------------------------------------------------------------
 
--- The whisper offering count quests in a zone (Zone-Share-Offer.lua): its locale key, then what fills it
-function ns.ZoneShareOfferFormat(count, zoneName)
+-- What the player is told when new party members are missing count of their quests in a zone (Zone-Share-Offer.lua); Options shows it as its Example
+function ns.BuildZoneShareNotice(count, zoneName)
 	if count == 1 then
-		return "ZONE_SHARE_OFFER_ONE", zoneName
+		return L["CHAT_ZONE_SHARE_NOTICE_ONE"]:format(zoneName)
 	end
-	return "ZONE_SHARE_OFFER", count, zoneName
-end
-
--- The whisper offering count quests in a zone, as sent; Options shows it as its Example
-function ns.BuildZoneShareOffer(count, zoneName)
-	return ns:BuildWhisperMessage(ns.ZoneShareOfferFormat(count, zoneName))
+	return L["CHAT_ZONE_SHARE_NOTICE"]:format(count, zoneName)
 end

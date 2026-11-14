@@ -209,9 +209,13 @@ L["SHARE_INTERVAL_DESCRIPTION"] =
 L["SHARE_WHISPERS"] = "Bei fehlgeschlagenem Teilen anflüstern"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Ist ein Gruppenmitglied beschäftigt, zu weit weg oder hat ein volles Questlog, flüsterst du ihm, welche Quest du teilen wolltest, und bittest es, dich daran zu erinnern. Nichts wird gesendet, wenn es die Voraussetzungen für die Quest nicht erfüllt, sie schon hat oder sie bereits erledigt hat."
-L["ZONE_SHARE_OFFERS"] = "Neuen Gruppenmitgliedern die Quests meiner Zone anbieten"
+L["ZONE_SHARE_OFFERS"] = "Mir sagen, wenn neuen Gruppenmitgliedern Quests meiner Zone fehlen"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"Wenn du einer Gruppe beitrittst oder jemand deiner Gruppe beitritt, wartet das Add-on 20 Sekunden, bis Questie die Questlogs ausgetauscht hat, flüstert dann jedem Gruppenmitglied in deiner Zone, wie viele deiner Quests mit Zielen dort ihm fehlen, und fragt, ob es sie haben möchte. Es zählen nur Quests, die du teilen kannst. Mitglieder, deren Quests nicht sichtbar sind (kein Questie, außer Reichweite), und solche, die schon alle haben, werden nicht angeflüstert. Jedes Mitglied wird einmal pro Gruppe gefragt, nie in einem Dungeon oder in einer Schlachtzugsgruppe."
+	"Wenn du einer Gruppe beitrittst oder jemand deiner Gruppe beitritt, wartet das Add-on 20 Sekunden, bis Questie die Questlogs ausgetauscht hat, und sagt dir dann im Chat, wie viele deiner Quests mit Zielen in deiner Zone den neuen Mitgliedern fehlen, damit du auf Quests teilen klicken kannst. Es zählen nur Quests, die du teilen kannst, jede nur einmal, egal wie vielen sie fehlt. An niemanden wird etwas gesendet. Mitglieder, deren Quests nicht sichtbar sind (kein Questie, außer Reichweite), werden nicht mitgezählt. Einmal, wenn jemand beitritt, nie in einem Dungeon oder in einer Schlachtzugsgruppe."
+L["ZONE_SHARE_OFFERS_SOUND"] = "Ton abspielen"
+L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] =
+	"Spielt zusätzlich zum Hinweis einen Hinweiston ab, falls im Chat gerade viel los ist."
+L["ZONE_SHARE_SOUND_PREVIEW"] = "Klicke, um den Hinweiston zu hören."
 L["SAMPLE_EXAMPLE"] = "Beispiel: %s"
 L["SAMPLE_QUEST_LOADING"] = "Lade Quest-ID: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Dungeonquests"
@@ -505,6 +509,10 @@ L["CHAT_SHARING_ZONE"] = "Teile %d Quests aus %s, eine alle %d Sekunden."
 L["CHAT_SHARING_ZONE_NONE"] = "Keine deiner Quests aus %s kann geteilt werden."
 -- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_PARTY_HAS"] = "Deine Gruppe hat schon alle deine Quests aus der Zone %s."
+-- TRANSLATORS: %s is the zone; printed when new party members are missing 1 of your quests there
+L["CHAT_ZONE_SHARE_NOTICE_ONE"] = "Du hast 1 teilbare Quest in der Zone %s, die deine Gruppe brauchen könnte."
+-- TRANSLATORS: %d is how many quests, %s is the zone; printed when new party members are missing them
+L["CHAT_ZONE_SHARE_NOTICE"] = "Du hast %d teilbare Quests in der Zone %s, die deine Gruppe brauchen könnte."
 
 --------------------------------------------------------------------------------
 -- Waypoint Markers, Quest Route and the Quest Arrow
@@ -632,14 +640,12 @@ L["ROUTES_GROUP_UP"] = "Zur Gruppe aufschließen"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	each %s is a quest link or a list of them,
 	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"Ich wollte %s mit dir teilen, aber es hat nicht geklappt. Wenn du die Quest möchtest, sag einfach Bescheid, sobald du bereit bist, dann teile ich sie noch mal"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Das gilt auch für %s"
-L["ZONE_SHARE_OFFER"] = "Ich habe %d Quests in der Zone %s, die dir fehlen. Soll ich versuchen, sie mit dir zu teilen?"
-L["ZONE_SHARE_OFFER_ONE"] = "In der Zone %s habe ich 1 Quest, die dir fehlt. Soll ich versuchen, sie mit dir zu teilen?"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "Ich habe hier %d Quests zu erledigen: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "Ich habe hier 1 Quest zu erledigen: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Weitere Quests, die ich hier erledigen muss: %s"

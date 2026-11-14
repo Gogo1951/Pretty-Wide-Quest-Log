@@ -213,9 +213,13 @@ L["SHARE_INTERVAL_DESCRIPTION"] =
 L["SHARE_WHISPERS"] = "Chuchoter quand un partage échoue"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Quand un membre du groupe est occupé, trop loin ou a un journal de quêtes plein, lui chuchote la quête que vous avez essayé de partager et lui demande de vous la rappeler. Rien n'est envoyé s'il ne remplit pas les conditions de la quête, l'a déjà ou l'a déjà terminée."
-L["ZONE_SHARE_OFFERS"] = "Proposer les quêtes de ma zone aux nouveaux membres du groupe"
+L["ZONE_SHARE_OFFERS"] = "Me prévenir quand il manque des quêtes de ma zone aux nouveaux membres du groupe"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"Quand vous rejoignez un groupe, ou que quelqu'un rejoint le vôtre, attend 20 secondes que Questie échange les journaux de quêtes, puis chuchote à chaque membre du groupe dans votre zone combien de vos quêtes ayant des objectifs là-bas il n'a pas, et lui demande s'il les veut. Seules les quêtes que vous pouvez partager comptent. Les membres dont les quêtes ne sont pas visibles (sans Questie, hors de portée) et ceux qui les ont déjà toutes ne reçoivent pas de chuchotement. Chaque membre n'est sollicité qu'une fois par groupe, et jamais dans un donjon ni dans un groupe de raid."
+	"Quand vous rejoignez un groupe, ou que quelqu'un rejoint le vôtre, attend 20 secondes que Questie échange les journaux de quêtes, puis vous indique dans le chat combien de vos quêtes ayant des objectifs dans votre zone manquent aux nouveaux membres, pour que vous puissiez cliquer sur Partager les quêtes. Seules les quêtes que vous pouvez partager comptent, chacune une seule fois même si elle manque à plusieurs membres. Rien n'est envoyé à personne. Les membres dont les quêtes ne sont pas visibles (sans Questie, hors de portée) ne sont pas comptés. Une fois à chaque arrivée, jamais dans un donjon ni dans un groupe de raid."
+L["ZONE_SHARE_OFFERS_SOUND"] = "Jouer un son"
+L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] =
+	"Joue une alerte en même temps que le message, pour quand le chat est chargé."
+L["ZONE_SHARE_SOUND_PREVIEW"] = "Cliquez pour écouter l'alerte."
 L["SAMPLE_EXAMPLE"] = "Exemple : %s"
 L["SAMPLE_QUEST_LOADING"] = "Chargement de l'ID de quête : %d"
 L["DUNGEON_QUESTS_HEADER"] = "Quêtes de donjon"
@@ -509,6 +513,10 @@ L["CHAT_SHARING_ZONE"] = "Partage de %d quêtes de %s, une toutes les %d seconde
 L["CHAT_SHARING_ZONE_NONE"] = "Aucune de vos quêtes de %s ne peut être partagée."
 -- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_PARTY_HAS"] = "Votre groupe a déjà toutes vos quêtes de %s."
+-- TRANSLATORS: %s is the zone; printed when new party members are missing 1 of your quests there
+L["CHAT_ZONE_SHARE_NOTICE_ONE"] = "Vous avez 1 quête partageable de %s dont votre groupe pourrait avoir besoin."
+-- TRANSLATORS: %d is how many quests, %s is the zone; printed when new party members are missing them
+L["CHAT_ZONE_SHARE_NOTICE"] = "Vous avez %d quêtes partageables de %s dont votre groupe pourrait avoir besoin."
 
 --------------------------------------------------------------------------------
 -- Waypoint Markers, Quest Route and the Quest Arrow
@@ -637,14 +645,12 @@ L["ROUTES_GROUP_UP"] = "Se regrouper"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	each %s is a quest link or a list of them,
 	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"J'ai essayé de partager %s avec toi, mais ça n'a pas marché. Si la quête t'intéresse, fais-moi signe quand tu peux et je te la repartage"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Pareil pour %s"
-L["ZONE_SHARE_OFFER"] = "J'ai %d quêtes dans la zone %s que tu n'as pas. Tu veux que j'essaie de te les partager ?"
-L["ZONE_SHARE_OFFER_ONE"] = "J'ai 1 quête dans la zone %s que tu n'as pas. Tu veux que j'essaie de te la partager ?"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "J'ai %d quêtes à faire ici : %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "J'ai 1 quête à faire ici : %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "Autres quêtes à faire ici : %s"

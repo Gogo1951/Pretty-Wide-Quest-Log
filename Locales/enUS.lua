@@ -202,9 +202,12 @@ L["SHARE_INTERVAL_DESCRIPTION"] =
 L["SHARE_WHISPERS"] = "Whisper When a Share Fails"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"When a party member is busy, too far away, or has a full quest log, whispers them which quest you tried to share and asks them to remind you. Nothing is sent when they aren't eligible for the quest, are already on it, or have done it."
-L["ZONE_SHARE_OFFERS"] = "Offer My Zone's Quests to New Party Members"
+L["ZONE_SHARE_OFFERS"] = "Tell Me When New Party Members Are Missing My Zone's Quests"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"When you join a party, or someone joins yours, waits 20 seconds for Questie to swap quest logs, then whispers each party member in your zone how many of your quests with objectives there they don't have and asks whether they'd like them. Only quests you can share count. Members whose quests can't be seen (no Questie, out of range) and those who already have them all aren't whispered. Each member is asked once per group, never in a dungeon or a raid group."
+	"When you join a party, or someone joins yours, waits 20 seconds for Questie to swap quest logs, then tells you in chat how many of your quests with objectives in your zone the new members are missing, so you can click Share Quests. Only quests you can share count, each once however many members lack it. Nothing is sent to anyone. Members whose quests can't be seen (no Questie, out of range) aren't counted. Once each time someone joins, never in a dungeon or a raid group."
+L["ZONE_SHARE_OFFERS_SOUND"] = "Play Sound"
+L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] = "Plays an alert alongside the notice, for when chat is busy."
+L["ZONE_SHARE_SOUND_PREVIEW"] = "Click to hear the alert."
 L["SAMPLE_EXAMPLE"] = "Example: %s"
 L["SAMPLE_QUEST_LOADING"] = "Loading Quest ID: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Dungeon Quests"
@@ -494,6 +497,10 @@ L["CHAT_SHARING_ZONE"] = "Sharing %d quests from %s, one every %d seconds."
 L["CHAT_SHARING_ZONE_NONE"] = "None of your quests from %s can be shared."
 -- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_PARTY_HAS"] = "Your party already has all your quests from %s."
+-- TRANSLATORS: %s is the zone; printed when new party members are missing 1 of your quests there
+L["CHAT_ZONE_SHARE_NOTICE_ONE"] = "You have 1 shareable quest in %s your party may need."
+-- TRANSLATORS: %d is how many quests, %s is the zone; printed when new party members are missing them
+L["CHAT_ZONE_SHARE_NOTICE"] = "You have %d shareable quests in %s your party may need."
 
 --------------------------------------------------------------------------------
 -- Waypoint Markers, Quest Route and the Quest Arrow
@@ -619,14 +626,12 @@ L["ROUTES_GROUP_UP"] = "Group Up"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	each %s is a quest link or a list of them,
 	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"I tried to share %s with you, but it didn't go through. If you'd like the quest, just give me a shout when you're ready and I'll share it again"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "Same goes for %s"
-L["ZONE_SHARE_OFFER"] = "I have %d quests in %s that you don't have. Would you like me to try to share them?"
-L["ZONE_SHARE_OFFER_ONE"] = "I have 1 quest in %s that you don't have. Would you like me to try to share it?"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "I have %d quests to do here: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "I have 1 quest to do here: %s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "More quests to do here: %s"

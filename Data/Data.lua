@@ -36,6 +36,9 @@ ns.LINKS = {
 -- The chain link before a quest ID that opens its Wowhead page: white, so it takes the quest ID's color
 ns.WOWHEAD_LINK_ICON = "Interface/AddOns/" .. ADDON_NAME .. "/Includes/Images/PWQL_Link"
 
+-- The sound with the notice that new party members are missing your zone's quests (Zone-Share-Offer.lua)
+ns.ZONE_SHARE_ALERT_SOUND = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Sounds\\Quests-to-Share.ogg"
+
 --------------------------------------------------------------------------------
 -- Colors
 --------------------------------------------------------------------------------

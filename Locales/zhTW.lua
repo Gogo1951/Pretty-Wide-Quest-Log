@@ -201,9 +201,12 @@ L["SHARE_INTERVAL_DESCRIPTION"] =
 L["SHARE_WHISPERS"] = "分享失敗時密語"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"當隊友正忙、距離太遠或任務日誌已滿時，密語告訴對方你嘗試分享的任務，並請對方提醒你。如果對方不符合任務條件、已經接了該任務或已經完成，則不傳送任何訊息。"
-L["ZONE_SHARE_OFFERS"] = "向新隊友提供我所在區域的任務"
+L["ZONE_SHARE_OFFERS"] = "新隊友缺少我所在區域的任務時提醒我"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"當你加入隊伍，或有人加入你的隊伍時，先等待20秒讓 Questie 交換任務日誌，然後密語你所在區域的每位隊友：你在該區域有目標的任務中有多少是對方沒有的，並詢問對方是否需要。只計算你可以分享的任務。無法看到其任務的隊友（沒有 Questie、超出範圍）以及已全部擁有這些任務的隊友不會收到密語。每位隊友在每個隊伍中只會被詢問一次，在地城或團隊中不會詢問。"
+	"當你加入隊伍，或有人加入你的隊伍時，先等待20秒讓 Questie 交換任務日誌，然後在聊天框告訴你：你在所在區域有目標的任務中，有多少是新隊友沒有的，方便你點擊分享任務。只計算你可以分享的任務，即使多位隊友都沒有也只算一次。不會向任何人發送訊息。無法看到其任務的隊友（沒有 Questie、超出範圍）不計入。每次有人加入時提醒一次，在地城或團隊中不會提醒。"
+L["ZONE_SHARE_OFFERS_SOUND"] = "播放音效"
+L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] = "在訊息的同時播放提示音，適合聊天繁忙的時候。"
+L["ZONE_SHARE_SOUND_PREVIEW"] = "點擊試聽提示音。"
 L["SAMPLE_EXAMPLE"] = "範例：%s"
 L["SAMPLE_QUEST_LOADING"] = "正在載入任務ID：%d"
 L["DUNGEON_QUESTS_HEADER"] = "地城任務"
@@ -495,6 +498,10 @@ L["CHAT_SHARING_ZONE"] = "正在分享 %d 個任務，來自 %s，每 %d 秒一�
 L["CHAT_SHARING_ZONE_NONE"] = "%s 中沒有可以分享的任務。"
 -- TRANSLATORS: %s is the zone
 L["CHAT_SHARING_ZONE_PARTY_HAS"] = "你的隊伍已經擁有你在 %s 的所有任務。"
+-- TRANSLATORS: %s is the zone; printed when new party members are missing 1 of your quests there
+L["CHAT_ZONE_SHARE_NOTICE_ONE"] = "你有 1 個可分享的 %s 任務，你的隊伍可能需要。"
+-- TRANSLATORS: %d is how many quests, %s is the zone; printed when new party members are missing them
+L["CHAT_ZONE_SHARE_NOTICE"] = "你有 %d 個可分享的 %s 任務，你的隊伍可能需要。"
 
 --------------------------------------------------------------------------------
 -- Waypoint Markers, Quest Route and the Quest Arrow
@@ -620,14 +627,12 @@ L["ROUTES_GROUP_UP"] = "與隊伍會合"
 
 --[[
 	TRANSLATORS: every line in this section is sent to other players in chat, 255 bytes at most, with no closing period;
-	each %s is a quest link or a list of them, except in ZONE_SHARE_OFFER and ZONE_SHARE_OFFER_ONE, where it is the zone,
+	each %s is a quest link or a list of them,
 	and each %d is how many quests
 ]]
 L["WHISPER_SHARE_FAILED"] =
 	"我剛才想把 %s 分享給你，但沒成功。如果需要，等你準備好時叫我一聲，我再分享一次"
 L["WHISPER_SHARE_FAILED_AGAIN"] = "%s 也一樣"
-L["ZONE_SHARE_OFFER"] = "我有%d個%s的任務你還沒有，要我試著分享給你嗎？"
-L["ZONE_SHARE_OFFER_ONE"] = "我有1個%s的任務你還沒有，要我試著分享給你嗎？"
 L["DUNGEON_QUESTS_ANNOUNCE"] = "我在這裡還有 %d 個任務要做：%s"
 L["DUNGEON_QUESTS_ANNOUNCE_ONE"] = "我在這裡還有 1 個任務要做：%s"
 L["DUNGEON_QUESTS_ANNOUNCE_CONTINUED"] = "我在這裡還有更多任務要做：%s"
