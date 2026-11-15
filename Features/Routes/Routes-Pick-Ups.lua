@@ -479,11 +479,7 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 			and not IsTakenOrDone(questID, log)
 			and StarterBlobs(QuestieDB, questID, start, yield)
 		local isWanted = wanted[questID] == true
-		if
-			starters
-			and #starters > 0
-			and (isWanted or not IsTooLow(QuestieDB, questID, settings.localQuestLevel))
-		then
+		if starters and #starters > 0 and (isWanted or not IsTooLow(QuestieDB, questID, settings.localQuestLevel)) then
 			local chained = planChains
 				and #starters > 0
 				and routes.IsChainQuest(QuestieDB, questID, start, yield)

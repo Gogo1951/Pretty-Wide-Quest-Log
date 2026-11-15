@@ -121,8 +121,12 @@ local heldEmpty = false
 local function HasTurnInLeft(stops)
 	for _, stop in ipairs(stops or {}) do
 		for _, task in ipairs(stop.tasks or {}) do
-			if task.kind == "turnIn" and task.questID and not routes.skipped[task.key]
-				and routes.IsOnQuest(task.questID) then
+			if
+				task.kind == "turnIn"
+				and task.questID
+				and not routes.skipped[task.key]
+				and routes.IsOnQuest(task.questID)
+			then
 				return true
 			end
 		end
@@ -135,8 +139,10 @@ local function HoldEmpty(stops, start)
 	local hold = #stops == 0
 		and not heldEmpty
 		and GetTime() - questLogChangedAt <= EMPTY_HOLD
-		and drawn ~= nil and start ~= nil
-		and drawn.zone == start.zone and drawn.instance == start.instance
+		and drawn ~= nil
+		and start ~= nil
+		and drawn.zone == start.zone
+		and drawn.instance == start.instance
 		and HasTurnInLeft(routes.stops)
 	heldEmpty = hold
 	if hold then
