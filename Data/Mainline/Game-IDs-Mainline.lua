@@ -14,6 +14,12 @@ ns.CITY_ZONE_MAP_IDS = {
 	[111] = 108, -- Shattrath City: Terokkar Forest
 }
 
+-- City map ID = { { x, y, facing }, ... }, -- City: its gates onto its zone, as Leatrix Maps places them
+ns.CITY_EXITS = {}
+
+-- Zone map ID = linked zone map ID, -- Zone: Linked Zone
+ns.LINKED_ZONE_MAP_IDS = {}
+
 ns.WORLD_ROOT_MAP_IDS = {
 	946, -- Cosmic
 	947, -- Azeroth
@@ -36,6 +42,9 @@ Notes
 	  city's own map ID to the map ID of the zone it sits in (Features/Routes/Routes-Geography.lua). The game files
 	  these cities under the continent, so their parent maps don't say which zone holds them. Undercity has two
 	  maps, 90 and 998, both in Tirisfal Glades.
+	- CITY_EXITS: none. Leatrix Maps draws no zone crossing arrows in the cities on this client.
+	- LINKED_ZONE_MAP_IDS: none. Cataclysm merged Alterac Mountains into Hillsbrad Foothills, the pair the
+	  older flavors link (Features/Routes/Routes-Geography.lua).
 	- WORLD_ROOT_MAP_IDS: the Cosmic map, which holds Outland, and Azeroth, whose continents Zone Info's zone menu
 	  lists (Features/Zone-Info-Data.lua).
 	- NOT_FLIGHT_PATH_NPC_IDS: flight masters that are no flight path to discover, the druids' own to Moonglade:

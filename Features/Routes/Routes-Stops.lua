@@ -110,7 +110,7 @@ function routes.ObjectiveText(objective)
 	return text
 end
 
--- What a task asks for: its objective, the turn-in, the pick-up, the flight path, the flight, or the way back to the corpse
+-- What a task asks for: its objective, the turn-in, the pick-up, the flight path, the flight, a city's gate, or the way back to the corpse
 function routes.TaskText(task)
 	if task.kind == "turnIn" then
 		return L["ROUTES_TURN_IN"]
@@ -120,13 +120,15 @@ function routes.TaskText(task)
 		return L["ROUTES_FLIGHT_PATH"]
 	elseif task.kind == "fly" then
 		return string.format(L["ROUTES_FLY_FROM"], task.flightMaster or "", task.destination or "")
+	elseif task.kind == "exit" then
+		return routes.ExitText(task)
 	elseif task.kind == "corpse" then
 		return L["ROUTES_CORPSE"]
 	end
 	return routes.ObjectiveText(task.objective or {})
 end
 
--- The color Questie gave the task's objective, the turn-in's gold, an escort pick-up's, a flight path's or a flight's green, or the corpse's white
+-- The color Questie gave the task's objective, the turn-in's gold, an escort pick-up's, a flight path's, a flight's or a gate's green, or the corpse's white
 function routes.TaskColor(task)
 	if task.kind == "corpse" then
 		return ns.GetColorRGB("TEXT")
@@ -134,7 +136,7 @@ function routes.TaskColor(task)
 	if task.kind == "pickUp" and task.escort then
 		return ns.GetColorRGB("ROUTE_ESCORT")
 	end
-	if task.kind == "flightPath" or task.kind == "fly" then
+	if task.kind == "flightPath" or task.kind == "fly" or task.kind == "exit" then
 		return ns.GetColorRGB("ROUTE_FLIGHT")
 	end
 	local color = task.objective and task.objective.Color

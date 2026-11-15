@@ -312,8 +312,6 @@ L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 L["LOCAL_ESCORT_QUESTS"] = "Escort Quests"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"Quests where you protect an NPC along the way, which take time and often a group. Their marker on the map is green."
-L["LOCAL_GROUP_QUESTS"] = "Group and Elite Quests"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quests Questie marks as elite, made for a group."
 L["LOCAL_OTHER_ZONE_QUESTS"] = "Objectives in Another Zone"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"Quests with an objective, or the turn-in, only outside the zone you're in, such as one that sends you on to the next town."
@@ -535,10 +533,15 @@ L["ROUTES_FLIGHT_PATH"] = "Get Flight Path"
 L["ROUTES_FLIGHT_PATH_FROM"] = "Get the Flight Path From %s"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "Talk to %s to Fly to %s"
+-- TRANSLATORS: %s is where a city's gate leads, the zone around it or the city itself, such as "Durotar" or "Orgrimmar"
+L["ROUTES_EXIT_TO"] = "Head to %s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Escort Quest, Not on the Route"
-L["ROUTES_OFF_ROUTE_GROUP"] = "Group Quest, Not on the Route"
 L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Leads to Another Zone, Not on the Route"
+L["ROUTES_OFF_ROUTE_DUNGEON"] = "Dungeon Quest, Not on the Route"
+L["ROUTES_OFF_ROUTE_RAID"] = "Raid Quest, Not on the Route"
+L["ROUTES_OFF_ROUTE_LOG_FULL"] = "Quest Log Full, Not on the Route"
+L["ROUTES_OFF_ROUTE_FAR"] = "Past the Search Range, Not on the Route"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "After You Pick up %s"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -568,6 +571,8 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignore This Waypoint"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignore This Objective"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Back on the Route"
+-- TRANSLATORS: right-clicking a map marker for a quest to pick up that is on the map only, which puts it on the route
+L["ROUTES_RIGHT_CLICK_ADD"] = "Add to the Route"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Reset This Zone"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Show the Whole Route"
@@ -578,7 +583,8 @@ L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: party objectives and members y
 -- TRANSLATORS: %s is a party member's name, or a list of them
 L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s left the group: the objectives you ignored for them are back on the route."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
-L["ROUTES_MENU_SECTION_IGNORE"] = "Ignore"
+L["ROUTES_MENU_SECTION_CURRENT"] = "Current Objective"
+L["ROUTES_MENU_IGNORE"] = "Ignore"
 L["ROUTES_MENU_SECTION_ROUTE"] = "Route"
 L["ROUTES_MENU_SECTION_SHOW"] = "Show"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
@@ -595,6 +601,8 @@ L["ROUTES_MENU_PICK_UP"] = "%s Pick-Up"
 L["ROUTES_MENU_FLIGHT_PATH"] = "%s Flight Path"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Flight to %s"
+-- TRANSLATORS: %s is where a city's gate leads, such as "Durotar"
+L["ROUTES_MENU_EXIT"] = "Way to %s"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Predictive Questing Routes"
 L["ROUTES_MENU_SHOWN_LOCAL"] = "Local Available Quests"
@@ -613,6 +621,8 @@ L["ROUTES_IGNORED"] = "Ignoring %s for %s until you reset the zone."
 L["ROUTES_IGNORED_PARTY"] = "Ignoring %s for %s until the party members on it leave the group."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s is back on the route."
+-- TRANSLATORS: %s is a quest link
+L["ROUTES_ADDED"] = "%s is on the route until you reset the zone."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "Leaving %s's objectives off the route."
 -- TRANSLATORS: %s is a party member's name

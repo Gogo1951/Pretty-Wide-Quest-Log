@@ -18,14 +18,35 @@ function routes.PlayerPosition()
 	end
 end
 
--- A map, or the zone a micro map (a cave, a building) sits in
-local function ZoneOf(mapID)
+--[[
+	The zone each city on a map of its own is in (ns.CITY_ZONE_MAP_IDS, the flavor's Game-IDs file). The game
+	files these cities under the continent, not the zone, so their parents don't say. Only the zone named
+	there counts: Thunder Bluff is in Mulgore, not the Barrens, though the Barrens' map reaches over it
+]]
+local CITY_ZONES = ns.CITY_ZONE_MAP_IDS
+
+--[[
+	A map, or the zone a micro map (a cave, a building) sits in. A city counts as the zone it's in
+	(CITY_ZONES), so standing in Stormwind the route still covers Elwynn Forest and sends the player back out
+]]
+local function OutOfMicro(mapID)
 	local info = mapID and C_Map.GetMapInfo(mapID)
 	while info and info.mapType == Enum.UIMapType.Micro and info.parentMapID and info.parentMapID > 0 do
 		mapID = info.parentMapID
 		info = C_Map.GetMapInfo(mapID)
 	end
 	return mapID
+end
+
+local function ZoneOf(mapID)
+	mapID = OutOfMicro(mapID)
+	return mapID and CITY_ZONES[mapID] or mapID
+end
+
+-- The city the player is standing in, its own map, or nothing outside one (Routes-Cities.lua)
+function routes.PlayerCity()
+	local mapID = OutOfMicro(C_Map.GetBestMapForUnit("player"))
+	return mapID and CITY_ZONES[mapID] and mapID or nil
 end
 
 -- The zone the player is in, the one the route covers
@@ -135,16 +156,17 @@ local function IsWithinByParents(mapID, zone)
 end
 
 --[[
-	The zone each city on a map of its own is in (ns.CITY_ZONE_MAP_IDS, the flavor's Game-IDs file). The game
-	files these cities under the continent, not the zone, so their parents don't say. Only the zone named
-	there counts: Thunder Bluff is in Mulgore, not the Barrens, though the Barrens' map reaches over it
+	Zones that play as one, each way round (ns.LINKED_ZONE_MAP_IDS, the flavor's Game-IDs file): Alterac
+	Mountains and Hillsbrad Foothills, whose quests run back and forth between them. None where the flavor
+	has no such zones
 ]]
-local CITY_ZONES = ns.CITY_ZONE_MAP_IDS
+local LINKED_ZONES = ns.LINKED_ZONE_MAP_IDS or {}
 
 --[[
-	Whether a map from Questie's database is the zone or inside it: a micro map (a cave, a building), or a
-	city that's in the zone (CITY_ZONES). Questie draws such a city's NPCs on the zone's map too, so their
-	turn-ins are on the route. Cached by zone, as it's asked per spawn
+	Whether a map from Questie's database is the zone or inside it: a micro map (a cave, a building), a
+	city that's in the zone (CITY_ZONES), or the zone linked to it and what's inside that (LINKED_ZONES).
+	Questie draws such a city's NPCs on the zone's map too, so their turn-ins are on the route. Cached by
+	zone, as it's asked per spawn
 ]]
 local inZone = {}
 local function IsInZone(mapID, zone)
@@ -155,7 +177,10 @@ local function IsInZone(mapID, zone)
 	end
 	local found = cache[mapID]
 	if found == nil then
-		found = IsWithinByParents(mapID, zone) or CITY_ZONES[mapID] == zone
+		local linked = LINKED_ZONES[zone]
+		found = IsWithinByParents(mapID, zone)
+			or CITY_ZONES[mapID] == zone
+			or (linked ~= nil and IsWithinByParents(mapID, linked))
 		cache[mapID] = found
 	end
 	return found

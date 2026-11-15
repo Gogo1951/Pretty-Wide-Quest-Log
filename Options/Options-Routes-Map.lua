@@ -114,7 +114,6 @@ local function AddLocalQuestsSection(args)
 		{ type = "range", min = 200, max = 800, step = 50 }
 	)
 	LocalRow(args, "localEscortQuests", "LOCAL_ESCORT_QUESTS", 39.7, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
-	LocalRow(args, "localGroupQuests", "LOCAL_GROUP_QUESTS", 39.75, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
 	LocalRow(args, "localOtherZoneQuests", "LOCAL_OTHER_ZONE_QUESTS", 39.8, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
 	LocalRow(args, "localQuestLevel", "LOCAL_QUEST_LEVEL", 39.85, LOCAL_LEVELS, LOCAL_LEVEL_ORDER)
 end

@@ -188,6 +188,13 @@ function routes.ForgetQuestTags()
 end
 routes.IsInstanceQuest = IsInstanceQuest
 
+-- "raid" for a raid quest, else "dungeon", for a map-only pick-up's tooltip; only asked of an instance quest
+function routes.InstanceQuestKind(questID)
+	local tagID = QuestieTag(questID) or ns.GetQuestTagByID(questID)
+	local kinds = ns.QUEST_TAG_SUFFIXES or {}
+	return tagID and kinds[tagID] == "RAID" and "raid" or "dungeon"
+end
+
 local function HasSpawns(objective)
 	return type(objective.spawnList) == "table" and next(objective.spawnList) ~= nil
 end
@@ -261,6 +268,7 @@ function routes.Signature()
 	parts[#parts + 1] = routes.FlightPathSignature()
 	parts[#parts + 1] = routes.FlyingSignature()
 	parts[#parts + 1] = tostring(routes.PlayerZone())
+	parts[#parts + 1] = routes.CitySignature()
 	parts[#parts + 1] = UnitIsGhost("player") and "ghost" or "alive"
 	return table.concat(parts, ";")
 end

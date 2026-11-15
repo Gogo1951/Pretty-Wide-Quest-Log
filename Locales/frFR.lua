@@ -325,8 +325,6 @@ L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 L["LOCAL_ESCORT_QUESTS"] = "Quêtes d'escorte"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"Quêtes où vous protégez un PNJ en chemin ; elles prennent du temps et souvent un groupe. Leur marqueur sur la carte est vert."
-L["LOCAL_GROUP_QUESTS"] = "Quêtes de groupe et élites"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Quêtes que Questie marque comme élites, faites pour un groupe."
 L["LOCAL_OTHER_ZONE_QUESTS"] = "Objectifs dans une autre zone"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"Quêtes dont un objectif, ou le rendu, se trouve uniquement hors de votre zone, comme une quête qui vous envoie à la ville suivante."
@@ -551,10 +549,14 @@ L["ROUTES_FLIGHT_PATH"] = "Obtenir le trajet aérien"
 L["ROUTES_FLIGHT_PATH_FROM"] = "Obtenir le trajet aérien auprès de %s"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "Parlez à %s pour voler vers %s"
+L["ROUTES_EXIT_TO"] = "Allez vers %s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Quête d'escorte, hors de la route"
-L["ROUTES_OFF_ROUTE_GROUP"] = "Quête de groupe, hors de la route"
 L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Mène à une autre zone, hors de la route"
+L["ROUTES_OFF_ROUTE_DUNGEON"] = "Quête de donjon, hors de la route"
+L["ROUTES_OFF_ROUTE_RAID"] = "Quête de raid, hors de la route"
+L["ROUTES_OFF_ROUTE_LOG_FULL"] = "Journal de quêtes plein, hors de la route"
+L["ROUTES_OFF_ROUTE_FAR"] = "Au-delà de la portée de recherche, hors de la route"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "Après avoir pris %s"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -584,6 +586,7 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorer ce point de passage"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorer cet objectif"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Remettre sur l'itinéraire"
+L["ROUTES_RIGHT_CLICK_ADD"] = "Ajouter à l'itinéraire"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Réinitialiser cette zone"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Afficher l'itinéraire complet"
@@ -596,7 +599,8 @@ L["ROUTES_GROUP_LEFT_CLEARED"] =
 L["ROUTES_MEMBER_LEFT_CLEARED"] =
 	"%s a quitté le groupe : les objectifs ignorés correspondants sont de retour sur l'itinéraire."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
-L["ROUTES_MENU_SECTION_IGNORE"] = "Ignorer"
+L["ROUTES_MENU_SECTION_CURRENT"] = "Objectif actuel"
+L["ROUTES_MENU_IGNORE"] = "Ignorer"
 L["ROUTES_MENU_SECTION_ROUTE"] = "Itinéraire"
 L["ROUTES_MENU_SECTION_SHOW"] = "Afficher"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
@@ -613,6 +617,7 @@ L["ROUTES_MENU_PICK_UP"] = "Prise de %s"
 L["ROUTES_MENU_FLIGHT_PATH"] = "Trajet aérien de %s"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Vol vers %s"
+L["ROUTES_MENU_EXIT"] = "Chemin vers %s"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Itinéraires de quête prédictifs"
 L["ROUTES_MENU_SHOWN_LOCAL"] = "Quêtes disponibles proches"
@@ -632,6 +637,7 @@ L["ROUTES_IGNORED_PARTY"] =
 	"L'itinéraire ignore %s pour %s jusqu'à ce que les membres du groupe qui l'ont quittent le groupe."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s est de retour sur l'itinéraire."
+L["ROUTES_ADDED"] = "%s est sur l'itinéraire jusqu'à ce que vous réinitialisiez la zone."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "Les objectifs de %s sont retirés de l'itinéraire."
 -- TRANSLATORS: %s is a party member's name

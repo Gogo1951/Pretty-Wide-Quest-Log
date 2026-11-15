@@ -18,6 +18,7 @@
 	<Script file="Routes-Quest-Plans.lua"/>
 	<Script file="Routes-Chains.lua"/>
 	<Script file="Routes-Flights.lua"/>
+	<Script file="Routes-Cities.lua"/>
 	<Script file="Routes-Pinning.lua"/>
 	<Script file="Routes-Overlaps.lua"/>
 	<Script file="Routes-Stops.lua"/>
@@ -106,5 +107,6 @@
 	<Script file="Routes-Arrow-Shade.lua"/>
 	<Script file="Routes-Arrow-Menu-Panel.lua"/>
 	<Script file="Routes-Arrow-Menu.lua"/>
+	<Script file="Routes-Map-Menu.lua"/>
 	<Script file="Routes-TomTom.lua"/>
 </Ui>

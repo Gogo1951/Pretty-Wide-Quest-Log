@@ -22,6 +22,7 @@ local PLATE_CORNER = 32
 local PLATE_SCALE = 0.5
 
 local MIN_WIDTH = 128
+local WRAP_WIDTH = 256 -- A wrapping row's text, a sentence such as the "…" marker's (Routes-Map-Menu.lua)
 local ROW_INSET = SPACE.LINE -- From the plate's edge to a row's highlight
 local TEXT_INSET = SPACE.NEAR -- From a row's edge to its text
 local HIGHLIGHT_ALPHA = 0.16
@@ -83,9 +84,9 @@ end
 	A plate with rows on it: the menu, and the flyout its Route, Show or Ignored label opens beside it
 	(submenu), drawn over the menu. Escape closes both
 ]]
-local function NewPanel(name, level)
+local function NewPanel(name, level, strata)
 	local panel = CreateFrame("Frame", name, UIParent)
-	panel:SetFrameStrata("DIALOG")
+	panel:SetFrameStrata(strata or "DIALOG")
 	if level then
 		panel:SetFrameLevel(level)
 	end
@@ -104,9 +105,21 @@ menu:HookScript("OnHide", function()
 	submenu:Hide()
 end)
 
--- What the menu reads back: the two plates, filling one with rows, and the flyout's opening and closing
-local panels = { menu = menu, submenu = submenu, submenus = {} }
+--[[
+	What the menus read back: the two plates, filling one with rows, and the flyout's opening and closing; and
+	making a plate of its own, as the world map's menu does (Routes-Map-Menu.lua)
+]]
+local panels = { menu = menu, submenu = submenu, submenus = {}, NewPanel = NewPanel }
 routes.arrowMenuPanels = panels
+
+-- A key for a panel's rows that changes only when what they say does
+function panels.EntriesKey(entries)
+	local parts = {}
+	for index, entry in ipairs(entries) do
+		parts[index] = entry.kind .. "|" .. (entry.left or "") .. "|" .. (entry.right or "")
+	end
+	return table.concat(parts, "\n")
+end
 
 --------------------------------------------------------------------------------
 -- Laying it out
@@ -117,7 +130,9 @@ local function Paint(fontString, text, colorKey, fontObject)
 		fontString:SetFontObject(fontObject)
 	end
 	fontString:SetText(text or "")
-	if colorKey then
+	if type(colorKey) == "table" then -- A color of its own, { red, green, blue }, as a tooltip line's
+		fontString:SetTextColor(unpack(colorKey))
+	elseif colorKey then
 		fontString:SetTextColor(ns.GetColorRGB(colorKey))
 	end
 	fontString:SetShown(text ~= nil)
@@ -162,7 +177,12 @@ local function Row(panel, index)
 				OpenSubmenu(self)
 			elseif self.action then
 				self.action()
-				routes.RefreshArrowMenu()
+				-- The arrow's menu shows what the click changed; a plate of its own may close instead
+				if panel.OnAction then
+					panel.OnAction()
+				else
+					routes.RefreshArrowMenu()
+				end
 			end
 		end)
 		--[[
@@ -243,7 +263,14 @@ local function Layout(panel, entries)
 			-- Centered on the line, not the row, so a label's extra room is all above it
 			local drop = (above - SPACE.LINE) / 2
 			row.left:ClearAllPoints()
-			row.left:SetPoint("LEFT", TEXT_INSET, -drop)
+			-- A wrapping row, a sentence: WRAP_WIDTH wide, as many lines tall as it takes, its first line at the top
+			row.left:SetWordWrap(entry.wrap == true)
+			row.left:SetWidth(entry.wrap and WRAP_WIDTH or 0)
+			if entry.wrap then
+				row.left:SetPoint("TOPLEFT", TEXT_INSET, -SPACE.LINE)
+			else
+				row.left:SetPoint("LEFT", TEXT_INSET, -drop)
+			end
 			row.right:ClearAllPoints()
 			row.right:SetPoint("RIGHT", -TEXT_INSET, -drop)
 			-- As wide as its widest look: the hover's right side measured too, so Put Back never crowds the name
@@ -257,6 +284,10 @@ local function Layout(panel, entries)
 				rightWidth = math.max(rightWidth, row.right:GetStringWidth() or 0)
 			end
 			local textWidth = row.left:GetStringWidth() or 0
+			if entry.wrap then
+				textWidth = math.min(textWidth, WRAP_WIDTH)
+				height = math.max(height, (row.left:GetStringHeight() or 0) + 2 * SPACE.LINE)
+			end
 			if rightWidth > 0 then
 				textWidth = textWidth + SPACE.GROUP + rightWidth
 			end

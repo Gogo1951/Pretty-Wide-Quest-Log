@@ -29,6 +29,7 @@ read_globals = {
 	"C_SpellBook",
 	"C_SuperTrack",
 	"C_TaxiMap",
+	"C_Texture",
 	"C_Timer",
 	"C_TooltipInfo",
 	"CAMERA_MODIFICATION_TYPE_DISCARD",

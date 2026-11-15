@@ -128,8 +128,8 @@ function routes.QuestsAt(stop, x, y)
 			entry.pickUp, entry.pickUpTask = true, task
 		elseif task.kind == "flightPath" then
 			entry.flightPath = true
-		elseif task.kind == "fly" then
-			entry.fly = true
+		elseif task.kind == "fly" or task.kind == "exit" then
+			entry.fly = true -- A flight to take or a city's gate: one line, routes.TaskText
 		elseif task.objective then
 			entry.here[task.objective] = true
 		end

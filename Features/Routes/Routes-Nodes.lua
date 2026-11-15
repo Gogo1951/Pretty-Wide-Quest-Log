@@ -9,10 +9,10 @@ local _, ns = ...
 	too. Routes-Solver.lua orders them; Routes-Stops.lua
 	makes the stops.
 
-	Only the zone the player is in counts, with the caves and cities inside it (routes.IsInZone): an
-	objective's spawns or a turn-in elsewhere are left out, whichever zone the quest is filed under, so a
-	quest from another zone with mobs in this one is on the route, and a quest of this zone's whose mobs
-	are all elsewhere isn't
+	Only the zone the player is in counts, with the caves and cities inside it and a zone linked to it
+	(routes.IsInZone): an objective's spawns or a turn-in elsewhere are left out, whichever zone the quest
+	is filed under, so a quest from another zone with mobs in this one is on the route, and a quest of this
+	zone's whose mobs are all elsewhere isn't
 ]]
 
 local routes = ns.routes

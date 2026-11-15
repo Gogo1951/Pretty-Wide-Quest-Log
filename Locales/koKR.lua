@@ -329,8 +329,6 @@ L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 L["LOCAL_ESCORT_QUESTS"] = "호위 퀘스트"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"가는 길에 NPC를 지켜야 하는 퀘스트로, 시간이 걸리고 파티가 필요한 경우가 많습니다. 지도 표식은 초록색입니다."
-L["LOCAL_GROUP_QUESTS"] = "파티 및 정예 퀘스트"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Questie가 정예로 표시한, 파티용 퀘스트입니다."
 L["LOCAL_OTHER_ZONE_QUESTS"] = "다른 지역의 목표"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"목표나 보고 장소가 현재 지역 밖에만 있는 퀘스트입니다. 다음 마을로 보내는 퀘스트 등이 해당합니다."
@@ -556,10 +554,14 @@ L["ROUTES_FLIGHT_PATH"] = "비행 경로 얻기"
 L["ROUTES_FLIGHT_PATH_FROM"] = "%s에게서 비행 경로 얻기"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "%s에게 말을 걸어 %s(으)로 비행하기"
+L["ROUTES_EXIT_TO"] = "%s(으)로 이동"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "호위 퀘스트, 경로에 없음"
-L["ROUTES_OFF_ROUTE_GROUP"] = "파티 퀘스트, 경로에 없음"
 L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "다른 지역으로 이어짐, 경로에 없음"
+L["ROUTES_OFF_ROUTE_DUNGEON"] = "던전 퀘스트, 경로에 없음"
+L["ROUTES_OFF_ROUTE_RAID"] = "공격대 퀘스트, 경로에 없음"
+L["ROUTES_OFF_ROUTE_LOG_FULL"] = "퀘스트 목록 가득 참, 경로에 없음"
+L["ROUTES_OFF_ROUTE_FAR"] = "검색 범위 밖, 경로에 없음"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "%s 받은 후"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -589,6 +591,7 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "이 경유지 무시"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "이 목표 무시"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "다시 경로에 포함"
+L["ROUTES_RIGHT_CLICK_ADD"] = "경로에 추가"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "이 지역 초기화"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "전체 경로 표시"
@@ -601,7 +604,8 @@ L["ROUTES_GROUP_LEFT_CLEARED"] =
 L["ROUTES_MEMBER_LEFT_CLEARED"] =
 	"%s 님이 파티를 떠났습니다: 무시했던 해당 목표가 다시 경로에 포함되었습니다."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
-L["ROUTES_MENU_SECTION_IGNORE"] = "무시"
+L["ROUTES_MENU_SECTION_CURRENT"] = "현재 목표"
+L["ROUTES_MENU_IGNORE"] = "무시"
 L["ROUTES_MENU_SECTION_ROUTE"] = "경로"
 L["ROUTES_MENU_SECTION_SHOW"] = "표시"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
@@ -618,6 +622,7 @@ L["ROUTES_MENU_PICK_UP"] = "%s 받기"
 L["ROUTES_MENU_FLIGHT_PATH"] = "%s 비행 경로"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "%s(으)로 비행"
+L["ROUTES_MENU_EXIT"] = "%s 가는 길"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "예측 퀘스트 경로"
 L["ROUTES_MENU_SHOWN_LOCAL"] = "주변의 받을 수 있는 퀘스트"
@@ -637,6 +642,7 @@ L["ROUTES_IGNORED_PARTY"] =
 	"%s 항목(%s)을 해당 퀘스트를 가진 파티원이 파티를 떠날 때까지 무시합니다."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s 항목이 다시 경로에 포함되었습니다."
+L["ROUTES_ADDED"] = "지역을 초기화할 때까지 %s 퀘스트가 경로에 포함됩니다."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "%s 님의 목표를 경로에서 제외합니다."
 -- TRANSLATORS: %s is a party member's name

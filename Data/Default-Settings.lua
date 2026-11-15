@@ -74,7 +74,6 @@ ns.DATABASE_DEFAULTS = {
 			localQuestRange = 400, -- Yards a quest giver can be from the player
 			localQuestLevel = "green", -- Lowest level: "questie" (Questie's own filter), "green" or "yellow" and higher
 			localEscortQuests = "map",
-			localGroupQuests = "map", -- Group and elite quests
 			localOtherZoneQuests = "map", -- An objective or the turn-in only in another zone
 			hideInRaids = true,
 			hideInInstances = true,
@@ -88,6 +87,7 @@ ns.DATABASE_DEFAULTS = {
 	},
 	char = {
 		routesIgnored = {}, -- The Quest Arrow's ignores of the character's own objectives, by task key, until the zone is reset
+		routesAdded = {}, -- Map-only pick-ups (a dungeon quest's, an escort's) put on the route with a right-click, by task key, until the zone is reset
 		routesFlightMasters = {}, -- Flight masters whose flight path the character has, by NPC ID, as flight maps showed (Routes-Flights.lua)
 		zoneShareOffered = {}, -- Party members offered the zone's quests in this group, by GUID, kept through a reload (Zone-Share-Offer.lua)
 		routesFlightMapSeen = {}, -- Continents whose flight map was read (all for a new character): until then no flight path goes on the route there
