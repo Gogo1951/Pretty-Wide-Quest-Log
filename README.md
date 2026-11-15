@@ -6,11 +6,15 @@ Wide quest log and quest helper for leveling: a quest route through the quests y
 
 ## Turns Icon Soup into an Actionable Route
 
-<img width="800" src="https://github.com/user-attachments/assets/b7daa43e-194b-4508-94e5-ae38ca5b6090" />
+<img width="1568" height="1003" alt="737aac09-3a75-4d7b-8920-a377804dda53" src="https://github.com/user-attachments/assets/cb0945fb-0070-4694-a57b-7c7ee5553bce" />
 
 ## With an Easy-to-Follow Guide Arrow
 
-<img width="800" src="https://github.com/user-attachments/assets/a5d6bc3a-6f05-468e-aed7-6dc9af7387c5" />
+<img width="1568" height="1003" alt="fea02be3-b311-4eb7-966c-892d1789ab91" src="https://github.com/user-attachments/assets/9a40b2b5-05fd-4c7f-ad6b-49789af4b359" />
+
+## Just a Little Easier to Read All Over
+
+<img width="1568" height="1003" alt="78dbcb62-77bb-438a-9c8f-51205fd4c4ad" src="https://github.com/user-attachments/assets/1ae61368-407a-4204-931e-8f06dc95dca3" />
 
 ### Quest Route
 
