@@ -137,8 +137,9 @@ local provider
 
 --[[
 	What right-clicking a marker does, and its hint: a waypoint is ignored (routes.SkipStop); a camp's
-	objective is ignored, or put back on the route once it is. Nothing for the corpse, or for a dungeon or
-	raid quest's objective, which the route never takes anyway
+	objective is ignored, or put back on the route once it is; a map-only pick-up (a dungeon quest's, an
+	escort's, one leading to another zone) is put on the route (routes.AddPickUp). Nothing for the corpse,
+	or for a dungeon or raid quest's objective, which the route never takes anyway
 ]]
 local function RightClick(stop)
 	if stop.corpse then
@@ -153,6 +154,11 @@ local function RightClick(stop)
 	if task.untracked then
 		return nil
 	end
+	if task.kind == "pickUp" and task.offRoute then
+		return L["ROUTES_RIGHT_CLICK_ADD"], function()
+			routes.AddPickUp(task)
+		end
+	end
 	if routes.skipped[task.key] then
 		return L["ROUTES_RIGHT_CLICK_UNIGNORE"], function()
 			routes.UnignoreTask(task.key)
@@ -163,47 +169,63 @@ local function RightClick(stop)
 	end
 end
 
--- Shows Questie's icons for the stop's objectives and lists its quests, each player's progress laid out as the quest log's
-local function OnStopEnter(pin)
-	routes.hoveredStop = pin.stop
-	ApplyQuestieIcons()
-	GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
-	routes.AddStopTooltip(GameTooltip, pin.stop)
-	if pin.stop.names and #pin.stop.names > 0 then
+--[[
+	A stop's menu (Routes-Map-Menu.lua): its quests, each player's progress laid out as the quest log's, Look
+	For, then its clicks as rows, Ignore and Reset This Zone, each clicked or done with its click on the
+	marker. Nothing once the pin shows another stop, which closes it
+]]
+local function StopMenuEntries(pin, stop)
+	if pin.stop ~= stop then
+		return nil
+	end
+	local rows = routes.MapMenuRows()
+	routes.AddStopTooltip(rows, stop)
+	if stop.names and #stop.names > 0 then
 		-- A heading, then a name per row a space in, so a long list grows down instead of wide
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(L["ROUTES_LOOK_FOR"], ns.GetColorRGB("TITLE"))
-		for _, name in ipairs(pin.stop.names) do
-			GameTooltip:AddLine(" " .. name, ns.GetColorRGB("TEXT"))
+		rows:AddSection(L["ROUTES_LOOK_FOR"])
+		for _, name in ipairs(stop.names) do
+			rows:AddLine(" " .. name, ns.GetColorRGB("TEXT"))
 		end
 	end
 	local hints = {}
-	local rightClick = RightClick(pin.stop)
+	local rightClick, action = RightClick(stop)
 	if rightClick then
-		hints[#hints + 1] = { L["ROUTES_CLICK_RIGHT"], rightClick }
+		hints[#hints + 1] = { L["ROUTES_CLICK_RIGHT"], rightClick, action }
 	end
-	hints[#hints + 1] = { L["ROUTES_CLICK_MIDDLE"], L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] }
-	routes.AddClickHints(GameTooltip, hints)
-	GameTooltip:Show()
+	hints[#hints + 1] = { L["ROUTES_CLICK_MIDDLE"], L["ROUTES_MIDDLE_CLICK_RESET_ZONE"], routes.ResetZone }
+	rows:AddHints(hints)
+	return rows.entries
 end
 
-local function OnStopLeave()
+-- Questie's icons for the hovered stop's objectives come back while its menu is open, and go with it
+local function OnStopMenuClose()
 	if routes.hoveredStop then
 		routes.hoveredStop = nil
 		ApplyQuestieIcons()
 	end
-	GameTooltip:Hide()
+end
+
+-- Opens the stop's menu and shows Questie's icons for its objectives
+local function OnStopEnter(pin)
+	local stop = pin.stop
+	local opened = routes.OpenMapMenu(pin, stop, function()
+		return StopMenuEntries(pin, stop)
+	end, OnStopMenuClose)
+	if opened then
+		routes.hoveredStop = stop
+		ApplyQuestieIcons()
+	end
 end
 
 local function OnStopMouseUp(pin, button)
 	if button == "RightButton" then
 		local _, action = RightClick(pin.stop)
 		if action then
-			OnStopLeave()
+			routes.CloseMapMenu()
 			action()
 		end
 	elseif button == "MiddleButton" then
-		OnStopLeave()
+		routes.CloseMapMenu()
 		routes.ResetZone()
 	end
 end
@@ -233,8 +255,7 @@ local function AddStopPin(map, stop, position, textures, dim, tail)
 	local pin = map:AcquirePin(STOP_TEMPLATE)
 	if not pin.routeReady then
 		pin.routeReady = true
-		pin:SetScript("OnEnter", OnStopEnter)
-		pin:SetScript("OnLeave", OnStopLeave)
+		pin:SetScript("OnEnter", OnStopEnter) -- The menu closes itself once the mouse has left it and the pin
 		pin:SetScript("OnMouseUp", OnStopMouseUp)
 	end
 	pin:SetScalingLimits(1, 1.0, 1.2)
@@ -282,31 +303,46 @@ local function ShowTail(alpha)
 	end
 end
 
-local function OnMoreEnter(pin)
-	ShowTail(TAIL_ALPHA)
-	GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
-	local hidden = pin.hidden or 0
-	local title = hidden == 1 and L["ROUTES_MORE_WAYPOINT"] or L["ROUTES_MORE_WAYPOINTS"]:format(hidden)
-	GameTooltip:AddLine(title, ns.GetColorRGB("TITLE"))
-	GameTooltip:AddLine(L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"], ns.GetColorRGB("HELP"))
-	routes.AddClickHints(GameTooltip, { { L["ROUTES_CLICK"], L["ROUTES_CLICK_SHOW_ROUTE"] } })
-	GameTooltip:Show()
-end
-
-local function OnMoreLeave()
-	ShowTail(0)
-	GameTooltip:Hide()
-end
-
--- Clicking it draws the whole route, every marker hoverable, the "…" gone, till the map closes
-local function OnMoreMouseUp(_, button)
-	if button ~= "LeftButton" then
-		return
-	end
-	OnMoreLeave()
+-- Draws the whole route, every marker hoverable, the "…" gone, till the map closes
+local function ShowWholeRoute()
+	routes.CloseMapMenu()
 	wholeRouteShown = true
 	if provider then
 		provider:RefreshAllData()
+	end
+end
+
+-- The "…" marker's menu: how many waypoints it hides, what it's for, and Show the Whole Route as a row
+local function MoreMenuEntries(pin, hidden)
+	if pin.hidden ~= hidden then
+		return nil
+	end
+	local rows = routes.MapMenuRows()
+	local title = hidden == 1 and L["ROUTES_MORE_WAYPOINT"] or L["ROUTES_MORE_WAYPOINTS"]:format(hidden or 0)
+	rows:AddLine(title, ns.GetColorRGB("TITLE"))
+	local red, green, blue = ns.GetColorRGB("HELP")
+	rows:AddLine(L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"], red, green, blue, true)
+	rows:AddHints({ { L["ROUTES_CLICK"], L["ROUTES_CLICK_SHOW_ROUTE"], ShowWholeRoute } })
+	return rows.entries
+end
+
+-- Opens its menu and draws the rest of the route faintly while it's open
+local function OnMoreEnter(pin)
+	local hidden = pin.hidden
+	local opened = routes.OpenMapMenu(pin, hidden, function()
+		return MoreMenuEntries(pin, hidden)
+	end, function()
+		ShowTail(0)
+	end)
+	if opened then
+		ShowTail(TAIL_ALPHA)
+	end
+end
+
+-- Clicking it shows the whole route, as its menu's row does
+local function OnMoreMouseUp(_, button)
+	if button == "LeftButton" then
+		ShowWholeRoute()
 	end
 end
 
@@ -351,8 +387,7 @@ local function BuildMorePin(pin)
 		dot:SetVertexColor(ns.GetColorRGB("ROUTE_LINE"))
 		pin.dots[i] = dot
 	end
-	pin:SetScript("OnEnter", OnMoreEnter)
-	pin:SetScript("OnLeave", OnMoreLeave)
+	pin:SetScript("OnEnter", OnMoreEnter) -- Its menu closes itself, as a stop's does
 	pin:SetScript("OnMouseUp", OnMoreMouseUp)
 end
 
@@ -476,12 +511,18 @@ local function DrawRoute(map, mapID, textures)
 		routeLine = pin
 	end
 
+	--[[
+		A fly waypoint has its marker at both ends of the flight, the flight master it leaves from and the one
+		it lands at, so the leg after it starts at a marker rather than out of nothing
+	]]
 	for i, stop in ipairs(stops) do
-		if IsOnMap(positions[i]) then
-			local tail = i > lastShown
-			local pin = AddStopPin(map, stop, positions[i], textures, nil, tail)
-			if tail then
-				tailPins[#tailPins + 1] = pin
+		local tail = i > lastShown
+		for _, position in ipairs({ positions[i], landings[i] or false }) do
+			if IsOnMap(position) then
+				local pin = AddStopPin(map, stop, position, textures, nil, tail)
+				if tail then
+					tailPins[#tailPins + 1] = pin
+				end
 			end
 		end
 	end

@@ -311,8 +311,6 @@ L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 L["LOCAL_ESCORT_QUESTS"] = "护送任务"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"需要一路保护 NPC 的任务，耗时且常需队伍。它们在地图上的标记为绿色。"
-L["LOCAL_GROUP_QUESTS"] = "团队和精英任务"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] = "Questie 标为精英、适合组队的任务。"
 L["LOCAL_OTHER_ZONE_QUESTS"] = "目标在其他区域"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"有目标或交任务地点只在你所在区域之外的任务，例如让你前往下一个城镇的任务。"
@@ -536,10 +534,14 @@ L["ROUTES_FLIGHT_PATH"] = "获取飞行点"
 L["ROUTES_FLIGHT_PATH_FROM"] = "从%s处获取飞行点"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "与%s交谈，飞往%s"
+L["ROUTES_EXIT_TO"] = "前往%s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "护送任务，不在路线上"
-L["ROUTES_OFF_ROUTE_GROUP"] = "组队任务，不在路线上"
 L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "通往其他区域，不在路线上"
+L["ROUTES_OFF_ROUTE_DUNGEON"] = "地下城任务，不在路线上"
+L["ROUTES_OFF_ROUTE_RAID"] = "团队副本任务，不在路线上"
+L["ROUTES_OFF_ROUTE_LOG_FULL"] = "任务日志已满，不在路线上"
+L["ROUTES_OFF_ROUTE_FAR"] = "超出搜索范围，不在路线上"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "接受 %s 后"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -569,6 +571,7 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "忽略此路径点"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "忽略此目标"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "放回路线"
+L["ROUTES_RIGHT_CLICK_ADD"] = "加入路线"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "重置此区域"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "显示完整路线"
@@ -579,7 +582,8 @@ L["ROUTES_GROUP_LEFT_CLEARED"] = "已离开队伍：已忽略的队伍目标和�
 -- TRANSLATORS: %s is a party member's name, or a list of them
 L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s 已离开队伍：为其忽略的目标已回到路线上。"
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
-L["ROUTES_MENU_SECTION_IGNORE"] = "忽略"
+L["ROUTES_MENU_SECTION_CURRENT"] = "当前目标"
+L["ROUTES_MENU_IGNORE"] = "忽略"
 L["ROUTES_MENU_SECTION_ROUTE"] = "路线"
 L["ROUTES_MENU_SECTION_SHOW"] = "显示"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
@@ -596,6 +600,7 @@ L["ROUTES_MENU_PICK_UP"] = "接受 %s"
 L["ROUTES_MENU_FLIGHT_PATH"] = "%s飞行点"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "飞往%s"
+L["ROUTES_MENU_EXIT"] = "通往%s"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "预测任务路线"
 L["ROUTES_MENU_SHOWN_LOCAL"] = "附近可接任务"
@@ -614,6 +619,7 @@ L["ROUTES_IGNORED"] = "忽略 %s（%s），直到重置区域。"
 L["ROUTES_IGNORED_PARTY"] = "忽略 %s（%s），直到有该任务的队友离开队伍。"
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s 已回到路线上。"
+L["ROUTES_ADDED"] = "%s 已加入路线，直到重置区域。"
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "%s 的目标已移出路线。"
 -- TRANSLATORS: %s is a party member's name

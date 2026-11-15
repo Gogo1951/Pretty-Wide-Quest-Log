@@ -19,9 +19,12 @@ local ROW_INDENT = " "
 
 -- Why a quest to pick up is on the map but not the route, by its task's offRoute (Routes-Pick-Ups.lua)
 local OFF_ROUTE_REASONS = {
+	dungeon = "ROUTES_OFF_ROUTE_DUNGEON",
+	raid = "ROUTES_OFF_ROUTE_RAID",
 	escort = "ROUTES_OFF_ROUTE_ESCORT",
-	group = "ROUTES_OFF_ROUTE_GROUP",
 	elsewhere = "ROUTES_OFF_ROUTE_ELSEWHERE",
+	full = "ROUTES_OFF_ROUTE_LOG_FULL",
+	far = "ROUTES_OFF_ROUTE_FAR",
 }
 
 -- A name in its class color, where the client says the class

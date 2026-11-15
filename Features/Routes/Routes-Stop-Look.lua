@@ -128,7 +128,15 @@ function routes.ApplyStopLook(marker, stop, textures)
 	else
 		texture = textures.objectives[task.objective]
 	end
-	texture = texture or (task.kind ~= "corpse" and QuestieIcon(task)) or nil
+	-- A city's gate: Leatrix Maps' zone crossing arrow, turned the way through (Routes-Cities.lua)
+	if task.kind == "exit" and C_Texture.GetAtlasInfo(routes.EXIT_ATLAS) then
+		marker.Icon:SetAtlas(routes.EXIT_ATLAS)
+		marker.Icon:SetRotation(task.facing or 0)
+		marker.Icon:Show()
+		return
+	end
+	marker.Icon:SetRotation(0) -- A marker turned for a gate before
+	texture = texture or (task.kind ~= "corpse" and task.kind ~= "exit" and QuestieIcon(task)) or nil
 	marker.Icon:SetTexture(texture)
 	-- The corpse's gravestone is a cell of a sheet of icons; Questie's are whole textures
 	if task.kind == "corpse" then

@@ -97,11 +97,13 @@ function routes.Print(message)
 end
 
 --[[
-	A tooltip's click hints, two columns in the add-on's blue, a blank line between each and between them
-	and anything above: each { action, what it does }, such as { "Right-Click", "Ignore This Waypoint" }
+	A tooltip's click hints, as the menus' footer rows read: what it does on the left in the add-on's blue, the
+	click on the right in gray, a blank line between each and between them and anything above. Each is
+	{ click, what it does }, such as { "Click", "Track Quest" }
 ]]
 function routes.AddClickHints(tooltip, hints)
 	local red, green, blue = ns.GetColorRGB("INFO")
+	local mutedRed, mutedGreen, mutedBlue = ns.GetColorRGB("MUTED")
 	if tooltip:NumLines() > 0 then
 		tooltip:AddLine(" ")
 	end
@@ -109,7 +111,7 @@ function routes.AddClickHints(tooltip, hints)
 		if index > 1 then
 			tooltip:AddLine(" ") -- A blank line between hints, as the options panels space their rows
 		end
-		tooltip:AddDoubleLine(hint[1], hint[2], red, green, blue, red, green, blue)
+		tooltip:AddDoubleLine(hint[2], hint[1], red, green, blue, mutedRed, mutedGreen, mutedBlue)
 	end
 end
 
@@ -173,6 +175,13 @@ routes.camps = {}
 	through a logout and a group change; a party member's go once everyone who had its quest leaves the group
 ]]
 routes.skipped = {}
+--[[
+	Pick-up keys the route takes though they'd be on the map only by default (a dungeon or raid quest's, an
+	escort's or one leading to another zone), each { questID, zone }: added with a right-click on its map
+	marker, and back to the map only once the zone they were added in is reset (Routes-Ignore.lua). Saved
+	for the character (char.routesAdded)
+]]
+routes.added = {}
 routes.ignoredMembers = {} -- Party members whose quests are left out, by name as routes.UnitFullName gives it
 routes.loginHandlers = {} -- Run at PLAYER_LOGIN, once the saved settings exist
 local listeners = {}

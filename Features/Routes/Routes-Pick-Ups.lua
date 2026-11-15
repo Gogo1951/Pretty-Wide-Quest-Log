@@ -5,15 +5,16 @@ local _, ns = ...
 	Quests as Objectives (showLocalQuests) on. A quest counts where Questie shows it as available (its
 	AvailableQuests module, which keeps to Questie's own level, repeatable, dungeon and hidden filters) and
 	an NPC or object that starts it stands within the Search Range (localQuestRange) of the player as the
-	route is planned. A quest started by an item that drops isn't one to walk to, nor is a dungeon or raid
-	quest. Each is a node of kind "pickUp", at its quest giver, as a turn-in is at its NPC.
+	route is planned. A quest started by an item one named creature drops counts at that creature; one
+	started by an item that several creatures or a chest drop isn't one to walk to. Each is a node of kind "pickUp", at its quest giver, as a turn-in is at its NPC.
 
 	The Local Available Quests settings then sort them. Below Lowest Quest Level (localQuestLevel) a quest
-	is left off. An escort (localEscortQuests), a group or elite quest (localGroupQuests), or one with an
-	objective or its turn-in only in another zone (localOtherZoneQuests) each goes on the route, on the map
-	only, or nowhere, the strictest of what applies winning. A map-only one is a camp (Routes-Camps.lua):
+	is left off. An escort (localEscortQuests), or one with an objective or its turn-in only in another
+	zone (localOtherZoneQuests), each goes on the route, on the map only, or nowhere, the strictest of what
+	applies winning. A dungeon or raid quest is on the map only. A group or elite quest counts as any other: players on WoW Forever kill elites alone. A map-only one is a camp (Routes-Camps.lua):
 	a marker on the map, dimmed in the route's zone as camps are, with no route line to it, so the Quest
-	Arrow never points there. An escort's marker is green, map only or on the route, and isn't dimmed
+	Arrow never points there. An escort's marker is green, map only or on the route, and isn't dimmed. A
+	right-click on a map-only marker puts it on the route (routes.AddPickUp) until the zone is reset
 ]]
 local routes = ns.routes
 
@@ -53,22 +54,59 @@ local function QueryQuest(QuestieDB, questID, field)
 	return ok and value or nil
 end
 
--- Calls add(spawns, name) for every NPC and object that starts the quest, as Questie's database has them
+--[[
+	The one creature that drops an item, or nil: an item dropped by a single named creature (Hoof of
+	Lakota'mani, from Lakota'mani) starts its quest at that creature, however many places it spawns or
+	walks. One that several creatures drop, or a chest, could come from anywhere, so it isn't a place to
+	walk to
+]]
+local function SoleDropper(QuestieDB, itemID)
+	local query = QuestieDB.QueryItemSingle
+	if type(query) ~= "function" then
+		return nil
+	end
+	local okObjects, objects = pcall(query, itemID, "objectDrops")
+	if okObjects and type(objects) == "table" and #objects > 0 then
+		return nil
+	end
+	local okNPCs, npcs = pcall(query, itemID, "npcDrops")
+	if okNPCs and type(npcs) == "table" and #npcs == 1 then
+		return npcs[1]
+	end
+	return nil
+end
+
+--[[
+	Calls add(spawns, name) for every NPC and object that starts the quest, as Questie's database has them,
+	and the creature that drops an item that starts it, when only one does (SoleDropper)
+]]
 local function ForEachStarter(QuestieDB, questID, add)
 	local startedBy = QueryQuest(QuestieDB, questID, "startedBy")
 	if type(startedBy) ~= "table" then
 		return
 	end
-	-- startedBy is { NPCs, objects, items }; an item that drops isn't a place to walk to
-	for index, query in pairs({ [1] = QuestieDB.QueryNPCSingle, [2] = QuestieDB.QueryObjectSingle }) do
+	local NPC = QuestieDB.QueryNPCSingle
+	local function Add(query, id)
+		local okSpawns, spawns = pcall(query, id, "spawns")
+		local okName, name = pcall(query, id, "name")
+		if okSpawns then
+			add(spawns, okName and name or nil)
+		end
+	end
+	-- startedBy is { NPCs, objects, items }
+	for index, query in pairs({ [1] = NPC, [2] = QuestieDB.QueryObjectSingle }) do
 		local ids = startedBy[index]
 		if type(query) == "function" and type(ids) == "table" then
 			for _, id in ipairs(ids) do
-				local okSpawns, spawns = pcall(query, id, "spawns")
-				local okName, name = pcall(query, id, "name")
-				if okSpawns then
-					add(spawns, okName and name or nil)
-				end
+				Add(query, id)
+			end
+		end
+	end
+	if type(NPC) == "function" and type(startedBy[3]) == "table" then
+		for _, itemID in ipairs(startedBy[3]) do
+			local dropper = SoleDropper(QuestieDB, itemID)
+			if dropper then
+				Add(NPC, dropper)
 			end
 		end
 	end
@@ -161,15 +199,6 @@ local function IsTooLow(QuestieDB, questID, setting)
 		ok, range = pcall(QuestieCompat.GetQuestGreenRange)
 	end
 	return ok and type(range) == "number" and below > range or false
-end
-
--- A group or elite quest, by Questie's tag for it
-local function IsGroupQuest(QuestieDB, questID)
-	if type(QuestieDB.IsGroupQuest) ~= "function" then
-		return false
-	end
-	local ok, group = pcall(QuestieDB.IsGroupQuest, questID)
-	return ok and group == true
 end
 
 --[[
@@ -316,20 +345,25 @@ end
 
 --[[
 	What the settings do with a quest whose giver is near: ROUTE, MAP or OFF, the strictest that applies,
-	and the reason for it ("escort", "group" or "elsewhere"), for the map marker's tooltip
+	and the reason for it ("dungeon", "raid", "escort" or "elsewhere"), for the map marker's tooltip. A
+	dungeon or raid quest is on the map only, as the route can't go in. One the player put on the route
+	with a right-click on its marker (routes.added) is on it, till the zone is reset
 ]]
 local function Handling(QuestieDB, questID, zone, settings, yield)
+	if routes.added[questID .. ":pickUp"] then
+		return ROUTE, nil
+	end
 	local handling, reason = ROUTE, nil
 	local function Apply(value, why)
 		if STRICTNESS[value] and STRICTNESS[value] > STRICTNESS[handling] then
 			handling, reason = value, why
 		end
 	end
+	if routes.IsInstanceQuest(questID) then
+		Apply(MAP, routes.InstanceQuestKind(questID))
+	end
 	if routes.IsEscort(questID) then
 		Apply(settings.localEscortQuests, "escort")
-	end
-	if handling ~= OFF and settings.localGroupQuests ~= ROUTE and IsGroupQuest(QuestieDB, questID) then
-		Apply(settings.localGroupQuests, "group")
 	end
 	if
 		handling ~= OFF
@@ -402,7 +436,8 @@ routes.pickUpHelpers = {
 --[[
 	Adds a "pickUp" node to nodes for every quest the player can pick up nearby that the settings put on the
 	route. Each is { key, kind, questID, questName, quest, candidates, blobs, ready, escort }, quest a small
-	table of its name and level for the arrow's title line. The map-only ones go on routes.mapOnlyPickUps.
+	table of its name and level for the arrow's title line. The map-only ones go on routes.mapOnlyPickUps,
+	with the ignored ones.
 
 	With Predictive Questing Routes on (predictiveRoutes), a quest that can be done in the zone from start
 	to finish (routes.IsChainQuest) counts from anywhere in the zone, not only within the Search Range, and
@@ -441,16 +476,10 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 			tag and level lookups
 		]]
 		local starters = available[questID]
-			and not skipped[key]
 			and not IsTakenOrDone(questID, log)
 			and StarterBlobs(QuestieDB, questID, start, yield)
 		local isWanted = wanted[questID] == true
-		if
-			starters
-			and #starters > 0
-			and not routes.IsInstanceQuest(questID)
-			and (isWanted or not IsTooLow(QuestieDB, questID, settings.localQuestLevel))
-		then
+		if starters and #starters > 0 and (isWanted or not IsTooLow(QuestieDB, questID, settings.localQuestLevel)) then
 			local chained = planChains
 				and #starters > 0
 				and routes.IsChainQuest(QuestieDB, questID, start, yield)
@@ -466,6 +495,15 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 				handling = ROUTE
 			elseif (nearby or shared) and #blobs > 0 then
 				handling, reason = Handling(QuestieDB, questID, start.zone, settings, yield)
+			elseif nearby then
+				--[[
+					Givers in the zone but past the Search Range stay on the map, off the route, so Questie's own
+					icon for them is hidden as for every other pick-up; a right-click puts one on the route
+				]]
+				handling, reason = Handling(QuestieDB, questID, start.zone, settings, yield)
+				if handling ~= OFF then
+					blobs, handling, reason = starters, MAP, handling == ROUTE and "far" or reason
+				end
 			end
 			if handling ~= OFF then
 				local info, name = QuestInfo(QuestieDB, questID)
@@ -478,7 +516,13 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 					ready = true,
 					escort = routes.IsEscort(questID) or nil,
 				}
-				if handling == ROUTE then
+				--[[
+					One ignored stays on the map, off the route: its marker gets the gray ring, and a right-click
+					on it puts it back (Routes-Map.lua)
+				]]
+				if handling == ROUTE and skipped[key] then
+					mapOnly[#mapOnly + 1] = { task = task, blobs = blobs, instance = start.instance }
+				elseif handling == ROUTE then
 					task.candidates = Candidates(blobs, start, false)
 					task.blobs = blobs
 					task.chained = chained or nil
@@ -531,6 +575,14 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 			if task.chained then
 				chainStarts[#chainStarts + 1] = task
 			end
+		elseif task.blobs and #task.blobs > 0 then
+			--[[
+				One the log has no room for stays on the map, off the route, so Questie's own icon for it is
+				hidden as for every other pick-up; a right-click on it puts it on the route ahead of the rest
+			]]
+			task.offRoute = "full"
+			task.candidates, task.chained = nil, nil
+			mapOnly[#mapOnly + 1] = { task = task, blobs = task.blobs, instance = start.instance }
 		end
 	end
 	return chainStarts
@@ -547,7 +599,13 @@ function routes.LocalQuestSignature()
 	for questID in pairs(WantedPickUps()) do
 		wantedIDs[#wantedIDs + 1] = questID
 	end
-	table.sort(wantedIDs)
+	-- The pick-ups put on the route from the map count as Zone Info's do
+	for key in pairs(routes.added) do
+		wantedIDs[#wantedIDs + 1] = key
+	end
+	table.sort(wantedIDs, function(a, b)
+		return tostring(a) < tostring(b)
+	end)
 	local wanted = "wanted=" .. table.concat(wantedIDs, ",")
 	if not (settings.showLocalQuests or settings.predictiveRoutes) then
 		return "no-local:" .. wanted
@@ -559,7 +617,6 @@ function routes.LocalQuestSignature()
 		tostring(routes.LocalQuestRange()),
 		tostring(settings.localQuestLevel),
 		tostring(settings.localEscortQuests),
-		tostring(settings.localGroupQuests),
 		tostring(settings.localOtherZoneQuests),
 		settings.predictiveRoutes and "chains" or "no-chains",
 	}, ":")

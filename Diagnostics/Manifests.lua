@@ -879,6 +879,8 @@ ns.DIAGNOSTIC_DATA_SOURCES = {
 					},
 				},
 			},
+			{ table = "CITY_EXITS", kind = "map", rowId = KeyId },
+			{ table = "LINKED_ZONE_MAP_IDS", kind = "map", rowId = KeyId },
 			{ table = "WORLD_ROOT_MAP_IDS", kind = "map", rowId = ListedId },
 			{ table = "NOT_FLIGHT_PATH_NPC_IDS", kind = "other" },
 		},
@@ -2566,7 +2568,6 @@ local function ArrowLines(lines)
 	RouteSetting(lines, "Local quests: search range", "localQuestRange")
 	RouteSetting(lines, "Local quests: lowest level", "localQuestLevel")
 	RouteSetting(lines, "Local quests: escort quests", "localEscortQuests")
-	RouteSetting(lines, "Local quests: group and elite quests", "localGroupQuests")
 	RouteSetting(lines, "Local quests: objectives in another zone", "localOtherZoneQuests")
 	-- How many quests Questie offers, and how many the route picks up nearby (Routes-Pick-Ups.lua)
 	local availableQuests = ns.ImportQuestieModule("AvailableQuests")

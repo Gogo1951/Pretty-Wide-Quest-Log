@@ -84,7 +84,12 @@ local function Forget(key)
 	end
 end
 
--- The saved ignores back on the list at login, ahead of the first plan
+-- The map-only pick-ups the player put on the route, saved for the character, by task key
+local function SavedAdded()
+	return ns.db and ns.db.char.routesAdded
+end
+
+-- The saved ignores and added pick-ups back at login, ahead of the first plan
 routes.OnLogin(function()
 	for key, entry in pairs(Saved() or {}) do
 		if type(key) == "string" and type(entry) == "table" and not IsPartyKey(key) then
@@ -92,7 +97,36 @@ routes.OnLogin(function()
 			ignoredCount = math.max(ignoredCount, tonumber(entry.order) or 0)
 		end
 	end
+	for key, entry in pairs(SavedAdded() or {}) do
+		if type(key) == "string" and type(entry) == "table" then
+			routes.added[key] = entry
+		end
+	end
 end)
+
+--[[
+	Puts a map-only pick-up (a dungeon or raid quest's, an escort's or one leading to another zone) on the
+	route, a right-click on its map marker, until the zone it was added in is reset
+]]
+function routes.AddPickUp(task)
+	if not (task and task.kind == "pickUp" and task.key) then
+		return
+	end
+	local entry = { questID = task.questID, zone = CurrentZone() }
+	routes.added[task.key] = entry
+	if SavedAdded() then
+		SavedAdded()[task.key] = entry
+	end
+	routes.Print(string.format(L["ROUTES_ADDED"], routes.QuestLink(task.questID, task.questName)))
+	routes.RequestPlan()
+end
+
+local function ForgetAdded(key)
+	routes.added[key] = nil
+	if SavedAdded() then
+		SavedAdded()[key] = nil
+	end
+end
 
 -- What ignoring a world map waypoint prints, naming what it ignored; the Maps & Objectives panel's Example draws it too
 function routes.BuildSkippedMessage(names)
@@ -106,7 +140,7 @@ function routes.SkipStop(stop)
 	end
 	local names, seen = {}, {}
 	for _, task in ipairs(stop.tasks) do
-		if task.kind == "flightPath" or task.kind == "fly" then
+		if task.kind == "flightPath" or task.kind == "fly" or task.kind == "exit" then
 			Ignore(task)
 			names[#names + 1] = routes.TaskLabel(task)
 		elseif task.kind ~= "corpse" then
@@ -124,7 +158,7 @@ function routes.SkipStop(stop)
 	routes.RequestPlan()
 end
 
--- What a task is called in chat and the Quest Arrow's menu: its objective, "Wayward Weapons Turn-In", "Devrak Flight Path" or "Flight to Camp Taurajo"
+-- What a task is called in chat and the Quest Arrow's menu: its objective, "Wayward Weapons Turn-In", "Devrak Flight Path", "Flight to Camp Taurajo" or "Way to Durotar"
 function routes.TaskLabel(task)
 	if task.kind == "turnIn" then
 		return string.format(L["ROUTES_MENU_TURN_IN"], task.questName or "")
@@ -134,6 +168,8 @@ function routes.TaskLabel(task)
 		return routes.FlightPathLabel(task)
 	elseif task.kind == "fly" then
 		return routes.FlightLabel(task)
+	elseif task.kind == "exit" then
+		return routes.ExitLabel(task)
 	end
 	return task.objective and task.objective.Description or ""
 end
@@ -157,7 +193,7 @@ function routes.IgnoreTask(task)
 	end
 	task = task.pickUpNode or task -- One of a quest not taken yet goes with its pick-up, and says so
 	Ignore(task)
-	if task.kind == "flightPath" or task.kind == "fly" then
+	if task.kind == "flightPath" or task.kind == "fly" or task.kind == "exit" then
 		-- No quest to name: "Ignoring Devrak Flight Path until you reset the zone."
 		routes.Print(routes.BuildSkippedMessage({ routes.TaskLabel(task) }))
 	else
@@ -181,7 +217,8 @@ end
 
 --[[
 	The ignore list as the Quest Arrow's menu shows it, in the order they were ignored: each { key, label }.
-	Only those still in play: a quest the player or the party still has, so a quest turned in or dropped
+	Only those ignored in the zone the player is in, the ones Reset This Zone would put back, and of those
+	only the ones still in play: a quest the player or the party still has, so a quest turned in or dropped
 	leaves it; a pick-up of a quest not yet taken or done; a party follow-up while someone it's for is in the
 	group (PruneGroupIgnores drops it once they've all gone); flight paths not yet discovered; and fly
 	waypoints, until the zone is reset
@@ -190,9 +227,12 @@ function routes.IgnoredTasks()
 	local log = routes.IsQuestieReady() and routes.QuestLog() or {}
 	local partyLog
 	local list = {}
+	local zone = CurrentZone()
 	for key, entry in pairs(routes.skipped) do
 		local held = entry.questID ~= nil and log[entry.questID]
-		if key:find("^fly:") then
+		if (entry.zone or 0) ~= zone then
+			held = false
+		elseif key:find("^fly:") then
 			held = true
 		elseif entry.npcID then
 			held = not routes.IsFlightMasterKnown(entry.npcID)
@@ -216,15 +256,20 @@ end
 
 --[[
 	Resets the zone the player is in, a middle-click on the Quest Arrow or a map marker: every objective
-	and turn-in ignored here back on the route, saved or a party member's, and no camp held first for having
-	been in it, so only one the player stands in now goes first again. Other zones' ignores, and party
-	members switched off, stay
+	and turn-in ignored here back on the route, saved or a party member's, every pick-up added here back to
+	the map only, as it is by default, and no camp held first for having been in it, so only one the player
+	stands in now goes first again. Other zones' ignores, and party members switched off, stay
 ]]
 function routes.ResetZone()
 	local zone = CurrentZone()
 	for key, entry in pairs(routes.skipped) do
 		if (entry.zone or 0) == zone then
 			Forget(key)
+		end
+	end
+	for key, entry in pairs(routes.added) do
+		if (entry.zone or 0) == zone then
+			ForgetAdded(key)
 		end
 	end
 	routes.engaged = nil
@@ -237,7 +282,8 @@ end
 
 --[[
 	A quest turned in or dropped takes its saved ignores with it, so they don't pile up. An ignored pick-up
-	stays when the quest is dropped, as it's back to one that could be picked up, and goes once it's turned in
+	stays when the quest is dropped, as it's back to one that could be picked up, and goes once it's turned
+	in; an added pick-up the same
 ]]
 local function ForgetQuest(questID, turnedIn)
 	if type(questID) ~= "number" then
@@ -247,6 +293,9 @@ local function ForgetQuest(questID, turnedIn)
 		if entry.questID == questID and not IsPartyKey(key) and (turnedIn or not key:find(":pickUp$")) then
 			Forget(key)
 		end
+	end
+	if turnedIn then
+		ForgetAdded(questID .. ":pickUp")
 	end
 end
 

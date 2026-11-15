@@ -7,18 +7,20 @@ local _, ns = ...
 	CLOSE_DELAY after the mouse leaves both; Escape closes it.
 
 	Under the title and a line's room, groups under small gold labels, rows indented a space as the
-	tooltips are: Ignore, each objective or turn-in at the waypoint the arrow shows, then at its Next
-	Objective (Next on the right), clicked to leave it off the route until the zone is reset
-	(routes.IgnoreTask). Then three labels with Blizzard's submenu arrow, each opening a flyout beside the
+	tooltips are: Current Objective, each objective or turn-in at the waypoint the arrow shows, then at its
+	Next Objective (Next on the right), with a gray Ignore on the right under the mouse, clicked to leave it
+	off the route until the zone is reset
+	(routes.IgnoreTask), then a spacer. Then three labels with Blizzard's submenu arrow, each opening a flyout beside the
 	menu on the same plate. Route, what the route plans, most used first: Predictive Questing Routes,
 	predictiveRoutes; Local Available Quests, showLocalQuests; Flight Paths, showFlightPaths; in a party,
 	Party Objectives, partyQuests, and with it on an Objectives From switch for each member, a space in.
 	Show, what only the arrow draws: Next Objective, showNextObjective. A switch that's off is gray, On
 	green. Ignored, with how many, only while something is: the ignore list, each row gray, brightening with
 	Put Back on the right under the mouse, clicked to put it back on the route (routes.UnignoreTask).
-	Then a line and the arrow's click hints, each a row to use as well as a reminder: Drag, dragged, moves the
-	arrow (routes.DragArrowFromMenu); right-click ignores the objective the arrow shows first
-	(routes.IgnoreArrowObjective); middle-click resets the zone (routes.ResetZone)
+	Then a spacer, a line and the arrow's click hints, each a row to use as well as a reminder, what it does
+	in blue on the left and its click in gray on the right: Move Quest Arrow, dragged, moves the arrow
+	(routes.DragArrowFromMenu); Ignore This Objective ignores the objective the arrow shows first
+	(routes.IgnoreArrowObjective); Reset This Zone resets the zone (routes.ResetZone)
 ]]
 
 local routes = ns.routes
@@ -60,7 +62,7 @@ local function MenuTasks(view)
 				turnIns[task.questID] = task
 			elseif task.kind == "pickUp" then
 				pickUps[task.questID] = task
-			elseif task.kind == "flightPath" or task.kind == "fly" then
+			elseif task.kind == "flightPath" or task.kind == "fly" or task.kind == "exit" then
 				flightPaths[task.key] = task -- A flight path to discover or a flight to take, neither a quest's
 			end
 		end
@@ -108,13 +110,7 @@ local function Colored(text, red, green, blue)
 end
 
 -- A key for a panel's rows that changes only when what they say does
-local function EntriesKey(entries)
-	local parts = {}
-	for index, entry in ipairs(entries) do
-		parts[index] = entry.kind .. "|" .. (entry.left or "") .. "|" .. (entry.right or "")
-	end
-	return table.concat(parts, "\n")
-end
+local EntriesKey = panels.EntriesKey
 
 -- A switch: On in green, or Off with its name gray too, so what's off sits back
 local function ToggleEntry(left, on, action)
@@ -177,6 +173,7 @@ local function Entries()
 					left = INDENT .. routes.TaskLabel(task),
 					right = isNext and L["ROUTES_MENU_NEXT"] or nil,
 					rightColor = "MUTED",
+					hover = { right = L["ROUTES_MENU_IGNORE"], rightColor = "MUTED" },
 					action = function()
 						routes.IgnoreTask(task)
 					end,
@@ -185,10 +182,12 @@ local function Entries()
 		end
 	end
 	if #ignoreRows > 0 then
-		Section(L["ROUTES_MENU_SECTION_IGNORE"])
+		Section(L["ROUTES_MENU_SECTION_CURRENT"])
 		for _, row in ipairs(ignoreRows) do
 			Add(row)
 		end
+		-- A spacer, as above the footer, so Route and the labels after it have room
+		Add({ kind = "spacer" })
 	end
 
 	-- Route and Show, each a flyout of its switches (RouteEntries, ShowEntries)
@@ -202,25 +201,35 @@ local function Entries()
 	end
 
 	--[[
-		The click hints, each a row to use as well: Drag dragged moves the arrow, the others clicked do what that
-		click on the arrow does
+		The footer, after a spacer and a line as the mini-map menus' Options row is: the arrow's click hints, each
+		a row to use as well, what it does on the left in blue and the click that does the same on the arrow on
+		the right in gray. Move Quest Arrow dragged moves the arrow, the others clicked do what their click does
 	]]
+	Add({ kind = "spacer" })
 	Separator()
 	if not routes.Settings().lockArrow then
-		Add({ kind = "hint", left = L["ROUTES_CLICK_DRAG"], right = L["ROUTES_DRAG_MOVE"], drag = true })
+		Add({
+			kind = "hint",
+			left = L["ROUTES_DRAG_MOVE"],
+			right = L["ROUTES_CLICK_DRAG"],
+			rightColor = "MUTED",
+			drag = true,
+		})
 	end
 	if not routes.groupUpTarget and ArrowObjective() then
 		Add({
 			kind = "hint",
-			left = L["ROUTES_CLICK_RIGHT"],
-			right = L["ROUTES_RIGHT_CLICK_IGNORE"],
+			left = L["ROUTES_RIGHT_CLICK_IGNORE"],
+			right = L["ROUTES_CLICK_RIGHT"],
+			rightColor = "MUTED",
 			action = routes.IgnoreArrowObjective,
 		})
 	end
 	Add({
 		kind = "hint",
-		left = L["ROUTES_CLICK_MIDDLE"],
-		right = L["ROUTES_MIDDLE_CLICK_RESET_ZONE"],
+		left = L["ROUTES_MIDDLE_CLICK_RESET_ZONE"],
+		right = L["ROUTES_CLICK_MIDDLE"],
+		rightColor = "MUTED",
 		action = routes.ResetZone,
 	})
 

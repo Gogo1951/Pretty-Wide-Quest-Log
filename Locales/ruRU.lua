@@ -342,9 +342,6 @@ L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 L["LOCAL_ESCORT_QUESTS"] = "Задания сопровождения"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"Задания, где вы охраняете NPC в пути; они требуют времени и часто группы. Их метка на карте зелёная."
-L["LOCAL_GROUP_QUESTS"] = "Групповые и элитные задания"
-L["LOCAL_GROUP_QUESTS_DESCRIPTION"] =
-	"Задания, которые Questie отмечает как элитные, рассчитанные на группу."
 L["LOCAL_OTHER_ZONE_QUESTS"] = "Цели в другой зоне"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"Задания, у которых цель или сдача есть только за пределами вашей зоны, например отправляющие в следующий город."
@@ -583,10 +580,14 @@ L["ROUTES_FLIGHT_PATH"] = "Открыть путь полёта"
 L["ROUTES_FLIGHT_PATH_FROM"] = "Открыть путь полёта: %s"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "Поговорите с %s, чтобы улететь: %s"
+L["ROUTES_EXIT_TO"] = "Идите в %s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Задание сопровождения, не на маршруте"
-L["ROUTES_OFF_ROUTE_GROUP"] = "Групповое задание, не на маршруте"
 L["ROUTES_OFF_ROUTE_ELSEWHERE"] = "Ведёт в другую зону, не на маршруте"
+L["ROUTES_OFF_ROUTE_DUNGEON"] = "Задание подземелья, не на маршруте"
+L["ROUTES_OFF_ROUTE_RAID"] = "Задание рейда, не на маршруте"
+L["ROUTES_OFF_ROUTE_LOG_FULL"] = "Журнал заданий заполнен, не на маршруте"
+L["ROUTES_OFF_ROUTE_FAR"] = "За радиусом поиска, не на маршруте"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "После того как возьмёте: %s"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -616,6 +617,7 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Игнорировать эту пу�
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Игнорировать эту цель"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Вернуть на маршрут"
+L["ROUTES_RIGHT_CLICK_ADD"] = "Добавить в маршрут"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Сбросить эту зону"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Показать весь маршрут"
@@ -629,7 +631,8 @@ L["ROUTES_GROUP_LEFT_CLEARED"] =
 L["ROUTES_MEMBER_LEFT_CLEARED"] =
 	"Группу покинули: %s. Игнорируемые для них цели снова на маршруте."
 -- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
-L["ROUTES_MENU_SECTION_IGNORE"] = "Игнорировать"
+L["ROUTES_MENU_SECTION_CURRENT"] = "Текущая цель"
+L["ROUTES_MENU_IGNORE"] = "Игнорировать"
 L["ROUTES_MENU_SECTION_ROUTE"] = "Маршрут"
 L["ROUTES_MENU_SECTION_SHOW"] = "Показывать"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
@@ -646,6 +649,7 @@ L["ROUTES_MENU_PICK_UP"] = "Взятие: %s"
 L["ROUTES_MENU_FLIGHT_PATH"] = "Путь полёта: %s"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Полёт: %s"
+L["ROUTES_MENU_EXIT"] = "Путь в %s"
 -- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
 L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Прогнозируемые маршруты заданий"
 L["ROUTES_MENU_SHOWN_LOCAL"] = "Доступные задания поблизости"
@@ -665,6 +669,7 @@ L["ROUTES_IGNORED_PARTY"] =
 	"Маршрут игнорирует %s для задания %s, пока участники группы с этим заданием не покинут группу."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s: снова на маршруте."
+L["ROUTES_ADDED"] = "%s на маршруте до сброса зоны."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "Цели участника %s убраны с маршрута."
 -- TRANSLATORS: %s is a party member's name

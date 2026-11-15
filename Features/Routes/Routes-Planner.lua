@@ -14,6 +14,7 @@ local CHECK_INTERVAL = 2 -- Seconds between checks for Questie's quest data chan
 local GROUP_SETTLE_DELAY = 5 -- Seconds after someone joins or leaves the group before Questie's data replans
 local REPLAN_DISTANCE = 400 -- Yards the player moves from where the route was planned before it's planned again
 local REPLAN_INTERVAL = 30 -- Seconds at least between plans for moving
+local EMPTY_HOLD = 5 -- Seconds after the quest log changes that an empty plan is checked once more before it's drawn
 --[[
 	Planning takes a share of each frame, not a fixed time: 4 milliseconds at 60 frames a second,
 	and less on a faster screen, which a fixed 4 would slow to half its frame rate while a plan runs
@@ -102,7 +103,52 @@ local function Plan()
 	local order = Shown(solved)
 	routes.BringTurnInsForward(order, start)
 	local stops = routes.AddFlightStops(routes.MakeStops(order, start), start)
+	stops = routes.AddCityExitStops(stops, start) -- Through a city's gate, not its walls (Routes-Cities.lua)
 	return stops, start, nodes, engaged, routes.BuildCamps(Yield), snapshot
+end
+
+--[[
+	An empty plan just after the quest log changed, while the route drawn still has a turn-in for a quest
+	that's in the game's log and not ignored, is held once: the route drawn stays and it's planned again
+	CHECK_INTERVAL later, which draws whatever that plan finds. Why: turning in a quest, Questie can update
+	its log a moment behind the game, and a plan read from it meanwhile finds nothing to turn in, so the
+	Quest Arrow would hide and come back a plan later. A turn-in handed in or ignored, a new zone or a
+	route with nothing left to do here still empties it at once
+]]
+local questLogChangedAt = -math.huge
+local heldEmpty = false
+
+local function HasTurnInLeft(stops)
+	for _, stop in ipairs(stops or {}) do
+		for _, task in ipairs(stop.tasks or {}) do
+			if
+				task.kind == "turnIn"
+				and task.questID
+				and not routes.skipped[task.key]
+				and routes.IsOnQuest(task.questID)
+			then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+local function HoldEmpty(stops, start)
+	local drawn = routes.start
+	local hold = #stops == 0
+		and not heldEmpty
+		and GetTime() - questLogChangedAt <= EMPTY_HOLD
+		and drawn ~= nil
+		and start ~= nil
+		and drawn.zone == start.zone
+		and drawn.instance == start.instance
+		and HasTurnInLeft(routes.stops)
+	heldEmpty = hold
+	if hold then
+		C_Timer.After(CHECK_INTERVAL, routes.RequestPlan)
+	end
+	return hold
 end
 
 -- Nothing plans in combat (the watcher drops a plan underway as the fight starts); this covers the frame between
@@ -120,7 +166,7 @@ planner:SetScript("OnUpdate", function(self, elapsed)
 	job = nil
 	if not ok then
 		geterrorhandler()(stops)
-	elseif stops then
+	elseif stops and not HoldEmpty(stops, start) then
 		-- Together, so the watcher never compares a new plan's pins with the old plan's nodes
 		routes.stops, routes.start, routes.nodes, routes.engaged = stops, start, nodes, engaged
 		routes.camps = camps
@@ -331,6 +377,7 @@ end
 -- Some time after the quest log last changed, so Questie has caught up
 local questLogTimer
 local function OnQuestLogUpdate()
+	questLogChangedAt = GetTime()
 	if questLogTimer then
 		questLogTimer:Cancel()
 	end
