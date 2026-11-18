@@ -222,7 +222,7 @@ ns.AddWideQuestLogPart(function()
 			then
 				local questID = data.Id
 				if gray[questID] == nil then
-					gray[questID] = (QuestieDB and helpers and helpers.IsTooLow(QuestieDB, questID, "green")) or false
+					gray[questID] = (QuestieDB and helpers and helpers.IsGray(QuestieDB, questID)) or false
 				end
 				local x, y = hereBeDragons:GetZoneCoordinatesFromWorldInstance(
 					placement.x,

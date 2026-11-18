@@ -36,26 +36,26 @@ function ns.BuildFeedbackSupportOptions()
 
 	for index, key in ipairs(PARAGRAPHS) do
 		if index > 1 then
-			args["spaceParagraph" .. index] = ns.OptionsSpacer(order)
+			args["spaceParagraph" .. index] = ns.OptionsKit.Spacer(order)
 			order = order + 1
 		end
-		args["paragraph" .. index] = ns.OptionsDesc(L[key], order)
+		args["paragraph" .. index] = ns.OptionsKit.Desc(L[key], order)
 		order = order + 1
 	end
 
-	args.spaceLinks0 = ns.OptionsSpacer(order)
-	args.headerLinks = ns.OptionsHeader(L["OPTIONS_FEEDBACK_LINKS_HEADER"], order + 1)
-	args.spaceLinks1 = ns.OptionsSpacer(order + 2)
+	args.spaceLinks0 = ns.OptionsKit.Spacer(order)
+	args.headerLinks = ns.OptionsKit.Header(L["OPTIONS_FEEDBACK_LINKS_HEADER"], order + 1)
+	args.spaceLinks1 = ns.OptionsKit.Spacer(order + 2)
 	order = order + 3
 
 	for index, row in ipairs(LINKS) do
 		local captionKey, linkKey = row[1], row[2]
 		if index > 1 then
-			args["linkSpace" .. index] = ns.OptionsSpacer(order)
+			args["linkSpace" .. index] = ns.OptionsKit.Spacer(order)
 			order = order + 1
 		end
 		args["linkLabel" .. index] =
-			ns.OptionsRowLabel(GetColor("TITLE") .. L[captionKey] .. "|r", order, LINK_LABEL_WIDTH)
+			ns.OptionsKit.Label(GetColor("TITLE") .. L[captionKey] .. "|r", order, LINK_LABEL_WIDTH)
 		args["linkValue" .. index] = {
 			type = "input",
 			name = "",
@@ -69,8 +69,8 @@ function ns.BuildFeedbackSupportOptions()
 		order = order + 2
 	end
 
-	args.spaceCopyLink = ns.OptionsSpacer(order)
-	args.copyLink = ns.OptionsDesc(GetColor("HELP") .. L["OPTIONS_COPY_LINK"] .. "|r", order + 1)
+	args.spaceCopyLink = ns.OptionsKit.Spacer(order)
+	args.copyLink = ns.OptionsKit.Desc(GetColor("HELP") .. L["OPTIONS_COPY_LINK"] .. "|r", order + 1)
 
 	args.spaceVersion = {
 		type = "description",

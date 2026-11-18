@@ -284,49 +284,78 @@ L["LINE_SPEED_NORMAL"] = "正常"
 L["LINE_SPEED_FAST"] = "快"
 L["LINE_OPACITY"] = "線條不透明度"
 L["LINE_OPACITY_DESCRIPTION"] = "圓點的不透明程度；越低，透出的地圖越多。"
-L["ROUTES_PLANNING_HEADER"] = "規劃"
-L["ROUTES_PLANNING_DESCRIPTION"] = "路線在你自己的任務之外還會規劃的內容。"
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "預測任務路線"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"規劃你能在本區域完成的任務，無論任務發布者在哪裡，而不只是附近的：包括它們的目標、回報，以及後續任務。路線會在你前往區域的某一部分之前，先接好那裡需要的所有任務，這樣你只需去一次。任務鏈會在第一個通往其他區域的任務處停止。尚未接受的任務，其目標以灰色標記顯示。每個任務的回報地點也會在完成前顯示，並以 Questie 的灰色問號標出。"
--- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+-- TRANSLATORS: a popup with an Okay button each time Plan Ahead (PLAN_AHEAD_ZONE) is chosen
 L["PREDICTIVE_ROUTES_POPUP"] =
-	"提示：預測任務路線會提前規劃整個區域，所以你的地圖看起來可能有點亂。但亂中有序！跟著任務箭頭走，少跑路，多拿經驗。(="
+	"提示：提前規劃會預先安排整個區域，所以你的地圖看起來可能有點亂。但亂中有序！跟著任務箭頭走，少跑路，多拿經驗。(="
 -- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
 L["SHOW_FLIGHT_PATHS"] = "將未發現的飛行點顯示為目標"
 L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
 	"把你所在區域中你還沒取得其飛行點的每位飛行管理員加入路線，並以飛行管理員圖示標出。如果角色之前已經擁有飛行點，請先開啟任意飛行地圖一次，讓路線知道你擁有哪些；在此之前不會加入任何飛行點。"
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "將附近可接任務顯示為目標"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"把你能接的任務加入路線：Questie 顯示為可接，且發布任務的 NPC 或物件在 %s以內，並以 Questie 的驚嘆號標出。由掉落物品開始的任務以及地城和團隊副本任務不會加入。"
-L["LOCAL_QUESTS_HEADER"] = "附近可接任務"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"任務箭頭會帶你去哪些附近的任務。被跳過的任務仍可顯示在世界地圖上，但沒有路線連到那裡。"
 L["LOCAL_QUEST_RANGE"] = "搜尋範圍"
 L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"發布任務者離你多少碼以內才算數。低於 400 時，在兩次路線規劃之間路過的任務發布者可能會被漏掉。"
 L["LOCAL_ESCORT_QUESTS"] = "護送任務"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"需要一路保護 NPC 的任務，耗時且常需隊伍。它們在地圖上的標記為綠色。"
-L["LOCAL_OTHER_ZONE_QUESTS"] = "目標在其他區域"
+L["LOCAL_OTHER_ZONE_QUESTS"] = "目標在其他區域的任務"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"有目標或交任務地點只在你所在區域之外的任務，例如讓你前往下一個城鎮的任務。"
 L["LOCAL_QUEST_LEVEL"] = "最低任務等級"
 L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	'低於此難度顏色的任務不計入。"Questie 設定"保留 Questie 在其地圖上顯示的任務。'
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "加入路線"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "僅地圖"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "不計入"
-L["LOCAL_LEVEL_QUESTIE"] = "Questie 設定"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "綠色及以上"
-L["LOCAL_LEVEL_YELLOW"] = "黃色及以上"
+	"比你低這麼多級以上的任務不計入。「無限制」也包含灰色任務，以 Questie 顯示的為準。"
+L["LOCAL_HIGHEST_QUEST_LEVEL"] = "最高任務等級"
+L["LOCAL_HIGHEST_QUEST_LEVEL_DESCRIPTION"] =
+	"比你高出這麼多級以上的任務會在地圖上顯示為灰色，並標出它們加入路線的等級，這樣路線不會帶你去仍然太難的任務。"
+-- TRANSLATORS: %d is a number of levels, 3, 6 or 9, above or below the player's own
+L["LOCAL_LEVELS_ABOVE"] = "比你高 %d 級"
+-- TRANSLATORS: Highest Quest Level's choice that leaves off every quest above the player's own level
+L["LOCAL_LEVELS_YOUR_LEVEL"] = "你的等級"
+L["LOCAL_LEVELS_BELOW"] = "比你低 %d 級"
+-- TRANSLATORS: Lowest Quest Level's choice that leaves no quest off for being too low, gray ones included
+L["LOCAL_LEVELS_NO_LIMIT"] = "無限制"
+-- TRANSLATORS: a section of the Quest Route panel: which quests the route guides you to pick up
+L["WHAT_TO_ROUTE_HEADER"] = "路線包含什麼"
+L["WHAT_TO_ROUTE_DESCRIPTION"] =
+	"你接受的每個任務都會一直在路線上。這些設定決定路線沿途引導你去接哪些任務，以符合你喜歡的解任務方式。"
+L["PLAN_AHEAD_HEADER"] = "提前規劃"
+L["PLAN_AHEAD_DESCRIPTION"] = "路線向前尋找可接任務的範圍。"
+-- TRANSLATORS: Plan Ahead's three choices are also switches on the Quest Arrow's menu
+L["PLAN_AHEAD_YOURS"] = "僅你的任務"
+L["PLAN_AHEAD_YOURS_DESCRIPTION"] = "只有你任務日誌裡的任務，就像以前的 QuestHelper 插件。"
+L["PLAN_AHEAD_NEARBY"] = "你的任務和附近可接任務"
+L["PLAN_AHEAD_NEARBY_DESCRIPTION"] = "你附近的任務發布者，作為去接任務的路徑點。"
+-- TRANSLATORS: the same words as PLAN_AHEAD_HEADER: the choice that plans the whole zone ahead
+L["PLAN_AHEAD_ZONE"] = "提前規劃"
+L["PLAN_AHEAD_ZONE_DESCRIPTION"] =
+	"整個區域的接任務、目標和交任務，以及後續任務，讓你在前往區域某處之前就接好那裡的所有任務。尚未接受的任務目標顯示為灰色標記。規劃得越遠，計算時間越長。"
+L["QUEST_DIFFICULTY_HEADER"] = "任務難度"
+L["QUEST_DIFFICULTY_DESCRIPTION"] =
+	"路線引導你去接的任務等級。任務日誌裡的任務無論等級都會留在路線上。"
+L["QUEST_TYPES_HEADER"] = "沿途要接的任務類型"
+L["QUEST_TYPES_DESCRIPTION"] =
+	"路線引導你去接的任務類型。未勾選的類型仍會以灰色顯示在地圖上並註明原因，但路線不會帶你去接。"
+-- TRANSLATORS: Era and Forever call quests with tag 1 Elite; TBC and later call them Group (PICK_UP_GROUP)
+L["PICK_UP_ELITE"] = "精英任務"
+L["PICK_UP_ELITE_DESCRIPTION"] = "與你同級的精英任務單人可解；高 4 級的可能需要一兩個朋友。"
+L["PICK_UP_GROUP"] = "團體任務"
+L["PICK_UP_GROUP_DESCRIPTION"] =
+	"為隊伍設計的任務。與你同級的通常單人可解；高幾級的可能需要一兩個朋友。"
+L["PICK_UP_PVP"] = "PvP 任務"
+L["PICK_UP_PVP_DESCRIPTION"] = "需要你與其他玩家戰鬥，或把你送進戰場的任務。"
+L["PICK_UP_DUNGEON"] = "地城任務"
+-- TRANSLATORS: PICK_UP_DUNGEON on games with heroic dungeons (TBC and later)
+L["PICK_UP_DUNGEON_HEROIC"] = "地城和英雄任務"
+L["PICK_UP_RAID"] = "團隊副本任務"
+L["PICK_UP_INSTANCE_DESCRIPTION"] = "只引導你去接任務；目標在副本裡面。"
+L["ROUTE_FOCUS_HEADER"] = "路線側重"
+L["ROUTE_FOCUS_DESCRIPTION"] = "路線如何選擇和安排你要接的任務。"
+L["ROUTE_FOCUS_FASTEST"] = "最快完成"
+L["ROUTE_FOCUS_FASTEST_DESCRIPTION"] = "你的設定允許的所有任務，走最少的路。"
+L["ROUTE_FOCUS_EASIEST"] = "先易後難"
+L["ROUTE_FOCUS_EASIEST_DESCRIPTION"] = "在多走不了幾步的情況下，先解較簡單的任務。"
+-- TRANSLATORS: Experimental: the option is new and may change
+L["ROUTE_FOCUS_XP"] = "每小時最多經驗（實驗性）"
+L["ROUTE_FOCUS_XP_DESCRIPTION"] = "跳過路程遠、回報少的任務。這是新功能，歡迎回饋。"
 L["ROUTES_PARTY_HEADER"] = "隊伍"
 L["ROUTES_PARTY_DESCRIPTION"] = "你的隊伍為路線增加的內容。"
 L["PARTY_QUESTS"] = "包含隊友的任務"
@@ -542,6 +571,12 @@ L["ROUTES_OFF_ROUTE_DUNGEON"] = "地城任務，不在路線上"
 L["ROUTES_OFF_ROUTE_RAID"] = "團隊任務，不在路線上"
 L["ROUTES_OFF_ROUTE_LOG_FULL"] = "任務日誌已滿，不在路線上"
 L["ROUTES_OFF_ROUTE_FAR"] = "超出搜尋範圍，不在路線上"
+L["ROUTES_OFF_ROUTE_ELITE"] = "精英任務，不在路線上"
+L["ROUTES_OFF_ROUTE_GROUP"] = "團體任務，不在路線上"
+L["ROUTES_OFF_ROUTE_PVP"] = "PvP 任務，不在路線上"
+-- TRANSLATORS: %d is the player level at which the quest goes on the route
+L["ROUTES_OFF_ROUTE_LEVEL"] = "%d 級時加入路線"
+L["ROUTES_OFF_ROUTE_XP"] = "路程經驗太少，不在路線上"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "接受 %s 後"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -586,6 +621,7 @@ L["ROUTES_MENU_SECTION_CURRENT"] = "目前目標"
 L["ROUTES_MENU_IGNORE"] = "忽略"
 L["ROUTES_MENU_SECTION_ROUTE"] = "路線"
 L["ROUTES_MENU_SECTION_SHOW"] = "顯示"
+L["ROUTES_MENU_SECTION_ALSO_ROUTE"] = "同時加入路線"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "下一個"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
@@ -601,9 +637,6 @@ L["ROUTES_MENU_FLIGHT_PATH"] = "%s飛行點"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "飛往%s"
 L["ROUTES_MENU_EXIT"] = "通往%s"
--- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
-L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "預測任務路線"
-L["ROUTES_MENU_SHOWN_LOCAL"] = "附近可接任務"
 L["ROUTES_MENU_SHOWN_FLIGHTS"] = "飛行點"
 L["ROUTES_MENU_SHOWN_PARTY"] = "隊友目標"
 L["ROUTES_MENU_ON"] = "開啟"

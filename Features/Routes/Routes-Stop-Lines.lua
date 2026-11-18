@@ -194,6 +194,35 @@ function routes.QuestObjectives(entry)
 	return objectives
 end
 
+--[[
+	What an objective is called. An event or escort objective often has no text in the quest log, nor a
+	mob, object or item to name it by (a party member's, Routes-Party.lua), so the text Questie's data
+	gives it, else the quest's own name, rather than a blank line
+]]
+function routes.ObjectiveName(objective)
+	local text = objective.Description
+	if type(text) == "string" and text ~= "" then
+		return text
+	end
+	local QuestieDB = ns.ImportQuestieModule("QuestieDB")
+	if objective.questId and QuestieDB and type(QuestieDB.GetQuest) == "function" then
+		local ok, quest = pcall(QuestieDB.GetQuest, objective.questId)
+		if ok and type(quest) == "table" then
+			local data = objective.Index
+				and type(quest.ObjectiveData) == "table"
+				and quest.ObjectiveData[objective.Index]
+			local dataText = type(data) == "table" and data.Text
+			if type(dataText) == "string" and dataText ~= "" then
+				return dataText
+			end
+			if type(quest.name) == "string" then
+				return quest.name
+			end
+		end
+	end
+	return ""
+end
+
 -- A count as the quest log writes it, "4 / 12"
 function routes.CountText(have, need)
 	return string.format("%s / %s", tostring(have or 0), tostring(need))
@@ -326,7 +355,7 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 					and objective.Needed
 					and routes.CountText(objective.Collected, objective.Needed)
 				red, green, blue = ns.GetColorRGB("TEXT")
-				callback("objective", objective.Description or "", red, green, blue, count or nil)
+				callback("objective", routes.ObjectiveName(objective), red, green, blue, count or nil)
 				for _, row in ipairs(rows) do
 					red, green, blue = routes.ClassColor(row.unit)
 					callback("name", row.name, red, green, blue, row.need and routes.CountText(row.have, row.need))

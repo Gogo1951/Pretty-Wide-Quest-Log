@@ -46,7 +46,7 @@ local THROWS = 2 -- Nodes thrown somewhere else in each shake
 local WARM_SHAKES = 8 -- Shakes at most for a route started from the last one, which was shaken already
 local WARM_REACH = 150 -- Yards a candidate can be from where the last route had a node and still be its place
 
-local TRIP_NEAR = 100 -- Yards a leg can be and still be within one camp, as stops within it merge (Routes-Stops.lua)
+local TRIP_NEAR = 100 -- Yards a leg can be and still be within one camp
 local TRIP_FAR = 300 -- Yards past which a leg is a trip somewhere else
 local TRIP_COST = 150 -- Yards a trip somewhere else counts for more than its length
 local CAMP_SPAN = 200 -- Yards apart two places in a row can be and still be one camp, and yards out of the way a side trip from it can't be

@@ -1,8 +1,8 @@
 local _, ns = ...
 
 --[[
-	Routes: the ordered nodes as stops, close ones on the finished route becoming one stop, and what
-	each task at a stop asks for
+	Routes: the ordered nodes as stops, turn-ins at one NPC becoming one stop, and what each task at a
+	stop asks for
 ]]
 
 local routes = ns.routes
@@ -10,7 +10,6 @@ local L = ns.L
 
 local MIN_STOP_RADIUS, NAME_LIMIT = routes.MIN_STOP_RADIUS, routes.NAME_LIMIT -- Routes-Blobs.lua
 
-local MERGE_RADIUS = 100 -- Yards apart two stops in a row can be and still become one
 local SAME_PLACE = 1 -- Yards apart two turn-ins can be and still be at the same NPC
 local CORPSE_RADIUS = 30 -- Yards from the corpse that count as being there, inside the client's reach to resurrect
 
@@ -34,28 +33,22 @@ local function AtQuestGiver(node)
 end
 
 --[[
-	Whether a task joins the stop before it: objectives within MERGE_RADIUS, as one trip, and every
-	objective whose area the player is standing in, however far apart the areas' middles, as the player
-	works them all at once; a turn-in only with turn-ins at the same NPC, so the route hands in one quest
-	giver's quests at a time
+	Whether a task joins the stop before it: only a turn-in, pick-up or flight path with others at the same
+	NPC, so the route hands in one quest giver's quests at a time. An objective never joins one, however
+	close: each is its own waypoint, so it can be ignored on its own
 ]]
 local function JoinsStop(stop, node, point)
-	if not stop or stop.corpse then
+	if not stop or stop.corpse or not (AtQuestGiver(node) and stop.turnIns) then
 		return false
 	end
 	local dx, dy = point.x - stop.x, point.y - stop.y
-	local distanceSquared = dx * dx + dy * dy
-	if AtQuestGiver(node) or stop.turnIns then
-		return AtQuestGiver(node) and stop.turnIns and distanceSquared <= SAME_PLACE * SAME_PLACE
-	end
-	return (node.inArea and stop.inArea) or distanceSquared <= MERGE_RADIUS * MERGE_RADIUS
+	return dx * dx + dy * dy <= SAME_PLACE * SAME_PLACE
 end
 
 --[[
-	The ordered nodes as stops on start's continent. A node joins the stop before it as JoinsStop allows:
-	an objective within MERGE_RADIUS, or one whose area the player stands in too, so several quests'
-	objectives in one camp make one stop; a turn-in only with turn-ins within SAME_PLACE, at the same NPC.
-	A ghost's route starts at their corpse, a stop of its own
+	The ordered nodes as stops on start's continent. A node joins the stop before it as JoinsStop allows: a
+	turn-in only with turn-ins within SAME_PLACE, at the same NPC. Every objective is a stop of its own. A
+	ghost's route starts at their corpse, a stop of its own
 ]]
 function routes.MakeStops(order, start)
 	local stops = {}
@@ -93,7 +86,6 @@ function routes.MakeStops(order, start)
 				mapID = zone,
 				area = IsArea(point),
 				turnIns = AtQuestGiver(node) or nil, -- Turn-ins and pick-ups at one NPC, which nothing else joins
-				inArea = node.inArea, -- The areas the player stands in, which all join it
 				tasks = { node },
 			}
 		end
@@ -103,7 +95,7 @@ end
 
 -- An objective as it stands now, its count first as the quest log writes it: "3/8 Boar"
 function routes.ObjectiveText(objective)
-	local text = objective.Description or ""
+	local text = routes.ObjectiveName(objective)
 	if objective.Needed then
 		text = string.format("%s/%s %s", tostring(objective.Collected or 0), tostring(objective.Needed), text)
 	end

@@ -1,5 +1,6 @@
 local _, ns = ...
 local L = ns.L
+local Kit = ns.OptionsKit
 
 --[[
 	The NPC Dialogue panel, under Wide Quest Log: the quest giver window cleanup (Quest-Giver.lua) and the
@@ -24,6 +25,7 @@ local function Toggle(key, nameKey, order)
 		set = function(_, value)
 			ns.db.profile[key] = value
 			ns.ApplyQuestGiverCleanup()
+			ns.RefreshSettings()
 		end,
 	}
 end
@@ -55,16 +57,16 @@ end
 
 function ns.BuildNPCDialogueOptions()
 	local args = {
-		descIntro = ns.OptionsDesc(L["TAB_NPC_DIALOGUE_DESCRIPTION"], 1),
-
-		spaceQuestGivers0 = ns.OptionsSpacer(10),
-		headerQuestGivers = ns.OptionsHeader(L["QUEST_GIVERS_HEADER"], 11),
-		spaceQuestGivers1 = ns.OptionsSpacer(12),
-		descQuestGivers = ns.OptionsDesc(L["QUEST_GIVERS_DESCRIPTION"], 13),
-		spaceQuestGivers2 = ns.OptionsSpacer(14),
-		giverCleanup = GiverCleanupToggle(15),
-		giverLevels = GiverLevelsToggle(16),
+		descIntro = Kit.Desc(L["TAB_NPC_DIALOGUE_DESCRIPTION"], 1),
+		giverCleanupRow = Kit.Row(15, nil, { GiverCleanupToggle(), GiverLevelsToggle() }),
 	}
-	ns.AddFontOptions(args, "dialogue", 20, nil, CleanupOff, FontNeedsCleanupText)
+	Kit.Section(args, "QuestGivers", 10, L["QUEST_GIVERS_HEADER"], L["QUEST_GIVERS_DESCRIPTION"])
+	--[[
+		The font's controls hide while the cleanup is off; its heading and the line saying why stay, so the
+		section still says where it went
+	]]
+	ns.AddFontOptions(args, "dialogue", 20, CleanupOff)
+	args.spaceFont0.hidden, args.headerFont.hidden, args.spaceFont1.hidden = nil, nil, nil
+	args.noteFont = Kit.StatusLine(FontNeedsCleanupText, 23.5)
 	return { type = "group", name = L["TAB_NPC_DIALOGUE"], args = args }
 end

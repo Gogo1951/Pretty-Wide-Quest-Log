@@ -141,7 +141,7 @@ ns.AddWideQuestLogPart(function()
 	ns.LinkQuestIDToWowhead(QuestLogDetailScrollChildFrame, questIDText, function()
 		return select(8, GetQuestLogTitle(GetQuestLogSelection()))
 	end)
-	QuestLogSpacerFrame:SetHeight(LAYOUT.QUEST_ID_GAP + 20) -- Room for the ID, so it scrolls into view
+	QuestLogSpacerFrame:SetHeight(LAYOUT.QUEST_ID_GAP + 16) -- Room for the ID, a 16-tall line, so it scrolls into view
 
 	local function PlaceQuestID()
 		local spacerTop, childTop = QuestLogSpacerFrame:GetTop(), QuestLogDetailScrollChildFrame:GetTop()
@@ -170,7 +170,7 @@ ns.AddWideQuestLogPart(function()
 				top - LAYOUT.QUEST_ID_GAP
 			)
 			-- Tall enough for the chain and the ID, so both scroll into view
-			QuestLogSpacerFrame:SetHeight(spacerTop - childTop - top + LAYOUT.QUEST_ID_GAP + 20)
+			QuestLogSpacerFrame:SetHeight(spacerTop - childTop - top + LAYOUT.QUEST_ID_GAP + 16)
 			QuestLogDetailScrollFrame:UpdateScrollChildRect()
 		end
 	end

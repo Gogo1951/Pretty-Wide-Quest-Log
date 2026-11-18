@@ -67,7 +67,7 @@ local FACING_TRUST = math.rad(60) -- Moving within this of their facing, the fac
 local SPOT_REACH = 10 -- Yards from one place (a chest, an NPC) that count as there: the eye instead of the arrow
 local BREATH_PERIOD = 2.5 -- Seconds for the eye to grow and shrink again
 local BREATH_GROWTH = 0.3 -- How much bigger the eye gets at the top of a breath
-local NEXT_ARROW_SIZE = 16 -- The Next Objective's arrow, left of its lines: a quarter of the big one
+local NEXT_ARROW_SIZE = 32 -- The Next Objective's arrow, left of its lines: half the big one
 local DIM_ALPHA = 0.72 -- What's on the way and what's next, behind what to do here
 local SPACE = ns.LAYOUT.SPACE
 

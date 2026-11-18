@@ -177,6 +177,7 @@ local function Row(panel, index)
 				OpenSubmenu(self)
 			elseif self.action then
 				self.action()
+				ns.RefreshSettings()
 				-- The arrow's menu shows what the click changed; a plate of its own may close instead
 				if panel.OnAction then
 					panel.OnAction()
@@ -193,6 +194,12 @@ local function Row(panel, index)
 			if self.hover then
 				Dress(self, true)
 			end
+			-- An item's row shows the game's tooltip for it (Zone-Info.lua)
+			if self.itemID then
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetItemByID(self.itemID)
+				GameTooltip:Show()
+			end
 			if self.submenu then
 				OpenSubmenu(self)
 			elseif panel == menu then
@@ -202,6 +209,14 @@ local function Row(panel, index)
 		row:SetScript("OnLeave", function(self)
 			if self.hover then
 				Dress(self, false)
+			end
+			if GameTooltip:IsOwned(self) then
+				GameTooltip:Hide()
+			end
+		end)
+		row:SetScript("OnHide", function(self)
+			if GameTooltip:IsOwned(self) then
+				GameTooltip:Hide()
 			end
 		end)
 		row:SetScript("OnDragStart", function(self)
@@ -217,7 +232,10 @@ end
 
 --[[
 	Sizes the menu to its rows: each as tall as a line and SPACE.LINE above and below, a group's label
-	SPACE.NEAR above instead to set its group apart, the separators SPACE.NEAR
+	SPACE.GROUP above instead to set its group apart (SPACE.NEAR where a spacer already does, or it opens the
+	plate), the spacers SPACE.GROUP and the separators SPACE.NEAR. A label that opens a flyout is a row like
+	any other, so every row to click is the same height. Every row is the same size of type; a label is told
+	apart by its gold alone
 ]]
 local function Layout(panel, entries)
 	local width, y = MIN_WIDTH, SPACE.NEAR
@@ -226,14 +244,19 @@ local function Layout(panel, entries)
 	for index, entry in ipairs(entries) do
 		local row = Row(panel, index)
 		local kind = entry.kind
-		local clickable = kind == "action" or kind == "toggle" or entry.submenu ~= nil or entry.action ~= nil
-		row:EnableMouse(clickable or entry.drag)
+		local clickable = kind == "action"
+			or kind == "toggle"
+			or kind == "radio"
+			or entry.submenu ~= nil
+			or entry.action ~= nil
+		row:EnableMouse(clickable or entry.drag or entry.itemID ~= nil)
 		if entry.drag then
 			row:RegisterForDrag("LeftButton")
 		else
 			row:RegisterForDrag()
 		end
 		row.drag = entry.drag
+		row.itemID = entry.itemID
 		row.line:SetShown(kind == "separator")
 		row.hover = entry.hover
 		row.submenu = entry.submenu
@@ -246,11 +269,8 @@ local function Layout(panel, entries)
 			Paint(row.right, nil)
 			height = kind == "spacer" and SPACE.GROUP or SPACE.NEAR
 		else
-			local font = kind == "header" and "GameFontNormal"
-				or kind == "section" and "GameFontNormalSmall"
-				or "GameFontHighlight"
-			row.left:SetFontObject(font)
-			row.right:SetFontObject(kind == "section" and font or "GameFontHighlight")
+			row.left:SetFontObject(kind == "header" and "GameFontNormal" or "GameFontHighlight")
+			row.right:SetFontObject("GameFontHighlight")
 			local leftColor = entry.leftColor
 				or (kind == "header" or kind == "section") and "TITLE"
 				or kind == "hint" and "INFO"
@@ -258,7 +278,13 @@ local function Layout(panel, entries)
 			local rightColor = entry.rightColor or (kind == "hint" and "INFO") or "TEXT"
 			row.look = { left = entry.left, leftColor = leftColor, right = entry.right, rightColor = rightColor }
 			local _, size = row.left:GetFont()
-			local above = kind == "section" and SPACE.NEAR or SPACE.LINE
+			local above = SPACE.LINE
+			-- A label that opens a flyout (Route, Show, Ignored) is a row to use, as tall as the rows it opens
+			if kind == "section" and not entry.submenu then
+				local before = entries[index - 1]
+				above = (before == nil or before.kind == "spacer") and SPACE.NEAR or SPACE.GROUP
+			end
+			row.above = above
 			height = (size or 12) + above + SPACE.LINE
 			-- Centered on the line, not the row, so a label's extra room is all above it
 			local drop = (above - SPACE.LINE) / 2
@@ -325,13 +351,15 @@ end
 ]]
 local function PlaceSubmenu(row)
 	submenu:ClearAllPoints()
-	local gap = ROW_INSET + SPACE.NEAR
+	local gap = SPACE.GROUP
+	-- Down by the label's room above it past SPACE.NEAR, so the flyout's first row stays level with its text
+	local top = SPACE.NEAR - ((row.above or SPACE.NEAR) - SPACE.NEAR)
 	local right = menu:GetRight() or 0
 	local scale = menu:GetEffectiveScale() / UIParent:GetEffectiveScale()
 	if (right + gap + submenu:GetWidth()) * scale > UIParent:GetWidth() then
-		submenu:SetPoint("TOPRIGHT", row, "TOPLEFT", -gap, SPACE.NEAR)
+		submenu:SetPoint("TOPRIGHT", row, "TOPLEFT", -gap, top)
 	else
-		submenu:SetPoint("TOPLEFT", row, "TOPRIGHT", gap, SPACE.NEAR)
+		submenu:SetPoint("TOPLEFT", row, "TOPRIGHT", gap, top)
 	end
 end
 

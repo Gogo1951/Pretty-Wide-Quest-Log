@@ -63,7 +63,7 @@ local function Yield()
 end
 
 --[[
-	The route as drawn: the solved order without the turn-ins planned but hidden (Predictive Questing Routes
+	The route as drawn: the solved order without the turn-ins planned but hidden (Plan Ahead
 	off, Routes-Nodes.lua), which still shaped it, so it heads back where the quests are handed in last
 ]]
 local function Shown(order)
@@ -84,8 +84,80 @@ end
 ]]
 local lastSolve
 
+--[[
+	The last route in each zone the character planned one in, kept over a logout (routesWarmStarts), so the
+	first plan on coming back starts from it as a replan does from lastSolve. Only where most of the nodes
+	are the ones it had (SAVED_MATCH): played through offline, a plan started from the zone's own route with
+	the same quests walked under 1% more for a third to a sixth of the time, but one started from a route
+	whose quests were mostly done since walked 4% more on average, so that one starts fresh. Kept for the
+	same Questie version only, as its data sets the nodes, and for MAX_SAVED_ZONES zones, the oldest dropped
+]]
+local SAVED_MATCH = 0.7 -- Share of this plan's nodes the saved route must have
+local MAX_SAVED_ZONES = 10
+local freshStart = false -- A zone reset: the next plan starts fresh, not from a saved route
+
+local function QuestieVersion()
+	return C_AddOns.GetAddOnMetadata("Questie", "Version") or "?"
+end
+
+local function SavedKey(start)
+	return tostring(start.zone) .. ":" .. tostring(start.instance or 0)
+end
+
+local function SavedStart(start, nodes)
+	local saved = ns.db.char.routesWarmStarts
+	local entry = type(saved) == "table" and saved[SavedKey(start)]
+	if
+		type(entry) ~= "table"
+		or entry.questie ~= QuestieVersion()
+		or type(entry.keys) ~= "table"
+		or type(entry.points) ~= "table"
+	then
+		return nil
+	end
+	local total, known = 0, 0
+	for _, node in ipairs(nodes) do
+		if node.key and node.candidates and #node.candidates > 0 then
+			total = total + 1
+			if entry.points[node.key] then
+				known = known + 1
+			end
+		end
+	end
+	if total == 0 or known < total * SAVED_MATCH then
+		return nil
+	end
+	return entry
+end
+
+local function SaveStart(snapshot)
+	if type(ns.db.char.routesWarmStarts) ~= "table" then
+		ns.db.char.routesWarmStarts = {}
+	end
+	local saved = ns.db.char.routesWarmStarts
+	-- at counts up with each save, the newest highest, so the oldest is the one to drop
+	local newest = 0
+	for _, entry in pairs(saved) do
+		newest = math.max(newest, type(entry) == "table" and tonumber(entry.at) or 0)
+	end
+	local key = SavedKey(snapshot)
+	saved[key] = { questie = QuestieVersion(), keys = snapshot.keys, points = snapshot.points, at = newest + 1 }
+	local count, oldestKey, oldestAt = 0, nil, math.huge
+	for savedKey, entry in pairs(saved) do
+		count = count + 1
+		local at = type(entry) == "table" and tonumber(entry.at) or 0
+		if at < oldestAt then
+			oldestKey, oldestAt = savedKey, at
+		end
+	end
+	if count > MAX_SAVED_ZONES and oldestKey then
+		saved[oldestKey] = nil
+	end
+end
+
 function routes.ForgetLastSolve()
 	lastSolve = nil
+	freshStart = true
 end
 
 local function Plan()
@@ -95,9 +167,12 @@ local function Plan()
 	end
 	local previous = lastSolve and lastSolve.zone == start.zone and lastSolve.instance == start.instance and lastSolve
 		or nil
+	if not previous and not freshStart then
+		previous = SavedStart(start, nodes)
+	end
 	start.flights = routes.KnownFlights(start, Yield) -- Flight paths as shortcuts (Routes-Flights.lua)
 	start.skippedFlights = routes.SkippedFlights() -- Fly waypoints the player ignored, walked instead
-	local solved = ns.routesSolver.Solve(start, nodes, Yield, previous)
+	local solved = routes.SolveForFocus(start, nodes, Yield, previous) -- By What to Route's Route Focus (Routes-Focus.lua)
 	local snapshot = ns.routesSolver.Snapshot(solved)
 	snapshot.zone, snapshot.instance = start.zone, start.instance
 	local order = Shown(solved)
@@ -170,7 +245,10 @@ planner:SetScript("OnUpdate", function(self, elapsed)
 		-- Together, so the watcher never compares a new plan's pins with the old plan's nodes
 		routes.stops, routes.start, routes.nodes, routes.engaged = stops, start, nodes, engaged
 		routes.camps = camps
-		lastSolve = snapshot or lastSolve
+		if snapshot then
+			lastSolve, freshStart = snapshot, false
+			SaveStart(snapshot)
+		end
 		Notify()
 	end
 	if replanQueued then

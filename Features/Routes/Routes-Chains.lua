@@ -1,8 +1,8 @@
 local _, ns = ...
 
 --[[
-	Routes: quest chains planned ahead, with Predictive Questing Routes (predictiveRoutes) on, whether
-	Local Available Quests is on or not. A quest the player doesn't have yet is planned whole: its pick-up (Routes-Pick-Ups.lua), then
+	Routes: quest chains planned ahead, with What to Route's Plan Ahead (planAhead "zone",
+	routes.PlansZone). A quest the player doesn't have yet is planned whole: its pick-up (Routes-Pick-Ups.lua), then
 	its objectives, then its turn-in, and then the quests its turn-in unlocks, each one's pick-up waiting
 	on that turn-in. The route then knows a follow-up waits in the north before the player goes there,
 	and does the south first, so the north is one trip.
@@ -30,7 +30,7 @@ local routes = ns.routes
 local helpers = routes.pickUpHelpers -- Routes-Pick-Ups.lua
 
 --[[
-	The popup each time Predictive Questing Routes turns on (routes.SetSetting), from Options or the Quest
+	The popup each time Plan Ahead turns on (routes.SetSetting), from Options or the Quest
 	Arrow's menu: the map can look wild with the whole zone planned, but following the arrow is faster
 ]]
 StaticPopupDialogs.PRETTYWIDEQUESTLOG_PREDICTIVE = {
@@ -375,18 +375,18 @@ local function LoggedTurnIns(nodes)
 end
 
 --[[
-	With Predictive Questing Routes on, plans whole each quest Routes-Pick-Ups.lua put on the route from across the
+	With Plan Ahead, plans whole each quest Routes-Pick-Ups.lua put on the route from across the
 	zone (chainStarts, nearest first), and then the quests that follow the log's quests and those, each
 	follow-up's pick-up waiting on the turn-in that unlocks it (WaitsOn), up to MAX_PLANNED_QUESTS in all
 	and MAX_CHAIN_DEPTH after any one quest. A follow-up is the zone's to finish (routes.IsChainQuest),
-	its giver in the zone, one the character could take (CouldTake), and one the Local Available Quests
+	its giver in the zone, one the character could take (CouldTake), and one the What to Route
 	settings put on the route. Then, in a party, the same from the party's own quests' turn-ins, for a member
 	who has the quest: those follow-ups are theirs (MemberCouldTake), and one the player's own chains plan
 	already isn't planned twice
 ]]
 function routes.AddChainNodes(nodes, start, log, chainStarts, yield)
 	local settings = routes.Settings()
-	if not settings.predictiveRoutes then
+	if not routes.PlansZone() then
 		return
 	end
 	local QuestieDB = ns.ImportQuestieModule("QuestieDB")
@@ -469,7 +469,7 @@ function routes.AddChainNodes(nodes, start, log, chainStarts, yield)
 				and not helpers.IsTakenOrDone(questID, log)
 				and not (party and routes.PartyHasQuest(questID))
 				and not routes.IsInstanceQuest(questID)
-				and not helpers.IsTooLow(QuestieDB, questID, settings.localQuestLevel)
+				and not helpers.IsOutsideLevels(QuestieDB, questID, settings)
 			then
 				-- A party member's done quests aren't shared: their follow-up waits only on the quest before it
 				local done, turnIns = complete, turnInOf

@@ -1,20 +1,13 @@
 local _, ns = ...
 local L = ns.L
 local GetColor = ns.GetColor
-
--- Reset Window, a quarter wider than a standard button for the longer locales, right-aligned
-local RESET_WINDOW_WIDTH = 1.25
-local RESET_WINDOW_INDENT_WIDTH = ns.OPTIONS_ROW_WIDTH - RESET_WINDOW_WIDTH
+local Kit = ns.OptionsKit
 
 --[[
 	Only a quest log that's a window of its own (WoW Forever and Mists) is dragged and saves its spot, which
 	its reset puts back; Blizzard's on Classic Era and TBC has no spot to reset (ns.ResetWindow)
 ]]
 local RESET_WINDOW_KIND = ns.questLogIsOwnWindow and "MOVE" or "SCALE"
-
--- The order dropdowns take more of their row than other controls, so their longest choice shows whole
-local SORT_LABEL_WIDTH = 1.4
-local SORT_CONTROL_WIDTH = ns.OPTIONS_ROW_WIDTH - SORT_LABEL_WIDTH
 
 -- The Handy Clicks column fits the longest click across the locales (Spanish), with the rest for its description
 local HANDY_CLICK_LABEL_WIDTH = 1.5
@@ -42,8 +35,11 @@ local MARK_UNTRACKED_TEXT = L["MARK_UNTRACKED_DESCRIPTION"]:format(
 	TrackingMarkIcon(ns.TRACKING_MARKS.untracked, 3)
 )
 
--- While the Quest Log switch (atop the Wide Quest Log panel) is off, the settings on it and the panels under it are hidden
-local function Hidden()
+--[[
+	While the Quest Log switch (atop the Wide Quest Log panel) is off, its Handy Clicks hide. The panels under
+	it keep their settings in view, gray, under a line saying where the switch is
+]]
+local function QuestLogOff()
 	return not ns.db.profile.enableWideQuestLog
 end
 
@@ -59,14 +55,11 @@ end
 -- Rows
 --------------------------------------------------------------------------------
 
-local function SortSelect(key, descriptionKey, values, sorting, order)
-	return {
+-- An order dropdown, its caption beside it
+local function SortRow(key, nameKey, values, sorting, order)
+	return Kit.LabelRow(order, nil, L[nameKey], {
 		type = "select",
-		name = "",
-		desc = L[descriptionKey],
-		width = SORT_CONTROL_WIDTH,
-		order = order,
-		hidden = Hidden,
+		desc = L[nameKey .. "_DESCRIPTION"],
 		disabled = Inactive,
 		values = values,
 		sorting = sorting,
@@ -76,8 +69,9 @@ local function SortSelect(key, descriptionKey, values, sorting, order)
 		set = function(_, value)
 			ns.db.profile[key] = value
 			ns.RefreshQuestLog()
+			ns.RefreshSettings()
 		end,
-	}
+	})
 end
 
 -- A full-width toggle bound to a profile key, redrawing the list when changed
@@ -88,7 +82,6 @@ local function QuestLogToggle(key, nameKey, desc, order)
 		desc = desc or L[nameKey .. "_DESCRIPTION"],
 		width = "full",
 		order = order,
-		hidden = Hidden,
 		disabled = Inactive,
 		get = function()
 			return ns.db.profile[key]
@@ -96,13 +89,14 @@ local function QuestLogToggle(key, nameKey, desc, order)
 		set = function(_, value)
 			ns.db.profile[key] = value
 			ns.RefreshQuestLog()
+			ns.RefreshSettings()
 		end,
 	}
 end
 
--- The map's settings are hidden too on a client whose wide quest log has no map yet (Quest-Map.lua)
+-- The map's settings are hidden on a client whose wide quest log has no map yet (Quest-Map.lua)
 local function MapHidden()
-	return Hidden() or not ns.hasQuestMap
+	return not ns.hasQuestMap
 end
 
 local function QuestieLoaded()
@@ -128,6 +122,7 @@ local function ObjectiveAreasToggle(order)
 	toggle.set = function(_, value)
 		ns.db.profile.showObjectiveAreas = value
 		ns.questMap.RequestRefresh()
+		ns.RefreshSettings()
 	end
 	return toggle
 end
@@ -153,6 +148,7 @@ local function ZoneInfoToggle(order)
 		if ns.zoneInfo.Apply then
 			ns.zoneInfo.Apply()
 		end
+		ns.RefreshSettings()
 	end
 	return toggle
 end
@@ -164,11 +160,10 @@ end
 local function SortSubOption(key, nameKey, order)
 	local toggle = QuestLogToggle(key, nameKey, nil, 2)
 	toggle.name = function()
-		return Inactive() and L[nameKey] or ns.OptionsSubLabel(L[nameKey])
+		return Inactive() and L[nameKey] or Kit.SubLabel(L[nameKey])
 	end
-	toggle.width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH
-	toggle.hidden = nil
-	return ns.OptionsSubRow(order, Hidden, { [key] = toggle })
+	toggle.width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH - 0.2
+	return Kit.SubRow(order, nil, { toggle })
 end
 
 --[[
@@ -185,31 +180,32 @@ local function AddHandyClicks(args, order)
 
 	for index, key in ipairs(keys) do
 		if index > 1 then
-			args[key .. "_SPACE"] = ns.OptionsSpacer(order, Hidden)
+			args[key .. "_SPACE"] = Kit.Spacer(order, QuestLogOff)
 			order = order + 1
 		end
-		args[key] = ns.OptionsRowLabel(GetColor("INFO") .. L[key] .. "|r", order, HANDY_CLICK_LABEL_WIDTH, Hidden)
-		args[key .. "_DESCRIPTION"] =
-			ns.OptionsRowLabel(L[key .. "_DESCRIPTION"], order + 1, HANDY_CLICK_DESCRIPTION_WIDTH, Hidden)
-		order = order + 2
+		args[key] = Kit.Row(order, QuestLogOff, {
+			Kit.Label(GetColor("INFO") .. L[key] .. "|r", nil, HANDY_CLICK_LABEL_WIDTH),
+			Kit.Label(L[key .. "_DESCRIPTION"], nil, HANDY_CLICK_DESCRIPTION_WIDTH),
+		})
+		order = order + 1
 	end
 end
 
 --[[
-	On a sub-panel, the silver line in place of its settings while the Quest Log switch (on the Wide Quest
-	Log panel) is off, or waiting for its reload
+	On a sub-panel, the silver line over its settings while the Quest Log switch (on the Wide Quest Log panel)
+	is off, or waiting for its reload
 ]]
 local function NeedsWideQuestLogText()
-	if Hidden() then
+	if QuestLogOff() then
 		return L["NEEDS_WIDE_QUEST_LOG"]
 	end
 	return ns.QuestLogReloadPendingText()
 end
 
--- A sub-panel's opening: its description, then the line saying why its settings are hidden or grayed out
+-- A sub-panel's opening: its description, then the line saying why its settings are grayed out
 local function SubPanelIntro(args, descriptionKey)
-	args.descIntro = ns.OptionsDesc(L[descriptionKey], 1)
-	args.needsWideQuestLog = ns.OptionsStatusLine(NeedsWideQuestLogText, 2)
+	args.descIntro = Kit.Desc(L[descriptionKey], 1)
+	args.needsWideQuestLog = Kit.StatusLine(NeedsWideQuestLogText, 2)
 end
 
 --------------------------------------------------------------------------------
@@ -225,23 +221,15 @@ function ns.BuildQuestLogOptions()
 		type = "group",
 		name = L["TAB_WIDE_QUEST_LOG"],
 		args = {
-			descIntro = ns.OptionsDesc(L["TAB_QUEST_LOG_DESCRIPTION"], 1),
-			spaceIntro = ns.OptionsSpacer(2),
-			enableWideQuestLog = ns.OptionsFeatureToggle(
-				"enableWideQuestLog",
-				"ENABLE_WIDE_QUEST_LOG",
-				"FEATURE_QUEST_LOG_DESCRIPTION",
-				3
-			),
-			reloadPending = ns.OptionsStatusLine(ns.QuestLogReloadPendingText, 4),
-			spaceSubPanels = ns.OptionsSpacer(5),
-			descSubPanels = ns.OptionsDesc(L["QUEST_LOG_SUB_PANELS_DESCRIPTION"], 6),
-
-			spaceHandyClicks0 = ns.OptionsSpacer(50, Hidden),
-			headerHandyClicks = ns.OptionsHeader(L["HANDY_CLICKS_HEADER"], 51, Hidden),
-			spaceHandyClicks1 = ns.OptionsSpacer(52, Hidden),
+			descIntro = Kit.Desc(L["TAB_QUEST_LOG_DESCRIPTION"], 1),
+			spaceIntro = Kit.Spacer(2),
+			enableWideQuestLog = ns.FeatureSwitch("enableWideQuestLog", 3),
+			reloadPending = Kit.StatusLine(ns.QuestLogReloadPendingText, 4),
+			spaceSubPanels = Kit.Spacer(5),
+			descSubPanels = Kit.Desc(L["QUEST_LOG_SUB_PANELS_DESCRIPTION"], 6),
 		},
 	}
+	Kit.Section(options.args, "HandyClicks", 50, L["HANDY_CLICKS_HEADER"], nil, QuestLogOff)
 	AddHandyClicks(options.args, 53)
 	return options
 end
@@ -250,44 +238,26 @@ end
 -- Quest List Panel
 --------------------------------------------------------------------------------
 
+local SORT_ORDER = { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }
+
 function ns.BuildQuestListOptions()
 	local args = {
-		spaceSorting0 = ns.OptionsSpacer(5, Hidden),
-		headerSorting = ns.OptionsHeader(L["QUEST_LOG_SORTING_HEADER"], 6, Hidden),
-		spaceSorting1 = ns.OptionsSpacer(7, Hidden),
-		descSorting = ns.OptionsDesc(L["QUEST_LOG_SORTING_DESCRIPTION"], 8, Hidden),
-		spaceSorting2 = ns.OptionsSpacer(9, Hidden),
-
-		zoneSortLabel = ns.OptionsRowLabel(L["ZONE_ORDER"], 10, SORT_LABEL_WIDTH, Hidden, L["ZONE_ORDER_DESCRIPTION"]),
-		zoneSort = SortSelect("zoneSort", "ZONE_ORDER_DESCRIPTION", {
+		zoneSort = SortRow("zoneSort", "ZONE_ORDER", {
 			LEVEL_HIGHEST_FIRST = L["SORT_AVERAGE_LEVEL_HIGHEST_DEFAULT"],
 			LEVEL_LOWEST_FIRST = L["SORT_AVERAGE_LEVEL_LOWEST"],
 			ALPHABETICAL = L["SORT_ALPHABETICAL"],
-		}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 11),
+		}, SORT_ORDER, 11),
 		currentZoneFirstRow = SortSubOption("currentZoneFirst", "CURRENT_ZONE_FIRST", 12),
-		spaceQuestSort = ns.OptionsSpacer(13, Hidden),
-		questSortLabel = ns.OptionsRowLabel(
-			L["QUEST_ORDER"],
-			14,
-			SORT_LABEL_WIDTH,
-			Hidden,
-			L["QUEST_ORDER_DESCRIPTION"]
-		),
-		questSort = SortSelect("questSort", "QUEST_ORDER_DESCRIPTION", {
+		spaceQuestSort = Kit.Spacer(13),
+		questSort = SortRow("questSort", "QUEST_ORDER", {
 			LEVEL_HIGHEST_FIRST = L["SORT_LEVEL_HIGHEST_DEFAULT"],
 			LEVEL_LOWEST_FIRST = L["SORT_LEVEL_LOWEST"],
 			ALPHABETICAL = L["SORT_ALPHABETICAL"],
-		}, { "LEVEL_HIGHEST_FIRST", "LEVEL_LOWEST_FIRST", "ALPHABETICAL" }, 15),
+		}, SORT_ORDER, 15),
 		completedFirstRow = SortSubOption("completedFirst", "COMPLETED_FIRST", 16),
 
-		spaceQuestRows0 = ns.OptionsSpacer(20, Hidden),
-		headerQuestRows = ns.OptionsHeader(L["QUEST_LOG_ROWS_HEADER"], 21, Hidden),
-		spaceQuestRows1 = ns.OptionsSpacer(22, Hidden),
-		descQuestRows = ns.OptionsDesc(L["QUEST_LOG_ROWS_DESCRIPTION"], 23, Hidden),
-		spaceQuestRows2 = ns.OptionsSpacer(24, Hidden),
-
 		zoneGap = QuestLogToggle("zoneGap", "ZONE_GAP", nil, 25),
-		spaceShowQuestLevels = ns.OptionsSpacer(26, Hidden),
+		spaceShowQuestLevels = Kit.Spacer(26),
 		showQuestLevels = QuestLogToggle(
 			"showQuestLevels",
 			"SHOW_QUEST_LEVELS",
@@ -296,11 +266,13 @@ function ns.BuildQuestListOptions()
 				.. ns.QuestLevelLegend(),
 			27
 		),
-		spaceMarkUntracked = ns.OptionsSpacer(28, Hidden),
+		spaceMarkUntracked = Kit.Spacer(28),
 		markUntracked = QuestLogToggle("markUntracked", "MARK_UNTRACKED", MARK_UNTRACKED_TEXT, 29),
 	}
 	SubPanelIntro(args, "TAB_QUEST_LIST_DESCRIPTION")
-	ns.AddFontOptions(args, "list", 30, Hidden, Inactive)
+	Kit.Section(args, "Sorting", 5, L["QUEST_LOG_SORTING_HEADER"], L["QUEST_LOG_SORTING_DESCRIPTION"])
+	Kit.Section(args, "QuestRows", 20, L["QUEST_LOG_ROWS_HEADER"], L["QUEST_LOG_ROWS_DESCRIPTION"])
+	ns.AddFontOptions(args, "list", 30, nil, Inactive)
 	return { type = "group", name = L["TAB_QUEST_LIST"], args = args }
 end
 
@@ -311,7 +283,7 @@ end
 function ns.BuildQuestDetailsOptions()
 	local args = {}
 	SubPanelIntro(args, "TAB_QUEST_DETAILS_DESCRIPTION")
-	ns.AddFontOptions(args, "details", 10, Hidden, Inactive)
+	ns.AddFontOptions(args, "details", 10, nil, Inactive)
 	return { type = "group", name = L["TAB_QUEST_DETAILS"], args = args }
 end
 
@@ -319,78 +291,55 @@ end
 -- Window & Map Panel
 --------------------------------------------------------------------------------
 
+-- A scale slider, its caption beside it, applied by the quest log's ns[apply]; global, so every profile shares the window's size
+local function ScaleRow(key, nameKey, order, hidden, apply)
+	return Kit.LabelRow(order, hidden, L[nameKey], {
+		type = "range",
+		desc = L[nameKey .. "_DESCRIPTION"],
+		disabled = Inactive,
+		min = 0.7,
+		max = 1.3,
+		step = 0.05,
+		isPercent = true,
+		get = function()
+			return ns.db.global[key]
+		end,
+		set = function(_, value)
+			ns.db.global[key] = value
+			ns[apply]()
+			ns.RefreshSettings()
+		end,
+	})
+end
+
 function ns.BuildWindowMapOptions()
 	local args = {
-		spaceWindowMap = ns.OptionsSpacer(34, Hidden),
+		spaceWindowMap = Kit.Spacer(34),
 
 		closeInCombat = QuestLogToggle("closeInCombat", "CLOSE_IN_COMBAT", nil, 35),
-		spaceObjectiveAreas = ns.OptionsSpacer(36, MapHidden),
+		spaceObjectiveAreas = Kit.Spacer(36, MapHidden),
 		showObjectiveAreas = ObjectiveAreasToggle(37),
-		spaceZoneInfo = ns.OptionsSpacer(37.1, MapHidden),
+		spaceZoneInfo = Kit.Spacer(37.1, MapHidden),
 		showZoneInfo = ZoneInfoToggle(37.2),
 
-		spaceWindowScale = ns.OptionsSpacer(38, Hidden),
-		windowScaleLabel = ns.OptionsRowLabel(L["WINDOW_SCALE"], 39, nil, Hidden, L["WINDOW_SCALE_DESCRIPTION"]),
-		windowScale = {
-			type = "range",
-			name = "",
-			desc = L["WINDOW_SCALE_DESCRIPTION"],
-			width = ns.OPTIONS_CONTROL_WIDTH,
-			order = 40,
-			hidden = Hidden,
-			disabled = Inactive,
-			min = 0.7,
-			max = 1.3,
-			step = 0.05,
-			isPercent = true,
-			get = function()
-				return ns.db.global.scale
-			end,
-			set = function(_, value)
-				ns.db.global.scale = value
-				ns.ApplyWindowScale()
-			end,
-		},
-		spaceMapScale = ns.OptionsSpacer(41, MapHidden),
-		mapScaleLabel = ns.OptionsRowLabel(L["MAP_SCALE"], 42, nil, MapHidden, L["MAP_SCALE_DESCRIPTION"]),
-		mapScale = {
-			type = "range",
-			name = "",
-			desc = L["MAP_SCALE_DESCRIPTION"],
-			width = ns.OPTIONS_CONTROL_WIDTH,
-			order = 43,
-			hidden = MapHidden,
-			disabled = Inactive,
-			min = 0.7,
-			max = 1.3,
-			step = 0.05,
-			isPercent = true,
-			get = function()
-				return ns.db.global.mapScale
-			end,
-			set = function(_, value)
-				ns.db.global.mapScale = value
-				ns.ApplyMapScale()
-			end,
-		},
-		spaceResetWindow = ns.OptionsSpacer(44, Hidden),
-		resetWindowIndent = ns.OptionsRowLabel(" ", 45, RESET_WINDOW_INDENT_WIDTH, Hidden),
-		resetWindow = {
-			type = "execute",
-			name = L["RESET_WINDOW_BUTTON"],
-			desc = L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_DESCRIPTION"],
-			width = RESET_WINDOW_WIDTH,
-			order = 46,
-			hidden = Hidden,
-			disabled = Inactive,
-			confirm = true,
-			confirmText = L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_CONFIRM"],
-			func = function()
+		spaceWindowScale = Kit.Spacer(38),
+		windowScale = ScaleRow("scale", "WINDOW_SCALE", 39, nil, "ApplyWindowScale"),
+		spaceMapScale = Kit.Spacer(41, MapHidden),
+		mapScale = ScaleRow("mapScale", "MAP_SCALE", 42, MapHidden, "ApplyMapScale"),
+		spaceResetWindow = Kit.Spacer(44),
+		resetWindow = Kit.ResetRow(
+			45,
+			nil,
+			L["RESET_WINDOW"],
+			L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_DESCRIPTION"],
+			Inactive,
+			function()
 				ns.ResetWindow()
 			end,
-		},
+			L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_CONFIRM"]
+		),
 	}
 	SubPanelIntro(args, "QUEST_LOG_WINDOW_MAP_DESCRIPTION")
-	ns.AddFontOptions(args, "window", 50, Hidden, Inactive)
+	ns.AddFontOptions(args, "window", 50, nil, Inactive)
 	return { type = "group", name = L["TAB_WINDOW_MAP"], args = args }
 end

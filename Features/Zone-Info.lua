@@ -237,7 +237,7 @@ ns.AddWideQuestLogPart(function()
 		row.Highlight:SetVertexColor(r, g, b)
 	end
 
-	local Row_OnEnter, Row_OnLeave, Row_OnClick -- Below, with the tooltips
+	local Row_OnEnter, Row_OnLeave, Row_OnClick -- Below, with the hover menus
 	local DrawQuests -- Below, with the lists
 
 	local function NewRow(column)
@@ -396,19 +396,15 @@ ns.AddWideQuestLogPart(function()
 	end
 
 	--------------------------------------------------------------------------------
-	-- Tooltips
+	-- Hover menus
 	--------------------------------------------------------------------------------
 
-	local function AddClickHints(tooltip, hints)
-		if ns.routes and ns.routes.AddClickHints then
-			ns.routes.AddClickHints(tooltip, hints)
-		end
-	end
-
-	-- A line that wraps at the tooltip's width; GetColorRGB's three values only all pass as the last argument
-	local function AddWrappedLine(text, colorKey)
-		local r, g, b = ns.GetColorRGB(colorKey)
-		GameTooltip:AddLine(text, r, g, b, true)
+	--[[
+		A row's hover menu, on the world map menu's plate (Routes-Map-Menu.lua), so its clicks are rows a
+		controller's cursor reaches too. Routes draws it, so without Routes the rows show none
+	]]
+	local function MenuRows()
+		return ns.routes and ns.routes.MapMenuRows and ns.routes.MapMenuRows()
 	end
 
 	-- Where the giver stands: "47,58 in Mulgore", or the zone alone when Questie has no spot on the zone's map
@@ -420,85 +416,124 @@ ns.AddWideQuestLogPart(function()
 		return quest.giverZone
 	end
 
-	--[[
-		The quest as the list names it, who gives it, where they stand, then the click, a blank line between
-		each; the row itself shows who can share it
-	]]
-	local function ShowQuestTooltip(row)
-		local quest = row.quest
-		GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
+	local function QuestTitle(quest)
 		local tagID, isElite = ns.GetQuestTagByID(quest.questID)
-		GameTooltip:AddLine(
-			ns.QuestListTitle(quest.level, quest.name, ns.QuestSuffix(tagID, isElite)),
-			ns.GetColorRGB("TITLE")
-		)
+		return ns.QuestListTitle(quest.level, quest.name, ns.QuestSuffix(tagID, isElite))
+	end
+
+	-- A quest's row puts its giver on the route or takes it off
+	local function ToggleWanted(row)
+		local questID = row.quest.questID
+		data.SetWanted(questID, not data.IsWanted(questID))
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		ShowRouteMark(row)
+	end
+
+	-- An item's row puts its link in the chat box, as Shift-Click does
+	local function LinkItem(itemID)
+		local _, link = data.GetItemInfo(itemID)
+		local insert = ChatFrameUtil and ChatFrameUtil.InsertLink or ChatEdit_InsertLink
+		if link and insert then
+			insert(link)
+		end
+	end
+
+	--[[
+		The quest as the list names it, who gives it and where they stand, then the click that puts it on the
+		route or takes it off; the row itself shows who can share it
+	]]
+	local function QuestMenu(row, quest)
+		if row.quest ~= quest then
+			return nil -- The row shows another quest now
+		end
+		local rows = MenuRows()
+		rows:AddLine(QuestTitle(quest), ns.GetColorRGB("TITLE"))
 		if quest.giver then
-			GameTooltip:AddLine(" ")
-			AddWrappedLine(L["ZONE_INFO_GIVER"]:format(quest.giver), "TEXT")
+			rows:AddLine(L["ZONE_INFO_GIVER"]:format(quest.giver), ns.GetColorRGB("TEXT"))
 		end
 		local place = PlaceLine(quest)
 		if place then
-			GameTooltip:AddLine(" ")
-			AddWrappedLine(place, "TEXT")
+			rows:AddLine(place, ns.GetColorRGB("TEXT"))
 		end
-		if CanRoute() then -- The click hints put their own blank line above
+		if CanRoute() then
 			local wanted = data.IsWanted(quest.questID)
-			AddClickHints(GameTooltip, {
-				{ L["ROUTES_CLICK"], wanted and L["ZONE_INFO_UNTRACK"] or L["ZONE_INFO_TRACK"] },
+			rows:AddHints({
+				{
+					L["ROUTES_CLICK"],
+					L[wanted and "ZONE_INFO_UNTRACK" or "ZONE_INFO_TRACK"],
+					function()
+						if row.quest == quest then
+							ToggleWanted(row)
+						end
+					end,
+				},
 			})
 		end
-		GameTooltip:Show()
+		return rows.entries
 	end
 
-	-- A heading of the add-on's own under the game's item lines, as other add-ons mark theirs: "PWQL // Needed for ..."
-	local function AddOnHeading(text)
-		GameTooltip:AddLine(
-			ns.GetColor("INFO")
-				.. L["ADDON_SHORT_NAME"]
-				.. "|r "
-				.. ns.GetColor("SEPARATOR")
-				.. "//|r "
-				.. ns.GetColor("TEXT")
-				.. text
-				.. "|r",
-			nil,
-			nil,
-			nil,
-			true
-		)
-	end
-
-	-- The item, then the quests here that want it, listed under the heading as the list names them: "[6] Name"
-	local function ShowItemTooltip(row)
-		local item = row.item
-		GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
-		GameTooltip:SetItemByID(item.itemID)
-		GameTooltip:AddLine(" ")
-		AddOnHeading(L["ZONE_INFO_NEEDED_FOR"])
-		for _, quest in ipairs(item.quests) do
-			local tagID, isElite = ns.GetQuestTagByID(quest.questID)
-			local title = ns.QuestListTitle(quest.level, quest.name, ns.QuestSuffix(tagID, isElite))
-			GameTooltip:AddLine(" " .. title, ns.GetColorRGB("TEXT"))
+	--[[
+		The item with its icon, in its quality's color, and the count; hovering it shows the game's item
+		tooltip. Then the quests here that want it, as the list names them, and the click that links it
+	]]
+	local function ItemMenu(row, item)
+		if row.item ~= item then
+			return nil
 		end
-		AddClickHints(GameTooltip, { { L["ZONE_INFO_SHIFT_CLICK"], L["ZONE_INFO_LINK_ITEM"] } })
-		GameTooltip:Show()
+		local rows = MenuRows()
+		local have = data.ItemCount(item.itemID)
+		local name = data.GetItemInfo(item.itemID) or item.name or L["ZONE_INFO_ITEM_LOADING"]:format(item.itemID)
+		local red, green, blue = ItemColor(item.itemID)
+		rows:Add({
+			kind = "status",
+			left = "|T" .. (data.ItemIcon(item.itemID) or 134400) .. ":0|t " .. name,
+			leftColor = { red, green, blue },
+			right = ("%d / %d"):format(have, item.need),
+			rightColor = have >= item.need and "ON" or "TEXT",
+			itemID = item.itemID,
+		})
+		rows:AddSection(L["ZONE_INFO_NEEDED_FOR"])
+		for _, quest in ipairs(item.quests) do
+			rows:AddLine(QuestTitle(quest), ns.GetColorRGB("TEXT"))
+		end
+		rows:AddHints({
+			{
+				L["ZONE_INFO_SHIFT_CLICK"],
+				L["ZONE_INFO_LINK_ITEM"],
+				function()
+					LinkItem(item.itemID)
+				end,
+			},
+		})
+		return rows.entries
+	end
+
+	local function OpenMenu(row)
+		if not MenuRows() then
+			return
+		end
+		if row.kind == "quest" then
+			local quest = row.quest
+			ns.routes.OpenMapMenu(row, quest, function()
+				return QuestMenu(row, quest)
+			end)
+		elseif row.kind == "item" then
+			local item = row.item
+			ns.routes.OpenMapMenu(row, item, function()
+				return ItemMenu(row, item)
+			end)
+		end
 	end
 
 	function Row_OnEnter(row)
 		ColorRow(row, true)
-		if row.kind == "quest" then
-			ShowQuestTooltip(row)
-		elseif row.kind == "item" then
-			ShowItemTooltip(row)
-		end
+		OpenMenu(row)
 	end
 
+	-- The menu closes itself once the mouse has left both the row and it (Routes-Map-Menu.lua)
 	function Row_OnLeave(row)
 		if row.kind then
 			ColorRow(row, false)
-		end
-		if GameTooltip:IsOwned(row) then
-			GameTooltip:Hide()
 		end
 	end
 
@@ -515,17 +550,14 @@ ns.AddWideQuestLogPart(function()
 			if not CanRoute() then
 				return
 			end
-			local questID = row.quest.questID
-			data.SetWanted(questID, not data.IsWanted(questID))
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			ShowRouteMark(row)
-			ShowQuestTooltip(row)
-		elseif row.kind == "item" and IsModifiedClick("CHATLINK") then
-			local _, link = data.GetItemInfo(row.item.itemID)
-			local insert = ChatFrameUtil and ChatFrameUtil.InsertLink or ChatEdit_InsertLink
-			if link and insert then
-				insert(link)
+			ToggleWanted(row)
+			-- The menu says the other click now
+			if ns.routes then
+				ns.routes.CloseMapMenu()
 			end
+			OpenMenu(row)
+		elseif row.kind == "item" and IsModifiedClick("CHATLINK") then
+			LinkItem(row.item.itemID)
 		end
 	end
 

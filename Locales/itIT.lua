@@ -299,49 +299,82 @@ L["LINE_SPEED_NORMAL"] = "Normale"
 L["LINE_SPEED_FAST"] = "Veloce"
 L["LINE_OPACITY"] = "Opacità della linea"
 L["LINE_OPACITY_DESCRIPTION"] = "Quanto sono pieni i puntini; più è bassa, più la mappa traspare."
-L["ROUTES_PLANNING_HEADER"] = "Pianificazione"
-L["ROUTES_PLANNING_DESCRIPTION"] = "Cosa pianifica il percorso oltre alle tue missioni."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "Percorsi di missioni predittivi"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"Pianifica le missioni che puoi completare in questa zona ovunque si trovi chi le assegna, non solo vicino: i loro obiettivi, la consegna e le missioni che le seguono. Il percorso ti fa poi accettare tutto ciò che serve per una parte della zona prima che tu ci vada, così ci vai una volta sola. Una catena si ferma alla prima missione che porta in un'altra zona. Gli obiettivi di una missione non ancora accettata hanno un indicatore grigio. Anche la consegna di ogni missione appare prima che sia completata, segnata dal punto interrogativo grigio di Questie."
--- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+-- TRANSLATORS: a popup with an Okay button each time Plan Ahead (PLAN_AHEAD_ZONE) is chosen
 L["PREDICTIVE_ROUTES_POPUP"] =
-	"Attenzione: Percorsi di missioni predittivi pianifica in anticipo l'intera zona, quindi la mappa può sembrare un po' folle. Ma c'è del metodo in questa follia! Segui la freccia delle missioni per correre di meno e guadagnare più esperienza. (="
+	"Attenzione: Pianifica in anticipo organizza l'intera zona in anticipo, quindi la mappa può sembrare un po' folle. Ma c'è del metodo in questa follia! Segui la freccia delle missioni per correre di meno e guadagnare più esperienza. (="
 -- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
 L["SHOW_FLIGHT_PATHS"] = "Mostra i percorsi di volo non scoperti come obiettivi"
 L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
 	"Aggiunge al percorso ogni maestro di volo della tua zona di cui non hai ancora il percorso di volo, segnato con l'icona del maestro di volo. Su un personaggio che aveva già dei percorsi di volo, apri una volta una mappa di volo qualsiasi perché il percorso sappia quali hai; fino ad allora non ne viene aggiunto nessuno."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "Mostra missioni disponibili vicine come obiettivi"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"Mette sul percorso le missioni che puoi accettare, quando Questie le mostra come disponibili e un PNG o un oggetto che le avvia è entro %s, segnate dal punto esclamativo di Questie. Restano fuori le missioni avviate da un oggetto bottino e quelle di spedizione e incursione."
-L["LOCAL_QUESTS_HEADER"] = "Missioni disponibili vicine"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"Verso quali missioni vicine ti guida la freccia delle missioni. Una che salta può comunque comparire sulla mappa del mondo, senza linea del percorso fino a lì."
 L["LOCAL_QUEST_RANGE"] = "Raggio di ricerca"
 L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"A quanti metri da te può trovarsi chi dà la missione per contare ancora. Sotto i 400, un datore che superi tra due calcoli del percorso può sfuggire."
 L["LOCAL_ESCORT_QUESTS"] = "Missioni di scorta"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"Missioni in cui proteggi un PNG lungo la strada; richiedono tempo e spesso un gruppo. Il loro indicatore sulla mappa è verde."
-L["LOCAL_OTHER_ZONE_QUESTS"] = "Obiettivi in un'altra zona"
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Missioni con obiettivi in un'altra zona"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"Missioni con un obiettivo, o la consegna, solo fuori dalla tua zona, come una che ti manda al villaggio successivo."
 L["LOCAL_QUEST_LEVEL"] = "Livello minimo delle missioni"
 L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	"Le missioni sotto questo colore di difficoltà restano fuori. Impostazione di Questie tiene le missioni che Questie mostra sulla sua mappa."
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "Nel percorso"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "Solo mappa"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "Escluse"
-L["LOCAL_LEVEL_QUESTIE"] = "Impostazione di Questie"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "Verdi e superiori"
-L["LOCAL_LEVEL_YELLOW"] = "Gialle e superiori"
+	"Le missioni più di questi livelli sotto di te vengono escluse. Nessun limite include anche quelle grigie, quante ne mostra Questie."
+L["LOCAL_HIGHEST_QUEST_LEVEL"] = "Livello massimo delle missioni"
+L["LOCAL_HIGHEST_QUEST_LEVEL_DESCRIPTION"] =
+	"Le missioni più di questi livelli sopra di te appaiono in grigio sulla mappa, con il livello a cui entrano nel percorso, così il percorso non ti manda a una ancora troppo difficile."
+-- TRANSLATORS: %d is a number of levels, 3, 6 or 9, above or below the player's own
+L["LOCAL_LEVELS_ABOVE"] = "%d livelli sopra di te"
+-- TRANSLATORS: Highest Quest Level's choice that leaves off every quest above the player's own level
+L["LOCAL_LEVELS_YOUR_LEVEL"] = "Il tuo livello"
+L["LOCAL_LEVELS_BELOW"] = "%d livelli sotto di te"
+-- TRANSLATORS: Lowest Quest Level's choice that leaves no quest off for being too low, gray ones included
+L["LOCAL_LEVELS_NO_LIMIT"] = "Nessun limite"
+-- TRANSLATORS: a section of the Quest Route panel: which quests the route guides you to pick up
+L["WHAT_TO_ROUTE_HEADER"] = "Cosa mettere nel percorso"
+L["WHAT_TO_ROUTE_DESCRIPTION"] =
+	"Ogni missione che accetti è sempre nel percorso. Queste impostazioni decidono quali missioni il percorso ti guida ad accettare lungo la strada, secondo come ti piace fare missioni."
+L["PLAN_AHEAD_HEADER"] = "Pianifica in anticipo"
+L["PLAN_AHEAD_DESCRIPTION"] = "Quanto avanti il percorso cerca missioni da accettare."
+-- TRANSLATORS: Plan Ahead's three choices are also switches on the Quest Arrow's menu
+L["PLAN_AHEAD_YOURS"] = "Solo le tue missioni"
+L["PLAN_AHEAD_YOURS_DESCRIPTION"] = "Solo le missioni del tuo registro, come il vecchio add-on QuestHelper."
+L["PLAN_AHEAD_NEARBY"] = "Le tue missioni e quelle vicine da accettare"
+L["PLAN_AHEAD_NEARBY_DESCRIPTION"] = "Chi dà missioni vicino a te, come punti di passaggio dove accettarle."
+-- TRANSLATORS: the same words as PLAN_AHEAD_HEADER: the choice that plans the whole zone ahead
+L["PLAN_AHEAD_ZONE"] = "Pianifica in anticipo"
+L["PLAN_AHEAD_ZONE_DESCRIPTION"] =
+	"Accettazioni, obiettivi e consegne in tutta la zona, con le missioni successive, così accetti tutto per una parte della zona prima di andarci. Gli obiettivi delle missioni che non hai ancora accettato hanno un indicatore grigio. Pianificare più avanti richiede più tempo."
+L["QUEST_DIFFICULTY_HEADER"] = "Difficoltà delle missioni"
+L["QUEST_DIFFICULTY_DESCRIPTION"] =
+	"I livelli delle missioni che il percorso ti guida ad accettare. Le missioni nel tuo registro restano nel percorso, qualunque sia il loro livello."
+L["QUEST_TYPES_HEADER"] = "Tipi di missione da accettare lungo il percorso"
+L["QUEST_TYPES_DESCRIPTION"] =
+	"I tipi di missione che il percorso ti guida ad accettare. Un tipo non selezionato appare comunque sulla mappa, in grigio con il motivo, ma il percorso non ti porta ad accettarla."
+-- TRANSLATORS: Era and Forever call quests with tag 1 Elite; TBC and later call them Group (PICK_UP_GROUP)
+L["PICK_UP_ELITE"] = "Missioni élite"
+L["PICK_UP_ELITE_DESCRIPTION"] =
+	"Una missione élite del tuo livello si fa da soli; una di 4 livelli sopra potrebbe richiedere un amico o due."
+L["PICK_UP_GROUP"] = "Missioni di gruppo"
+L["PICK_UP_GROUP_DESCRIPTION"] =
+	"Missioni pensate per un gruppo. Una del tuo livello spesso si fa da soli; una di qualche livello sopra potrebbe richiedere un amico o due."
+L["PICK_UP_PVP"] = "Missioni PvP"
+L["PICK_UP_PVP_DESCRIPTION"] = "Missioni in cui combatti altri giocatori, o che ti mandano in un campo di battaglia."
+L["PICK_UP_DUNGEON"] = "Missioni da spedizione"
+-- TRANSLATORS: PICK_UP_DUNGEON on games with heroic dungeons (TBC and later)
+L["PICK_UP_DUNGEON_HEROIC"] = "Missioni da spedizione ed eroiche"
+L["PICK_UP_RAID"] = "Missioni da incursione"
+L["PICK_UP_INSTANCE_DESCRIPTION"] = "Ti guida solo dove accettarla; gli obiettivi sono all'interno."
+L["ROUTE_FOCUS_HEADER"] = "Priorità del percorso"
+L["ROUTE_FOCUS_DESCRIPTION"] = "Come il percorso sceglie e ordina ciò che accetti."
+L["ROUTE_FOCUS_FASTEST"] = "Completamento più rapido"
+L["ROUTE_FOCUS_FASTEST_DESCRIPTION"] =
+	"Tutte le missioni che le tue impostazioni consentono, camminando il meno possibile."
+L["ROUTE_FOCUS_EASIEST"] = "Prima le più facili"
+L["ROUTE_FOCUS_EASIEST_DESCRIPTION"] =
+	"Le missioni più facili prima di quelle più difficili, quando costa poca strada in più."
+-- TRANSLATORS: Experimental: the option is new and may change
+L["ROUTE_FOCUS_XP"] = "Più esperienza all'ora (sperimentale)"
+L["ROUTE_FOCUS_XP_DESCRIPTION"] =
+	"Salta le missioni che rendono troppo poco per la strada fino a loro. È una novità, quindi i commenti sono benvenuti."
 L["ROUTES_PARTY_HEADER"] = "Gruppo"
 L["ROUTES_PARTY_DESCRIPTION"] = "Cosa aggiunge il tuo gruppo al percorso."
 L["PARTY_QUESTS"] = "Includi le missioni dei membri del gruppo"
@@ -559,6 +592,12 @@ L["ROUTES_OFF_ROUTE_DUNGEON"] = "Missione da spedizione, fuori dal percorso"
 L["ROUTES_OFF_ROUTE_RAID"] = "Missione da incursione, fuori dal percorso"
 L["ROUTES_OFF_ROUTE_LOG_FULL"] = "Registro missioni pieno, fuori dal percorso"
 L["ROUTES_OFF_ROUTE_FAR"] = "Oltre il raggio di ricerca, fuori dal percorso"
+L["ROUTES_OFF_ROUTE_ELITE"] = "Missione élite, fuori dal percorso"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Missione di gruppo, fuori dal percorso"
+L["ROUTES_OFF_ROUTE_PVP"] = "Missione PvP, fuori dal percorso"
+-- TRANSLATORS: %d is the player level at which the quest goes on the route
+L["ROUTES_OFF_ROUTE_LEVEL"] = "Nel percorso al livello %d"
+L["ROUTES_OFF_ROUTE_XP"] = "Poca esperienza per la strada, fuori dal percorso"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "Dopo aver accettato %s"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -605,6 +644,7 @@ L["ROUTES_MENU_SECTION_CURRENT"] = "Obiettivo attuale"
 L["ROUTES_MENU_IGNORE"] = "Ignora"
 L["ROUTES_MENU_SECTION_ROUTE"] = "Percorso"
 L["ROUTES_MENU_SECTION_SHOW"] = "Mostra"
+L["ROUTES_MENU_SECTION_ALSO_ROUTE"] = "Anche nel percorso"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "Successivo"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
@@ -620,9 +660,6 @@ L["ROUTES_MENU_FLIGHT_PATH"] = "Percorso di volo di %s"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Volo per %s"
 L["ROUTES_MENU_EXIT"] = "Strada per %s"
--- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
-L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Percorsi di missioni predittivi"
-L["ROUTES_MENU_SHOWN_LOCAL"] = "Missioni disponibili vicine"
 L["ROUTES_MENU_SHOWN_FLIGHTS"] = "Percorsi di volo"
 L["ROUTES_MENU_SHOWN_PARTY"] = "Obiettivi del gruppo"
 L["ROUTES_MENU_ON"] = "Attivo"

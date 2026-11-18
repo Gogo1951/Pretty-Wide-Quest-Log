@@ -1,8 +1,6 @@
 local ADDON_NAME, ns = ...
 local L = ns.L
 
-local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
-
 --------------------------------------------------------------------------------
 -- Version
 --------------------------------------------------------------------------------
@@ -221,9 +219,7 @@ function ns:ApplyProfile()
 	if ns.dungeonQuests then
 		ns.dungeonQuests.Watch()
 	end
-	for _, registryName in pairs(ns.OPTIONS_REGISTRY) do
-		AceConfigRegistry:NotifyChange(registryName)
-	end
+	ns.RefreshSettings()
 end
 
 --[[

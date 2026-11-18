@@ -107,16 +107,6 @@ ns.OPTIONS_REGISTRY = {
 }
 
 --------------------------------------------------------------------------------
--- Options Layout Grid
---------------------------------------------------------------------------------
-
-ns.OPTIONS_ROW_WIDTH = 3.4
-ns.OPTIONS_LABEL_WIDTH = 2.1
-ns.OPTIONS_CONTROL_WIDTH = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_LABEL_WIDTH
-ns.OPTIONS_REMOVE_ICON_WIDTH = 0.25 -- the item lists' remove column, sized to its icon
-ns.OPTIONS_SUB_INDENT_WIDTH = 0.115 -- the blank cell a sub-option row leads with
-
---------------------------------------------------------------------------------
 -- Layout
 --------------------------------------------------------------------------------
 

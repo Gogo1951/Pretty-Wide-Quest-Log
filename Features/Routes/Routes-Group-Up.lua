@@ -11,6 +11,12 @@ local _, ns = ...
 	It lasts until everyone here is within TOGETHER yards, so drifting a little apart doesn't start it again,
 	or until the player changes zone. There's no skipping it, which nothing could undo: the setting turns it
 	off. Only in a party: in a raid group the arrow hides by default and there's no one place to meet
+
+	Dead, the player has no joining up: the arrow runs them back to their corpse. While a member is dead,
+	the rest join up at where their body lies instead, the middle of the bodies if more than one, by the same
+	APART and TOGETHER yards; a member's ghost is at the graveyard, so it's never where to head. The game says
+	where only the player's own corpse is, so a member's is where they were when they died, or last seen alive
+	if they'd released before it could be seen, and nothing if they were a ghost all along
 ]]
 
 local routes = ns.routes
@@ -30,6 +36,8 @@ local TOGETHER = 40 -- Yards from every member within which the group counts as 
 local joining = false -- Anyone went off the minimap, and not everyone is together since
 local myZone -- The zone of the last check, so a new one starts afresh
 local lastSeen = {} -- Each member's last known place, by unit name, kept while the client won't say
+local corpses = {} -- Where each dead member's body lies, by unit name, kept until they're alive again
+local meetingCorpse = false -- Whether the last spot to head for was a dead member's body
 
 --[[
 	Where the arrow and the map's marker lead while joining up: { x, y, instance } in world yards, one table
@@ -45,24 +53,71 @@ local function IsWanted()
 end
 
 --[[
-	The places of the online members in the player's zone, on the player's continent: each one's last known
-	place where WoW Forever keeps their map, position or connection secret. Also whether any was secret
+	Whether an online member is dead, and whether as a ghost: their body lies where they died, a ghost is at
+	the graveyard. Nothing where WoW Forever keeps it secret
+]]
+local function DeathOf(unit)
+	local dead, ghost = UnitIsDeadOrGhost(unit), UnitIsGhost(unit)
+	if not ns.IsReadable(dead, ghost) then
+		return nil
+	end
+	return dead and true or false, ghost and true or false
+end
+
+--[[
+	Alive, a member has no body. Once a ghost, theirs is kept as it was; one not seen dead first, as one who
+	released within a check, lies where they were last seen alive. Dead and not released, where they stand is
+	their body, set with their place (Others)
+]]
+local function NoteCorpse(name, dead, ghost)
+	if not dead then
+		corpses[name] = nil
+	elseif ghost and not corpses[name] then
+		local last = lastSeen[name]
+		corpses[name] = last and { x = last.x, y = last.y, instance = last.instance, zone = last.zone } or nil
+	end
+end
+
+--[[
+	The places of the online members in the player's zone, on the player's continent, alive: each one's last
+	known place where WoW Forever keeps their map, position or connection secret. Then the bodies of the dead
+	ones that lie here, and whether any was secret
 ]]
 local function Others(zone, instance)
-	local others, seen, anySecret = {}, {}, false
+	local others, bodies, seen, anySecret = {}, {}, {}, false
 	for _, member in ipairs(routes.PartyMembers(true)) do
-		seen[member.name] = true
+		local name = member.name
+		seen[name] = true
 		local secret = member.unknown or not ns.IsReadable(C_Map.GetBestMapForUnit(member.unit))
 		anySecret = anySecret or secret
-		local here = not member.offline and routes.UnitZone(member.unit) == zone
-		if here then
-			local x, y, memberInstance = routes.UnitWorldPosition(member.unit)
-			if x then
-				lastSeen[member.name] = { x = x, y = y, instance = memberInstance, zone = zone }
+		local dead, ghost
+		if not member.offline then
+			dead, ghost = DeathOf(member.unit)
+			if dead == nil then
+				-- Secret: as dead as last seen, and a body kept as it was, since they may have released
+				dead = corpses[name] ~= nil
+				ghost = dead
+			else
+				NoteCorpse(name, dead, ghost)
 			end
 		end
-		if here or secret then
-			local last = lastSeen[member.name]
+		local here = not member.offline and routes.UnitZone(member.unit) == zone
+		if here and not ghost then
+			local x, y, memberInstance = routes.UnitWorldPosition(member.unit)
+			if x then
+				lastSeen[name] = { x = x, y = y, instance = memberInstance, zone = zone }
+				if dead then
+					corpses[name] = lastSeen[name] -- Not released: where they stand is their body
+				end
+			end
+		end
+		if dead then
+			local body = corpses[name]
+			if body and body.zone == zone and body.instance == instance then
+				bodies[#bodies + 1] = body
+			end
+		elseif here or secret then
+			local last = lastSeen[name]
 			if last and last.zone == zone and last.instance == instance then
 				others[#others + 1] = last
 			end
@@ -73,7 +128,12 @@ local function Others(zone, instance)
 			lastSeen[name] = nil -- Gone from the party
 		end
 	end
-	return others, anySecret
+	for name in pairs(corpses) do
+		if not seen[name] then
+			corpses[name] = nil
+		end
+	end
+	return others, bodies, anySecret
 end
 
 --[[
@@ -100,8 +160,8 @@ end
 	meeting is on the way to it. Nothing while the group is together
 ]]
 local function Target()
-	if not IsWanted() then
-		joining = false
+	if not IsWanted() or UnitIsDeadOrGhost("player") then
+		joining, meetingCorpse = false, false -- Dead, the arrow runs the player back to their corpse
 		return nil
 	end
 	local zone = routes.PlayerZone()
@@ -113,7 +173,23 @@ local function Target()
 	if not (x and zone and hereBeDragons) then
 		return nil
 	end
-	local others, anySecret = Others(zone, instance)
+	local others, bodies, anySecret = Others(zone, instance)
+	meetingCorpse = #bodies > 0
+	if meetingCorpse then
+		-- A member is dead: join up at where the body lies, the middle of the bodies if more than one
+		local sumX, sumY = 0, 0
+		for _, body in ipairs(bodies) do
+			sumX, sumY = sumX + body.x, sumY + body.y
+		end
+		place.x, place.y, place.instance = sumX / #bodies, sumY / #bodies, instance
+		local away = hereBeDragons:GetWorldDistance(instance, x, y, place.x, place.y) or 0
+		if away <= TOGETHER then
+			joining = false
+		elseif away > APART then
+			joining = true
+		end
+		return joining and place or nil
+	end
 	if #others == 0 and anySecret then
 		-- Nobody can be placed while it's secret, so joining up and its spot stay as they were
 		return joining and routes.groupUpTarget or nil
@@ -157,7 +233,11 @@ end
 
 -- For the Routes Context report: the state alone, no names or places
 function routes.GroupUpState()
-	return joining and "joining up" or "together"
+	if UnitIsDeadOrGhost("player") then
+		return "off while dead"
+	end
+	local state = joining and "joining up" or "together"
+	return meetingCorpse and state .. " at a member's corpse" or state
 end
 
 local checker = CreateFrame("Frame")

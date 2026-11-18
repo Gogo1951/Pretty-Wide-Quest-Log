@@ -1,5 +1,6 @@
 local _, ns = ...
 local L = ns.L
+local Kit = ns.OptionsKit
 
 --[[
 	The Quest Arrow panel of the Options Interface, which Options.lua registers after Quest Route, in
@@ -41,10 +42,9 @@ end
 
 -- A switch that's a sub-option of the switch above it, on its own indented row in silver
 local function SubToggle(key, nameKey, order, hidden)
-	local toggle = ns.OptionsRoutesToggle(key, nameKey, nameKey .. "_DESCRIPTION", 2)
-	toggle.name = ns.OptionsSubLabel(L[nameKey])
-	toggle.width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH
-	return ns.OptionsSubRow(order, hidden, { [key] = toggle })
+	local toggle = ns.OptionsRoutesToggle(key, nameKey, nameKey .. "_DESCRIPTION")
+	toggle.hidden = nil
+	return Kit.SubToggleRow(order, hidden, toggle)
 end
 
 --------------------------------------------------------------------------------
@@ -59,78 +59,46 @@ end
 local function IgnoredPrintExample()
 	local quest = ns.SampleQuests()[1]
 	local label = L["ROUTES_MENU_TURN_IN"]:format(quest.title)
-	return ns.RenderSample("PRINT", ns.routes.BuildIgnoredMessage(label, quest.questID, quest.title))
-end
-
--- The ignore Example, for the whole arrow rather than any one switch, so not indented under one
-local function IgnoredExample(order)
-	return {
-		type = "description",
-		name = function()
-			return ns.NoSampleQuests() and "" or IgnoredPrintExample()
-		end,
-		fontSize = "medium",
-		order = order,
-		hidden = function()
-			return ArrowHidden() or ns.NoSampleQuests()
-		end,
-	}
+	return ns.PrintedExample(ns.routes.BuildIgnoredMessage(label, quest.questID, quest.title))
 end
 
 function ns.BuildQuestArrowOptions()
-	return {
+	local options = {
 		type = "group",
 		name = L["TAB_QUEST_ARROW"],
 		args = {
-			descIntro = ns.OptionsDesc(L["TAB_QUEST_ARROW_DESCRIPTION"], 1),
-			spaceIntro = ns.OptionsSpacer(2),
-			enableQuestArrow = ns.OptionsRoutesToggle(
-				"showArrow",
-				"ENABLE_QUEST_ARROW",
-				"FEATURE_QUEST_ARROW_DESCRIPTION",
-				3
+			descIntro = Kit.Desc(L["TAB_QUEST_ARROW_DESCRIPTION"], 1),
+			spaceIntro = Kit.Spacer(2),
+			enableQuestArrow = ns.FeatureSwitch("routes.showArrow", 3),
+			needsQuestie = ns.RoutesNeedQuestieLine(3.1),
+			-- Ignoring comes from the arrow as a whole, so its Example closes the arrow's own switch
+			ignoredExample = ns.OptionsExample(3.2, ArrowHidden, IgnoredPrintExample),
+
+			arrowScale = ns.OptionsRoutesLabelRow(
+				13,
+				ArrowHidden,
+				L["ARROW_SIZE"],
+				L["ARROW_SIZE_DESCRIPTION"],
+				"arrowScale",
+				{
+					type = "range",
+					min = 0.5,
+					max = 2,
+					step = 0.05,
+					isPercent = true,
+				}
 			),
-
-			spaceArrow0 = ns.OptionsSpacer(10, ArrowHidden),
-			headerArrow = ns.OptionsHeader(L["QUEST_ARROW_HEADER"], 11, ArrowHidden),
-			spaceArrow1 = ns.OptionsSpacer(12, ArrowHidden),
-			descArrow = ns.OptionsDesc(L["QUEST_ARROW_DESCRIPTION"], 12.1, ArrowHidden),
-			spaceArrow2 = ns.OptionsSpacer(12.2, ArrowHidden),
-			arrowScaleLabel = ns.OptionsRowLabel(L["ARROW_SIZE"], 13, nil, ArrowHidden, L["ARROW_SIZE_DESCRIPTION"]),
-			arrowScale = ns.OptionsRoutesControl("arrowScale", {
-				type = "range",
-				desc = L["ARROW_SIZE_DESCRIPTION"],
-				min = 0.5,
-				max = 2,
-				step = 0.05,
-				isPercent = true,
-			}, 14, ArrowHidden),
-			spaceLock = ns.OptionsSpacer(15, ArrowHidden),
+			spaceLock = Kit.Spacer(15, ArrowHidden),
 			lockArrow = Toggle("lockArrow", "LOCK_ARROW", 16, ArrowHidden),
-			spaceReset = ns.OptionsSpacer(16.5, ArrowHidden),
-			resetArrowLabel = ns.OptionsRowLabel(L["RESET_ARROW"], 17, nil, ArrowHidden, L["RESET_ARROW_DESCRIPTION"]),
-			resetArrow = ns.OptionsRoutesControl(nil, {
-				type = "execute",
-				name = L["RESET_ARROW_BUTTON"],
-				desc = L["RESET_ARROW_DESCRIPTION"],
-				confirm = true,
-				confirmText = L["RESET_ARROW_CONFIRM"],
-				func = function()
-					ns.routes.ResetArrowPosition()
-				end,
-			}, 18, ArrowHidden),
+			spaceReset = Kit.Spacer(16.5, ArrowHidden),
+			resetArrow = Kit.ResetRow(17, ArrowHidden, L["RESET_ARROW"], L["RESET_ARROW_DESCRIPTION"], nil, function()
+				ns.routes.ResetArrowPosition()
+			end, L["RESET_ARROW_CONFIRM"]),
 
-			spaceText0 = ns.OptionsSpacer(20, ArrowHidden),
-			headerText = ns.OptionsHeader(L["QUEST_ARROW_TEXT_HEADER"], 21, ArrowHidden),
-			spaceText1 = ns.OptionsSpacer(22, ArrowHidden),
-			descText = ns.OptionsDesc(L["QUEST_ARROW_TEXT_DESCRIPTION"], 22.1, ArrowHidden),
-			spaceIgnoredExample = ns.OptionsSpacer(22.12, ArrowHidden),
-			ignoredExample = IgnoredExample(22.15),
-			spaceText2 = ns.OptionsSpacer(22.2, ArrowHidden),
 			showDistance = ShowDistanceToggle(),
-			spaceShowQuests = ns.OptionsSpacer(23.5, ArrowHidden),
+			spaceShowQuests = Kit.Spacer(23.5, ArrowHidden),
 			showQuests = Toggle("showQuests", "SHOW_ARROW_QUESTS", 24, ArrowHidden),
-			spaceQuestsListed = ns.OptionsSpacer(24.5, QuestsHidden),
+			spaceQuestsListed = Kit.Spacer(24.5, QuestsHidden),
 			questsListedRow = ns.OptionsRoutesSubControlRow(
 				25,
 				QuestsHidden,
@@ -139,19 +107,19 @@ function ns.BuildQuestArrowOptions()
 				"questsListed",
 				{ type = "range", min = 1, max = 8, step = 1 }
 			),
-			spaceItemButtons = ns.OptionsSpacer(26.2, QuestsHidden),
+			spaceItemButtons = Kit.Spacer(26.2, QuestsHidden),
 			showItemButtons = SubToggle("showItemButtons", "SHOW_ITEM_BUTTONS", 26.3, QuestsHidden),
-			spaceShowNext = ns.OptionsSpacer(26.5, ArrowHidden),
+			spaceShowNext = Kit.Spacer(26.5, ArrowHidden),
 			showNextObjective = ShowNextToggle(),
 
-			spaceHiding0 = ns.OptionsSpacer(30, ArrowHidden),
-			headerHiding = ns.OptionsHeader(L["QUEST_ARROW_HIDING_HEADER"], 31, ArrowHidden),
-			spaceHiding1 = ns.OptionsSpacer(32, ArrowHidden),
-			descHiding = ns.OptionsDesc(L["QUEST_ARROW_HIDING_DESCRIPTION"], 32.1, ArrowHidden),
-			spaceHiding2 = ns.OptionsSpacer(32.2, ArrowHidden),
 			hideInRaids = Toggle("hideInRaids", "HIDE_IN_RAIDS", 33, ArrowHidden),
-			spaceHideInInstances = ns.OptionsSpacer(33.5, ArrowHidden),
+			spaceHideInInstances = Kit.Spacer(33.5, ArrowHidden),
 			hideInInstances = Toggle("hideInInstances", "HIDE_IN_INSTANCES", 34, ArrowHidden),
 		},
 	}
+	local args = options.args
+	Kit.Section(args, "Arrow", 10, L["QUEST_ARROW_HEADER"], L["QUEST_ARROW_DESCRIPTION"], ArrowHidden)
+	Kit.Section(args, "Text", 20, L["QUEST_ARROW_TEXT_HEADER"], L["QUEST_ARROW_TEXT_DESCRIPTION"], ArrowHidden)
+	Kit.Section(args, "Hiding", 30, L["QUEST_ARROW_HIDING_HEADER"], L["QUEST_ARROW_HIDING_DESCRIPTION"], ArrowHidden)
+	return options
 end
