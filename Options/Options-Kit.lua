@@ -306,18 +306,18 @@ function Kit.SubRow(order, hidden, cells)
 end
 
 --[[
-    A silver line under a field, in the control column, for what a player needs
-    before they hover: a limit or a consequence ("General reaches only your
-    current layer."). The control's tooltip still carries its description.
+    A silver line under a field, across the whole row from the caption's edge,
+    for what a player needs before they hover: a limit or a consequence
+    ("General reaches only your current layer."). The control's tooltip still
+    carries its description.
 ]]
 function Kit.Helper(order, hidden, text)
 	return Kit.Row(order, hidden, {
-		Kit.Label(" ", nil, Kit.LABEL_WIDTH),
-		Kit.Label(Kit.Color("HELP", text), nil, Kit.CONTROL_WIDTH),
+		Kit.Label(Kit.Color("HELP", text), nil, Kit.ROW_WIDTH),
 	})
 end
 
--- One arg holding a row and, when there is helper text, the helper line under its control.
+-- One arg holding a row and, when there is helper text, the helper line under the whole row.
 local function WithHelper(order, hidden, row, helper)
 	if not helper then
 		row.order, row.hidden = order, hidden
@@ -431,7 +431,7 @@ end
     every speaker on a panel lines up. When the caption won't fit the label
     column, the switch takes the whole line and its setting drops to the line
     below, still in its column. extras.helper puts a silver helper line under
-    the setting, leaving with it. toggle.get is called with no info.
+    the whole row, leaving with the setting. toggle.get is called with no info.
 ]]
 function Kit.ToggleRow(order, toggle, extras)
 	extras = extras or {}
