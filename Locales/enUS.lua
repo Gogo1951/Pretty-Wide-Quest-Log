@@ -616,6 +616,8 @@ L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Reset This Zone"
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Show the Whole Route"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Ignoring %s until you reset the zone."
+-- TRANSLATORS: on the world map while the route is planned again after clicks on its markers
+L["ROUTES_REROUTING"] = "Rerouting…"
 L["ROUTES_ZONE_RESET"] = "Zone reset: objectives ignored here are back on the route."
 L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: party objectives and members you ignored are back on the route."
 -- TRANSLATORS: %s is a party member's name, or a list of them

@@ -633,6 +633,7 @@ L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Reimposta questa zona"
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Mostra il percorso intero"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Il percorso ignora %s finché non reimposti la zona."
+L["ROUTES_REROUTING"] = "Ricalcolo del percorso…"
 L["ROUTES_ZONE_RESET"] = "Zona reimpostata: gli obiettivi ignorati qui sono di nuovo sul percorso."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"Gruppo lasciato: gli obiettivi di gruppo e i membri ignorati sono di nuovo sul percorso."

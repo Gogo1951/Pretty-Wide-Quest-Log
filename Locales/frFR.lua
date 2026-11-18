@@ -631,6 +631,7 @@ L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Réinitialiser cette zone"
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Afficher l'itinéraire complet"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "L'itinéraire ignore %s jusqu'à ce que vous réinitialisiez la zone."
+L["ROUTES_REROUTING"] = "Recalcul de l'itinéraire…"
 L["ROUTES_ZONE_RESET"] = "Zone réinitialisée : les objectifs ignorés ici sont de retour sur l'itinéraire."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"Groupe quitté : les objectifs de groupe et membres ignorés sont de retour sur l'itinéraire."

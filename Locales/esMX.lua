@@ -631,6 +631,7 @@ L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Restablecer esta zona"
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Mostrar la ruta completa"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Ignorando %s hasta que restablezcas la zona."
+L["ROUTES_REROUTING"] = "Recalculando la ruta…"
 L["ROUTES_ZONE_RESET"] = "Zona restablecida: los objetivos ignorados aquí vuelven a estar en la ruta."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"Dejaste el grupo: los objetivos de grupo y los miembros ignorados vuelven a estar en la ruta."

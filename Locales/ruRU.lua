@@ -666,6 +666,7 @@ L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Сбросить эту зону"
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Показать весь маршрут"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Маршрут игнорирует %s до сброса зоны."
+L["ROUTES_REROUTING"] = "Пересчёт маршрута…"
 L["ROUTES_ZONE_RESET"] =
 	"Зона сброшена: цели, игнорируемые здесь, снова на маршруте."
 L["ROUTES_GROUP_LEFT_CLEARED"] =

@@ -22,6 +22,13 @@ local EMPTY_HOLD = 5 -- Seconds after the quest log changes that an empty plan i
 local FRAME_SHARE = 0.25 -- Of the last frame's length
 local MIN_BUDGET = 1 -- Milliseconds of planning a frame at least
 local MAX_BUDGET = 4 -- And at most
+--[[
+	Clicks on the world map's markers (an ignore, an unignore, an add, a zone reset) don't plan at once: the
+	route is planned once the clicks have stopped for REROUTE_DELAY, so marker after marker can be clicked
+	with no plan or redraw in between. The markers stay as they are till then, and the map shows Rerouting
+	while that plan runs (Routes-Map-Reroute.lua)
+]]
+local REROUTE_DELAY = 3 -- Seconds after the last click on a map marker before the route is planned again
 
 --------------------------------------------------------------------------------
 -- Planning, a few milliseconds a frame
@@ -30,6 +37,9 @@ local MAX_BUDGET = 4 -- And at most
 local planner = CreateFrame("Frame")
 planner:Hide()
 local job, sliceStarted, replanQueued
+local holdTimer -- Counting down REROUTE_DELAY after a click on a map marker; nothing plans while it runs
+local heldPlan = false -- A plan asked for while held, made once the hold ends
+local rerouting = false -- The plan underway, or queued after it, is the one a map click asked for
 local budget = MAX_BUDGET -- Milliseconds this frame's slice may take
 local onTaxi = false -- On a flight path: nothing is planned until the player lands
 
@@ -47,8 +57,13 @@ end
 
 -- Drops a plan underway and any asked for after it, so it can't put back what was just cleared or reset
 function routes.CancelPlan()
-	job, replanQueued = nil, nil
+	job, replanQueued, rerouting = nil, nil, false
 	planner:Hide()
+end
+
+-- Whether the plan a click on a map marker asked for is underway, for the map's Rerouting bar
+function routes.IsRerouting()
+	return rerouting and job ~= nil
 end
 
 -- Whether the player is on a flight path, as the watcher last saw
@@ -255,6 +270,9 @@ planner:SetScript("OnUpdate", function(self, elapsed)
 		replanQueued = nil
 		routes.RequestPlan()
 	end
+	if not job then
+		rerouting = false
+	end
 end)
 
 --[[
@@ -272,6 +290,10 @@ function routes.RequestPlan()
 		planAfterCombat = true
 		return
 	end
+	if holdTimer then
+		heldPlan = true
+		return
+	end
 	if job then
 		replanQueued = true
 		return
@@ -279,6 +301,38 @@ function routes.RequestPlan()
 	routes.signature = routes.Signature()
 	job = coroutine.create(Plan)
 	planner:Show()
+end
+
+-- Ends the wait after the map clicks: the plan they asked for, and any other asked for meanwhile, starts now
+function routes.ReleasePlanHold()
+	if not holdTimer then
+		return
+	end
+	holdTimer:Cancel()
+	holdTimer = nil
+	if heldPlan then
+		heldPlan = false
+		routes.RequestPlan()
+		rerouting = job ~= nil
+		if rerouting then
+			routes.ShowRerouting() -- Routes-Map-Reroute.lua
+		end
+	end
+end
+
+--[[
+	A click on a map marker: what it changed is planned REROUTE_DELAY after the last such click. A plan
+	underway is dropped and made again after the wait, so it can't redraw the map between clicks either
+]]
+function routes.HoldPlanForMapClick()
+	if holdTimer then
+		holdTimer:Cancel()
+	end
+	if job or replanQueued then
+		heldPlan = true
+		routes.CancelPlan()
+	end
+	holdTimer = C_Timer.NewTimer(REROUTE_DELAY, routes.ReleasePlanHold)
 end
 
 --[[
@@ -291,7 +345,7 @@ local function PlanCamps()
 end
 
 local function RequestCamps()
-	if job or InCombatLockdown() or not routes.IsWanted() then
+	if job or holdTimer or InCombatLockdown() or not routes.IsWanted() then
 		return
 	end
 	job = coroutine.create(PlanCamps)
@@ -364,7 +418,7 @@ local function SetInCombat(now)
 		if job or replanQueued then
 			planAfterCombat = true
 		end
-		job, replanQueued = nil, nil
+		job, replanQueued, rerouting = nil, nil, false
 		planner:Hide()
 	else
 		checkElapsed = CHECK_INTERVAL
