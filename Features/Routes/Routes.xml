@@ -109,5 +109,6 @@
 	<Script file="Routes-Arrow-Menu-Panel.lua"/>
 	<Script file="Routes-Arrow-Menu.lua"/>
 	<Script file="Routes-Map-Menu.lua"/>
+	<Script file="Routes-Map-Reroute.lua"/>
 	<Script file="Routes-TomTom.lua"/>
 </Ui>

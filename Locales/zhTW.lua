@@ -612,6 +612,7 @@ L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "重設此區域"
 L["ROUTES_CLICK_SHOW_ROUTE"] = "顯示完整路線"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "忽略 %s，直到重設區域。"
+L["ROUTES_REROUTING"] = "正在重新規劃路線…"
 L["ROUTES_ZONE_RESET"] = "區域已重設：在此忽略的目標已回到路線上。"
 L["ROUTES_GROUP_LEFT_CLEARED"] = "已離開隊伍：已忽略的隊伍目標和隊友已回到路線上。"
 -- TRANSLATORS: %s is a party member's name, or a list of them

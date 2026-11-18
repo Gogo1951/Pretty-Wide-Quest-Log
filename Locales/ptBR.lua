@@ -627,6 +627,7 @@ L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Redefinir esta zona"
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Mostrar a rota inteira"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Ignorando %s até você redefinir a zona."
+L["ROUTES_REROUTING"] = "Recalculando a rota…"
 L["ROUTES_ZONE_RESET"] = "Zona redefinida: os objetivos ignorados aqui voltaram para a rota."
 L["ROUTES_GROUP_LEFT_CLEARED"] = "Você saiu do grupo: os objetivos de grupo e membros ignorados voltaram para a rota."
 -- TRANSLATORS: %s is a party member's name, or a list of them

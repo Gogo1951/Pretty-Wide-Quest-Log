@@ -33,7 +33,7 @@ local GATHER_REACH = 800 -- Yards around an objective's busiest camp whose other
 local WIDE_MAP_SCALE = 0.6 -- Markers on a continent's or the world's map at Medium, which hold many zones' worth
 local QUESTIE_LEVEL = "PIN_FRAME_LEVEL_AREA_POI" -- Where HereBeDragons-Pins puts Questie's icons
 local SPREAD_OVERLAP = 0.75 -- Marker widths apart, middle to middle, two markers can be before one is moved off the other
-local SPREAD_TRIES = 8 -- Marker widths to the right a covered marker is tried at, at most
+local SPREAD_RINGS = 2 -- Rings of honeycomb cells around its own place a covered marker is tried in, at most
 
 --[[
 	Waypoints Shown: the "…" marker where the zone map stops drawing the route, on the first hidden waypoint
@@ -137,8 +137,71 @@ end
 
 local provider
 
+local function CampAlpha(pin)
+	return pin.dimmable and not IsUntracked(pin.stop) and CAMP_ALPHA or 1
+end
+
 --[[
-	What right-clicking a marker does, and its hint: a waypoint is ignored (routes.SkipStop); a camp's
+	Every marker on the map given its look again at once, its ring gray or black and a camp's dimming, from
+	the ignore list as it is now: what a click changed shows on the marker right away, though the route
+	isn't planned again till the clicks stop. A marker in the hidden tail stays unseen
+]]
+local function RestyleMarkers()
+	if not (WorldMapFrame and WorldMapFrame:IsShown()) then
+		return
+	end
+	for pin in WorldMapFrame:EnumeratePinsByTemplate(STOP_TEMPLATE) do
+		if pin.stop and pin.routeTextures then
+			routes.ApplyStopLook(pin, pin.stop, pin.routeTextures)
+			if not pin.inTail then
+				pin:SetAlpha(CampAlpha(pin))
+			end
+		end
+	end
+end
+
+--[[
+	A click on a marker that changes the route: done now, its chat line said and every marker's look
+	(RestyleMarkers), but planned only once the clicks have stopped for a few seconds
+	(routes.HoldPlanForMapClick), so the next marker is clicked with no plan or redraw in between. The markers
+	stay where they are till then
+]]
+local function MapClick(action)
+	return function()
+		routes.HoldPlanForMapClick()
+		action()
+		RestyleMarkers()
+	end
+end
+local ResetZone = MapClick(function()
+	routes.ResetZone()
+end)
+
+--[[
+	A waypoint right-clicked while the map is open, its route not planned again yet: the keys it ignored, as
+	routes.SkipStop ignores them (a quest not taken yet by its pick-up), once every one of them is ignored.
+	Nothing while any is still on the route, or for the corpse
+]]
+local function WaypointIgnoredKeys(stop)
+	local keys, seen = {}, {}
+	for _, task in ipairs(stop.tasks) do
+		if task.kind ~= "corpse" then
+			local key = (task.pickUpNode or task).key
+			if not (key and routes.skipped[key]) then
+				return nil
+			end
+			if not seen[key] then
+				seen[key] = true
+				keys[#keys + 1] = key
+			end
+		end
+	end
+	return #keys > 0 and keys or nil
+end
+
+--[[
+	What right-clicking a marker does, and its hint: a waypoint is ignored (routes.SkipStop), or put back on
+	the route once it is (gray, its route not planned again yet); a camp's
 	objective is ignored, or put back on the route once it is; a map-only pick-up (a dungeon quest's, an
 	escort's, one leading to another zone) is put on the route (routes.AddPickUp). Nothing for the corpse,
 	or for a dungeon or raid quest's objective, which the route never takes anyway
@@ -148,27 +211,36 @@ local function RightClick(stop)
 		return nil
 	end
 	if not stop.camp then
-		return L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"], function()
-			routes.SkipStop(stop)
+		local ignored = WaypointIgnoredKeys(stop)
+		if ignored then
+			return L["ROUTES_RIGHT_CLICK_UNIGNORE"],
+				MapClick(function()
+					for _, key in ipairs(ignored) do
+						routes.UnignoreTask(key)
+					end
+				end)
 		end
+		return L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"], MapClick(function()
+			routes.SkipStop(stop)
+		end)
 	end
 	local task = stop.tasks[1]
 	if task.untracked then
 		return nil
 	end
 	if task.kind == "pickUp" and task.offRoute then
-		return L["ROUTES_RIGHT_CLICK_ADD"], function()
+		return L["ROUTES_RIGHT_CLICK_ADD"], MapClick(function()
 			routes.AddPickUp(task)
-		end
+		end)
 	end
 	if routes.skipped[task.key] then
-		return L["ROUTES_RIGHT_CLICK_UNIGNORE"], function()
+		return L["ROUTES_RIGHT_CLICK_UNIGNORE"], MapClick(function()
 			routes.UnignoreTask(task.key)
-		end
+		end)
 	end
-	return L["ROUTES_RIGHT_CLICK_IGNORE"], function()
+	return L["ROUTES_RIGHT_CLICK_IGNORE"], MapClick(function()
 		routes.IgnoreTask(task)
-	end
+	end)
 end
 
 --[[
@@ -194,7 +266,7 @@ local function StopMenuEntries(pin, stop)
 	if rightClick then
 		hints[#hints + 1] = { L["ROUTES_CLICK_RIGHT"], rightClick, action }
 	end
-	hints[#hints + 1] = { L["ROUTES_CLICK_MIDDLE"], L["ROUTES_MIDDLE_CLICK_RESET_ZONE"], routes.ResetZone }
+	hints[#hints + 1] = { L["ROUTES_CLICK_MIDDLE"], L["ROUTES_MIDDLE_CLICK_RESET_ZONE"], ResetZone }
 	rows:AddHints(hints)
 	return rows.entries
 end
@@ -228,7 +300,7 @@ local function OnStopMouseUp(pin, button)
 		end
 	elseif button == "MiddleButton" then
 		routes.CloseMapMenu()
-		routes.ResetZone()
+		ResetZone()
 	end
 end
 
@@ -253,8 +325,8 @@ end
 local spreadPins = {}
 
 --[[
-	Where each marker was put since the map opened, by map and marker: { x, y, shift }, the place it was
-	drawn for and how many marker widths right SpreadPins moved it. A redraw while the map is open (an
+	Where each marker was put since the map opened, by map and marker: { x, y, offsetX, offsetY }, the place
+	it was drawn for and how many marker widths across and down SpreadPins moved it. A redraw while the map is open (an
 	ignore, a replan) puts every marker it has here back where it was, so nothing moves under the mouse;
 	closing the map forgets them all
 ]]
@@ -293,14 +365,34 @@ end
 --[[
 	Markers that overlap are moved apart, so each keeps its own hover and right-click: in the order drawn
 	(the route's waypoints, then the camps), one whose middle comes within SPREAD_OVERLAP of a marker already
-	placed moves right a marker's width at a time till it's clear. Flight paths, flights and changes of zone
+	placed takes the first clear cell of a honeycomb around its own place (HONEYCOMB), so a pile packs into
+	a tight blob round the spot rather than a row off to one side. Flight paths, flights and changes of zone
 	stay where they are, stacked, placed first so the rest move off them. Worked out in the canvas's pixels
 	at this zoom. Only a marker new since the map opened is placed: every other goes back where it was
-	(lockedPlaces), the same number of marker widths right at any zoom, so a click, a replan or a zoom never
+	(lockedPlaces), the same number of marker widths off at any zoom, so a click, a replan or a zoom never
 	moves one. The line still runs to where each was drawn for. It runs on every frame of a zoom, so its
 	working lists are kept and wiped rather than made anew
 ]]
 local newPins, placedX, placedY, placedSize = {}, {}, {}, {}
+
+--[[
+	The honeycomb's cells, in marker widths from the marker's own place, neighbors one width apart: the
+	place itself, then each ring out to SPREAD_RINGS, every ring from the right going clockwise
+]]
+local HONEYCOMB = { { 0, 0 } }
+do
+	local ROW = math.sqrt(3) / 2
+	local steps = { { -1, 1 }, { -1, 0 }, { 0, -1 }, { 1, -1 }, { 1, 0 }, { 0, 1 } } -- Axial, clockwise from lower left
+	for ring = 1, SPREAD_RINGS do
+		local q, r = ring, 0
+		for _, step in ipairs(steps) do
+			for _ = 1, ring do
+				HONEYCOMB[#HONEYCOMB + 1] = { q + r / 2, r * ROW }
+				q, r = q + step[1], r + step[2]
+			end
+		end
+	end
+end
 
 local function Place(x, y, size)
 	local index = #placedX + 1
@@ -322,11 +414,11 @@ local function SpreadPins(map)
 		local size = pin:GetWidth() * pin:GetScale()
 		local place = locked[pin.markerKey]
 		if not place and IsTravel(pin) then
-			place = { x = pin.baseX, y = pin.baseY, shift = 0 }
+			place = { x = pin.baseX, y = pin.baseY, offsetX = 0, offsetY = 0 }
 			locked[pin.markerKey] = place
 		end
 		if place then
-			local x, y = place.x * width + place.shift * size, place.y * height
+			local x, y = place.x * width + place.offsetX * size, place.y * height + place.offsetY * size
 			pin:SetPosition(x / width, y / height)
 			Place(x, y, size)
 		else
@@ -336,11 +428,11 @@ local function SpreadPins(map)
 	for _, pin in ipairs(newPins) do
 		local size = pin:GetWidth() * pin:GetScale()
 		local x, y = pin.baseX * width, pin.baseY * height
-		local shift = 0
-		for try = 0, SPREAD_TRIES do
+		local offsetX, offsetY = 0, 0 -- No cell clear: it stays on its own place, over the others
+		for _, cell in ipairs(HONEYCOMB) do
 			local clear = true
 			for index = 1, #placedX do
-				local dx, dy = x + try * size - placedX[index], y - placedY[index]
+				local dx, dy = x + cell[1] * size - placedX[index], y + cell[2] * size - placedY[index]
 				local reach = SPREAD_OVERLAP * (size + placedSize[index]) / 2
 				if dx * dx + dy * dy < reach * reach then
 					clear = false
@@ -348,23 +440,24 @@ local function SpreadPins(map)
 				end
 			end
 			if clear then
-				shift = try
+				offsetX, offsetY = cell[1], cell[2]
 				break
 			end
 		end
-		locked[pin.markerKey] = { x = pin.baseX, y = pin.baseY, shift = shift }
-		x = x + shift * size
+		locked[pin.markerKey] = { x = pin.baseX, y = pin.baseY, offsetX = offsetX, offsetY = offsetY }
+		x, y = x + offsetX * size, y + offsetY * size
 		Place(x, y, size)
 		pin:SetPosition(x / width, y / height)
 	end
 end
 
 --[[
-	A waypoint's marker, or a camp's: dim for one in the route's zone the route doesn't go to. One in the
-	route's hidden tail (Waypoints Shown) is placed but unseen and takes no mouse, till the "…" marker is
-	hovered, and isn't moved off others (SpreadPins). landing: a flight's marker where it lands
+	A waypoint's marker, or a camp's: dimmable for a camp in the route's zone, dim while the route could still
+	take it (CampAlpha). One in the route's hidden tail (Waypoints Shown) is placed but unseen and takes no
+	mouse, till the "…" marker is hovered, and isn't moved off others (SpreadPins). landing: a flight's marker
+	where it lands
 ]]
-local function AddStopPin(map, stop, position, textures, dim, tail, landing)
+local function AddStopPin(map, stop, position, textures, dimmable, tail, landing)
 	position = LockedPosition(map:GetMapID(), stop, position, landing)
 	local pin = map:AcquirePin(STOP_TEMPLATE)
 	if not pin.routeReady then
@@ -377,10 +470,12 @@ local function AddStopPin(map, stop, position, textures, dim, tail, landing)
 	pin:SetSize(STOP_SIZE * size, STOP_SIZE * size)
 	pin.Icon:SetSize(STOP_ICON_SIZE * size, STOP_ICON_SIZE * size)
 	pin.stop = stop
+	pin.routeTextures = textures -- For RestyleMarkers
 	routes.ApplyStopLook(pin, stop, textures)
 
 	-- Pins are handed out again, so every one is set
-	pin:SetAlpha(tail and 0 or dim and CAMP_ALPHA or 1)
+	pin.dimmable, pin.inTail = dimmable or nil, tail or nil
+	pin:SetAlpha(tail and 0 or CampAlpha(pin))
 	pin:EnableMouse(not tail)
 	pin:UseFrameLevelType(stop.camp and CAMP_LEVEL or STOP_LEVEL)
 	pin:ApplyFrameLevel()
@@ -808,7 +903,7 @@ function providerMixin:RefreshAllData()
 			An escort to pick up later stays at full strength, its green the point of it
 		]]
 		local escort = marker.tasks[1].kind == "pickUp" and marker.tasks[1].escort
-		AddStopPin(map, marker, position, textures, onRoute and not IsUntracked(marker) and not escort)
+		AddStopPin(map, marker, position, textures, onRoute and not escort)
 	end
 	SpreadPins(map)
 
@@ -844,6 +939,7 @@ local function AddToWorldMap()
 	WorldMapFrame:HookScript("OnHide", function()
 		wholeRouteShown = false
 		wipe(lockedPlaces) -- Markers are placed afresh the next time it opens
+		routes.ReleasePlanHold() -- No more clicks on its markers to wait for: the route is planned now
 	end)
 	provider = CreateFromMixins(providerMixin)
 	WorldMapFrame:AddDataProvider(provider)

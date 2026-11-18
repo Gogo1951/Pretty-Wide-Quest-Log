@@ -107,9 +107,10 @@ end)
 
 --[[
 	What the menus read back: the two plates, filling one with rows, and the flyout's opening and closing; and
-	making a plate of its own, as the world map's menu does (Routes-Map-Menu.lua)
+	making a plate of its own, as the world map's menu does (Routes-Map-Menu.lua), or just the plate, as the
+	map's Rerouting bar has (Routes-Map-Reroute.lua)
 ]]
-local panels = { menu = menu, submenu = submenu, submenus = {}, NewPanel = NewPanel }
+local panels = { menu = menu, submenu = submenu, submenus = {}, NewPanel = NewPanel, AddPlate = AddPlate }
 routes.arrowMenuPanels = panels
 
 -- A key for a panel's rows that changes only when what they say does

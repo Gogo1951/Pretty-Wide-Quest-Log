@@ -635,6 +635,7 @@ L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "이 지역 초기화"
 L["ROUTES_CLICK_SHOW_ROUTE"] = "전체 경로 표시"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "지역을 초기화할 때까지 %s 항목을 무시합니다."
+L["ROUTES_REROUTING"] = "경로 재계산 중…"
 L["ROUTES_ZONE_RESET"] = "지역 초기화: 이곳에서 무시한 목표가 다시 경로에 포함되었습니다."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"파티를 떠났습니다: 무시한 파티 목표와 파티원이 다시 경로에 포함되었습니다."
