@@ -1,8 +1,6 @@
 local _, ns = ...
 local L = ns.L
 
-local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
-
 --------------------------------------------------------------------------------
 -- Opening Key Bindings
 --------------------------------------------------------------------------------
@@ -60,5 +58,5 @@ end
 ns.keyBindings = {}
 
 function ns.keyBindings:OnUpdateBindings()
-	AceConfigRegistry:NotifyChange(ns.OPTIONS_REGISTRY.General)
+	ns.RefreshSettings()
 end

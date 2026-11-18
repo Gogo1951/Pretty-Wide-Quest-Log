@@ -956,7 +956,7 @@ local SHARED_LABELS = {
 	"CANCEL",
 	"ERR_NOT_IN_GROUP",
 	"RELOADUI",
-	-- The button on the popup as Predictive Questing Routes turns on (Routes-Chains.lua)
+	-- The button on the popup as Plan Ahead turns on (Routes-Chains.lua)
 	"OKAY",
 	-- The zone heading for quests outside any zone in the turn-in line's tooltip, and its thousands separator
 	"OTHER",
@@ -1532,10 +1532,12 @@ function ns:BuildQuestLogContextReport()
 	-- /pwql refuses to open the options in combat; on WoW Forever the quest log also can't close the windows on the left
 	lines[#lines + 1] = ""
 	lines[#lines + 1] = string.format("In combat: %s", YesNo(InCombatLockdown()))
+	-- The kit registers the root panel through AceConfigDialog, which keeps its group and category ID (Options-Kit.lua)
+	local dialog = LibStub("AceConfigDialog-3.0")
 	lines[#lines + 1] = string.format(
 		"Options panel registered: %s (category %s)",
-		YesNo(ns.optionsFrames),
-		tostring(ns.optionsFrames and ns.optionsFrames.categoryID)
+		YesNo(dialog.BlizOptions[ns.OPTIONS_REGISTRY.General]),
+		tostring(dialog.BlizOptionsIDMap and dialog.BlizOptionsIDMap[ns.L["ADDON_TITLE"]])
 	)
 	lines[#lines + 1] = string.format("Set Key opens: %s", KeyBindingsRoute())
 
@@ -2563,12 +2565,17 @@ local function ArrowLines(lines)
 		(questieDB and type(questieDB.GetQuest) == "function") and "found" or "not found, so only the client's own"
 	)
 	RouteSetting(lines, "Show next objective", "showNextObjective")
-	RouteSetting(lines, "Predictive questing routes", "predictiveRoutes")
-	RouteSetting(lines, "Show available local quests as objectives", "showLocalQuests")
-	RouteSetting(lines, "Local quests: search range", "localQuestRange")
-	RouteSetting(lines, "Local quests: lowest level", "localQuestLevel")
-	RouteSetting(lines, "Local quests: escort quests", "localEscortQuests")
-	RouteSetting(lines, "Local quests: objectives in another zone", "localOtherZoneQuests")
+	RouteSetting(lines, "What to route: plan ahead", "planAhead")
+	RouteSetting(lines, "What to route: search range", "localQuestRange")
+	RouteSetting(lines, "What to route: highest level", "highestQuestLevel")
+	RouteSetting(lines, "What to route: lowest level", "lowestQuestLevel")
+	RouteSetting(lines, "What to route: elite or group quests", "pickUpElite")
+	RouteSetting(lines, "What to route: PvP quests", "pickUpPvP")
+	RouteSetting(lines, "What to route: dungeon quests", "pickUpDungeon")
+	RouteSetting(lines, "What to route: raid quests", "pickUpRaid")
+	RouteSetting(lines, "What to route: escort quests", "pickUpEscort")
+	RouteSetting(lines, "What to route: objectives in another zone", "pickUpOtherZone")
+	RouteSetting(lines, "What to route: route focus", "routeFocus")
 	-- How many quests Questie offers, and how many the route picks up nearby (Routes-Pick-Ups.lua)
 	local availableQuests = ns.ImportQuestieModule("AvailableQuests")
 	local available = availableQuests and availableQuests.__availableQuests
@@ -2610,7 +2617,7 @@ local function ArrowLines(lines)
 		end
 	end
 	lines[#lines + 1] = string.format("Quest log room for pick-ups: %d free of %d", math.max(most - taken, 0), most)
-	-- Waypoints of quests not taken yet, planned ahead with Predictive Questing Routes (Routes-Chains.lua)
+	-- Waypoints of quests not taken yet, planned ahead with Plan Ahead (Routes-Chains.lua)
 	lines[#lines + 1] = string.format("Waypoints planned ahead for quests not taken yet: %d", predicted)
 	-- A party member's race is matched to a follow-up through Questie's race masks (Routes-Chains.lua)
 	local raceMasks = LibQuestieDB and LibQuestieDB.Enum and LibQuestieDB.Enum.raceMaskById

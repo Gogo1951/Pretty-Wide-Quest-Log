@@ -11,9 +11,9 @@ local _, ns = ...
 	Next Objective (Next on the right), with a gray Ignore on the right under the mouse, clicked to leave it
 	off the route until the zone is reset
 	(routes.IgnoreTask), then a spacer. Then three labels with Blizzard's submenu arrow, each opening a flyout beside the
-	menu on the same plate. Route, what the route plans, most used first: Predictive Questing Routes,
-	predictiveRoutes; Local Available Quests, showLocalQuests; Flight Paths, showFlightPaths; in a party,
-	Party Objectives, partyQuests, and with it on an Objectives From switch for each member, a space in.
+	menu on the same plate. Route, what the route plans: under What to Route, Plan Ahead's three choices
+	(planAhead) as radio dots, one chosen; under Also Route, Flight Paths, showFlightPaths; in a party,
+	Party Objectives, partyQuests, and with it on an Objectives From switch for each member, a space further in.
 	Show, what only the arrow draws: Next Objective, showNextObjective. A switch that's off is gray, On
 	green. Ignored, with how many, only while something is: the ignore list, each row gray, brightening with
 	Put Back on the right under the mouse, clicked to put it back on the route (routes.UnignoreTask).
@@ -112,6 +112,20 @@ end
 -- A key for a panel's rows that changes only when what they say does
 local EntriesKey = panels.EntriesKey
 
+-- Blizzard's radio button, the line's height: the chosen dot, then the empty one (UI-RadioButton's first two)
+local RADIO_ON = "|TInterface\\Buttons\\UI-RadioButton:0:0:0:0:64:16:16:32:0:16|t"
+local RADIO_OFF = "|TInterface\\Buttons\\UI-RadioButton:0:0:0:0:64:16:0:16:0:16|t"
+
+-- One choice of several: Blizzard's radio dot before the name, the chosen one filled, the others empty and gray
+local function RadioEntry(left, chosen, action)
+	return {
+		kind = "radio",
+		left = INDENT .. (chosen and RADIO_ON or RADIO_OFF) .. " " .. left,
+		leftColor = not chosen and "MUTED" or nil,
+		action = action,
+	}
+end
+
 -- A switch: On in green, or Off with its name gray too, so what's off sits back
 local function ToggleEntry(left, on, action)
 	return {
@@ -127,8 +141,8 @@ end
 --[[
 	The menu's rows, each { kind, left, right, leftColor, rightColor, hover, action, submenu }: kind "header",
 	"spacer" (a line's room), "section" (a group's label), "separator", "action" (a row to click), "toggle" (a
-	row to click, On or Off on the right), "status" (a toggle that can't be switched now, its reason on the
-	right), or "hint" (a click hint). hover, { right, rightColor }, is the right side under the mouse, the name
+	row to click, On or Off on the right), "radio" (a row to click, one choice of several, its radio dot before
+	the name), "status" (a toggle that can't be switched now, its reason on the right), or "hint" (a click hint). hover, { right, rightColor }, is the right side under the mouse, the name
 	brightened. submenu, on a label, names the flyout it opens under the mouse or a click (panels.submenus).
 	Returns them and a key that changes only when what they say does
 ]]
@@ -237,29 +251,42 @@ local function Entries()
 end
 
 --[[
-	Route's flyout: what the route plans, most used first, each as Options switches it and planned again at
-	once. In a party, where the setting does anything, Party Objectives, and with it on, a switch for each
-	member's objectives a space in
+	Route's flyout: what the route plans, each as Options sets it and planned again at once. Under What to
+	Route, Plan Ahead's three choices as radio dots, one chosen; a spacer, then under Also Route the switches:
+	Flight Paths, and in a party, where the setting does anything, Party Objectives, and with it on, a switch
+	for each member's objectives a space further in
 ]]
+-- What to Route's Plan Ahead choices, in Options' order (Options-Routes-Map.lua)
+local PLAN_AHEAD_CHOICES = {
+	{ value = "yours", nameKey = "PLAN_AHEAD_YOURS" },
+	{ value = "nearby", nameKey = "PLAN_AHEAD_NEARBY" },
+	{ value = "zone", nameKey = "PLAN_AHEAD_ZONE" },
+}
+
 local function RouteEntries()
 	local settings = routes.Settings()
-	local entries = {
-		ToggleEntry(L["ROUTES_MENU_SHOWN_PREDICTIVE"], settings.predictiveRoutes, function()
-			routes.SetSetting("predictiveRoutes", not routes.Settings().predictiveRoutes)
-			routes.RequestPlan()
-		end),
-		ToggleEntry(L["ROUTES_MENU_SHOWN_LOCAL"], settings.showLocalQuests, function()
-			routes.SetSetting("showLocalQuests", not routes.Settings().showLocalQuests)
-			routes.RequestPlan()
-		end),
-		ToggleEntry(L["ROUTES_MENU_SHOWN_FLIGHTS"], settings.showFlightPaths, function()
-			routes.SetSetting("showFlightPaths", not routes.Settings().showFlightPaths)
-			routes.RequestPlan()
-		end),
-	}
+	local entries = {}
+	-- What to Route: Plan Ahead's three choices, as Options sets them, a click on another choosing it
+	entries[#entries + 1] = { kind = "section", left = L["WHAT_TO_ROUTE_HEADER"] }
+	local planAhead = routes.PlanAhead()
+	for _, choice in ipairs(PLAN_AHEAD_CHOICES) do
+		entries[#entries + 1] = RadioEntry(L[choice.nameKey], planAhead == choice.value, function()
+			if routes.PlanAhead() ~= choice.value then
+				routes.SetSetting("planAhead", choice.value)
+				routes.RequestPlan()
+			end
+		end)
+	end
+	-- Also Route: the switches, a space in as the choices are
+	entries[#entries + 1] = { kind = "spacer" }
+	entries[#entries + 1] = { kind = "section", left = L["ROUTES_MENU_SECTION_ALSO_ROUTE"] }
+	entries[#entries + 1] = ToggleEntry(INDENT .. L["ROUTES_MENU_SHOWN_FLIGHTS"], settings.showFlightPaths, function()
+		routes.SetSetting("showFlightPaths", not routes.Settings().showFlightPaths)
+		routes.RequestPlan()
+	end)
 	if routes.IsInParty() then
 		local on = settings.partyQuests
-		entries[#entries + 1] = ToggleEntry(L["ROUTES_MENU_SHOWN_PARTY"], on, function()
+		entries[#entries + 1] = ToggleEntry(INDENT .. L["ROUTES_MENU_SHOWN_PARTY"], on, function()
 			routes.SetPartyQuests(not routes.Settings().partyQuests)
 		end)
 		--[[
@@ -270,7 +297,7 @@ local function RouteEntries()
 		for _, member in ipairs(on and routes.PartyMembers(true) or {}) do
 			local included = routes.ignoredMembers[member.name] == nil
 			local name = Colored(member.name, routes.ClassColor(member.unit))
-			local left = INDENT .. string.format(L["ROUTES_MENU_MEMBER_OBJECTIVES"], name)
+			local left = INDENT .. INDENT .. string.format(L["ROUTES_MENU_MEMBER_OBJECTIVES"], name)
 			local reason = member.offline and L["ROUTES_MENU_OFFLINE"]
 				or not routes.MemberHasQuestie(member.name) and L["ROUTES_MENU_NO_QUESTIE"]
 				or routes.IsUnitOutOfZone(member.unit) and L["ROUTES_MENU_OUT_OF_ZONE"]

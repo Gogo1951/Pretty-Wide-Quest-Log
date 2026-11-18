@@ -1,11 +1,12 @@
 local _, ns = ...
 local L = ns.L
+local Kit = ns.OptionsKit
 
 --[[
 	The Quest Route panel of the Options Interface, which Options.lua registers after Maps & Objectives where
 	Routes (Features/Routes) is loaded. The settings are Routes' own, on the profile (routes.Settings). The
-	Route Line hides while the switch at the top of it is off; Planning, Local Available Quests and Party,
-	what the route takes in, show while anything follows the route (the Waypoint Markers or the Quest
+	Route Line hides while the switch at the top of it is off; What to Route and Party, what the route
+	takes in, show while anything follows the route (the Waypoint Markers or the Quest
 	Arrow). The Quest Route is drawn between the markers, so its switch is grayed out while they're off.
 	The markers' switch, and their settings map by map, are under Maps & Objectives (Options-Maps.lua)
 ]]
@@ -28,18 +29,14 @@ local function TakenInHidden()
 	return not (Settings().showMap or Settings().showArrow)
 end
 
-local function LocalHidden()
-	return TakenInHidden() or not Settings().showLocalQuests
-end
-
--- Join Up with Group needs Party Objectives (Routes-Group-Up.lua), so it's grayed out with them off
-local function GroupUpOff()
-	return not Settings().partyQuests
+-- Group Up needs Party Objectives (Routes-Group-Up.lua), so it's their sub-option, hidden with them off
+local function GroupUpHidden()
+	return TakenInHidden() or not Settings().partyQuests
 end
 
 -- A full-width switch for a setting, hidden with its feature
-local function Toggle(key, nameKey, order, hidden, disabled)
-	return ns.OptionsRoutesToggle(key, nameKey, nameKey .. "_DESCRIPTION", order, nil, hidden, disabled)
+local function Toggle(key, nameKey, order, hidden)
+	return ns.OptionsRoutesToggle(key, nameKey, nameKey .. "_DESCRIPTION", order, nil, hidden)
 end
 
 local function Choices(names)
@@ -66,56 +63,159 @@ local function NeedsMarkersText()
 	end
 end
 
--- How near a quest giver must be, the Search Range, in the Quest Arrow's own words for a distance (Routes-Pick-Ups.lua)
-local function LocalQuestsToggle()
-	local toggle = Toggle("showLocalQuests", "SHOW_LOCAL_QUESTS", 39.5, TakenInHidden)
-	toggle.desc = function()
-		local range = ns.routes and ns.routes.LocalQuestRange() or 400
-		return L["SHOW_LOCAL_QUESTS_DESCRIPTION"]:format(L["ROUTES_YARDS"]:format(range))
-	end
-	return toggle
+--[[
+	What to Route: which quests the route guides the player to pick up (Routes-Pick-Ups.lua). Quests in the
+	log are always on the route, so every setting here is about pick-ups
+]]
+
+--[[
+	A dropdown for a setting, its caption beside it and the chosen choice's help (its name key and
+	_DESCRIPTION) in silver under it, so each choice says what it does without a tooltip
+]]
+local function ChoiceRow(key, captionKey, descKey, order, nameKeys, sorting)
+	local nameKey = nameKeys[Settings()[key]]
+	return ns.OptionsRoutesLabelRow(order, TakenInHidden, L[captionKey], L[descKey], key, {
+		type = "select",
+		values = function()
+			return Choices(nameKeys)
+		end,
+		sorting = sorting,
+	}, nameKey and L[nameKey .. "_DESCRIPTION"] or nil)
 end
 
--- What a Local Available Quests choice does with a kind of quest (Routes-Pick-Ups.lua)
-local LOCAL_CHOICES = { route = "LOCAL_CHOICE_ROUTE", map = "LOCAL_CHOICE_MAP", off = "LOCAL_CHOICE_OFF" }
-local LOCAL_CHOICE_ORDER = { "route", "map", "off" }
-local LOCAL_LEVELS = { questie = "LOCAL_LEVEL_QUESTIE", green = "LOCAL_LEVEL_GREEN", yellow = "LOCAL_LEVEL_YELLOW" }
-local LOCAL_LEVEL_ORDER = { "questie", "green", "yellow" }
+-- Plan Ahead: how far ahead the route looks for quests to pick up
+local PLAN_AHEAD = { yours = "PLAN_AHEAD_YOURS", nearby = "PLAN_AHEAD_NEARBY", zone = "PLAN_AHEAD_ZONE" }
+local PLAN_AHEAD_ORDER = { "yours", "nearby", "zone" }
 
--- A row of the Local Available Quests section, a sub-option of its switch: a dropdown of choices
-local function LocalRow(args, key, nameKey, order, names, sorting)
-	args[key .. "Space"] = ns.OptionsSpacer(order - 0.02, LocalHidden)
-	args[key .. "Row"] =
-		ns.OptionsRoutesSubControlRow(order, LocalHidden, L[nameKey], L[nameKey .. "_DESCRIPTION"], key, {
-			type = "select",
-			values = function()
-				return Choices(names)
-			end,
-			sorting = sorting,
-		})
+-- Route Focus: how the route chooses and orders what to pick up (Routes-Focus.lua)
+local ROUTE_FOCUS = { fastest = "ROUTE_FOCUS_FASTEST", easiest = "ROUTE_FOCUS_EASIEST", xp = "ROUTE_FOCUS_XP" }
+local ROUTE_FOCUS_ORDER = { "fastest", "easiest", "xp" }
+
+-- The Search Range matters only where the route looks for pick-ups near the player
+local function RangeHidden()
+	return TakenInHidden() or Settings().planAhead == "yours"
 end
 
--- The Local Available Quests section, between Planning and Party: which nearby quests count
-local function AddLocalQuestsSection(args)
-	args.spaceLocal0 = ns.OptionsSpacer(39, TakenInHidden)
-	args.headerLocal = ns.OptionsHeader(L["LOCAL_QUESTS_HEADER"], 39.1, TakenInHidden)
-	args.spaceLocal1 = ns.OptionsSpacer(39.2, TakenInHidden)
-	args.descLocal = ns.OptionsDesc(L["LOCAL_QUESTS_DESCRIPTION"], 39.3, TakenInHidden)
-	args.spaceLocal2 = ns.OptionsSpacer(39.4, TakenInHidden)
-	-- The same setting as the Quest Arrow menu's Local Available Quests
-	args.showLocalQuests = LocalQuestsToggle()
-	args.spaceLocalRange = ns.OptionsSpacer(39.55, LocalHidden)
+-- Highest and Lowest Quest Level: levels above or below the player, not colors, which differ from game to game
+-- 0 is Highest Quest Level's Your Level (nothing above the player) and Lowest Quest Level's No Limit (gray quests too)
+local HIGHEST_LEVEL_STEPS = { 0, 3, 6, 9 }
+local LOWEST_LEVEL_STEPS = { 3, 6, 9, 0 }
+
+--[[
+	A row of levels above or below the player (formatKey: "%d Levels Above You" or below), steps of 3, 6 and
+	9, and 0 named by zeroKey (Your Level, No Limit)
+]]
+local function LevelRow(args, key, nameKey, order, formatKey, steps, zeroKey)
+	args[key .. "Space"] = Kit.Spacer(order - 0.02, TakenInHidden)
+	args[key] = ns.OptionsRoutesLabelRow(order, TakenInHidden, L[nameKey], L[nameKey .. "_DESCRIPTION"], key, {
+		type = "select",
+		values = function()
+			local values = {}
+			for _, levels in ipairs(steps) do
+				values[levels] = levels == 0 and L[zeroKey] or L[formatKey]:format(levels)
+			end
+			return values
+		end,
+		sorting = steps,
+	})
+end
+
+--[[
+	Quest Types to Pick Up Along the Route, as this game tags quests (ns.QUEST_TAG_SUFFIXES): Elite on Era
+	and Forever, Group from TBC on, both the tag with ID 1; Dungeon named with Heroic where the game has
+	heroic quests (tag 85)
+]]
+local function EliteNameKey()
+	return (ns.QUEST_TAG_SUFFIXES or {})[1] == "GROUP" and "PICK_UP_GROUP" or "PICK_UP_ELITE"
+end
+
+local function DungeonNameKey()
+	return (ns.QUEST_TAG_SUFFIXES or {})[85] and "PICK_UP_DUNGEON_HEROIC" or "PICK_UP_DUNGEON"
+end
+
+local QUEST_TYPES = {
+	{ key = "pickUpElite", nameKey = EliteNameKey },
+	{ key = "pickUpPvP", nameKey = "PICK_UP_PVP" },
+	{ key = "pickUpDungeon", nameKey = DungeonNameKey, descKey = "PICK_UP_INSTANCE_DESCRIPTION" },
+	{ key = "pickUpRaid", nameKey = "PICK_UP_RAID", descKey = "PICK_UP_INSTANCE_DESCRIPTION" },
+	{ key = "pickUpEscort", nameKey = "LOCAL_ESCORT_QUESTS" },
+	{ key = "pickUpOtherZone", nameKey = "LOCAL_OTHER_ZONE_QUESTS" },
+}
+
+--[[
+	The What to Route sections, under the Quest Route switch, then Party, then the Route Line: the big choices
+	first, What to Route's own Plan Ahead and Route Focus dropdowns, then the pick-up filters, Quest Types and
+	Quest Difficulty
+]]
+local function AddWhatToRouteSection(args)
+	--[[
+		What to Route: Plan Ahead, the same setting as the Quest Arrow menu's What to Route, with its Search
+		Range under it, then Route Focus and Flight Paths
+	]]
+	args.spaceWhat0 = Kit.Spacer(38, TakenInHidden)
+	args.headerWhat = Kit.Header(L["WHAT_TO_ROUTE_HEADER"], 38.01, TakenInHidden)
+	args.spaceWhat1 = Kit.Spacer(38.02, TakenInHidden)
+	args.descWhat = Kit.Desc(L["WHAT_TO_ROUTE_DESCRIPTION"], 38.03, TakenInHidden)
+	args.spacePlanAhead = Kit.Spacer(38.04, TakenInHidden)
+	args.planAhead =
+		ChoiceRow("planAhead", "PLAN_AHEAD_HEADER", "PLAN_AHEAD_DESCRIPTION", 38.05, PLAN_AHEAD, PLAN_AHEAD_ORDER)
 	args.localQuestRangeRow = ns.OptionsRoutesSubControlRow(
-		39.6,
-		LocalHidden,
+		38.075,
+		RangeHidden,
 		L["LOCAL_QUEST_RANGE"],
 		L["LOCAL_QUEST_RANGE_DESCRIPTION"],
 		"localQuestRange",
 		{ type = "range", min = 200, max = 800, step = 50 }
 	)
-	LocalRow(args, "localEscortQuests", "LOCAL_ESCORT_QUESTS", 39.7, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
-	LocalRow(args, "localOtherZoneQuests", "LOCAL_OTHER_ZONE_QUESTS", 39.8, LOCAL_CHOICES, LOCAL_CHOICE_ORDER)
-	LocalRow(args, "localQuestLevel", "LOCAL_QUEST_LEVEL", 39.85, LOCAL_LEVELS, LOCAL_LEVEL_ORDER)
+	args.spaceFocus = Kit.Spacer(38.078, TakenInHidden)
+	args.routeFocus =
+		ChoiceRow("routeFocus", "ROUTE_FOCUS_HEADER", "ROUTE_FOCUS_DESCRIPTION", 38.079, ROUTE_FOCUS, ROUTE_FOCUS_ORDER)
+	args.spaceFlightPaths = Kit.Spacer(38.08, TakenInHidden)
+	-- The same setting as the Quest Arrow menu's Flight Paths
+	args.showFlightPaths = Toggle("showFlightPaths", "SHOW_FLIGHT_PATHS", 38.085, TakenInHidden)
+
+	-- Quest Types to Pick Up Along the Route
+	args.spaceTypes0 = Kit.Spacer(38.2, TakenInHidden)
+	args.headerTypes = Kit.Header(L["QUEST_TYPES_HEADER"], 38.21, TakenInHidden)
+	args.spaceTypes1 = Kit.Spacer(38.22, TakenInHidden)
+	args.descTypes = Kit.Desc(L["QUEST_TYPES_DESCRIPTION"], 38.23, TakenInHidden)
+	args.spaceTypes2 = Kit.Spacer(38.24, TakenInHidden)
+	for index, questType in ipairs(QUEST_TYPES) do
+		local nameKey = type(questType.nameKey) == "function" and questType.nameKey() or questType.nameKey
+		local toggle = ns.OptionsRoutesToggle(
+			questType.key,
+			nameKey,
+			questType.descKey or (nameKey .. "_DESCRIPTION"),
+			38.25 + index / 1000,
+			nil,
+			TakenInHidden
+		)
+		args[questType.key] = toggle
+	end
+
+	-- Quest Difficulty
+	args.spaceLevels0 = Kit.Spacer(38.3, TakenInHidden)
+	args.headerLevels = Kit.Header(L["QUEST_DIFFICULTY_HEADER"], 38.31, TakenInHidden)
+	args.spaceLevels1 = Kit.Spacer(38.32, TakenInHidden)
+	args.descLevels = Kit.Desc(L["QUEST_DIFFICULTY_DESCRIPTION"], 38.33, TakenInHidden)
+	LevelRow(
+		args,
+		"highestQuestLevel",
+		"LOCAL_HIGHEST_QUEST_LEVEL",
+		38.36,
+		"LOCAL_LEVELS_ABOVE",
+		HIGHEST_LEVEL_STEPS,
+		"LOCAL_LEVELS_YOUR_LEVEL"
+	)
+	LevelRow(
+		args,
+		"lowestQuestLevel",
+		"LOCAL_QUEST_LEVEL",
+		38.39,
+		"LOCAL_LEVELS_BELOW",
+		LOWEST_LEVEL_STEPS,
+		"LOCAL_LEVELS_NO_LIMIT"
+	)
 end
 
 function ns.BuildQuestRouteOptions()
@@ -123,63 +223,47 @@ function ns.BuildQuestRouteOptions()
 		type = "group",
 		name = L["TAB_QUEST_ROUTE"],
 		args = {
-			descIntro = ns.OptionsDesc(L["TAB_QUEST_ROUTE_DESCRIPTION"], 1),
-			spaceIntro = ns.OptionsSpacer(2),
-			enableQuestRoute = ns.OptionsQuestRouteToggle(3),
-			needsMarkers = ns.OptionsStatusLine(NeedsMarkersText, 4),
+			descIntro = Kit.Desc(L["TAB_QUEST_ROUTE_DESCRIPTION"], 1),
+			spaceIntro = Kit.Spacer(2),
+			enableQuestRoute = ns.FeatureSwitch("routes.showLine", 3),
+			needsMarkers = Kit.StatusLine(NeedsMarkersText, 4),
+			needsQuestie = ns.RoutesNeedQuestieLine(4.1),
 
-			spaceLine0 = ns.OptionsSpacer(30, RouteHidden),
-			headerLine = ns.OptionsHeader(L["ROUTES_LINE_HEADER"], 31, RouteHidden),
-			spaceLine1 = ns.OptionsSpacer(32, RouteHidden),
-			descLine = ns.OptionsDesc(L["ROUTES_LINE_DESCRIPTION"], 32.1, RouteHidden),
-			spaceLine2 = ns.OptionsSpacer(32.2, RouteHidden),
-			lineSpeedLabel = ns.OptionsRowLabel(L["LINE_SPEED"], 34, nil, RouteHidden, L["LINE_SPEED_DESCRIPTION"]),
-			lineSpeed = ns.OptionsRoutesControl("lineSpeed", {
-				type = "select",
-				desc = L["LINE_SPEED_DESCRIPTION"],
-				values = function()
-					return Choices(LINE_SPEEDS)
-				end,
-				sorting = LINE_SPEED_ORDER,
-			}, 35, RouteHidden),
-			spaceLineOpacity = ns.OptionsSpacer(35.5, RouteHidden),
-			lineOpacityLabel = ns.OptionsRowLabel(
-				L["LINE_OPACITY"],
-				36,
-				nil,
+			lineSpeed = ns.OptionsRoutesLabelRow(
+				54,
 				RouteHidden,
-				L["LINE_OPACITY_DESCRIPTION"]
+				L["LINE_SPEED"],
+				L["LINE_SPEED_DESCRIPTION"],
+				"lineSpeed",
+				{
+					type = "select",
+					values = function()
+						return Choices(LINE_SPEEDS)
+					end,
+					sorting = LINE_SPEED_ORDER,
+				}
 			),
-			lineOpacity = ns.OptionsRoutesControl("lineOpacity", {
-				type = "range",
-				desc = L["LINE_OPACITY_DESCRIPTION"],
-				min = 0.2,
-				max = 1,
-				step = 0.1,
-				isPercent = true,
-			}, 37, RouteHidden),
+			spaceLineOpacity = Kit.Spacer(55.5, RouteHidden),
+			lineOpacity = ns.OptionsRoutesLabelRow(
+				56,
+				RouteHidden,
+				L["LINE_OPACITY"],
+				L["LINE_OPACITY_DESCRIPTION"],
+				"lineOpacity",
+				{ type = "range", min = 0.2, max = 1, step = 0.1, isPercent = true }
+			),
 
-			spacePlanning0 = ns.OptionsSpacer(38, TakenInHidden),
-			headerPlanning = ns.OptionsHeader(L["ROUTES_PLANNING_HEADER"], 38.1, TakenInHidden),
-			spacePlanning1 = ns.OptionsSpacer(38.2, TakenInHidden),
-			descPlanning = ns.OptionsDesc(L["ROUTES_PLANNING_DESCRIPTION"], 38.3, TakenInHidden),
-			spacePlanning2 = ns.OptionsSpacer(38.4, TakenInHidden),
-			-- The same setting as the Quest Arrow menu's Predictive Questing Routes (Routes-Chains.lua)
-			predictiveRoutes = Toggle("predictiveRoutes", "PREDICTIVE_ROUTES", 38.5, TakenInHidden),
-			spaceFlightPaths = ns.OptionsSpacer(38.6, TakenInHidden),
-			-- The same setting as the Quest Arrow menu's Flight Paths
-			showFlightPaths = Toggle("showFlightPaths", "SHOW_FLIGHT_PATHS", 38.7, TakenInHidden),
-
-			spaceParty0 = ns.OptionsSpacer(40, TakenInHidden),
-			headerParty = ns.OptionsHeader(L["ROUTES_PARTY_HEADER"], 41, TakenInHidden),
-			spaceParty1 = ns.OptionsSpacer(42, TakenInHidden),
-			descParty = ns.OptionsDesc(L["ROUTES_PARTY_DESCRIPTION"], 42.1, TakenInHidden),
-			spaceParty2 = ns.OptionsSpacer(42.2, TakenInHidden),
 			partyQuests = Toggle("partyQuests", "PARTY_QUESTS", 43, TakenInHidden),
-			spaceGroupUp = ns.OptionsSpacer(43.5, TakenInHidden),
-			groupUp = Toggle("groupUp", "GROUP_UP", 44, TakenInHidden, GroupUpOff),
+			groupUp = Kit.SubToggleRow(
+				44,
+				GroupUpHidden,
+				ns.OptionsRoutesToggle("groupUp", "GROUP_UP", "GROUP_UP_DESCRIPTION")
+			),
 		},
 	}
-	AddLocalQuestsSection(options.args)
+	local args = options.args
+	Kit.Section(args, "Party", 40, L["ROUTES_PARTY_HEADER"], L["ROUTES_PARTY_DESCRIPTION"], TakenInHidden)
+	Kit.Section(args, "Line", 50, L["ROUTES_LINE_HEADER"], L["ROUTES_LINE_DESCRIPTION"], RouteHidden)
+	AddWhatToRouteSection(args)
 	return options
 end

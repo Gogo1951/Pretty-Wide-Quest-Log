@@ -302,49 +302,81 @@ L["LINE_SPEED_FAST"] = "빠르게"
 L["LINE_OPACITY"] = "경로선 불투명도"
 L["LINE_OPACITY_DESCRIPTION"] =
 	"점이 얼마나 진하게 보이는지 정합니다. 낮을수록 지도가 더 많이 비쳐 보입니다."
-L["ROUTES_PLANNING_HEADER"] = "계획"
-L["ROUTES_PLANNING_DESCRIPTION"] = "경로가 내 퀘스트 외에 함께 계획하는 것입니다."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "예측 퀘스트 경로"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"근처뿐 아니라 퀘스트를 주는 NPC가 어디에 있든, 이 지역에서 끝낼 수 있는 퀘스트를 미리 계획합니다. 목표, 완료 보고, 이어지는 퀘스트까지 포함됩니다. 경로는 지역의 한 구역에 가기 전에 그곳에 필요한 퀘스트를 모두 받게 하므로 한 번만 가면 됩니다. 연계 퀘스트는 다른 지역으로 이어지는 첫 퀘스트에서 멈춥니다. 아직 받지 않은 퀘스트의 목표는 회색 표식으로 표시됩니다. 각 퀘스트의 완료 보고 위치도 완료 전부터 Questie의 회색 물음표로 표시됩니다."
--- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+-- TRANSLATORS: a popup with an Okay button each time Plan Ahead (PLAN_AHEAD_ZONE) is chosen
 L["PREDICTIVE_ROUTES_POPUP"] =
-	"알림: 예측 퀘스트 경로는 지역 전체를 미리 계획하므로 지도가 좀 복잡해 보일 수 있습니다. 하지만 다 이유가 있습니다! 퀘스트 화살표를 따라가면 달리는 시간은 줄고 경험치를 얻는 시간은 늘어납니다. (="
+	"알림: 미리 계획은 지역 전체를 미리 계획하므로 지도가 좀 복잡해 보일 수 있습니다. 하지만 다 이유가 있습니다! 퀘스트 화살표를 따라가면 달리는 시간은 줄고 경험치를 얻는 시간은 늘어납니다. (="
 -- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
 L["SHOW_FLIGHT_PATHS"] = "발견하지 않은 비행 경로를 목표로 표시"
 L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
 	"현재 지역에서 아직 비행 경로를 얻지 않은 비행 조련사를 경로에 추가하고 비행 조련사 아이콘으로 표시합니다. 이미 비행 경로를 가진 캐릭터라면 아무 비행 지도나 한 번 열어 내가 가진 비행 경로를 경로가 알 수 있게 하세요. 그 전까지는 아무것도 추가되지 않습니다."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "주변의 받을 수 있는 퀘스트를 목표로 표시"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"Questie가 받을 수 있다고 표시하고, 퀘스트를 주는 NPC나 물체가 %s 이내에 있는 퀘스트를 경로에 넣고 Questie의 느낌표로 표시합니다. 전리품 아이템으로 시작하는 퀘스트와 던전 및 공격대 퀘스트는 제외됩니다."
-L["LOCAL_QUESTS_HEADER"] = "주변의 받을 수 있는 퀘스트"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"퀘스트 화살표가 주변의 어떤 퀘스트로 안내할지 정합니다. 건너뛴 퀘스트도 경로 선 없이 세계 지도에 표시될 수 있습니다."
 L["LOCAL_QUEST_RANGE"] = "검색 범위"
 L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"퀘스트를 주는 대상이 몇 미터 안에 있어야 포함되는지 정합니다. 400 미만이면 경로를 다시 계산하는 사이에 지나친 대상을 놓칠 수 있습니다."
 L["LOCAL_ESCORT_QUESTS"] = "호위 퀘스트"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"가는 길에 NPC를 지켜야 하는 퀘스트로, 시간이 걸리고 파티가 필요한 경우가 많습니다. 지도 표식은 초록색입니다."
-L["LOCAL_OTHER_ZONE_QUESTS"] = "다른 지역의 목표"
+L["LOCAL_OTHER_ZONE_QUESTS"] = "다른 지역에 목표가 있는 퀘스트"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"목표나 보고 장소가 현재 지역 밖에만 있는 퀘스트입니다. 다음 마을로 보내는 퀘스트 등이 해당합니다."
 L["LOCAL_QUEST_LEVEL"] = "최저 퀘스트 레벨"
 L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	"이 난이도 색보다 낮은 퀘스트는 제외됩니다. Questie 설정은 Questie가 지도에 표시하는 퀘스트를 그대로 둡니다."
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "경로에 포함"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "지도에만"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "제외"
-L["LOCAL_LEVEL_QUESTIE"] = "Questie 설정"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "초록색 이상"
-L["LOCAL_LEVEL_YELLOW"] = "노란색 이상"
+	"내 레벨보다 이만큼 넘게 낮은 퀘스트는 제외됩니다. 제한 없음은(는) Questie가 보여 주는 만큼 회색 퀘스트도 포함합니다."
+L["LOCAL_HIGHEST_QUEST_LEVEL"] = "최고 퀘스트 레벨"
+L["LOCAL_HIGHEST_QUEST_LEVEL_DESCRIPTION"] =
+	"내 레벨보다 이만큼 넘게 높은 퀘스트는 경로에 들어가는 레벨과 함께 지도에 회색으로 표시되어, 아직 너무 어려운 퀘스트로 보내지 않습니다."
+-- TRANSLATORS: %d is a number of levels, 3, 6 or 9, above or below the player's own
+L["LOCAL_LEVELS_ABOVE"] = "내 레벨 +%d"
+-- TRANSLATORS: Highest Quest Level's choice that leaves off every quest above the player's own level
+L["LOCAL_LEVELS_YOUR_LEVEL"] = "내 레벨"
+L["LOCAL_LEVELS_BELOW"] = "내 레벨 -%d"
+-- TRANSLATORS: Lowest Quest Level's choice that leaves no quest off for being too low, gray ones included
+L["LOCAL_LEVELS_NO_LIMIT"] = "제한 없음"
+-- TRANSLATORS: a section of the Quest Route panel: which quests the route guides you to pick up
+L["WHAT_TO_ROUTE_HEADER"] = "경로에 넣을 것"
+L["WHAT_TO_ROUTE_DESCRIPTION"] =
+	"받은 퀘스트는 언제나 경로에 포함됩니다. 이 설정은 내 퀘스트 방식에 맞춰, 가는 길에 어떤 퀘스트를 받으러 안내할지 정합니다."
+L["PLAN_AHEAD_HEADER"] = "미리 계획"
+L["PLAN_AHEAD_DESCRIPTION"] = "경로가 받을 퀘스트를 얼마나 멀리까지 찾는지입니다."
+-- TRANSLATORS: Plan Ahead's three choices are also switches on the Quest Arrow's menu
+L["PLAN_AHEAD_YOURS"] = "내 퀘스트만"
+L["PLAN_AHEAD_YOURS_DESCRIPTION"] = "퀘스트 목록에 있는 퀘스트만, 예전 QuestHelper 애드온처럼."
+L["PLAN_AHEAD_NEARBY"] = "내 퀘스트와 주변에서 받을 퀘스트"
+L["PLAN_AHEAD_NEARBY_DESCRIPTION"] = "주변의 퀘스트 제공자를 받으러 갈 경유지로 표시합니다."
+-- TRANSLATORS: the same words as PLAN_AHEAD_HEADER: the choice that plans the whole zone ahead
+L["PLAN_AHEAD_ZONE"] = "미리 계획"
+L["PLAN_AHEAD_ZONE_DESCRIPTION"] =
+	"지역 전체의 퀘스트 받기, 목표, 완료를 후속 퀘스트까지 계획해, 지역의 한 곳에 가기 전에 그곳의 퀘스트를 모두 받게 합니다. 아직 받지 않은 퀘스트의 목표는 회색으로 표시됩니다. 더 멀리 계획할수록 계산이 오래 걸립니다."
+L["QUEST_DIFFICULTY_HEADER"] = "퀘스트 난이도"
+L["QUEST_DIFFICULTY_DESCRIPTION"] =
+	"경로가 받으러 안내할 퀘스트 레벨입니다. 퀘스트 목록에 있는 퀘스트는 레벨과 관계없이 경로에 남습니다."
+L["QUEST_TYPES_HEADER"] = "가는 길에 받을 퀘스트 유형"
+L["QUEST_TYPES_DESCRIPTION"] =
+	"경로가 받으러 안내할 퀘스트 유형입니다. 선택하지 않은 유형도 지도에 회색으로 이유와 함께 표시되지만, 경로가 받으러 안내하지는 않습니다."
+-- TRANSLATORS: Era and Forever call quests with tag 1 Elite; TBC and later call them Group (PICK_UP_GROUP)
+L["PICK_UP_ELITE"] = "정예 퀘스트"
+L["PICK_UP_ELITE_DESCRIPTION"] =
+	"내 레벨의 정예 퀘스트는 혼자 할 만하고, 4레벨 높은 것은 친구 한두 명이 필요할 수 있습니다."
+L["PICK_UP_GROUP"] = "파티 퀘스트"
+L["PICK_UP_GROUP_DESCRIPTION"] =
+	"파티용 퀘스트입니다. 내 레벨이면 혼자서도 할 만한 경우가 많고, 몇 레벨 높으면 친구 한두 명이 필요할 수 있습니다."
+L["PICK_UP_PVP"] = "PvP 퀘스트"
+L["PICK_UP_PVP_DESCRIPTION"] = "다른 플레이어와 싸우거나 전장으로 보내는 퀘스트입니다."
+L["PICK_UP_DUNGEON"] = "던전 퀘스트"
+-- TRANSLATORS: PICK_UP_DUNGEON on games with heroic dungeons (TBC and later)
+L["PICK_UP_DUNGEON_HEROIC"] = "던전 및 영웅 퀘스트"
+L["PICK_UP_RAID"] = "공격대 퀘스트"
+L["PICK_UP_INSTANCE_DESCRIPTION"] = "퀘스트를 받는 곳까지만 안내합니다. 목표는 안에 있습니다."
+L["ROUTE_FOCUS_HEADER"] = "경로 우선순위"
+L["ROUTE_FOCUS_DESCRIPTION"] = "경로가 받을 퀘스트를 고르고 순서를 정하는 방식입니다."
+L["ROUTE_FOCUS_FASTEST"] = "가장 빠른 완료"
+L["ROUTE_FOCUS_FASTEST_DESCRIPTION"] = "설정이 허용하는 모든 퀘스트를 가장 적게 걸어서."
+L["ROUTE_FOCUS_EASIEST"] = "쉬운 것부터"
+L["ROUTE_FOCUS_EASIEST_DESCRIPTION"] =
+	"걷는 거리가 조금만 늘어난다면 쉬운 퀘스트를 어려운 퀘스트보다 먼저."
+-- TRANSLATORS: Experimental: the option is new and may change
+L["ROUTE_FOCUS_XP"] = "시간당 최대 경험치 (실험적)"
+L["ROUTE_FOCUS_XP_DESCRIPTION"] =
+	"가는 거리에 비해 보상이 너무 적은 퀘스트는 건너뜁니다. 새 기능이니 의견을 환영합니다."
 L["ROUTES_PARTY_HEADER"] = "파티"
 L["ROUTES_PARTY_DESCRIPTION"] = "파티가 경로에 더하는 것입니다."
 L["PARTY_QUESTS"] = "파티원의 퀘스트 포함"
@@ -562,6 +594,12 @@ L["ROUTES_OFF_ROUTE_DUNGEON"] = "던전 퀘스트, 경로에 없음"
 L["ROUTES_OFF_ROUTE_RAID"] = "공격대 퀘스트, 경로에 없음"
 L["ROUTES_OFF_ROUTE_LOG_FULL"] = "퀘스트 목록 가득 참, 경로에 없음"
 L["ROUTES_OFF_ROUTE_FAR"] = "검색 범위 밖, 경로에 없음"
+L["ROUTES_OFF_ROUTE_ELITE"] = "정예 퀘스트, 경로에 없음"
+L["ROUTES_OFF_ROUTE_GROUP"] = "파티 퀘스트, 경로에 없음"
+L["ROUTES_OFF_ROUTE_PVP"] = "PvP 퀘스트, 경로에 없음"
+-- TRANSLATORS: %d is the player level at which the quest goes on the route
+L["ROUTES_OFF_ROUTE_LEVEL"] = "%d레벨에 경로에 추가"
+L["ROUTES_OFF_ROUTE_XP"] = "거리 대비 경험치 적음, 경로에 없음"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "%s 받은 후"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -608,6 +646,7 @@ L["ROUTES_MENU_SECTION_CURRENT"] = "현재 목표"
 L["ROUTES_MENU_IGNORE"] = "무시"
 L["ROUTES_MENU_SECTION_ROUTE"] = "경로"
 L["ROUTES_MENU_SECTION_SHOW"] = "표시"
+L["ROUTES_MENU_SECTION_ALSO_ROUTE"] = "경로에 추가"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "다음"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
@@ -623,9 +662,6 @@ L["ROUTES_MENU_FLIGHT_PATH"] = "%s 비행 경로"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "%s(으)로 비행"
 L["ROUTES_MENU_EXIT"] = "%s 가는 길"
--- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
-L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "예측 퀘스트 경로"
-L["ROUTES_MENU_SHOWN_LOCAL"] = "주변의 받을 수 있는 퀘스트"
 L["ROUTES_MENU_SHOWN_FLIGHTS"] = "비행 경로"
 L["ROUTES_MENU_SHOWN_PARTY"] = "파티 목표"
 L["ROUTES_MENU_ON"] = "켜짐"

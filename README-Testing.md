@@ -8,7 +8,7 @@ Pretty Wide Quest Log turns the quest log into one wide window and, with Questie
 
 1. With Questie on, press **M** in a zone with lots of quests; the route should end at a **…** marker that shows the rest of it while you hover, and all of it once you click.
 2. Under **Maps & Objectives > Zone Map** in the options, set **Waypoints Shown** to **Next 5**, then to **Whole Route**.
-3. Turn on **Predictive Questing Routes** under **Planning** on the **Quest Route** options panel, then off and on again from the Quest Arrow's menu; a heads-up popup should show each time.
+3. Choose **Plan Ahead** under **What to Route** on the **Quest Route** options panel, then another choice and **Plan Ahead** again from the Quest Arrow's menu; a heads-up popup should show each time.
 4. When the Quest Arrow says **Talk to … to Fly to …**, hover it and click that flight under **Ignore**; the route should walk you there instead.
 5. With Questie on, press **L** and pick another zone in the zone menu under the map; **Things to Bring** should name that zone, and hovering a quest giver on the map should list their quests.
 6. On WoW Forever, share a quest with a party member who is too far away; they should get a whisper from you.

@@ -91,6 +91,38 @@ local function DropPredictiveSettings()
 	settings.planQuestChains = nil
 end
 
+--[[
+	MIGRATION (remove after 2026-12-17): Lowest Quest Level went from difficulty colors (localQuestLevel) to
+	levels below the player (lowestQuestLevel), so the old one is dropped from the profile
+]]
+local function DropQuestColorSetting()
+	ns.db.profile.routes.localQuestLevel = nil
+end
+
+--[[
+	MIGRATION (remove after 2026-12-17): What to Route's Plan Ahead (planAhead) replaced the Predictive
+	Questing Routes and Local Available Quests switches (predictiveRoutes, showLocalQuests), and its Quest
+	Types to Pick Up Along the Route boxes the escort and other-zone choices (localEscortQuests,
+	localOtherZoneQuests). Predictive on is Plan Ahead; Local Available Quests off, Your Quests Only. An
+	escort or other-zone choice of "route" checks its box; "map" and "off" leave it unchecked, a gray marker
+]]
+local function MoveWhatToRouteSettings()
+	local settings = ns.db.profile.routes
+	if settings.predictiveRoutes == true then
+		settings.planAhead = "zone"
+	elseif settings.showLocalQuests == false then
+		settings.planAhead = "yours"
+	end
+	if settings.localEscortQuests == "route" then
+		settings.pickUpEscort = true
+	end
+	if settings.localOtherZoneQuests == "route" then
+		settings.pickUpOtherZone = true
+	end
+	settings.predictiveRoutes, settings.showLocalQuests = nil, nil
+	settings.localEscortQuests, settings.localOtherZoneQuests = nil, nil
+end
+
 -- A line in chat the way the rest of the add-on writes them: its name, a separator, the message
 function routes.Print(message)
 	ns:PrintMessage(message)
@@ -259,7 +291,7 @@ end
 function routes.SetSetting(key, value)
 	local was = routes.Settings()[key]
 	routes.Settings()[key] = value
-	if key == "predictiveRoutes" and value and not was then
+	if key == "planAhead" and value == "zone" and was ~= "zone" then
 		StaticPopup_Show("PRETTYWIDEQUESTLOG_PREDICTIVE") -- Routes-Chains.lua
 	end
 	routes.UpdateWatcher()
@@ -296,6 +328,8 @@ function routes:OnPlayerLogin()
 	MigrateSettings() -- MIGRATION (remove after 2026-12-06)
 	DropRetiredSettings() -- MIGRATION (remove after 2026-12-07)
 	DropPredictiveSettings() -- MIGRATION (remove after 2026-12-11)
+	DropQuestColorSetting() -- MIGRATION (remove after 2026-12-17)
+	MoveWhatToRouteSettings() -- MIGRATION (remove after 2026-12-17)
 	for _, handler in ipairs(routes.loginHandlers) do
 		handler()
 	end

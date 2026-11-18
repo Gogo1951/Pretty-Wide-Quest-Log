@@ -314,50 +314,87 @@ L["LINE_SPEED_FAST"] = "Быстрая"
 L["LINE_OPACITY"] = "Непрозрачность линии"
 L["LINE_OPACITY_DESCRIPTION"] =
 	"Насколько плотные точки; чем ниже, тем больше карты просвечивает сквозь них."
-L["ROUTES_PLANNING_HEADER"] = "Планирование"
-L["ROUTES_PLANNING_DESCRIPTION"] =
-	"Что маршрут планирует помимо ваших собственных заданий."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_PREDICTIVE
-L["PREDICTIVE_ROUTES"] = "Прогнозируемые маршруты заданий"
-L["PREDICTIVE_ROUTES_DESCRIPTION"] =
-	"Планирует задания, которые можно выполнить в этой зоне, где бы ни стоял тот, кто их выдаёт, а не только поблизости: их цели, сдачу и задания, которые идут следом. Затем маршрут собирает всё нужное для части зоны до того, как вы туда отправитесь, так что идти туда придётся лишь раз. Цепочка обрывается на первом задании, ведущем в другую зону. Цели ещё не взятого задания отмечены серой меткой. Сдача каждого задания тоже показывается заранее, серым вопросительным знаком Questie."
--- TRANSLATORS: a popup with an Okay button each time Predictive Questing Routes is turned on
+-- TRANSLATORS: a popup with an Okay button each time Plan Ahead (PLAN_AHEAD_ZONE) is chosen
 L["PREDICTIVE_ROUTES_POPUP"] =
-	"Внимание: «Прогнозируемые маршруты заданий» планируют всю зону заранее, поэтому карта может выглядеть немного безумно. Но в этом безумии есть система! Следуйте за стрелкой заданий, чтобы меньше бегать и больше получать опыта. (="
+	"Внимание: «Планировать заранее» планирует всю зону наперёд, поэтому карта может выглядеть немного безумно. Но в этом безумии есть система! Следуйте за стрелкой заданий, чтобы меньше бегать и больше получать опыта. (="
 -- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_FLIGHTS
 L["SHOW_FLIGHT_PATHS"] = "Показывать неоткрытые пути полёта как цели"
 L["SHOW_FLIGHT_PATHS_DESCRIPTION"] =
 	"Добавляет в маршрут распорядителей полётов вашей зоны, чей путь полёта у вас ещё не открыт, со значком распорядителя полётов. Если у персонажа уже были пути полёта, откройте один раз любую карту полётов, чтобы маршрут узнал, какие у вас есть; до этого ни один не добавляется."
--- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_MENU_SHOWN_LOCAL
-L["SHOW_LOCAL_QUESTS"] = "Показывать доступные задания поблизости как цели"
--- TRANSLATORS: %s is ROUTES_YARDS, such as "400 Yards"
-L["SHOW_LOCAL_QUESTS_DESCRIPTION"] =
-	"Добавляет в маршрут задания, которые можно взять, если Questie показывает их как доступные, а НИП или предмет, выдающий их, находится не дальше %s, с восклицательным знаком Questie. Задания, которые начинает добыча, а также задания подземелий и рейдов не добавляются."
-L["LOCAL_QUESTS_HEADER"] = "Доступные задания поблизости"
-L["LOCAL_QUESTS_DESCRIPTION"] =
-	"К каким заданиям поблизости ведёт стрелка заданий. Пропущенное может всё равно отображаться на карте мира, без линии маршрута к нему."
 L["LOCAL_QUEST_RANGE"] = "Радиус поиска"
 L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"На скольких метрах от вас может стоять тот, кто даёт задание, чтобы оно учитывалось. Если меньше 400, того, мимо кого вы прошли между расчётами маршрута, можно пропустить."
 L["LOCAL_ESCORT_QUESTS"] = "Задания сопровождения"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
 	"Задания, где вы охраняете NPC в пути; они требуют времени и часто группы. Их метка на карте зелёная."
-L["LOCAL_OTHER_ZONE_QUESTS"] = "Цели в другой зоне"
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Задания с целями в другой зоне"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"Задания, у которых цель или сдача есть только за пределами вашей зоны, например отправляющие в следующий город."
 L["LOCAL_QUEST_LEVEL"] = "Минимальный уровень задания"
 L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	'Задания ниже этого цвета сложности не учитываются. "Настройка Questie" оставляет задания, которые Questie показывает на своей карте.'
--- TRANSLATORS: a choice for a kind of nearby quest: the Quest Arrow takes you there
-L["LOCAL_CHOICE_ROUTE"] = "На маршруте"
--- TRANSLATORS: a choice for a kind of nearby quest: a marker on the world map, but the Quest Arrow skips it
-L["LOCAL_CHOICE_MAP"] = "Только карта"
--- TRANSLATORS: a choice for a kind of nearby quest: neither the route nor its map markers show it
-L["LOCAL_CHOICE_OFF"] = "Не учитывать"
-L["LOCAL_LEVEL_QUESTIE"] = "Настройка Questie"
--- TRANSLATORS: quest difficulty colors, green being a few levels below the player
-L["LOCAL_LEVEL_GREEN"] = "Зелёные и выше"
-L["LOCAL_LEVEL_YELLOW"] = "Жёлтые и выше"
+	"Задания ниже вашего уровня больше чем на столько не учитываются. «Без ограничений» берёт и серые задания, сколько их показывает Questie."
+L["LOCAL_HIGHEST_QUEST_LEVEL"] = "Максимальный уровень задания"
+L["LOCAL_HIGHEST_QUEST_LEVEL_DESCRIPTION"] =
+	"Задания выше вашего уровня больше чем на столько показываются на карте серым, с уровнем, с которого они попадут на маршрут, чтобы маршрут не отправил вас к пока слишком сложному."
+-- TRANSLATORS: %d is a number of levels, 3, 6 or 9, above or below the player's own
+L["LOCAL_LEVELS_ABOVE"] = "На %d выше вашего"
+-- TRANSLATORS: Highest Quest Level's choice that leaves off every quest above the player's own level
+L["LOCAL_LEVELS_YOUR_LEVEL"] = "Ваш уровень"
+L["LOCAL_LEVELS_BELOW"] = "На %d ниже вашего"
+-- TRANSLATORS: Lowest Quest Level's choice that leaves no quest off for being too low, gray ones included
+L["LOCAL_LEVELS_NO_LIMIT"] = "Без ограничений"
+-- TRANSLATORS: a section of the Quest Route panel: which quests the route guides you to pick up
+L["WHAT_TO_ROUTE_HEADER"] = "Что вести по маршруту"
+L["WHAT_TO_ROUTE_DESCRIPTION"] =
+	"Каждое взятое задание всегда на маршруте. Эти настройки решают, к каким заданиям маршрут поведёт вас по пути, чтобы их взять, — под ваш стиль выполнения заданий."
+L["PLAN_AHEAD_HEADER"] = "Планировать заранее"
+L["PLAN_AHEAD_DESCRIPTION"] =
+	"Как далеко вперёд маршрут ищет задания, которые можно взять."
+-- TRANSLATORS: Plan Ahead's three choices are also switches on the Quest Arrow's menu
+L["PLAN_AHEAD_YOURS"] = "Только ваши задания"
+L["PLAN_AHEAD_YOURS_DESCRIPTION"] =
+	"Только задания из вашего журнала, как в старом аддоне QuestHelper."
+L["PLAN_AHEAD_NEARBY"] = "Ваши задания и задания поблизости"
+L["PLAN_AHEAD_NEARBY_DESCRIPTION"] =
+	"Персонажи с заданиями рядом с вами — точки маршрута, где их взять."
+-- TRANSLATORS: the same words as PLAN_AHEAD_HEADER: the choice that plans the whole zone ahead
+L["PLAN_AHEAD_ZONE"] = "Планировать заранее"
+L["PLAN_AHEAD_ZONE_DESCRIPTION"] =
+	"Взятие, цели и сдача по всей зоне, с последующими заданиями, чтобы вы брали всё для части зоны до того, как туда идти. Цели ещё не взятых заданий отмечены серым. Чем дальше план, тем дольше он рассчитывается."
+L["QUEST_DIFFICULTY_HEADER"] = "Сложность заданий"
+L["QUEST_DIFFICULTY_DESCRIPTION"] =
+	"Уровни заданий, к которым маршрут ведёт вас, чтобы их взять. Задания в журнале остаются на маршруте при любом уровне."
+L["QUEST_TYPES_HEADER"] = "Типы заданий, которые брать по пути"
+L["QUEST_TYPES_DESCRIPTION"] =
+	"Типы заданий, к которым маршрут ведёт вас, чтобы их взять. Неотмеченный тип всё равно виден на карте серым с причиной, но маршрут не поведёт вас его брать."
+-- TRANSLATORS: Era and Forever call quests with tag 1 Elite; TBC and later call them Group (PICK_UP_GROUP)
+L["PICK_UP_ELITE"] = "Элитные задания"
+L["PICK_UP_ELITE_DESCRIPTION"] =
+	"Элитное задание вашего уровня можно сделать в одиночку; на 4 уровня выше может понадобиться друг-другой."
+L["PICK_UP_GROUP"] = "Групповые задания"
+L["PICK_UP_GROUP_DESCRIPTION"] =
+	"Задания для группы. Задание вашего уровня часто можно сделать в одиночку; на несколько уровней выше может понадобиться друг-другой."
+L["PICK_UP_PVP"] = "PvP-задания"
+L["PICK_UP_PVP_DESCRIPTION"] =
+	"Задания, где вы сражаетесь с другими игроками или отправляетесь на поле боя."
+L["PICK_UP_DUNGEON"] = "Задания подземелий"
+-- TRANSLATORS: PICK_UP_DUNGEON on games with heroic dungeons (TBC and later)
+L["PICK_UP_DUNGEON_HEROIC"] = "Задания подземелий и героические"
+L["PICK_UP_RAID"] = "Рейдовые задания"
+L["PICK_UP_INSTANCE_DESCRIPTION"] = "Ведёт только к месту взятия; цели внутри."
+L["ROUTE_FOCUS_HEADER"] = "Приоритет маршрута"
+L["ROUTE_FOCUS_DESCRIPTION"] =
+	"Как маршрут выбирает и упорядочивает то, что вы берёте."
+L["ROUTE_FOCUS_FASTEST"] = "Быстрее всего"
+L["ROUTE_FOCUS_FASTEST_DESCRIPTION"] =
+	"Все задания, что позволяют ваши настройки, с наименьшей ходьбой."
+L["ROUTE_FOCUS_EASIEST"] = "Сначала лёгкие"
+L["ROUTE_FOCUS_EASIEST_DESCRIPTION"] =
+	"Лёгкие задания раньше трудных, если это добавляет немного ходьбы."
+-- TRANSLATORS: Experimental: the option is new and may change
+L["ROUTE_FOCUS_XP"] = "Больше всего опыта в час (экспериментально)"
+L["ROUTE_FOCUS_XP_DESCRIPTION"] =
+	"Пропускает задания, которые дают слишком мало за дорогу к ним. Это новинка, поэтому отзывы приветствуются."
 L["ROUTES_PARTY_HEADER"] = "Группа"
 L["ROUTES_PARTY_DESCRIPTION"] = "Что ваша группа добавляет к маршруту."
 L["PARTY_QUESTS"] = "Учитывать задания участников группы"
@@ -588,6 +625,12 @@ L["ROUTES_OFF_ROUTE_DUNGEON"] = "Задание подземелья, не на 
 L["ROUTES_OFF_ROUTE_RAID"] = "Задание рейда, не на маршруте"
 L["ROUTES_OFF_ROUTE_LOG_FULL"] = "Журнал заданий заполнен, не на маршруте"
 L["ROUTES_OFF_ROUTE_FAR"] = "За радиусом поиска, не на маршруте"
+L["ROUTES_OFF_ROUTE_ELITE"] = "Элитное задание, не на маршруте"
+L["ROUTES_OFF_ROUTE_GROUP"] = "Групповое задание, не на маршруте"
+L["ROUTES_OFF_ROUTE_PVP"] = "PvP-задание, не на маршруте"
+-- TRANSLATORS: %d is the player level at which the quest goes on the route
+L["ROUTES_OFF_ROUTE_LEVEL"] = "На маршруте с уровня %d"
+L["ROUTES_OFF_ROUTE_XP"] = "Мало опыта за дорогу, не на маршруте"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "После того как возьмёте: %s"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -635,6 +678,7 @@ L["ROUTES_MENU_SECTION_CURRENT"] = "Текущая цель"
 L["ROUTES_MENU_IGNORE"] = "Игнорировать"
 L["ROUTES_MENU_SECTION_ROUTE"] = "Маршрут"
 L["ROUTES_MENU_SECTION_SHOW"] = "Показывать"
+L["ROUTES_MENU_SECTION_ALSO_ROUTE"] = "Также на маршруте"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "Далее"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
@@ -650,9 +694,6 @@ L["ROUTES_MENU_FLIGHT_PATH"] = "Путь полёта: %s"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Полёт: %s"
 L["ROUTES_MENU_EXIT"] = "Путь в %s"
--- TRANSLATORS: the Quest Arrow menu's switches under ROUTES_MENU_SECTION_ROUTE; Next Objective, under ROUTES_MENU_SECTION_SHOW, is ROUTES_NEXT_OBJECTIVE
-L["ROUTES_MENU_SHOWN_PREDICTIVE"] = "Прогнозируемые маршруты заданий"
-L["ROUTES_MENU_SHOWN_LOCAL"] = "Доступные задания поблизости"
 L["ROUTES_MENU_SHOWN_FLIGHTS"] = "Пути полёта"
 L["ROUTES_MENU_SHOWN_PARTY"] = "Цели группы"
 L["ROUTES_MENU_ON"] = "Вкл."

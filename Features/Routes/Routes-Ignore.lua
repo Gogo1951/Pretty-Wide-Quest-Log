@@ -171,7 +171,7 @@ function routes.TaskLabel(task)
 	elseif task.kind == "exit" then
 		return routes.ExitLabel(task)
 	end
-	return task.objective and task.objective.Description or ""
+	return task.objective and routes.ObjectiveName(task.objective) or ""
 end
 
 --[[

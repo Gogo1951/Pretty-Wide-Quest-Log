@@ -25,6 +25,11 @@ local OFF_ROUTE_REASONS = {
 	elsewhere = "ROUTES_OFF_ROUTE_ELSEWHERE",
 	full = "ROUTES_OFF_ROUTE_LOG_FULL",
 	far = "ROUTES_OFF_ROUTE_FAR",
+	elite = "ROUTES_OFF_ROUTE_ELITE",
+	group = "ROUTES_OFF_ROUTE_GROUP",
+	pvp = "ROUTES_OFF_ROUTE_PVP",
+	level = "ROUTES_OFF_ROUTE_LEVEL", -- Formatted with the level it goes on the route at (task.opensAt)
+	xp = "ROUTES_OFF_ROUTE_XP",
 }
 
 -- A name in its class color, where the client says the class
@@ -35,7 +40,7 @@ end
 
 -- One objective line: its check, name, and "4 / 12" on the right, where it has a count
 local function AddObjective(tooltip, objective, have, need, done)
-	local left = ROW_INDENT .. ns.CheckIcon(GameTooltipText, done) .. " " .. (objective.Description or "")
+	local left = ROW_INDENT .. ns.CheckIcon(GameTooltipText, done) .. " " .. routes.ObjectiveName(objective)
 	local red, green, blue = ns.GetColorRGB(done and "HELP" or "TEXT")
 	if need then
 		local count = routes.CountText(have, need)
@@ -137,7 +142,7 @@ function routes.AddStopTooltip(tooltip, stop)
 			-- Why a map-only pick-up isn't on the route (Routes-Pick-Ups.lua), indented a space as objectives are
 			local reason = OFF_ROUTE_REASONS[entry.task.offRoute or ""]
 			if reason then
-				tooltip:AddLine(ROW_INDENT .. L[reason], ns.GetColorRGB("HELP"))
+				tooltip:AddLine(ROW_INDENT .. L[reason]:format(entry.task.opensAt or 0), ns.GetColorRGB("HELP"))
 			end
 			-- A follow-up planned ahead (Routes-Chains.lua): the turn-in that unlocks it, the party's for theirs
 			local after = entry.task.after

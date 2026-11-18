@@ -32,6 +32,8 @@ local CAMP_ALPHA = 0.5 -- A camp in the route's zone the route doesn't go to, be
 local GATHER_REACH = 800 -- Yards around an objective's busiest camp whose other camps its one marker gathers
 local WIDE_MAP_SCALE = 0.6 -- Markers on a continent's or the world's map at Medium, which hold many zones' worth
 local QUESTIE_LEVEL = "PIN_FRAME_LEVEL_AREA_POI" -- Where HereBeDragons-Pins puts Questie's icons
+local SPREAD_OVERLAP = 0.75 -- Marker widths apart, middle to middle, two markers can be before one is moved off the other
+local SPREAD_TRIES = 8 -- Marker widths to the right a covered marker is tried at, at most
 
 --[[
 	Waypoints Shown: the "…" marker where the zone map stops drawing the route, on the first hidden waypoint
@@ -247,11 +249,123 @@ local function MarkerSize(map)
 	return size * UIParent:GetEffectiveScale() / map:GetEffectiveScale()
 end
 
+-- The markers drawn this time, in the order drawn, where each really is, for SpreadPins
+local spreadPins = {}
+
+--[[
+	Where each marker was put since the map opened, by map and marker: { x, y, shift }, the place it was
+	drawn for and how many marker widths right SpreadPins moved it. A redraw while the map is open (an
+	ignore, a replan) puts every marker it has here back where it was, so nothing moves under the mouse;
+	closing the map forgets them all
+]]
+local lockedPlaces = {}
+
+local function LockedPlaces(mapID)
+	local key = mapID or 0
+	lockedPlaces[key] = lockedPlaces[key] or {}
+	return lockedPlaces[key]
+end
+
+-- A marker by its tasks, the same whether it's drawn as a waypoint or a camp; a flight's landing end is its own
+local function MarkerKey(stop, landing)
+	local keys = {}
+	for i, task in ipairs(stop.tasks or {}) do
+		keys[i] = task.key or task.kind or ""
+	end
+	return table.concat(keys, ",") .. (landing and "@landing" or "")
+end
+
+-- Where a marker is drawn on this map: where it was first put since the map opened, or else its own place
+local function LockedPosition(mapID, stop, position, landing)
+	local place = position and LockedPlaces(mapID)[MarkerKey(stop, landing)]
+	if place then
+		return { x = place.x, y = place.y }
+	end
+	return position
+end
+
+-- A flight path, flight or change of zone: one place you travel from, whose markers may stack
+local function IsTravel(pin)
+	local kind = pin.stop.tasks[1] and pin.stop.tasks[1].kind
+	return kind == "flightPath" or kind == "fly" or kind == "exit"
+end
+
+--[[
+	Markers that overlap are moved apart, so each keeps its own hover and right-click: in the order drawn
+	(the route's waypoints, then the camps), one whose middle comes within SPREAD_OVERLAP of a marker already
+	placed moves right a marker's width at a time till it's clear. Flight paths, flights and changes of zone
+	stay where they are, stacked, placed first so the rest move off them. Worked out in the canvas's pixels
+	at this zoom. Only a marker new since the map opened is placed: every other goes back where it was
+	(lockedPlaces), the same number of marker widths right at any zoom, so a click, a replan or a zoom never
+	moves one. The line still runs to where each was drawn for. It runs on every frame of a zoom, so its
+	working lists are kept and wiped rather than made anew
+]]
+local newPins, placedX, placedY, placedSize = {}, {}, {}, {}
+
+local function Place(x, y, size)
+	local index = #placedX + 1
+	placedX[index], placedY[index], placedSize[index] = x, y, size
+end
+
+local function SpreadPins(map)
+	local width, height = map:GetCanvas():GetSize()
+	if not (width and height and width > 0 and height > 0) then
+		return
+	end
+	local locked = LockedPlaces(map:GetMapID())
+	wipe(newPins)
+	wipe(placedX)
+	wipe(placedY)
+	wipe(placedSize)
+	for _, pin in ipairs(spreadPins) do
+		pin:ApplyCurrentScale()
+		local size = pin:GetWidth() * pin:GetScale()
+		local place = locked[pin.markerKey]
+		if not place and IsTravel(pin) then
+			place = { x = pin.baseX, y = pin.baseY, shift = 0 }
+			locked[pin.markerKey] = place
+		end
+		if place then
+			local x, y = place.x * width + place.shift * size, place.y * height
+			pin:SetPosition(x / width, y / height)
+			Place(x, y, size)
+		else
+			newPins[#newPins + 1] = pin
+		end
+	end
+	for _, pin in ipairs(newPins) do
+		local size = pin:GetWidth() * pin:GetScale()
+		local x, y = pin.baseX * width, pin.baseY * height
+		local shift = 0
+		for try = 0, SPREAD_TRIES do
+			local clear = true
+			for index = 1, #placedX do
+				local dx, dy = x + try * size - placedX[index], y - placedY[index]
+				local reach = SPREAD_OVERLAP * (size + placedSize[index]) / 2
+				if dx * dx + dy * dy < reach * reach then
+					clear = false
+					break
+				end
+			end
+			if clear then
+				shift = try
+				break
+			end
+		end
+		locked[pin.markerKey] = { x = pin.baseX, y = pin.baseY, shift = shift }
+		x = x + shift * size
+		Place(x, y, size)
+		pin:SetPosition(x / width, y / height)
+	end
+end
+
 --[[
 	A waypoint's marker, or a camp's: dim for one in the route's zone the route doesn't go to. One in the
-	route's hidden tail (Waypoints Shown) is placed but unseen and takes no mouse, till the "…" marker is hovered
+	route's hidden tail (Waypoints Shown) is placed but unseen and takes no mouse, till the "…" marker is
+	hovered, and isn't moved off others (SpreadPins). landing: a flight's marker where it lands
 ]]
-local function AddStopPin(map, stop, position, textures, dim, tail)
+local function AddStopPin(map, stop, position, textures, dim, tail, landing)
+	position = LockedPosition(map:GetMapID(), stop, position, landing)
 	local pin = map:AcquirePin(STOP_TEMPLATE)
 	if not pin.routeReady then
 		pin.routeReady = true
@@ -272,6 +386,11 @@ local function AddStopPin(map, stop, position, textures, dim, tail)
 	pin:ApplyFrameLevel()
 	pin:SetPosition(position.x, position.y)
 	pin:ApplyCurrentScale()
+	pin.baseX, pin.baseY = position.x, position.y
+	pin.markerKey = MarkerKey(stop, landing)
+	if not tail then
+		spreadPins[#spreadPins + 1] = pin
+	end
 	return pin
 end
 
@@ -464,6 +583,7 @@ function providerMixin:RemoveAllData()
 		reach a line pin already released, off any map
 	]]
 	wipe(tailPins)
+	wipe(spreadPins)
 	routeLine = nil
 	local map = self:GetMap()
 	map:RemoveAllPinsByTemplate(LINE_TEMPLATE)
@@ -481,11 +601,12 @@ local function DrawRoute(map, mapID, textures)
 	local stops = routes.stops
 	local positions, landings = {}, {}
 	for i, stop in ipairs(stops) do
-		positions[i] = MapPosition(mapID, stop.x, stop.y, stop.instance) or false
+		-- Where its marker was drawn for since the map opened, so the line runs to the marker (LockedPosition)
+		positions[i] = LockedPosition(mapID, stop, MapPosition(mapID, stop.x, stop.y, stop.instance)) or false
 		-- A fly waypoint: the leg after it runs from the flight master it lands at (Routes-Flights.lua)
 		local landing = stop.landing
 		if landing then
-			landings[i] = MapPosition(mapID, landing.x, landing.y, stop.instance)
+			landings[i] = LockedPosition(mapID, stop, MapPosition(mapID, landing.x, landing.y, stop.instance), true)
 		end
 	end
 
@@ -517,9 +638,9 @@ local function DrawRoute(map, mapID, textures)
 	]]
 	for i, stop in ipairs(stops) do
 		local tail = i > lastShown
-		for _, position in ipairs({ positions[i], landings[i] or false }) do
+		for end_, position in ipairs({ positions[i], landings[i] or false }) do
 			if IsOnMap(position) then
-				local pin = AddStopPin(map, stop, position, textures, nil, tail)
+				local pin = AddStopPin(map, stop, position, textures, nil, tail, end_ == 2)
 				if tail then
 					tailPins[#tailPins + 1] = pin
 				end
@@ -586,10 +707,16 @@ local function Gathered(camps)
 	}
 end
 
--- The task keys the route has a waypoint for
+--[[
+	The task keys the route draws a waypoint for: those up to the last one Waypoints Shown lets it draw. An
+	objective further on keeps its camp marker, so nothing the route will take is missing from the map
+]]
 local function RouteKeys()
 	local keys = {}
-	for _, stop in ipairs(routes.stops) do
+	for i, stop in ipairs(routes.stops) do
+		if i > LastShown(routes.stops) then
+			break
+		end
 		for _, task in ipairs(stop.tasks) do
 			if task.key then
 				keys[task.key] = true
@@ -597,6 +724,30 @@ local function RouteKeys()
 		end
 	end
 	return keys
+end
+
+--[[
+	The route's quests to pick up with no waypoint drawn on this map: past Waypoints Shown, on another zone's
+	map, or on a flight. A pick-up has no camp, and Questie's icon for it is hidden, so each is drawn here as
+	a camp marker of its own rather than left off the map
+]]
+local function UndrawnPickUps(routeKeys)
+	local markers = {}
+	for _, stop in ipairs(routes.stops) do
+		for _, task in ipairs(stop.tasks) do
+			if task.kind == "pickUp" and task.key and not routeKeys[task.key] then
+				markers[#markers + 1] = {
+					x = stop.x,
+					y = stop.y,
+					instance = stop.instance,
+					names = stop.names,
+					camp = true,
+					tasks = { task },
+				}
+			end
+		end
+	end
+	return markers
 end
 
 --[[
@@ -626,9 +777,16 @@ function providerMixin:RefreshAllData()
 		DrawRoute(map, mapID, textures)
 	end
 
-	-- Each objective's camps on this map, in the order they come
+	-- Each objective's camps on this map, in the order they come, then the pick-ups the route draws no waypoint for here
 	local byKey, order = {}, {}
+	local camps = {}
 	for _, camp in ipairs(routes.camps) do
+		camps[#camps + 1] = camp
+	end
+	for _, marker in ipairs(UndrawnPickUps(routeKeys)) do
+		camps[#camps + 1] = marker
+	end
+	for _, camp in ipairs(camps) do
 		local key = camp.tasks[1].key
 		if not routeKeys[key] and IsOnMap(MapPosition(mapID, camp.x, camp.y, camp.instance)) then
 			if not byKey[key] then
@@ -652,9 +810,18 @@ function providerMixin:RefreshAllData()
 		local escort = marker.tasks[1].kind == "pickUp" and marker.tasks[1].escort
 		AddStopPin(map, marker, position, textures, onRoute and not IsUntracked(marker) and not escort)
 	end
+	SpreadPins(map)
 
 	routes.AddMeetPin(map, mapID) -- Routes-Map-Meet.lua
 end
+
+-- A moved marker is moved in marker widths, so its move is laid out again as the map zooms or resizes, never worked out anew
+function providerMixin:OnCanvasScaleChanged()
+	if #spreadPins > 0 then
+		SpreadPins(self:GetMap())
+	end
+end
+providerMixin.OnCanvasSizeChanged = providerMixin.OnCanvasScaleChanged
 
 -- Joining up starting or ending (Routes-Group-Up.lua): its marker comes or goes on the open map
 function routes.RefreshGroupUpMarker()
@@ -676,6 +843,7 @@ local function AddToWorldMap()
 	-- A click on the "…" marker shows the whole route only while the map stays open
 	WorldMapFrame:HookScript("OnHide", function()
 		wholeRouteShown = false
+		wipe(lockedPlaces) -- Markers are placed afresh the next time it opens
 	end)
 	provider = CreateFromMixins(providerMixin)
 	WorldMapFrame:AddDataProvider(provider)

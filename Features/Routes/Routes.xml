@@ -8,6 +8,7 @@
 	<Script file="Routes-Planner.lua"/>
 	<Script file="Routes-Ignore.lua"/>
 	<Script file="Routes-Solver.lua"/>
+	<Script file="Routes-Focus.lua"/>
 	<Script file="Routes-Party.lua"/>
 	<Script file="Routes-Group-Up.lua"/>
 	<Script file="Routes-Geography.lua"/>

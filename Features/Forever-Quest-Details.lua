@@ -155,7 +155,7 @@ local chainSection = ns.CreateQuestChainSection(detailChild)
 
 -- The quest ID, right-aligned under whatever comes last, in the description's color
 local questIDRow = CreateFrame("Frame", nil, detailChild)
-questIDRow:SetSize(WIDTH, 14)
+questIDRow:SetSize(WIDTH, 16)
 questIDRow.Text = questIDRow:CreateFontString(nil, "ARTWORK")
 questIDRow.Text:SetFontObject(ns.AreaFont("details", "QuestFontNormalSmall"))
 questIDRow.Text:SetPoint("RIGHT")

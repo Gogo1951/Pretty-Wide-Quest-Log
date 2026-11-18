@@ -303,7 +303,6 @@ function routes.PinEngaged(nodes, start)
 		if blob and not IsPinnable(node, wasPinned, destination, planned, blob) then
 			blob = nil
 		end
-		node.inArea = nil
 		if blob then
 			blob.penalty = 0
 			node.candidates = { blob }
@@ -313,8 +312,6 @@ function routes.PinEngaged(nodes, start)
 				blob = blob,
 				collected = type(wasPinned) == "table" and wasPinned.collected or collected,
 			}
-			-- Standing in its area, not just working on it from further off: areas overlapping here are one stop
-			node.inArea = routes.InArea(node, start.x, start.y, previous[node.key]) or nil
 		end
 		if blob and not hurrying then
 			first[#first + 1] = node

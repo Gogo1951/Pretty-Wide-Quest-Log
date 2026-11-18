@@ -7,7 +7,7 @@ local ADDON_NAME, ns = ...
 
 local routes = ns.routes
 
--- A stop's disc: with its black ring, or the fill alone, under a tinted ring (a party member's, a dungeon's, an ignored one)
+-- A stop's disc: with its black ring, or the fill alone, under a tinted ring (a party member's, a dungeon's, an ignored or off-route one)
 local DISC_TEXTURE = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Route-Stop"
 local PARTY_DISC_TEXTURE = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Route-Stop-Fill"
 
@@ -28,17 +28,22 @@ local function IsEveryTask(stop, test)
 	return true
 end
 
--- An objective the route won't take: a dungeon or raid quest's, inside the instance, or one ignored
+--[[
+	A task the route won't take: a dungeon or raid quest's objective, inside the instance, one ignored, or a
+	quest to pick up that is on the map but not the route (Routes-Pick-Ups.lua), till it's added
+]]
 local function IsUntrackedTask(task)
-	return task.untracked or (task.key ~= nil and routes.skipped[task.key] ~= nil)
+	return task.untracked
+		or (task.kind == "pickUp" and task.offRoute ~= nil)
+		or (task.key ~= nil and routes.skipped[task.key] ~= nil)
 end
 
--- A marker whose every objective the route won't take, a dungeon's or one ignored
+-- A marker whose every task the route won't take, a dungeon's, one ignored or one off the route
 local function IsUntracked(stop)
 	return not stop.corpse and IsEveryTask(stop, IsUntrackedTask)
 end
 
--- Not a dungeon or raid quest's: what the route won't take there is only ignored, for the gray ring over the red
+-- Not a dungeon or raid quest's: what the route won't take there is only ignored or off the route, for the gray ring over the red
 local function IsUntrackedOnlyIgnored(stop)
 	return IsEveryTask(stop, function(task)
 		return not task.untracked
@@ -103,7 +108,7 @@ function routes.ApplyStopLook(marker, stop, textures)
 	marker.Disc:SetVertexColor(routes.TaskColor(task))
 	--[[
 		A ring for one the route won't take: red, to stand out, for a dungeon or raid quest's, light gray for
-		one ignored. A white one for a party member's, a quest the player doesn't have; else the disc's black ring
+		one ignored or off the route. A white one for a party member's, a quest the player doesn't have; else the disc's black ring
 	]]
 	local ringColor
 	if IsUntracked(stop) then

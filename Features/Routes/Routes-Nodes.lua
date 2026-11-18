@@ -3,7 +3,7 @@ local _, ns = ...
 --[[
 	Routes: the route's nodes, from Questie's quest log and database. Every objective not yet done becomes
 	a node whose candidates are its blobs (Routes-Blobs.lua), and every done quest's turn-in a node too (a
-	quest not yet done has its turn-in planned ahead, shown only with Predictive Questing Routes on). A
+	quest not yet done has its turn-in planned ahead, shown only with Plan Ahead). A
 	dungeon or raid quest's objectives are left out, as they're inside the instance, but its turn-in is a
 	node like any other's, where the NPC or object is out in the world: one inside the instance is left out
 	too. Routes-Solver.lua orders them; Routes-Stops.lua
@@ -248,7 +248,7 @@ function routes.BuildNodes(yield)
 				The turn-in: once the quest is done and the party needs none of it, ready now; before then
 				(or while helping), planned ahead, waiting on every one of its objectives' nodes (requires),
 				so the route and the Quest Arrow's Next Objective show it where it falls once they're done.
-				With Predictive Questing Routes (predictiveRoutes) off it's still planned, hidden: the player
+				Without Plan Ahead (routes.PlansZone) it's still planned, hidden: the player
 				walks back to hand the quest in either way, and a route planned as if they didn't would end
 				out in the fields, sending them to town first for a turn-in that's ready and then back out
 				again. The planner drops hidden ones from what's drawn (Routes-Planner.lua). None ahead for a
@@ -270,7 +270,7 @@ function routes.BuildNodes(yield)
 						candidates = Candidates(blobs, start, false),
 						blobs = blobs,
 						ready = ready, -- Done: it can be turned in now
-						hidden = not ready and not routes.Settings().predictiveRoutes or nil, -- Planned, not drawn
+						hidden = not ready and not routes.PlansZone() or nil, -- Planned, not drawn
 						requires = not ready and objectiveNodes or nil,
 						urgent = urgent,
 						turnInDistance = turnInDistance,
@@ -284,12 +284,12 @@ function routes.BuildNodes(yield)
 	--[[
 		The party's quests the player doesn't have, their objectives planned as the player's own, and their
 		turn-ins (questID:pt), from Questie's database: ready once nobody needs any of it, else planned ahead
-		of the objectives and hidden with Predictive Questing Routes off, as the player's own are. The route
+		of the objectives and hidden without Plan Ahead, as the player's own are. The route
 		then heads back to town with the party rather than ending out where their last objective is, and the
 		party's follow-ups grow from these (Routes-Chains.lua). None of a dungeon's, and no turn-in ahead
 		while an objective the party still needs has nowhere to go
 	]]
-	local predictive = routes.Settings().predictiveRoutes
+	local predictive = routes.PlansZone()
 	for questID, quest in pairs(routes.PartyQuests(QuestLog(), yield)) do
 		if not IsInstanceQuest(questID) then
 			local questName = quest.name or tostring(questID)
@@ -342,10 +342,10 @@ function routes.BuildNodes(yield)
 		yield()
 	end
 
-	-- Quests to pick up, nearby with Local Available Quests on, across the zone with Predictive Questing Routes (Routes-Pick-Ups.lua)
+	-- Quests to pick up, nearby with Nearby Pick-Ups or Plan Ahead, across the zone with Plan Ahead (Routes-Pick-Ups.lua)
 	local chainStarts = routes.AddLocalQuestNodes(nodes, start, log, yield)
 
-	-- Quests the zone can finish, planned whole with their follow-ups, with Predictive Questing Routes on (Routes-Chains.lua)
+	-- Quests the zone can finish, planned whole with their follow-ups, with Plan Ahead (Routes-Chains.lua)
 	routes.AddChainNodes(nodes, start, log, chainStarts, yield)
 
 	--[[

@@ -158,6 +158,7 @@ routes.TimedQuests = TimedQuests
 ]]
 local INSTANCE_KINDS = { DUNGEON = true, RAID = true }
 local instanceQuests = {}
+local questTagKinds = {} -- Quest ID to its tag's kind (ns.QUEST_TAG_SUFFIXES), or false for none
 
 local function QuestieTag(questID)
 	local QuestieDB = ns.ImportQuestieModule("QuestieDB")
@@ -181,18 +182,31 @@ local function IsInstanceQuest(questID)
 	return found
 end
 
--- A quest's tag can load with the quest log, so both answers are asked again after it changes
+-- A quest's tag can load with the quest log, so the answers are asked again after it changes
 function routes.ForgetQuestTags()
 	wipe(escortQuests)
 	wipe(instanceQuests)
+	wipe(questTagKinds)
 end
 routes.IsInstanceQuest = IsInstanceQuest
 
--- "raid" for a raid quest, else "dungeon", for a map-only pick-up's tooltip; only asked of an instance quest
-function routes.InstanceQuestKind(questID)
+--[[
+	A quest's tag as its kind on this game (ns.QUEST_TAG_SUFFIXES): "ELITE" on Era and Forever, "GROUP" from
+	TBC on, "PVP", "DUNGEON" (Heroic too) or "RAID", nil for none, for What to Route's Quest Types to Pick Up
+	Along the Route (Routes-Pick-Ups.lua). Remembered once it has one, as IsInstanceQuest is
+]]
+function routes.QuestTagKind(questID)
+	local known = questTagKinds[questID]
+	if known ~= nil then
+		return known or nil
+	end
 	local tagID = QuestieTag(questID) or ns.GetQuestTagByID(questID)
-	local kinds = ns.QUEST_TAG_SUFFIXES or {}
-	return tagID and kinds[tagID] == "RAID" and "raid" or "dungeon"
+	if not tagID then
+		return nil
+	end
+	local kind = (ns.QUEST_TAG_SUFFIXES or {})[tagID]
+	questTagKinds[questID] = kind or false
+	return kind
 end
 
 local function HasSpawns(objective)
@@ -204,7 +218,7 @@ routes.HasSpawns = HasSpawns
 	What the route depends on, as text: each quest's state, whether it's in an instance and whether its
 	timer is running, each objective's being done and having spawns, and of those done whether the party
 	still needs it (routes.PartyNeeds), the party's quests' progress
-	(routes.PartyProgress), the ignored objectives and party members, the members in another zone, Predictive Questing Routes, the local quests' and flight paths' settings (routes.LocalQuestSignature, routes.FlightPathSignature), the player's zone and whether they're a ghost. The route is
+	(routes.PartyProgress), the ignored objectives and party members, the members in another zone, Plan Ahead, the local quests' and flight paths' settings (routes.LocalQuestSignature, routes.FlightPathSignature), the player's zone and whether they're a ghost. The route is
 	planned again when this changes. Nil until Questie is ready
 ]]
 function routes.Signature()
@@ -263,7 +277,7 @@ function routes.Signature()
 		end
 	end
 	table.sort(parts)
-	parts[#parts + 1] = routes.Settings().predictiveRoutes and "predictive" or "done-only"
+	parts[#parts + 1] = routes.PlansZone() and "predictive" or "done-only"
 	parts[#parts + 1] = routes.LocalQuestSignature()
 	parts[#parts + 1] = routes.FlightPathSignature()
 	parts[#parts + 1] = routes.FlyingSignature()

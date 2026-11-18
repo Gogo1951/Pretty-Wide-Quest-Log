@@ -178,7 +178,7 @@ function data.AvailableZones(most)
 	local counts = {}
 	for questID in pairs(available) do
 		local sort = QueryQuest(QuestieDB, questID, "zoneOrSort")
-		local gray = helpers and helpers.IsTooLow(QuestieDB, questID, "green")
+		local gray = helpers and helpers.IsGray(QuestieDB, questID)
 		local zone = not gray and type(sort) == "number" and sort > 0 and data.ZoneOf(UiMapOfArea(sort))
 		if zone then
 			counts[zone] = (counts[zone] or 0) + 1
@@ -801,11 +801,7 @@ local function Build(mapID, yield)
 			if hasGiver or carried then
 				AddRoot(questID)
 			end
-			if
-				hasGiver
-				and not StarterHere(zone, QuestieDB, questID)
-				and not helpers.IsTooLow(QuestieDB, questID, "green")
-			then
+			if hasGiver and not StarterHere(zone, QuestieDB, questID) and not helpers.IsGray(QuestieDB, questID) then
 				local giver, giverMapID, giverX, giverY = Giver(QuestieDB, questID)
 				local shareable = HasFlag(QueryQuest(QuestieDB, questID, "questFlags"), QUEST_FLAG_SHARABLE)
 				result.quests[#result.quests + 1] = {

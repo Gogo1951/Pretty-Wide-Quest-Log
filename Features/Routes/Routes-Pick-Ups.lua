@@ -1,17 +1,24 @@
 local _, ns = ...
 
 --[[
-	Routes: quests the player can pick up nearby, as objectives on the route, with Show Available Local
-	Quests as Objectives (showLocalQuests) on. A quest counts where Questie shows it as available (its
+	Routes: quests the player can pick up nearby, as objectives on the route, with What to Route's Plan
+	Ahead (planAhead) on Your Quests and Nearby Pick-Ups or Plan Ahead. A quest counts where Questie shows it as available (its
 	AvailableQuests module, which keeps to Questie's own level, repeatable, dungeon and hidden filters) and
 	an NPC or object that starts it stands within the Search Range (localQuestRange) of the player as the
-	route is planned. A quest started by an item one named creature drops counts at that creature; one
-	started by an item that several creatures or a chest drop isn't one to walk to. Each is a node of kind "pickUp", at its quest giver, as a turn-in is at its NPC.
+	route is planned. A quest started by an item that only one named creature or one object gives counts
+	there: Hoof of Lakota'mani at Lakota'mani, the Dirt-stained Map at the map on the ground in Mulgore. One
+	started by an item that several creatures or objects give isn't one to walk to. Each is a node of kind
+	"pickUp", at its quest giver, as a turn-in is at its NPC.
 
-	The Local Available Quests settings then sort them. Below Lowest Quest Level (localQuestLevel) a quest
-	is left off. An escort (localEscortQuests), or one with an objective or its turn-in only in another
-	zone (localOtherZoneQuests), each goes on the route, on the map only, or nowhere, the strictest of what
-	applies winning. A dungeon or raid quest is on the map only. A group or elite quest counts as any other: players on WoW Forever kill elites alone. A map-only one is a camp (Routes-Camps.lua):
+	The What to Route settings then sort them; they only guide what to pick up, as a quest already in the
+	log is always on the route (Routes-Nodes.lua), whatever its level or kind. A quest more levels above the
+	player than Highest Quest Level (highestQuestLevel) is on the map only, saying the level it goes on the
+	route at; one more below than Lowest Quest Level (lowestQuestLevel) is left off. Each kind under Quest
+	Types to Pick Up Along the Route that's unchecked is on the map only, saying why: elite (group from TBC
+	on), PvP, dungeon, raid and escort quests by their tags (pickUpElite, pickUpPvP, pickUpDungeon,
+	pickUpRaid, pickUpEscort), and one with an objective or its turn-in only in another zone
+	(pickUpOtherZone). A dungeon or raid quest checked has its pick-up on the route, its objectives being
+	inside. A map-only one is a camp (Routes-Camps.lua):
 	a marker on the map, dimmed in the route's zone as camps are, with no route line to it, so the Quest
 	Arrow never points there. An escort's marker is green, map only or on the route, and isn't dimmed. A
 	right-click on a map-only marker puts it on the route (routes.AddPickUp) until the zone is reset
@@ -32,9 +39,29 @@ function routes.LocalQuestRange()
 	return tonumber(routes.Settings().localQuestRange) or 400
 end
 
--- What each Local Available Quests choice does with a quest, strictest last
+-- What the settings do with a quest to pick up: on the route, a marker on the map only, or nothing
 local ROUTE, MAP, OFF = "route", "map", "off"
-local STRICTNESS = { [ROUTE] = 1, [MAP] = 2, [OFF] = 3 }
+
+--[[
+	What to Route's Plan Ahead: "yours" (Your Quests Only), "nearby" (Your Quests and Nearby Pick-Ups) or
+	"zone" (Plan Ahead: the zone's quests planned whole with their follow-ups, Routes-Chains.lua)
+]]
+local PLAN_AHEAD = { yours = true, nearby = true, zone = true }
+
+function routes.PlanAhead()
+	local value = routes.Settings().planAhead
+	return PLAN_AHEAD[value] and value or "nearby"
+end
+
+-- Whether the route guides the player to quests to pick up near them, as Nearby Pick-Ups and Plan Ahead do
+function routes.PlansPickUps()
+	return routes.PlanAhead() ~= "yours"
+end
+
+-- Whether the zone's quests are planned whole with their follow-ups, Plan Ahead
+function routes.PlansZone()
+	return routes.PlanAhead() == "zone"
+end
 
 --[[
 	Map-only pick-ups from the last plan, each { task, blobs, instance }, for the camps (Routes-Camps.lua).
@@ -55,37 +82,40 @@ local function QueryQuest(QuestieDB, questID, field)
 end
 
 --[[
-	The one creature that drops an item, or nil: an item dropped by a single named creature (Hoof of
-	Lakota'mani, from Lakota'mani) starts its quest at that creature, however many places it spawns or
-	walks. One that several creatures drop, or a chest, could come from anywhere, so it isn't a place to
-	walk to
+	The one thing an item comes from, as "npc" or "object" and its ID, or nil: an item dropped by a single
+	named creature (Hoof of Lakota'mani, from Lakota'mani) starts its quest at that creature, however many
+	places it spawns or walks, and one looted from a single object (the Dirt-stained Map, lying on the
+	ground in Mulgore) starts it at that object. One that several creatures or objects give could come from
+	anywhere, so it isn't a place to walk to
 ]]
-local function SoleDropper(QuestieDB, itemID)
+local function SoleSource(QuestieDB, itemID)
 	local query = QuestieDB.QueryItemSingle
 	if type(query) ~= "function" then
 		return nil
 	end
 	local okObjects, objects = pcall(query, itemID, "objectDrops")
-	if okObjects and type(objects) == "table" and #objects > 0 then
+	objects = okObjects and type(objects) == "table" and objects or {}
+	local okNPCs, npcs = pcall(query, itemID, "npcDrops")
+	npcs = okNPCs and type(npcs) == "table" and npcs or {}
+	if #npcs + #objects ~= 1 then
 		return nil
 	end
-	local okNPCs, npcs = pcall(query, itemID, "npcDrops")
-	if okNPCs and type(npcs) == "table" and #npcs == 1 then
-		return npcs[1]
+	if #npcs == 1 then
+		return "npc", npcs[1]
 	end
-	return nil
+	return "object", objects[1]
 end
 
 --[[
 	Calls add(spawns, name) for every NPC and object that starts the quest, as Questie's database has them,
-	and the creature that drops an item that starts it, when only one does (SoleDropper)
+	and the creature or object an item that starts it comes from, when it comes from only one (SoleSource)
 ]]
 local function ForEachStarter(QuestieDB, questID, add)
 	local startedBy = QueryQuest(QuestieDB, questID, "startedBy")
 	if type(startedBy) ~= "table" then
 		return
 	end
-	local NPC = QuestieDB.QueryNPCSingle
+	local NPC, Object = QuestieDB.QueryNPCSingle, QuestieDB.QueryObjectSingle
 	local function Add(query, id)
 		local okSpawns, spawns = pcall(query, id, "spawns")
 		local okName, name = pcall(query, id, "name")
@@ -94,7 +124,7 @@ local function ForEachStarter(QuestieDB, questID, add)
 		end
 	end
 	-- startedBy is { NPCs, objects, items }
-	for index, query in pairs({ [1] = NPC, [2] = QuestieDB.QueryObjectSingle }) do
+	for index, query in pairs({ [1] = NPC, [2] = Object }) do
 		local ids = startedBy[index]
 		if type(query) == "function" and type(ids) == "table" then
 			for _, id in ipairs(ids) do
@@ -102,11 +132,13 @@ local function ForEachStarter(QuestieDB, questID, add)
 			end
 		end
 	end
-	if type(NPC) == "function" and type(startedBy[3]) == "table" then
+	if type(startedBy[3]) == "table" then
+		local byKind = { npc = NPC, object = Object }
 		for _, itemID in ipairs(startedBy[3]) do
-			local dropper = SoleDropper(QuestieDB, itemID)
-			if dropper then
-				Add(NPC, dropper)
+			local kind, id = SoleSource(QuestieDB, itemID)
+			local query = kind and byKind[kind]
+			if type(query) == "function" then
+				Add(query, id)
 			end
 		end
 	end
@@ -181,24 +213,41 @@ local function QuestLevel(QuestieDB, questID)
 end
 
 --[[
-	Whether a quest is under Lowest Quest Level, in the game's quest colors: gray is more than Questie's
-	green range below the player (QuestieCompat.GetQuestGreenRange, the client's own on each game), yellow
-	starts two levels below. "questie" adds nothing to Questie's own filter
+	Whether a quest is gray: more than Questie's green range below the player (QuestieCompat.GetQuestGreenRange,
+	the client's own on each game), for Zone Info and the Questie map. The route goes by IsOutsideLevels
 ]]
-local function IsTooLow(QuestieDB, questID, setting)
-	if setting ~= "green" and setting ~= "yellow" then
-		return false
-	end
+local function IsGray(QuestieDB, questID)
 	local below = UnitLevel("player") - QuestLevel(QuestieDB, questID)
-	if setting == "yellow" then
-		return below > 2
-	end
 	local QuestieCompat = ns.ImportQuestieModule("QuestieCompat")
 	local ok, range = false, nil
 	if QuestieCompat and type(QuestieCompat.GetQuestGreenRange) == "function" then
 		ok, range = pcall(QuestieCompat.GetQuestGreenRange)
 	end
 	return ok and type(range) == "number" and below > range or false
+end
+
+--[[
+	Whether a quest is outside the levels the route picks up: "high", and the player level it comes within
+	them at, where its level is more than Highest Quest Level (highestQuestLevel, whose 0 is Your Level)
+	above the player's; "low" where it's more than Lowest Quest Level (lowestQuestLevel) below, whose 0 is
+	No Limit: gray quests too, for completionists; else false. Levels, not colors: what the colors mean
+	differs from game to game. A quest at the player's own level whatever it is (Questie's -1) never is
+]]
+local function IsOutsideLevels(QuestieDB, questID, settings)
+	local level = QueryQuest(QuestieDB, questID, "questLevel")
+	if type(level) ~= "number" or level == -1 then
+		return false
+	end
+	local player = UnitLevel("player")
+	local above = tonumber(settings.highestQuestLevel) or 3
+	local below = tonumber(settings.lowestQuestLevel) or 6
+	if level > player + above then
+		return "high", level - above
+	end
+	if below > 0 and level < player - below then
+		return "low"
+	end
+	return false
 end
 
 --[[
@@ -344,35 +393,44 @@ local function IsElsewhere(QuestieDB, questID, zone, yield)
 end
 
 --[[
-	What the settings do with a quest whose giver is near: ROUTE, MAP or OFF, the strictest that applies,
-	and the reason for it ("dungeon", "raid", "escort" or "elsewhere"), for the map marker's tooltip. A
-	dungeon or raid quest is on the map only, as the route can't go in. One the player put on the route
-	with a right-click on its marker (routes.added) is on it, till the zone is reset
+	Quest Types to Pick Up Along the Route, by the kind of the quest's tag (routes.QuestTagKind): its
+	setting, the reason a quest of it unchecked is off the route, and whether it's an instance's, whose
+	objectives are inside, so never count as another zone's
+]]
+local QUEST_TYPES = {
+	ELITE = { setting = "pickUpElite", reason = "elite" },
+	GROUP = { setting = "pickUpElite", reason = "group" },
+	PVP = { setting = "pickUpPvP", reason = "pvp" },
+	DUNGEON = { setting = "pickUpDungeon", reason = "dungeon", instance = true },
+	RAID = { setting = "pickUpRaid", reason = "raid", instance = true },
+}
+
+--[[
+	What the settings do with a quest whose giver is near: ROUTE, or MAP and the reason for it ("elite",
+	"group", "pvp", "dungeon", "raid", "escort" or "elsewhere") for the map marker's tooltip, where its kind
+	is unchecked under Quest Types to Pick Up Along the Route. A dungeon or raid quest checked is on the
+	route, its pick-up only (Routes-Nodes.lua leaves an instance's objectives off). One the player put on
+	the route with a right-click on its marker (routes.added) is on it, till the zone is reset
 ]]
 local function Handling(QuestieDB, questID, zone, settings, yield)
 	if routes.added[questID .. ":pickUp"] then
 		return ROUTE, nil
 	end
-	local handling, reason = ROUTE, nil
-	local function Apply(value, why)
-		if STRICTNESS[value] and STRICTNESS[value] > STRICTNESS[handling] then
-			handling, reason = value, why
-		end
+	local questType = QUEST_TYPES[routes.QuestTagKind(questID) or ""]
+	if questType and not settings[questType.setting] then
+		return MAP, questType.reason
 	end
-	if routes.IsInstanceQuest(questID) then
-		Apply(MAP, routes.InstanceQuestKind(questID))
-	end
-	if routes.IsEscort(questID) then
-		Apply(settings.localEscortQuests, "escort")
+	if not settings.pickUpEscort and routes.IsEscort(questID) then
+		return MAP, "escort"
 	end
 	if
-		handling ~= OFF
-		and (STRICTNESS[settings.localOtherZoneQuests] or 0) > STRICTNESS[handling]
+		not settings.pickUpOtherZone
+		and not (questType and questType.instance)
 		and IsElsewhere(QuestieDB, questID, zone, yield)
 	then
-		Apply(settings.localOtherZoneQuests, "elsewhere")
+		return MAP, "elsewhere"
 	end
-	return handling, reason
+	return ROUTE, nil
 end
 
 -- Yards from the start to the nearest of some blobs, math.huge for none
@@ -427,7 +485,8 @@ routes.pickUpHelpers = {
 	QuestInfo = QuestInfo,
 	StarterBlobs = StarterBlobs,
 	IsTakenOrDone = IsTakenOrDone,
-	IsTooLow = IsTooLow,
+	IsGray = IsGray,
+	IsOutsideLevels = IsOutsideLevels,
 	IsElsewhere = IsElsewhere,
 	Handling = Handling,
 	ROUTE = ROUTE,
@@ -439,19 +498,20 @@ routes.pickUpHelpers = {
 	table of its name and level for the arrow's title line. The map-only ones go on routes.mapOnlyPickUps,
 	with the ignored ones.
 
-	With Predictive Questing Routes on (predictiveRoutes), a quest that can be done in the zone from start
-	to finish (routes.IsChainQuest) counts from anywhere in the zone, not only within the Search Range, and
+	With Plan Ahead (routes.PlansZone), a quest that can be done in the zone from start to finish
+	(routes.IsChainQuest) counts from anywhere in the zone, not only within the Search Range, and
 	Routes-Chains.lua plans its objectives, its turn-in and the quests that follow it. Those are returned,
 	nearest giver first. A quest Zone Info's + asked for (task.wanted) counts from anywhere in the zone too,
 	whatever its level or kind, ahead of every other. A quest someone in the party has (Party Objectives on)
-	counts from anywhere in the zone as well. With Local Available Quests off, those are the only quests to
-	pick up. No more quests are picked up than the log has room for, nearest first
+	counts from anywhere in the zone as well. With Your Quests Only, those are the only quests to pick up.
+	One above Highest Quest Level is on the map only, saying the level it goes on the route at (opensAt). No
+	more quests are picked up than the log has room for, nearest first
 ]]
 function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	local mapOnly = {}
 	routes.mapOnlyPickUps = mapOnly
 	local settings = routes.Settings()
-	local nearby, planChains = settings.showLocalQuests, settings.predictiveRoutes
+	local nearby, planChains = routes.PlansPickUps(), routes.PlansZone()
 	local wanted = WantedPickUps()
 	if not (nearby or planChains or next(wanted) or routes.ShowsParty()) then
 		return {}
@@ -479,7 +539,33 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 			and not IsTakenOrDone(questID, log)
 			and StarterBlobs(QuestieDB, questID, start, yield)
 		local isWanted = wanted[questID] == true
-		if starters and #starters > 0 and (isWanted or not IsTooLow(QuestieDB, questID, settings.localQuestLevel)) then
+		local outside, opensAt = false, nil
+		-- One put on the route from its map marker (routes.added) is on it whatever its level, as a wanted one is
+		if starters and #starters > 0 and not isWanted and not routes.added[key] then
+			outside, opensAt = IsOutsideLevels(QuestieDB, questID, settings)
+		end
+		if outside == "high" and nearby then
+			--[[
+				Too hard yet: on the map only, wherever in the zone its giver is, saying the level it goes on the
+				route at, so the player sees it's held back, not missed; a right-click puts it on the route
+			]]
+			local info, name = QuestInfo(QuestieDB, questID)
+			mapOnly[#mapOnly + 1] = {
+				task = {
+					key = key,
+					kind = "pickUp",
+					questID = questID,
+					questName = name,
+					quest = info,
+					ready = true,
+					escort = routes.IsEscort(questID) or nil,
+					offRoute = "level",
+					opensAt = opensAt,
+				},
+				blobs = starters,
+				instance = start.instance,
+			}
+		elseif starters and #starters > 0 and not outside then
 			local chained = planChains
 				and #starters > 0
 				and routes.IsChainQuest(QuestieDB, questID, start, yield)
@@ -489,9 +575,14 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 				Range, as taking it lets the two do it together and both get the credit
 			]]
 			local shared = routes.PartyHasQuest(questID)
-			local blobs = (chained or shared or isWanted) and starters or InRange(starters, start, range)
+			--[[
+				One put on the route from its map marker (routes.added) counts from across the zone, as a wanted
+				one does: else a giver past the Search Range would fall straight back to "far", off the route
+			]]
+			local isAdded = routes.added[key] ~= nil
+			local blobs = (chained or shared or isWanted or isAdded) and starters or InRange(starters, start, range)
 			local handling, reason = OFF, nil
-			if chained or isWanted then
+			if chained or isWanted or isAdded then
 				handling = ROUTE
 			elseif (nearby or shared) and #blobs > 0 then
 				handling, reason = Handling(QuestieDB, questID, start.zone, settings, yield)
@@ -528,6 +619,7 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 					task.chained = chained or nil
 					task.shared = shared or nil
 					task.wanted = isWanted or nil
+					task.added = isAdded or nil
 					onRoute[#onRoute + 1] = { task = task, yards = NearestYards(blobs, start) }
 				else
 					task.offRoute = reason
@@ -539,12 +631,17 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	end
 
 	--[[
-		Only as many as the log takes: the wanted quests first, then the party's, then nearest giver first; the
+		Only as many as the log takes: the wanted quests first, then the right-clicked ones, then the party's,
+		then nearest giver first; the
 		quest ID breaks a tie, so the same quests always win
 	]]
 	table.sort(onRoute, function(a, b)
 		if (a.task.wanted ~= nil) ~= (b.task.wanted ~= nil) then
 			return a.task.wanted ~= nil
+		end
+		-- One put on the route by a right-click on its marker next, so a full log never pushes it back off
+		if (a.task.added ~= nil) ~= (b.task.added ~= nil) then
+			return a.task.added ~= nil
 		end
 		if (a.task.shared ~= nil) ~= (b.task.shared ~= nil) then
 			return a.task.shared ~= nil
@@ -564,7 +661,7 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 		local task = entry.task
 		if task.chained and #chainStarts >= routes.MAX_CHAIN_STARTS then
 			task.chained = nil
-			task.blobs = (task.shared or task.wanted) and task.blobs
+			task.blobs = (task.shared or task.wanted or task.added) and task.blobs
 				or nearby and InRange(task.blobs, start, range)
 				or {}
 			task.candidates = #task.blobs > 0 and Candidates(task.blobs, start, false) or nil
@@ -588,9 +685,12 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	return chainStarts
 end
 
+-- Quest Types to Pick Up Along the Route's settings, in the signature's order
+local TYPE_SETTINGS = { "pickUpElite", "pickUpPvP", "pickUpDungeon", "pickUpRaid", "pickUpEscort", "pickUpOtherZone" }
+
 --[[
 	What the settings add to the route's signature: the player's level, as Questie offers more quests with
-	each, and each Local Available Quests choice. The set of available quests near enough to matter is
+	each, and each What to Route choice. The set of available quests near enough to matter is
 	worked out again with every plan
 ]]
 function routes.LocalQuestSignature()
@@ -607,17 +707,21 @@ function routes.LocalQuestSignature()
 		return tostring(a) < tostring(b)
 	end)
 	local wanted = "wanted=" .. table.concat(wantedIDs, ",")
-	if not (settings.showLocalQuests or settings.predictiveRoutes) then
+	if not routes.PlansPickUps() then
 		return "no-local:" .. wanted
+	end
+	local types = {}
+	for _, key in ipairs(TYPE_SETTINGS) do
+		types[#types + 1] = settings[key] and "1" or "0"
 	end
 	return table.concat({
 		wanted,
-		settings.showLocalQuests and "local" or "chains-only",
+		routes.PlanAhead(),
 		tostring(UnitLevel("player")),
 		tostring(routes.LocalQuestRange()),
-		tostring(settings.localQuestLevel),
-		tostring(settings.localEscortQuests),
-		tostring(settings.localOtherZoneQuests),
-		settings.predictiveRoutes and "chains" or "no-chains",
+		tostring(settings.highestQuestLevel),
+		tostring(settings.lowestQuestLevel),
+		table.concat(types),
+		tostring(settings.routeFocus),
 	}, ":")
 end

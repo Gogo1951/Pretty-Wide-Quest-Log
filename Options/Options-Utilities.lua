@@ -1,63 +1,101 @@
 local _, ns = ...
 local L = ns.L
-local GetColor = ns.GetColor
+local Kit = ns.OptionsKit
+
+-- Every string the kit draws (Options-Kit.lua)
+Kit.SetText({
+	example = L["SAMPLE_EXAMPLE"],
+	soundPreview = L["OPTIONS_SOUND_PREVIEW_DESCRIPTION"],
+	inCombat = L["CHAT_OPTIONS_IN_COMBAT"],
+	reset = L["OPTIONS_RESET"],
+})
 
 --------------------------------------------------------------------------------
--- Standard Helpers
+-- Features
 --------------------------------------------------------------------------------
 
-function ns.OptionsHeader(text, order, hidden)
-	return { type = "header", name = GetColor("TITLE") .. text .. "|r", order = order, hidden = hidden }
+-- A Routes switch writes through Routes, which redraws what follows it (Routes-Core.lua)
+local function RoutesApply(key)
+	return function(value)
+		ns.routes.SetSetting(key, value)
+	end
 end
 
-function ns.OptionsDesc(text, order, hidden)
-	return { type = "description", name = text, fontSize = "medium", order = order, hidden = hidden }
-end
-
-function ns.OptionsSpacer(order, hidden)
-	return { type = "description", name = " ", order = order, hidden = hidden }
+-- A Quality of Life setting takes effect at once: the dungeon quests' checks
+function ns.ApplyQualityOfLifeSettings()
+	if ns.dungeonQuests then
+		ns.dungeonQuests.Watch()
+	end
 end
 
 --[[
-	A row's caption on the left of its control. Given desc, the caption shows the same tooltip as its
-	control, titled with the caption: AceConfig wires every row to its tooltip, and InteractiveLabel is the
-	label that takes the mouse
+	The root panel's Features switches and each feature's own Enable switch, in tree order. The Wide Quest
+	Log's takes effect at the next /reload, which the Options window offers on close (below). The Routes
+	switches are listed only where Routes (Features/Routes) is loaded
 ]]
-function ns.OptionsRowLabel(text, order, width, hidden, desc)
-	return {
-		type = "description",
-		name = text,
-		desc = desc,
-		dialogControl = desc and "InteractiveLabel" or nil,
-		fontSize = "medium",
-		width = width or ns.OPTIONS_LABEL_WIDTH,
-		order = order,
-		hidden = hidden,
-	}
+ns.FEATURES = {
+	{
+		store = "profile",
+		setting = "enableWideQuestLog",
+		name = "TAB_WIDE_QUEST_LOG",
+		caption = "ENABLE_WIDE_QUEST_LOG",
+		desc = "FEATURE_QUEST_LOG_DESCRIPTION",
+	},
+}
+if ns.routes then
+	for _, feature in ipairs({
+		{ key = "showMap", name = "TAB_MAPS_OBJECTIVES", feature = "WAYPOINT_MARKERS" },
+		{ key = "showLine", name = "TAB_QUEST_ROUTE", feature = "QUEST_ROUTE" },
+		{ key = "showArrow", name = "TAB_QUEST_ARROW", feature = "QUEST_ARROW" },
+	}) do
+		ns.FEATURES[#ns.FEATURES + 1] = {
+			store = "profile",
+			setting = "routes." .. feature.key,
+			name = feature.name,
+			caption = "ENABLE_" .. feature.feature,
+			desc = "FEATURE_" .. feature.feature .. "_DESCRIPTION",
+			apply = RoutesApply(feature.key),
+		}
+	end
 end
+ns.FEATURES[#ns.FEATURES + 1] = {
+	store = "profile",
+	setting = "enableQualityOfLife",
+	name = "TAB_QUALITY_OF_LIFE",
+	caption = "ENABLE_QUALITY_OF_LIFE",
+	desc = "FEATURE_QUALITY_OF_LIFE_SUMMARY",
+	apply = function(value)
+		ns.db.profile.enableQualityOfLife = value
+		ns.ApplyQualityOfLifeSettings()
+	end,
+}
 
 --[[
-	A feature's on/off switch, the same widget on the root panel's Features section and at the top of the
-	feature's own panel
+	A feature's Enable switch. The Quest Route is drawn between the Waypoint Markers, so its switch is grayed
+	out while they're off
 ]]
-function ns.OptionsFeatureToggle(key, nameKey, descKey, order, width, onSet)
-	return {
-		type = "toggle",
-		name = ns.L[nameKey],
-		desc = ns.L[descKey],
-		width = width or "full",
-		order = order,
-		get = function()
-			return ns.db.profile[key]
-		end,
-		set = function(_, value)
-			ns.db.profile[key] = value
-			if onSet then
-				onSet(value)
-			end
-		end,
-	}
+function ns.FeatureSwitch(setting, order, width)
+	local switch = Kit.FeatureSwitch(setting, order, width)
+	if setting == "routes.showLine" then
+		switch.disabled = function()
+			return not ns.routes.Settings().showMap
+		end
+	end
+	return switch
 end
+
+-- The root panel's Features switches, two to a line, in ns.FEATURES order
+function ns.FeatureSwitches(order)
+	local switches = {}
+	for _, feature in ipairs(ns.FEATURES) do
+		switches[#switches + 1] = ns.FeatureSwitch(feature.setting)
+	end
+	return Kit.Pairs(order, nil, switches)
+end
+
+--------------------------------------------------------------------------------
+-- Routes Settings
+--------------------------------------------------------------------------------
 
 --[[
 	A Routes setting's switch. Routes is one line to leave out of the TOC (Features/Routes), so the switch
@@ -66,8 +104,8 @@ end
 function ns.OptionsRoutesToggle(key, nameKey, descKey, order, width, hidden, disabled)
 	return {
 		type = "toggle",
-		name = ns.L[nameKey],
-		desc = ns.L[descKey],
+		name = L[nameKey],
+		desc = L[descKey],
 		width = width or "full",
 		order = order,
 		hidden = function()
@@ -79,13 +117,14 @@ function ns.OptionsRoutesToggle(key, nameKey, descKey, order, width, hidden, dis
 		end,
 		set = function(_, value)
 			ns.routes.SetSetting(key, value)
+			ns.RefreshSettings()
 		end,
 	}
 end
 
 --[[
-	A control on the right of a row for a Routes setting (key; nil for a button), its caption on its own row
-	label to the left, as the other panels lay out sliders and choices. hidden hides it
+	A control for a Routes setting (key; nil for a button), for a row that sets its width and caption. hidden
+	hides it
 ]]
 function ns.OptionsRoutesControl(key, control, order, hidden)
 	control.name = control.name or ""
@@ -98,9 +137,22 @@ function ns.OptionsRoutesControl(key, control, order, hidden)
 		end
 		control.set = function(_, value)
 			ns.routes.SetSetting(key, value)
+			ns.RefreshSettings()
 		end
 	end
 	return control
+end
+
+-- A Routes setting's caption beside its control, on a row of its own
+function ns.OptionsRoutesLabelRow(order, hidden, caption, desc, key, control, helper)
+	control.desc = desc
+	return Kit.LabelRow(order, hidden, caption, ns.OptionsRoutesControl(key, control), desc, helper)
+end
+
+-- A Routes setting that's a sub-option of the control above it: its silver caption and its control, indented
+function ns.OptionsRoutesSubControlRow(order, hidden, caption, desc, key, control)
+	control.desc = desc
+	return Kit.SubLabelRow(order, hidden, caption, ns.OptionsRoutesControl(key, control), desc)
 end
 
 --[[
@@ -124,29 +176,20 @@ function ns.OptionsSizeValues()
 end
 
 --[[
-	The Quest Route switch, on the root panel's Features section and the Quest Route panel: the route is
-	drawn between the Waypoint Markers, so it's grayed out while they're off
+	The route is planned from Questie's quest data, so without Questie there's none: a silver line under the
+	Maps & Objectives, Quest Route and Quest Arrow switches says why nothing shows
 ]]
-function ns.OptionsQuestRouteToggle(order, width)
-	return ns.OptionsRoutesToggle(
-		"showLine",
-		"ENABLE_QUEST_ROUTE",
-		"FEATURE_QUEST_ROUTE_DESCRIPTION",
-		order,
-		width,
-		nil,
-		function()
-			return ns.routes ~= nil and not ns.routes.Settings().showMap
+function ns.RoutesNeedQuestieLine(order)
+	return Kit.StatusLine(function()
+		if not C_AddOns.IsAddOnLoaded(ns.QUESTIE_ADDON_NAME) then
+			return L["ROUTES_NEED_QUESTIE"]
 		end
-	)
+	end, order)
 end
 
--- A Quality of Life setting takes effect at once: the dungeon quests' checks
-function ns.ApplyQualityOfLifeSettings()
-	if ns.dungeonQuests then
-		ns.dungeonQuests.Watch()
-	end
-end
+--------------------------------------------------------------------------------
+-- Wide Quest Log Reload
+--------------------------------------------------------------------------------
 
 --[[
 	Whether the Quest Log switch asks for the other quest log than this session runs: it applies only as the
@@ -156,126 +199,16 @@ function ns.IsQuestLogReloadPending()
 	return ns.hasWideQuestLog == true and (ns.db.profile.enableWideQuestLog and true or false) ~= ns.wideQuestLogActive
 end
 
--- The silver line under the Quest Log switch, on the General and Quest Log panels, while it waits for its reload
+-- The silver line under the Quest Log switch, on the Wide Quest Log panel and the panels under it, while it waits for its reload
 function ns.QuestLogReloadPendingText()
 	if ns.IsQuestLogReloadPending() then
 		return L["FEATURE_QUEST_LOG_RELOAD_PENDING"]
 	end
 end
 
--- A silver line shown only while getText returns something
-function ns.OptionsStatusLine(getText, order)
-	return {
-		type = "description",
-		name = function()
-			local text = getText()
-			return text and (GetColor("HELP") .. text .. "|r") or ""
-		end,
-		fontSize = "medium",
-		order = order,
-		hidden = function()
-			return getText() == nil
-		end,
-	}
-end
-
--- A sub-option's caption, in silver (Build Reference → Sub-Option Rows)
-function ns.OptionsSubLabel(text)
-	return GetColor("HELP") .. text .. "|r"
-end
-
---[[
-	A sub-option: an indented control on a line of its own, in an unnamed inline group (Build Reference →
-	Sub-Option Rows). hidden goes on the group, so the indent collapses with it
-]]
-function ns.OptionsSubRow(order, hidden, controls)
-	local args = {
-		indent = { type = "description", name = " ", width = ns.OPTIONS_SUB_INDENT_WIDTH, order = 1 },
-	}
-	for key, control in pairs(controls) do
-		args[key] = control
-	end
-	return { type = "group", name = "", inline = true, order = order, hidden = hidden, args = args }
-end
-
---[[
-	A Routes setting that's a sub-option of the switch above it: its silver caption and its control on one
-	indented row, which hides it, not the control
-]]
-function ns.OptionsRoutesSubControlRow(order, hidden, text, desc, key, control)
-	control.desc = desc
-	return ns.OptionsSubRow(order, hidden, {
-		label = ns.OptionsRowLabel(
-			ns.OptionsSubLabel(text),
-			2,
-			ns.OPTIONS_LABEL_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH,
-			nil,
-			desc
-		),
-		[key] = ns.OptionsRoutesControl(key, control, 3, nil),
-	})
-end
-
 --------------------------------------------------------------------------------
 -- Example Lines
 --------------------------------------------------------------------------------
-
---[[
-	How a line reaches whoever reads it, which decides how its Example is drawn: a whisper as the player
-	receiving it sees it, and group chat as party chat, the one every group has. chatType is the client's
-	ChatTypeInfo key, so a player who recolored a channel sees their own color; hex is for a client that
-	hasn't filled that table in
-]]
-local SAMPLE_FORMS = {
-	PARTY = { chatType = "PARTY", hex = "AAAAFF", prefix = CHAT_PARTY_GET },
-	WHISPER = { chatType = "WHISPER", hex = "FF80FF", prefix = CHAT_WHISPER_GET },
-}
-
-local function ChatColor(form)
-	local info = ChatTypeInfo and ChatTypeInfo[form.chatType]
-	if not info then
-		return "|cff" .. form.hex
-	end
-	return format(
-		"|cff%02x%02x%02x",
-		math.floor(info.r * 255 + 0.5),
-		math.floor(info.g * 255 + 0.5),
-		math.floor(info.b * 255 + 0.5)
-	)
-end
-
--- A panel falls back to white after a link's |r where chat falls back to the channel's color, so it's opened again
-local function Tint(color, text)
-	return color .. text:gsub("|r", "|r" .. color) .. "|r"
-end
-
--- The receiving client draws a {rtN} token as its mark
-local function RaidIconTexture(index)
-	return "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_" .. index .. ":0|t"
-end
-
--- The sender as chat names them: the character the panel is opened on, in its class color
-local function SampleSender()
-	local _, class = UnitClass("player")
-	local color = ns.CLASS_COLORS[class or ""] or ns.PALETTE.TEXT
-	return "[|cff" .. color .. (GetUnitName("player") or UnitName("player") or "") .. "|r]"
-end
-
---[[
-	An Example line: the silver label, then the line drawn as it will arrive. PRINT is the player's own
-	window (ns.BuildPrintLine), PARTY and WHISPER chat from the player's character
-]]
-function ns.RenderSample(formKey, message)
-	local line
-	if formKey == "PRINT" then
-		line = ns.BuildPrintLine(message)
-	else
-		local form = SAMPLE_FORMS[formKey]
-		local shown = message:gsub("{rt(%d)}", RaidIconTexture)
-		line = Tint(ChatColor(form), form.prefix:format(SampleSender()) .. shown)
-	end
-	return GetColor("HELP") .. L["SAMPLE_EXAMPLE"]:format(line .. GetColor("HELP")) .. "|r"
-end
 
 -- The flavor's sample quests as the features take them; a title the client hasn't loaded yet is asked for
 function ns.SampleQuests()
@@ -298,21 +231,19 @@ function ns.NoSampleQuests()
 	return #ns.SAMPLE_QUEST_IDS == 0
 end
 
--- An Example under a control, indented as a sub-option and shown only while hidden() is false
-function ns.OptionsExampleRow(order, example, hidden)
-	return ns.OptionsSubRow(order, function()
-		return hidden() or ns.NoSampleQuests()
-	end, {
-		example = {
-			type = "description",
-			name = function()
-				return ns.NoSampleQuests() and "" or example()
-			end,
-			fontSize = "medium",
-			width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH,
-			order = 2,
-		},
-	})
+--[[
+	An Example closing its control's field set, shown only while hidden() is false and the client has sample
+	quests. getLine returns the finished line (Kit.PrintedLine, Kit.SentLine)
+]]
+function ns.OptionsExample(order, hidden, getLine)
+	return Kit.Example(order, function()
+		return (hidden ~= nil and hidden()) or ns.NoSampleQuests()
+	end, getLine)
+end
+
+-- What the add-on prints, as the player's own chat window shows it
+function ns.PrintedExample(message)
+	return Kit.PrintedLine(ns.BuildPrintLine(message))
 end
 
 --------------------------------------------------------------------------------

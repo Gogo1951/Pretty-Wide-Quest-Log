@@ -340,6 +340,7 @@ read_globals = {
 	"UnitGUID",
 	"UnitInRange",
 	"UnitIsConnected",
+	"UnitIsDeadOrGhost",
 	"UnitIsFriend",
 	"UnitIsGhost",
 	"UnitIsUnit",

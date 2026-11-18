@@ -64,17 +64,24 @@ ns.DATABASE_DEFAULTS = {
 			questsListed = 4, -- Quests listed at most; the rest are counted
 			showItemButtons = true, -- A Use Item button beside each listed quest with an item to use
 			showNextObjective = false, -- In an objective area, the waypoint after it, dimmed under the list
-			predictiveRoutes = false, -- Quests the zone can finish planned whole with their follow-ups, and turn-ins shown before they're done; off, as it's a lot at first
-			showLocalQuests = true, -- Quests Questie shows as available, whose giver is nearby, as waypoints to pick up
 			showFlightPaths = true, -- Flight masters in the zone whose flight path the character doesn't have, as waypoints
 			--[[
-				Local Available Quests: which nearby quests count. The three kinds of quest below the level each
-				take "route", "map" (a marker, no route line) or "off"
+				What to Route: which quests the route guides the player to pick up. Quests in the log are always on
+				the route, whatever these say (Routes-Pick-Ups.lua)
 			]]
-			localQuestRange = 400, -- Yards a quest giver can be from the player
-			localQuestLevel = "green", -- Lowest level: "questie" (Questie's own filter), "green" or "yellow" and higher
-			localEscortQuests = "map",
-			localOtherZoneQuests = "map", -- An objective or the turn-in only in another zone
+			-- Plan Ahead: "yours" (Your Quests Only), "nearby" (and pick-ups near you) or "zone" (the zone planned with follow-ups)
+			planAhead = "nearby",
+			localQuestRange = 400, -- Yards a quest giver can be from the player, for Nearby Pick-Ups
+			highestQuestLevel = 3, -- Levels above the player a quest to pick up can be: 0 (Your Level), 3, 6 or 9
+			lowestQuestLevel = 6, -- Levels below the player a quest to pick up can be: 3, 6, 9 or 0 for No Limit
+			-- Quest Types to Pick Up Along the Route; an unchecked one is a gray marker on the map, off the route
+			pickUpElite = true, -- Elite quests on Era and Forever, Group quests from TBC on (the tag both games give ID 1)
+			pickUpPvP = false,
+			pickUpDungeon = false, -- The pick-up only: the objectives are inside
+			pickUpRaid = false, -- The pick-up only
+			pickUpEscort = false,
+			pickUpOtherZone = false, -- An objective or the turn-in only in another zone
+			routeFocus = "easiest", -- Route Focus: "fastest" (Fastest Clear), "easiest" (Easiest First) or "xp" (Most XP per Hour)
 			hideInRaids = true,
 			hideInInstances = true,
 			partyQuests = true, -- Party members' quests the player doesn't have, as their Questie shares them
@@ -92,5 +99,6 @@ ns.DATABASE_DEFAULTS = {
 		zoneShareOffered = {}, -- Party members offered the zone's quests in this group, by GUID, kept through a reload (Zone-Share-Offer.lua)
 		routesFlightMapSeen = {}, -- Continents whose flight map was read (all for a new character): until then no flight path goes on the route there
 		zoneInfoWanted = {}, -- Quests Zone Info's + put on the route, by quest ID, until taken or done (Zone-Info-Data.lua)
+		routesWarmStarts = {}, -- The last route planned in each zone, the first plan's start on coming back (Routes-Planner.lua)
 	},
 }
