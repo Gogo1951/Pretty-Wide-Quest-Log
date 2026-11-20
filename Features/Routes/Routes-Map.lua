@@ -47,6 +47,11 @@ local MORE_GAP = 40
 local TAIL_ALPHA = 0.5
 local IMAGES = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\"
 
+-- A zone's disc on a continent's or the world's map (Routes-Map-Zones.lua)
+local ZONE_TEMPLATE = "PrettyWideQuestLogRouteZonePinTemplate"
+local DISC_TEXTURE = IMAGES .. "Route-Stop" -- A waypoint's disc, its black ring and all
+local ZONE_SCALE = 2 -- A zone's disc, times a marker's size on that map, so it stands out on the parchment
+
 --[[
 	The mixin of the route's pin templates in Routes.xml, which load after this file. The map canvas lets right
 	clicks pass through every pin it makes, with SetPassThroughButtons, which WoW blocks in combat: opening the
@@ -131,6 +136,30 @@ local function IsRouteMap(mapID)
 	return first ~= nil and first.mapID ~= nil and mapID ~= nil and routes.IsInZone(mapID, first.mapID)
 end
 
+local ContinentOf = routes.ContinentOf -- Routes-Map-Zones.lua
+
+--[[
+	Whether a camp stands in the zone a zone's map is of (a cave's map counting as its zone's), with the
+	cities and caves inside it and a zone linked to it (routes.IsInZone). A zone's map reaches over its
+	neighbors' edges, and their markers there are theirs, not this map's: the Barrens' map shows none of
+	Mulgore's, Durotar's or Stonetalon's. The map under the camp is asked of the continent's map, which
+	knows where each zone ends, and kept on the camp; a camp nothing claims there, out at sea, stays
+]]
+local function IsInMapZone(camp, mapID)
+	local continent = ContinentOf(mapID)
+	if not continent then
+		return true
+	end
+	if camp.mapAt == nil then
+		local position = MapPosition(continent, camp.x, camp.y, camp.instance)
+		local info = IsOnMap(position) and C_Map.GetMapInfoAtPosition(continent, position.x, position.y)
+		camp.mapAt = info and info.mapID ~= continent and info.mapID or false
+	end
+	return not camp.mapAt or routes.IsInZone(camp.mapAt, routes.OutOfMicro(mapID))
+end
+
+routes.IsInMapZone = IsInMapZone -- Questie's icons keep to a zone's map too (Routes-Map-Questie-Icons.lua)
+
 --------------------------------------------------------------------------------
 -- The stops
 --------------------------------------------------------------------------------
@@ -200,10 +229,33 @@ local function WaypointIgnoredKeys(stop)
 end
 
 --[[
+	The zone a right-click on a camp's marker is for: none (the player's) while the route has the task or a
+	camp of it stands in the player's zone, as the route may take it there; else the zone the marker stands
+	in (routes.ZoneAt), so the change waits till the player gets there (routes.IsChangeHere)
+]]
+local function ClickZone(stop, task)
+	local here = routes.PlayerZone()
+	for _, routeStop in ipairs(routes.stops) do
+		for _, routeTask in ipairs(routeStop.tasks) do
+			if routeTask.key == task.key then
+				return nil
+			end
+		end
+	end
+	for _, camp in ipairs(routes.camps) do
+		if here and camp.tasks[1] and camp.tasks[1].key == task.key and IsInMapZone(camp, here) then
+			return nil
+		end
+	end
+	return routes.ZoneAt(stop.x, stop.y, stop.instance)
+end
+
+--[[
 	What right-clicking a marker does, and its hint: a waypoint is ignored (routes.SkipStop), or put back on
 	the route once it is (gray, its route not planned again yet); a camp's
 	objective is ignored, or put back on the route once it is; a map-only pick-up (a dungeon quest's, an
-	escort's, one leading to another zone) is put on the route (routes.AddPickUp). Nothing for the corpse,
+	escort's, one leading to another zone) is put on the route (routes.AddPickUp), and one in a zone the route
+	isn't planned in taken back off it once it is (routes.RemovePickUp). Nothing for the corpse,
 	or for a dungeon or raid quest's objective, which the route never takes anyway
 ]]
 local function RightClick(stop)
@@ -225,11 +277,29 @@ local function RightClick(stop)
 		end)
 	end
 	local task = stop.tasks[1]
-	if task.untracked then
+	-- A quest to pick up on the route's zone the route can't plan (routes.ZonePickUps): a marker alone
+	if task.untracked or task.unplanned then
 		return nil
 	end
+	--[[
+		A quest to pick up on a zone's map the route isn't planned in (routes.ZonePickUps): put on the route for
+		when the player gets there, or taken back off it. Its look changes at once, the task being every camp's
+	]]
+	if task.elsewhere then
+		if routes.added[task.key] then
+			return L["ROUTES_TAKE_OFF_ROUTE"],
+				MapClick(function()
+					routes.RemovePickUp(task)
+					task.offRoute = "zone"
+				end)
+		end
+		return L["ROUTES_ADD_TO_ROUTE"], MapClick(function()
+			routes.AddPickUp(task)
+			task.offRoute = nil
+		end)
+	end
 	if task.kind == "pickUp" and task.offRoute then
-		return L["ROUTES_RIGHT_CLICK_ADD"], MapClick(function()
+		return L["ROUTES_ADD_TO_ROUTE"], MapClick(function()
 			routes.AddPickUp(task)
 		end)
 	end
@@ -239,12 +309,13 @@ local function RightClick(stop)
 		end)
 	end
 	return L["ROUTES_RIGHT_CLICK_IGNORE"], MapClick(function()
-		routes.IgnoreTask(task)
+		routes.IgnoreTask(task, ClickZone(stop, task))
 	end)
 end
 
 --[[
-	A stop's menu (Routes-Map-Menu.lua): its quests, each player's progress laid out as the quest log's, Look
+	A stop's menu (Routes-Map-Menu.lua): its first quest's title as the header with PWQL on the right, its
+	quests, each player's progress laid out as the quest log's, Look
 	For, then its clicks as rows, Ignore and Reset This Zone, each clicked or done with its click on the
 	marker. Nothing once the pin shows another stop, which closes it
 ]]
@@ -254,6 +325,7 @@ local function StopMenuEntries(pin, stop)
 	end
 	local rows = routes.MapMenuRows()
 	routes.AddStopTooltip(rows, stop)
+	rows:MakeHeader()
 	if stop.names and #stop.names > 0 then
 		-- A heading, then a name per row a space in, so a long list grows down instead of wide
 		rows:AddSection(L["ROUTES_LOOK_FOR"])
@@ -323,6 +395,11 @@ end
 
 -- The markers drawn this time, in the order drawn, where each really is, for SpreadPins
 local spreadPins = {}
+--[[
+	The map spreadPins were drawn for. Changing maps zooms the canvas out to the new map before its pins are
+	drawn again, so a zoom can come while spreadPins still hold the last map's markers
+]]
+local spreadMapID
 
 --[[
 	Where each marker was put since the map opened, by map and marker: { x, y, offsetX, offsetY }, the place
@@ -490,6 +567,78 @@ local function AddStopPin(map, stop, position, textures, dimmable, tail, landing
 end
 
 --------------------------------------------------------------------------------
+-- A zone's disc, on a continent's or the world's map
+--------------------------------------------------------------------------------
+
+-- Opens a zone's map from its disc, or its menu's row
+local function OpenZoneMap(zoneID)
+	return function()
+		routes.CloseMapMenu()
+		WorldMapFrame:SetMapID(zoneID)
+	end
+end
+
+-- Opens the zone's menu (routes.ZoneMenuEntries); nothing once the pin shows another zone, which closes it
+local function OnZoneEnter(pin)
+	local group = pin.zoneGroup
+	routes.OpenMapMenu(pin, group, function()
+		if pin.zoneGroup ~= group then
+			return nil
+		end
+		return routes.ZoneMenuEntries(group, OpenZoneMap(group.zoneID))
+	end)
+end
+
+local function OnZoneMouseUp(pin, button)
+	if button == "LeftButton" and pin.zoneGroup then
+		OpenZoneMap(pin.zoneGroup.zoneID)()
+	end
+end
+
+-- Questie's icon of a type (Questie.ICON_TYPE_AVAILABLE and the rest), in the user's Questie icon theme
+local function QuestieIconOfType(name)
+	local icons = Questie and Questie.usedIcons
+	return icons and Questie[name] and icons[Questie[name]] or nil
+end
+
+--[[
+	A zone's disc, in its level color with Questie's ! on it: sized, layered and moved off others as one marker
+	is, ZONE_SCALE times a marker's size. Its disc and icon are made the first time the pin is
+]]
+local function AddZonePin(map, group)
+	local pin = map:AcquirePin(ZONE_TEMPLATE)
+	if not pin.routeReady then
+		pin.routeReady = true
+		pin:SetScript("OnEnter", OnZoneEnter) -- The menu closes itself once the mouse has left it and the pin
+		pin:SetScript("OnMouseUp", OnZoneMouseUp)
+		pin.disc = pin:CreateTexture(nil, "ARTWORK", nil, 0)
+		pin.disc:SetTexture(DISC_TEXTURE)
+		pin.disc:SetAllPoints()
+		pin.icon = pin:CreateTexture(nil, "ARTWORK", nil, 1)
+		pin.icon:SetPoint("CENTER")
+	end
+	pin:SetScalingLimits(1, 1.0, 1.2)
+	local size = MarkerSize(map) * ZONE_SCALE
+	pin:SetSize(STOP_SIZE * size, STOP_SIZE * size)
+	pin.icon:SetSize(STOP_ICON_SIZE * size, STOP_ICON_SIZE * size)
+	pin.disc:SetVertexColor(routes.ZoneColorRGB(group.color))
+	pin.icon:SetTexture(QuestieIconOfType("ICON_TYPE_AVAILABLE"))
+	pin.icon:SetShown(pin.icon:GetTexture() ~= nil)
+	pin.stop, pin.zoneGroup = { tasks = {} }, group -- No task: SpreadPins never takes it for a flight's marker
+
+	pin:SetAlpha(1)
+	pin:EnableMouse(true)
+	pin:UseFrameLevelType(CAMP_LEVEL)
+	pin:ApplyFrameLevel()
+	pin:SetPosition(group.position.x, group.position.y)
+	pin:ApplyCurrentScale()
+	pin.baseX, pin.baseY = group.position.x, group.position.y
+	pin.markerKey = "zone:" .. group.zoneID
+	spreadPins[#spreadPins + 1] = pin
+	return pin
+end
+
+--------------------------------------------------------------------------------
 -- Waypoints Shown: the "…" marker and the route's hidden tail
 --------------------------------------------------------------------------------
 
@@ -526,7 +675,7 @@ local function ShowWholeRoute()
 	end
 end
 
--- The "…" marker's menu: how many waypoints it hides, what it's for, and Show the Whole Route as a row
+-- The "…" marker's menu: how many waypoints it hides as the header with PWQL on the right, what it's for, and Show the Whole Route as a row
 local function MoreMenuEntries(pin, hidden)
 	if pin.hidden ~= hidden then
 		return nil
@@ -534,6 +683,7 @@ local function MoreMenuEntries(pin, hidden)
 	local rows = routes.MapMenuRows()
 	local title = hidden == 1 and L["ROUTES_MORE_WAYPOINT"] or L["ROUTES_MORE_WAYPOINTS"]:format(hidden or 0)
 	rows:AddLine(title, ns.GetColorRGB("TITLE"))
+	rows:MakeHeader()
 	local red, green, blue = ns.GetColorRGB("HELP")
 	rows:AddLine(L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"], red, green, blue, true)
 	rows:AddHints({ { L["ROUTES_CLICK"], L["ROUTES_CLICK_SHOW_ROUTE"], ShowWholeRoute } })
@@ -679,11 +829,14 @@ function providerMixin:RemoveAllData()
 	]]
 	wipe(tailPins)
 	wipe(spreadPins)
+	spreadMapID = nil
 	routeLine = nil
 	local map = self:GetMap()
 	map:RemoveAllPinsByTemplate(LINE_TEMPLATE)
 	map:RemoveAllPinsByTemplate(STOP_TEMPLATE)
 	map:RemoveAllPinsByTemplate(MORE_TEMPLATE)
+	map:RemoveAllPinsByTemplate(ZONE_TEMPLATE)
+	routes.zoneDiscQuests = {} -- Questie's ! icons the zone discs stood in for come back, till discs are drawn again
 	map:RemoveAllPinsByTemplate(routes.MEET_TEMPLATE) -- Routes-Map-Meet.lua
 	routes.hoveredStop = nil -- Its pin is gone, and the mouse may never leave it
 end
@@ -873,7 +1026,7 @@ function providerMixin:RefreshAllData()
 	end
 
 	-- Each objective's camps on this map, in the order they come, then the pick-ups the route draws no waypoint for here
-	local byKey, order = {}, {}
+	local byKey, order, shown = {}, {}, {}
 	local camps = {}
 	for _, camp in ipairs(routes.camps) do
 		camps[#camps + 1] = camp
@@ -881,15 +1034,59 @@ function providerMixin:RefreshAllData()
 	for _, marker in ipairs(UndrawnPickUps(routeKeys)) do
 		camps[#camps + 1] = marker
 	end
+	local wide = IsWideMap(mapID)
+	--[[
+		A zone's map has a marker for each quest to pick up there its zone's disc counts (Routes-Map-Zones.lua),
+		the route's zone's too, for those the route has no marker for
+	]]
+	local elsewhere = {}
+	if not wide then
+		local have = {}
+		for _, camp in ipairs(camps) do
+			have[camp.tasks[1].key or ""] = true
+		end
+		for key in pairs(routeKeys) do
+			have[key] = true
+		end
+		elsewhere = routes.ZonePickUps(mapID, have, IsRouteMap(mapID))
+		for _, camp in ipairs(elsewhere) do
+			camps[#camps + 1] = camp
+		end
+	end
 	for _, camp in ipairs(camps) do
 		local key = camp.tasks[1].key
-		if not routeKeys[key] and IsOnMap(MapPosition(mapID, camp.x, camp.y, camp.instance)) then
+		if
+			not routeKeys[key]
+			and IsOnMap(MapPosition(mapID, camp.x, camp.y, camp.instance))
+			and (wide or IsInMapZone(camp, mapID))
+		then
+			shown[#shown + 1] = camp
 			if not byKey[key] then
 				byKey[key] = {}
 				order[#order + 1] = key
 			end
 			table.insert(byKey[key], camp)
 		end
+	end
+	--[[
+		A continent's or the world's map has each zone's disc in place of its pick-ups and objectives
+		(Routes-Map-Zones.lua), and a marker for each turn-in alone; Questie's ! icons for the quests the
+		discs count are hidden too, now they're known. A zone's map shows only its own markers (IsInMapZone)
+	]]
+	if wide then
+		for _, group in ipairs(routes.ZoneGroups(mapID, shown)) do
+			AddZonePin(map, group)
+		end
+		ApplyQuestieIcons()
+		local turnIns = {}
+		for _, key in ipairs(order) do
+			if byKey[key][1].tasks[1].kind == "turnIn" then
+				turnIns[#turnIns + 1] = key
+			end
+		end
+		order = turnIns
+	elseif #elsewhere > 0 then
+		ApplyQuestieIcons() -- Questie's ! icons for the zone's quests to pick up hide, now they're known
 	end
 	for _, key in ipairs(order) do
 		local marker = Gathered(byKey[key])
@@ -900,20 +1097,26 @@ function providerMixin:RefreshAllData()
 		end
 		--[[
 			Dim on the route's zone only while the route could take it; one it won't has its ring instead.
-			An escort to pick up later stays at full strength, its green the point of it
+			An escort to pick up later stays at full strength
 		]]
 		local escort = marker.tasks[1].kind == "pickUp" and marker.tasks[1].escort
 		AddStopPin(map, marker, position, textures, onRoute and not escort)
 	end
+	spreadMapID = mapID
 	SpreadPins(map)
 
 	routes.AddMeetPin(map, mapID) -- Routes-Map-Meet.lua
 end
 
--- A moved marker is moved in marker widths, so its move is laid out again as the map zooms or resizes, never worked out anew
+--[[
+	A moved marker is moved in marker widths, so its move is laid out again as the map zooms or resizes, never
+	worked out anew. Not while the canvas is already on another map with the last map's markers still up: they'd
+	be locked in at that map's places on this one, and drawn there once this map's are (spreadMapID)
+]]
 function providerMixin:OnCanvasScaleChanged()
-	if #spreadPins > 0 then
-		SpreadPins(self:GetMap())
+	local map = self:GetMap()
+	if #spreadPins > 0 and spreadMapID == map:GetMapID() then
+		SpreadPins(map)
 	end
 end
 providerMixin.OnCanvasSizeChanged = providerMixin.OnCanvasScaleChanged

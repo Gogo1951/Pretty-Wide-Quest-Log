@@ -264,8 +264,11 @@ function routes.Signature()
 			.. ":"
 			.. table.concat(bits, ",")
 	end
-	for key in pairs(routes.skipped) do
-		parts[#parts + 1] = "skip:" .. key
+	-- Not those kept for another zone, planned once the player gets there (routes.IsChangeHere)
+	for key, entry in pairs(routes.skipped) do
+		if routes.IsChangeHere(entry.zone) then
+			parts[#parts + 1] = "skip:" .. key
+		end
 	end
 	for name in pairs(routes.ignoredMembers) do
 		parts[#parts + 1] = "ignore:" .. name

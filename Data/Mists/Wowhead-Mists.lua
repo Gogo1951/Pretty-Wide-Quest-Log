@@ -7,11 +7,12 @@ ns.WOWHEAD_QUEST_URL = "https://www.wowhead.com/mop-classic/quest="
 How We Got the Data
 
 Last Validated
-	2026-11-13, MoP Classic 5.5.4.70631
+	2026-11-20, wago.tools, MoP Classic 5.5.4.71060
 
 Notes
 	- The page the quest log's Wowhead link opens, with the quest ID added on the end
 	  (Features/Wowhead-Link.lua), in the part of the site for this client.
+	- No game table holds a web address, so the game tables have nothing to check it against.
 
 SQL (CMaNGOS)
 	None.

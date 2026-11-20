@@ -54,7 +54,7 @@ ns.NOT_FLIGHT_PATH_NPC_IDS = {
 How We Got the Data
 
 Last Validated
-	2026-11-13, WoW Forever 1.60.1.70938
+	2026-11-20, wago.tools, WoW Forever 1.60.1.70959
 
 Notes
 	- CITY_ZONE_MAP_IDS: the six old-world capitals, each city's own map ID to the map ID of the zone it sits in
@@ -80,8 +80,8 @@ Wowhead
 	None.
 
 wago.tools
-	https://wago.tools/db2/UiMap?build=1.60.1.70938
+	https://wago.tools/db2/UiMap?build=1.60.1.70959
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/Classic/classicNpcDB.lua
 ]]

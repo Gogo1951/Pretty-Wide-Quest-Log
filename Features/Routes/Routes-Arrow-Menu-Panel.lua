@@ -2,7 +2,8 @@ local ADDON_NAME, ns = ...
 
 --[[
 	Routes: the plates the Quest Arrow's menu is drawn on (Routes-Arrow-Menu.lua), laid out as WIM's whisper
-	list is: a dark plate with angled corners and a row for each line, and the flyout a label opens beside the
+	list is and to Style Guide → MENUS, with Menu-Kit's sizes: a dark plate with angled corners and a row for
+	each line, the text EDGE in from the plate on every side, and the flyout a label opens overlapping the
 	menu, on a plate of its own. Each row is a kind the menu's rows name ("header", "section", "action" and
 	the rest), laid out to its text; what the rows say, and opening and closing the menu, are the menu's
 ]]
@@ -22,9 +23,24 @@ local PLATE_CORNER = 32
 local PLATE_SCALE = 0.5
 
 local MIN_WIDTH = 128
+local MAX_WIDTH = 320 -- No menu or flyout is wider: a longer row wraps instead, as Menu-Kit's do
 local WRAP_WIDTH = 256 -- A wrapping row's text, a sentence such as the "…" marker's (Routes-Map-Menu.lua)
-local ROW_INSET = SPACE.LINE -- From the plate's edge to a row's highlight
-local TEXT_INSET = SPACE.NEAR -- From a row's edge to its text
+local EDGE = SPACE.GROUP -- From the plate's edge to the text, on every side
+local ROW_INSET = SPACE.NEAR -- From the plate's edge to a row's highlight
+local TEXT_INSET = EDGE - ROW_INSET -- From a row's edge to its text
+local PANEL_INSET = EDGE - SPACE.LINE -- Above the first row and below the last: a row's own SPACE.LINE makes up EDGE
+--[[
+	A flyout overlaps its menu, as the game's own do: its edge sits FLYOUT_OVERLAP inside the menu's, where a
+	row's highlight ends and clear of its arrow, and it rises FLYOUT_RISE so its first row meets the row that
+	opened it (Menu-Kit's Kit.FLYOUT_OVERLAP and Kit.FLYOUT_RISE)
+]]
+local FLYOUT_OVERLAP = ROW_INSET
+local FLYOUT_RISE = PANEL_INSET
+--[[
+	A flyout's label draws Menu-Kit's chevron in an arrow column of its own at the right, a line tall, SPACE.LINE
+	past what's set inside it. Every row's right side ends where the column begins, on a plate with any arrow
+]]
+local ARROW_TEXTURE = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Menu-Arrow"
 local HIGHLIGHT_ALPHA = 0.16
 local PLATE_ALPHA = 0.8 -- The plate's art is black: a little of the world shows through, so it reads lighter
 
@@ -167,6 +183,8 @@ local function Row(panel, index)
 		row.right = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 		row.right:SetJustifyH("RIGHT")
 		row.right:SetWordWrap(false)
+		row.arrow = row:CreateTexture(nil, "OVERLAY")
+		row.arrow:SetTexture(ARROW_TEXTURE)
 		row.line = row:CreateTexture(nil, "ARTWORK")
 		row.line:SetHeight(1)
 		row.line:SetPoint("LEFT", TEXT_INSET, 0)
@@ -232,22 +250,28 @@ local function Row(panel, index)
 end
 
 --[[
-	Sizes the menu to its rows: each as tall as a line and SPACE.LINE above and below, a group's label
-	SPACE.GROUP above instead to set its group apart (SPACE.NEAR where a spacer already does, or it opens the
-	plate), the spacers SPACE.GROUP and the separators SPACE.NEAR. A label that opens a flyout is a row like
-	any other, so every row to click is the same height. Every row is the same size of type; a label is told
-	apart by its gold alone
+	Sizes the menu to its rows, PANEL_INSET above the first and below the last: each as tall as a line and
+	SPACE.LINE above and below, a group's label SPACE.GROUP above instead to set its group apart (SPACE.NEAR
+	where a spacer already does, and only SPACE.LINE where it opens the plate), the spacers SPACE.GROUP and the
+	separators SPACE.NEAR. A label that opens a flyout is a row like any other, so every row to click is the
+	same height. Every row is the same size of type; a label is told apart by its gold alone. No panel is wider
+	than MAX_WIDTH: a row's name that would make it so wraps, its right side level with the first line. On a
+	plate with a flyout's label, every row's right side ends at the arrow column (ARROW_TEXTURE)
 ]]
 local function Layout(panel, entries)
-	local width, y = MIN_WIDTH, SPACE.NEAR
+	local width, y = MIN_WIDTH, PANEL_INSET
 	local rows = panel.rows
 	panel.submenuRows = {}
+	local hasArrows = false
+	for _, entry in ipairs(entries) do
+		hasArrows = hasArrows or entry.submenu ~= nil
+	end
 	for index, entry in ipairs(entries) do
 		local row = Row(panel, index)
 		local kind = entry.kind
 		local clickable = kind == "action"
 			or kind == "toggle"
-			or kind == "radio"
+			or kind == "choice"
 			or entry.submenu ~= nil
 			or entry.action ~= nil
 		row:EnableMouse(clickable or entry.drag or entry.itemID ~= nil)
@@ -259,6 +283,7 @@ local function Layout(panel, entries)
 		row.drag = entry.drag
 		row.itemID = entry.itemID
 		row.line:SetShown(kind == "separator")
+		row.arrow:Hide()
 		row.hover = entry.hover
 		row.submenu = entry.submenu
 		if entry.submenu then
@@ -283,23 +308,13 @@ local function Layout(panel, entries)
 			-- A label that opens a flyout (Route, Show, Ignored) is a row to use, as tall as the rows it opens
 			if kind == "section" and not entry.submenu then
 				local before = entries[index - 1]
-				above = (before == nil or before.kind == "spacer") and SPACE.NEAR or SPACE.GROUP
+				above = before == nil and SPACE.LINE or before.kind == "spacer" and SPACE.NEAR or SPACE.GROUP
 			end
 			row.above = above
 			height = (size or 12) + above + SPACE.LINE
-			-- Centered on the line, not the row, so a label's extra room is all above it
-			local drop = (above - SPACE.LINE) / 2
-			row.left:ClearAllPoints()
-			-- A wrapping row, a sentence: WRAP_WIDTH wide, as many lines tall as it takes, its first line at the top
-			row.left:SetWordWrap(entry.wrap == true)
-			row.left:SetWidth(entry.wrap and WRAP_WIDTH or 0)
-			if entry.wrap then
-				row.left:SetPoint("TOPLEFT", TEXT_INSET, -SPACE.LINE)
-			else
-				row.left:SetPoint("LEFT", TEXT_INSET, -drop)
-			end
-			row.right:ClearAllPoints()
-			row.right:SetPoint("RIGHT", -TEXT_INSET, -drop)
+			-- Measured on one line first, to see whether it fits
+			row.left:SetWordWrap(false)
+			row.left:SetWidth(0)
 			-- As wide as its widest look: the hover's right side measured too, so Put Back never crowds the name
 			local rightWidth = 0
 			if row.hover then
@@ -311,15 +326,41 @@ local function Layout(panel, entries)
 				rightWidth = math.max(rightWidth, row.right:GetStringWidth() or 0)
 			end
 			local textWidth = row.left:GetStringWidth() or 0
-			if entry.wrap then
-				textWidth = math.min(textWidth, WRAP_WIDTH)
-				height = math.max(height, (row.left:GetStringHeight() or 0) + 2 * SPACE.LINE)
+			local arrowSize = size or 12
+			local arrowRoom = hasArrows and SPACE.LINE + arrowSize or 0
+			local rightRoom = (rightWidth > 0 or entry.submenu) and SPACE.GROUP + rightWidth or 0
+			local insets = 2 * (TEXT_INSET + ROW_INSET) + arrowRoom
+			--[[
+				A wrapping row: a sentence WRAP_WIDTH wide, or a name too long for MAX_WIDTH in what's left beside
+				its right side, as many lines tall as it takes, its first line at the top
+			]]
+			local wrapWidth = entry.wrap and WRAP_WIDTH or nil
+			if not wrapWidth and textWidth + rightRoom + insets > MAX_WIDTH then
+				wrapWidth = MAX_WIDTH - rightRoom - insets
 			end
-			if rightWidth > 0 then
-				textWidth = textWidth + SPACE.GROUP + rightWidth
+			row.left:ClearAllPoints()
+			row.right:ClearAllPoints()
+			row.arrow:ClearAllPoints()
+			row.arrow:SetSize(arrowSize, arrowSize)
+			if wrapWidth then
+				row.left:SetWordWrap(true)
+				row.left:SetWidth(wrapWidth)
+				row.left:SetText(row.left:GetText()) -- Laid out again at that width
+				row.left:SetPoint("TOPLEFT", TEXT_INSET, -above)
+				row.right:SetPoint("TOPRIGHT", -(TEXT_INSET + arrowRoom), -above)
+				row.arrow:SetPoint("TOPRIGHT", -TEXT_INSET, -above)
+				textWidth = math.min(textWidth, wrapWidth)
+				height = math.max(height, (row.left:GetStringHeight() or 0) + above + SPACE.LINE)
+			else
+				-- Centered on the line, not the row, so a label's extra room is all above it
+				local drop = (above - SPACE.LINE) / 2
+				row.left:SetPoint("LEFT", TEXT_INSET, -drop)
+				row.right:SetPoint("RIGHT", -(TEXT_INSET + arrowRoom), -drop)
+				row.arrow:SetPoint("RIGHT", -TEXT_INSET, -drop)
 			end
-			width = math.max(width, textWidth + 2 * (TEXT_INSET + ROW_INSET))
-			if row.hover and row:IsMouseOver() then
+			row.arrow:SetShown(entry.submenu ~= nil)
+			width = math.max(width, math.min(textWidth + rightRoom + insets, MAX_WIDTH))
+			if row.hover and routes.IsCursorOver(row) then
 				Dress(row, true)
 			end
 		end
@@ -332,7 +373,7 @@ local function Layout(panel, entries)
 	for index = #entries + 1, #rows do
 		rows[index]:Hide()
 	end
-	panel:SetSize(math.ceil(width), y + SPACE.NEAR)
+	panel:SetSize(math.ceil(width), y + PANEL_INSET)
 end
 
 -- Lays a panel out again where what its rows say has changed; their actions always, as a new plan makes new tasks
@@ -347,20 +388,22 @@ local function Fill(panel, entries, key)
 end
 
 --[[
-	The flyout beside its label (Route, Show or Ignored), its first row level with the label: to the right of
-	the menu, or to the left where the screen hasn't the room. The label keeps its highlight while it's open
+	The flyout beside its label (Route, Show or Ignored), overlapping the menu by FLYOUT_OVERLAP and its first
+	row level with the label: to the right of the menu, or to the left where the screen hasn't the room. The
+	label keeps its highlight while it's open
 ]]
 local function PlaceSubmenu(row)
 	submenu:ClearAllPoints()
-	local gap = SPACE.GROUP
-	-- Down by the label's room above it past SPACE.NEAR, so the flyout's first row stays level with its text
-	local top = SPACE.NEAR - ((row.above or SPACE.NEAR) - SPACE.NEAR)
+	-- From the row's edge, which sits ROW_INSET inside the menu's
+	local offset = ROW_INSET - FLYOUT_OVERLAP
+	-- Down by the label's room above it past SPACE.LINE, so the flyout's first row stays level with its text
+	local top = FLYOUT_RISE - ((row.above or SPACE.LINE) - SPACE.LINE)
 	local right = menu:GetRight() or 0
 	local scale = menu:GetEffectiveScale() / UIParent:GetEffectiveScale()
-	if (right + gap + submenu:GetWidth()) * scale > UIParent:GetWidth() then
-		submenu:SetPoint("TOPRIGHT", row, "TOPLEFT", -gap, top)
+	if (right - FLYOUT_OVERLAP + submenu:GetWidth()) * scale > UIParent:GetWidth() then
+		submenu:SetPoint("TOPRIGHT", row, "TOPLEFT", -offset, top)
 	else
-		submenu:SetPoint("TOPLEFT", row, "TOPRIGHT", gap, top)
+		submenu:SetPoint("TOPLEFT", row, "TOPRIGHT", offset, top)
 	end
 end
 

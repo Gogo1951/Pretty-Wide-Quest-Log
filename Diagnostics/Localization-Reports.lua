@@ -188,7 +188,7 @@ end
 --[[
 	Each whisper built for that quest, as sent (with Questie's link where it fits), and its byte length
 	against the chat limit; SHORTENED where even the bracketed title had to be cut. Then each message of
-	the dungeon announcement and the zone offer whisper, OVER past the limit. Builds strings only
+	the dungeon announcement, OVER past the limit. Builds strings only
 ]]
 function ns:BuildMessageLengthReport()
 	local lines = { GetClientHeader(), "" }

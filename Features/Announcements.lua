@@ -23,6 +23,12 @@ function ns:PrintMessage(message)
 	print(ns.BuildPrintLine(message))
 end
 
+-- A refusal at the center of the screen, where Blizzard's errors show: "PWQL // message" in red
+function ns:Notice(message)
+	local red, green, blue = ns.GetColorRGB("OFF")
+	UIErrorsFrame:AddMessage(L["ADDON_SHORT_NAME"] .. " // " .. message, red, green, blue, 1.0)
+end
+
 --[[
 	What sharing an area's quests prints: none can be shared, one, or how many at the pace
 	ns.GetShareInterval() sets. Share Quests, the dungeon share and their Options Examples all print it

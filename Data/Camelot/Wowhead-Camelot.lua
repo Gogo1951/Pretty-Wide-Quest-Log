@@ -7,12 +7,14 @@ ns.WOWHEAD_QUEST_URL = "https://www.wowhead.com/classic/quest="
 How We Got the Data
 
 Last Validated
-	2026-11-13, WoW Forever 1.60.1.70938
+	2026-11-20, wago.tools, WoW Forever 1.60.1.70959
 
 Notes
 	- The page the quest log's Wowhead link opens, with the quest ID added on the end
 	  (Features/Wowhead-Link.lua), in the part of the site for this client.
-	- WoW Forever's quests are Classic Era's, so it uses Classic Era's part of the site.
+	- No game table holds a web address, so the game tables have nothing to check it against.
+	- WoW Forever's quests from Classic Era use Classic Era's part of the site. QuestieDB also lists 1,678
+	  quests of WoW Forever's own and links them to Wowhead's Forever part of the site (wowhead.com/forever).
 
 SQL (CMaNGOS)
 	None.
@@ -24,5 +26,5 @@ wago.tools
 	None.
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/src/corrections/Forever/generated/foreverBaseQuest.lua
 ]]

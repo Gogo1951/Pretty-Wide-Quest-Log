@@ -34,7 +34,7 @@ ns.NOT_FLIGHT_PATH_NPC_IDS = {
 How We Got the Data
 
 Last Validated
-	2026-11-13, MoP Classic 5.5.4.70631
+	2026-11-20, wago.tools, MoP Classic 5.5.4.71060
 
 Notes
 	- CITY_ZONE_MAP_IDS: the six old-world capitals, plus The Exodar, Silvermoon City and Shattrath City, each
@@ -57,8 +57,8 @@ Wowhead
 	None.
 
 wago.tools
-	https://wago.tools/db2/UiMap?build=5.5.4.70631
+	https://wago.tools/db2/UiMap?build=5.5.4.71060
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/MoP/mopNpcDB.lua
 ]]

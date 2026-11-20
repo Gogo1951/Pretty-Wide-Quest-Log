@@ -122,7 +122,7 @@ local SHARED_FUNCTIONS = {
 	"GossipSharedActiveQuestButtonMixin.Setup",
 	-- The Example lines ask for a sample quest's title that hasn't loaded (Options-Quality-of-Life.lua)
 	"C_QuestLog.RequestLoadQuestByID",
-	-- The name a zone offer is whispered to when the party frame has none yet (Zone-Share-Offer.lua)
+	-- The name a failed share's whisper goes to when the party frame has none yet (Announcements.lua)
 	"GetPlayerInfoByGUID",
 	-- Where the player is on the quest log's map without Questie (Player-Map-Pin.lua), and Routes' positions
 	"C_Map.GetPlayerMapPosition",
@@ -172,7 +172,6 @@ local SHARED_TABLES = {
 	"StaticPopupDialogs",
 	"GameTooltip",
 	"NORMAL_FONT_COLOR",
-	"RED_FONT_COLOR",
 	-- The chat colors the Example lines take; without it they fall back to the default colors
 	"ChatTypeInfo",
 }
@@ -297,12 +296,15 @@ local ROUTES_FUNCTIONS = {
 	"TaxiNodePosition",
 	-- Each flight path's name on the route, read off the zone's flight paths; without it the line names the flight master
 	"C_TaxiMap.GetTaxiNodesForMap",
+	-- Where a zone's disc sits on a continent's or the world's map (Routes-Map-Zones.lua)
+	"C_Map.GetMapRectOnMap",
+	-- A city gate's marker art; without the atlas the marker takes its usual icon (Routes-Stop-Look.lua)
+	"C_Texture.GetAtlasInfo",
 }
 
--- The fonts a tooltip's click hints are set in (Routes-Core.lua)
+-- The font a tooltip's objective checks are set in (Routes-Map-Tooltip.lua)
 local ROUTES_TABLES = {
 	"GameTooltipText",
-	"GameTooltipHeaderText",
 	-- Which flight paths a flight map shows as known and as the one you're at; without it, the usual numbers (Routes-Flights.lua)
 	"Enum.FlightPathState",
 }
@@ -440,6 +442,8 @@ local CLASSIC_FUNCTIONS = {
 -- Blizzard's quest log pieces the widened layout moves, resizes or restyles
 local CLASSIC_TABLES = {
 	"QuestLogTitleText",
+	-- The quest count beside the title, set in the window's font where the client has it (Classic-Quest-Log.lua)
+	"QuestLogQuestCount",
 	"QuestLogTitle1",
 	"QuestLogListScrollFrame",
 	"QuestLogDetailScrollFrame",
@@ -624,9 +628,7 @@ local QUEST_ID_FUNCTIONS = {
 }
 
 local QUEST_ID_TABLES = {
-	"QuestLogPopupDetailFrame",
 	"QuestFrameGreetingPanel.titleButtonPool",
-	"Enum.RelativeContentDifficulty",
 }
 
 -- The window on Mists, over the quest log index calls above (Quest-Log-API.lua, Mists-Tracking.lua, Mists-Quest-Portrait.lua)
@@ -1484,20 +1486,14 @@ function ns:BuildQuestLogContextReport()
 
 	if OWN_WINDOW then
 		--[[
-			The quest details share Blizzard's quest text pieces, so they stay
-			blank while the quest giver window or any of these has them
-			(Forever-Quest-Details.lua). The detail popup is WoW Forever's;
-			Blizzard's quest log and its details window are Mists'.
+			Mists: Blizzard's quest log and its details window, which the window takes over from out of combat
+			and which stay open in combat (Mists-Quest-Log-Key.lua). Every client with the window: Quest Text
+			Contrast, which shades the quest details (Forever-Quest-Details.lua)
 		]]
-		local mapDetails = QuestMapFrame and QuestMapFrame.DetailsFrame
-		if QUEST_ID_API then
-			lines[#lines + 1] = string.format("Quest detail popup: %s", Shown(QuestLogPopupDetailFrame))
-		else
+		if not QUEST_ID_API then
 			lines[#lines + 1] = string.format("Blizzard's quest log: %s", Shown(QuestLogFrame))
 			lines[#lines + 1] = string.format("Blizzard's quest details window: %s", Shown(QuestLogDetailFrame))
 		end
-		lines[#lines + 1] =
-			string.format("World map quest details visible: %s", YesNo(mapDetails and mapDetails:IsVisible()))
 		lines[#lines + 1] = string.format(
 			"Quest Text Contrast on: %s",
 			tostring(QuestTextContrast and QuestTextContrast.IsEnabled and QuestTextContrast.IsEnabled())
@@ -1557,6 +1553,18 @@ function ns:BuildQuestLogContextReport()
 	Setting(lines, "Quest levels at quest givers", "giverLevels")
 	-- Its own switch on the NPC Dialogue panel; Quality of Life's no longer counts (Quest-Giver.lua)
 	lines[#lines + 1] = string.format("Quest giver window cleanup in effect: %s", YesNo(ns.IsQuestGiverCleanupOn()))
+	--[[
+		The quest text's fade, put right whatever the cleanup says: cleared where the client can clear it
+		(WoW Forever), else carried past the end where it stops short; with neither, the text keeps Blizzard's
+		fade (Quest-Giver.lua)
+	]]
+	local fadeText = QuestInfoDescriptionText
+	lines[#lines + 1] = string.format(
+		"Quest text fade put right by: %s",
+		not (QuestFrameDetailPanel and fadeText and fadeText.SetAlphaGradient) and "nothing (left as Blizzard's)"
+			or fadeText.ClearAlphaGradient and "clearing it"
+			or "carrying it past the end where it stops short"
+	)
 	FontLines(lines)
 	-- Quest ID lines link to Wowhead only on a client with a Wowhead address (Wowhead-Link.lua)
 	lines[#lines + 1] = string.format("Wowhead quest address: %s", tostring(ns.WOWHEAD_QUEST_URL or "(none)"))
@@ -2660,17 +2668,36 @@ local function ZoneMapLines(lines)
 	lines[#lines + 1] = string.format("World map: %s", Shown(WorldMapFrame))
 	local canMeasure = WorldMapFrame and type(WorldMapFrame.EnumeratePinsByTemplate) == "function"
 	if canMeasure then
-		lines[#lines + 1] = MapLine("World map showing", WorldMapFrame:GetMapID())
+		local mapID = WorldMapFrame:GetMapID()
+		lines[#lines + 1] = MapLine("World map showing", mapID)
 		-- The route is drawn on whatever map the world map shows; a stop off that map gets no marker
 		lines[#lines + 1] = string.format(
 			"Route drawn on it: %d line, %d stop markers",
 			PinCount(WorldMapFrame, ROUTE_LINE_TEMPLATE),
 			PinCount(WorldMapFrame, ROUTE_STOP_TEMPLATE)
 		)
+		--[[
+			A continent's or the world's map shows markers only with its own switch on, and there a disc for
+			each zone with quests to pick up in place of their markers (Routes-Core.lua, Routes-Map-Zones.lua)
+		]]
+		lines[#lines + 1] = string.format(
+			"A continent's or the world's map: %s; markers shown on it: %s",
+			YesNo(ns.routes.IsWideMap(mapID)),
+			YesNo(ns.routes.IsMapShownOn(mapID))
+		)
 	end
 	--[[
+		The quests to pick up the last map drew zone discs, or markers off the route, for: a continent's or the
+		world's map, or a zone's map the route isn't planned in. None while What to Route is on Your Quests
+		Only, or while Questie's available quests can't be read (Routes-Map-Zones.lua)
+	]]
+	lines[#lines + 1] = string.format(
+		"Quests to pick up on the last map's zone discs or other zone markers: %d",
+		CountKeys(ns.routes.zoneDiscQuests or {})
+	)
+	--[[
 		Full Size Map turns the map's own miniWorldMap setting off (0), never in combat, as the map closes
-		and as settings change (Routes-Map.lua)
+		and as settings change (Routes-Map-Size.lua)
 	]]
 	lines[#lines + 1] = string.format("miniWorldMap CVar: %s", tostring(GetCVar("miniWorldMap")))
 	RouteSetting(lines, "Full size map", "fullSizeMap")
@@ -2872,6 +2899,22 @@ function ns:BuildRoutesContextReport()
 	lines[#lines + 1] = string.format(
 		"Objectives on the ignore list: %d",
 		type(routes.skipped) == "table" and CountKeys(routes.skipped) or 0
+	)
+	--[[
+		Pick-ups put on the route with a right-click; one put on from another zone's map waits there until
+		the player gets to that zone (Routes-Ignore.lua)
+	]]
+	local added, addedElsewhere = 0, 0
+	for _, entry in pairs(type(routes.added) == "table" and routes.added or {}) do
+		added = added + 1
+		if type(entry) == "table" and not routes.IsChangeHere(entry.zone) then
+			addedElsewhere = addedElsewhere + 1
+		end
+	end
+	lines[#lines + 1] = string.format(
+		"Pick-ups put on the route by hand: %d, %d of them waiting for another zone",
+		added,
+		addedElsewhere
 	)
 	RouteStopLines(lines, "First stop", routes.stops[1])
 

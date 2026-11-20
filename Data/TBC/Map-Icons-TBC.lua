@@ -1,18 +1,17 @@
 local _, ns = ...
 
---[[
-	The cell of the POI icons (Interface\\Minimap\\POIIcons) holding the corpse's gravestone, as this client's
-	CorpsePinTemplate takes it: { left, right, top, bottom }
-]]
+-- { left, right, top, bottom }
 ns.CORPSE_ICON_COORDS = { 0.875, 1, 0, 0.125 }
 
 --[[
 How We Got the Data
 
 Last Validated
-	2026-11-13, TBC Anniversary 2.5.6.70577
+	2026-11-20, wago.tools, TBC Anniversary 2.5.6.70577
 
 Notes
+	- The cell of the POI icons (Interface\\Minimap\\POIIcons) holding the corpse's gravestone, as this client's
+	  CorpsePinTemplate takes it, given as texture coordinates.
 	- The gravestone the route's corpse waypoint shows on the map (Features/Routes/Routes-Stop-Look.lua), the
 	  same cell the game's own CorpsePinTemplate marks the corpse with on the world map and minimap.
 	- The Classic clients' sheet.
@@ -25,7 +24,7 @@ Wowhead
 	None.
 
 wago.tools
-	None.
+	https://wago.tools/db2/ManifestInterfaceData?build=2.5.6.70577
 
 QuestieDB
 	None.

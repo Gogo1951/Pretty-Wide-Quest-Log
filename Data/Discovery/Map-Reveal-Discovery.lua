@@ -621,7 +621,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 How We Got the Data
 
 Last Validated
-	2026-11-13, Season of Discovery 1.15.9.70576
+	2026-11-20, wago.tools, Season of Discovery 1.15.9.70576
 
 Notes
 	- Every area of a zone's map that starts hidden until the character explores it, so the quest map can show the
@@ -648,6 +648,8 @@ wago.tools
 	https://wago.tools/db2/WorldMapOverlay?build=1.15.9.70576
 	https://wago.tools/db2/WorldMapOverlayTile?build=1.15.9.70576
 	https://wago.tools/db2/UiMapXMapArt?build=1.15.9.70576
+	https://wago.tools/db2/UiMap?build=1.15.9.70576
+	https://wago.tools/db2/UiMapArt?build=1.15.9.70576
 
 QuestieDB
 	None.

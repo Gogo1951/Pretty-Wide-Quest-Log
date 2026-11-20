@@ -8,7 +8,7 @@ ns.QUEST_ITEM_COUNTS = ""
 How We Got the Data
 
 Last Validated
-	2026-11-13, MoP Classic 5.5.4.70631
+	2026-11-20, wago.tools, MoP Classic 5.5.4.71060
 
 Notes
 	- How many of each item a quest asks the player to bring, for Zone Info's Things to Bring column

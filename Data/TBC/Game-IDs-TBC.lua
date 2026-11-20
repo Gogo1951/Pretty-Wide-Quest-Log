@@ -72,7 +72,7 @@ ns.NOT_FLIGHT_PATH_NPC_IDS = {
 How We Got the Data
 
 Last Validated
-	2026-11-13, TBC Anniversary 2.5.6.70577
+	2026-11-20, wago.tools, TBC Anniversary 2.5.6.70577
 
 Notes
 	- CITY_ZONE_MAP_IDS: the six old-world capitals, plus The Exodar, Silvermoon City and Shattrath City, each
@@ -101,5 +101,5 @@ wago.tools
 	https://wago.tools/db2/UiMap?build=2.5.6.70577
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/TBC/tbcNpcDB.lua
 ]]

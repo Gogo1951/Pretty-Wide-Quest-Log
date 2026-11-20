@@ -28,23 +28,11 @@
 - **Instead:** The quest log window's title is the game's own Quest Log label, then the Short Name (`Quest Log // PWQL`).
 - **Why:** The window stands in for Blizzard's quest log, so its title leads with the game's own name for it.
 
-### README opens with headline screenshots
+### Quest log window keeps Blizzard's layout
 
-- **Departs from:** README rules, Image Handling, one image per feature block and nowhere else.
-- **Instead:** Two headed screenshots, one of the route and one of the Quest Arrow, sit between the TL;DR and the first feature block, and the Quest Route block carries a second screenshot under its table.
-- **Why:** The route and the arrow sell the add-on at a glance, so they lead the page before any bullet.
-
-### README Tips & Tricks carries pictures and a third section
-
-- **Departs from:** README rules, images living only in the feature blocks, and Tips & Tricks holding at most two sub-sections beyond the Mini-Map Button and CVar.
-- **Instead:** The Quest Arrow's feature block is the one that takes an existing screenshot, and Tips & Tricks holds three sections with pictures: Routes & the Quest Arrow with its Questie Routes fun fact and image, Quest Chains with a screenshot of a chain, and a quest log screenshot for each client, Forever and TBC & Era.
-- **Why:** The route, a chain's checked-off steps and each client's own quest log window read best as pictures beside the tips that explain them.
-
-### README's Related Add-ons are hand-picked
-
-- **Departs from:** README rules, Related Add-ons, each color's entries chosen by highest downloads among add-ons updated within the last 12 months.
-- **Instead:** Pairs With holds Questie, TomTom, Spoken, VoiceOver and whichever of Guidelime and RestedXP Guide has more downloads, Alternatives always holds whichever Questie arrow add-on has the most downloads however long ago it was updated, and there is no Overlaps color.
-- **Why:** These are the add-ons the maintainer wants players to install beside this one or weigh it against, the Quest Arrow stands in for a Questie arrow add-on, and add-ons that only overlap with it aren't worth calling out.
+- **Departs from:** WINDOWS, the title at the left of the title bar and Reset Position putting the window back in the center.
+- **Instead:** The quest log window centers its title on the title bar, and Reset Position puts it back where Blizzard's quest log opens, at the top left.
+- **Why:** The window stands in for Blizzard's quest log, so it keeps that window's title placement and opening spot.
 
 ### Classic quest log reshaped in place
 

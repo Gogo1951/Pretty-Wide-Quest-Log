@@ -7,11 +7,12 @@ ns.WOWHEAD_QUEST_URL = "https://www.wowhead.com/tbc/quest="
 How We Got the Data
 
 Last Validated
-	2026-11-13, TBC Anniversary 2.5.6.70577
+	2026-11-20, wago.tools, TBC Anniversary 2.5.6.70577
 
 Notes
 	- The page the quest log's Wowhead link opens, with the quest ID added on the end
 	  (Features/Wowhead-Link.lua), in the part of the site for this client.
+	- No game table holds a web address, so the game tables have nothing to check it against.
 
 SQL (CMaNGOS)
 	None.

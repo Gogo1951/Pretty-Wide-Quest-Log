@@ -90,6 +90,32 @@ end
 routes.AddSpawns = AddSpawns
 
 --[[
+	Whether every spawn of an objective is inside a dungeon or raid (an area Questie knows the entrances of):
+	one the route can't lead to, like a dungeon quest's, though its quest isn't tagged one (Brutal Armor's
+	Vial of Phlogiston, from Roogug in Razorfen Kraul)
+]]
+function routes.IsInsideOnly(objective)
+	local ZoneDB = ns.ImportQuestieModule("ZoneDB")
+	if not (ZoneDB and ZoneDB.GetDungeonLocation and type(objective) == "table") then
+		return false
+	end
+	local inside = false
+	for _, spawnData in pairs(objective.spawnList or {}) do
+		if type(spawnData) == "table" and type(spawnData.Spawns) == "table" then
+			for areaID, list in pairs(spawnData.Spawns) do
+				if type(list) == "table" then
+					if type(ZoneDB:GetDungeonLocation(areaID)) ~= "table" then
+						return false
+					end
+					inside = true
+				end
+			end
+		end
+	end
+	return inside
+end
+
+--[[
 	Adds every spawn, whatever the zone, to points for its continent (byInstance, points by world
 	instance), for the camps every map shows (Routes-Camps.lua). A dungeon's or raid's spawns, which no
 	world map shows (Questie keeps most at -1, -1), go at its entrances instead, one point each, as Questie

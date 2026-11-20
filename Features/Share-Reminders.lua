@@ -107,8 +107,8 @@ local function PartyUnitNamed(name)
 end
 
 function ns:OnChatMsgSystem(message)
-	-- During chat lockdown on WoW Forever the system message is secret and can't be read
-	if C_ChatInfo.InChatMessagingLockdown() then
+	-- On WoW Forever a chat line can arrive secret, during chat lockdown or not, and can't be read
+	if not ns.IsReadable(message) or C_ChatInfo.InChatMessagingLockdown() then
 		return
 	end
 	local profile = ns.db.profile

@@ -845,6 +845,10 @@ local function CollectIds(entry)
 		end
 
 		local rows = ns[source.table]
+		-- A file can hold one ID as a named constant (Game-IDs): it reads as a one-row table keyed by that name.
+		if type(rows) == "number" and source.kind ~= "value" then
+			rows = { [source.table] = rows }
+		end
 		if source.kind == "value" then
 			if rows == nil then
 				missing[#missing + 1] = source

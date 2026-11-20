@@ -1529,7 +1529,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 How We Got the Data
 
 Last Validated
-	2026-11-13, MoP Classic 5.5.4.70631
+	2026-11-20, wago.tools, MoP Classic 5.5.4.71060
 
 Notes
 	- Every area of a zone's map that starts hidden until the character explores it, so the quest map can show the
@@ -1559,10 +1559,11 @@ Wowhead
 	None.
 
 wago.tools
-	https://wago.tools/db2/WorldMapOverlay?build=5.5.4.70631
-	https://wago.tools/db2/WorldMapOverlayTile?build=5.5.4.70631
-	https://wago.tools/db2/UiMapXMapArt?build=5.5.4.70631
-	https://wago.tools/db2/UiMap?build=5.5.4.70631
+	https://wago.tools/db2/WorldMapOverlay?build=5.5.4.71060
+	https://wago.tools/db2/WorldMapOverlayTile?build=5.5.4.71060
+	https://wago.tools/db2/UiMapXMapArt?build=5.5.4.71060
+	https://wago.tools/db2/UiMap?build=5.5.4.71060
+	https://wago.tools/db2/UiMapArt?build=5.5.4.71060
 
 QuestieDB
 	None.

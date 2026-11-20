@@ -43,7 +43,7 @@ local function IsUntracked(stop)
 	return not stop.corpse and IsEveryTask(stop, IsUntrackedTask)
 end
 
--- Not a dungeon or raid quest's: what the route won't take there is only ignored or off the route, for the gray ring over the red
+-- Not a dungeon or raid quest's: what the route won't take there is only ignored or off the route, for the gray ring over the blue
 local function IsUntrackedOnlyIgnored(stop)
 	return IsEveryTask(stop, function(task)
 		return not task.untracked
@@ -107,12 +107,12 @@ function routes.ApplyStopLook(marker, stop, textures)
 	local task = stop.tasks[1]
 	marker.Disc:SetVertexColor(routes.TaskColor(task))
 	--[[
-		A ring for one the route won't take: red, to stand out, for a dungeon or raid quest's, light gray for
+		A ring for one the route won't take: blue, to stand out, for one inside a dungeon or raid, light gray for
 		one ignored or off the route. A white one for a party member's, a quest the player doesn't have; else the disc's black ring
 	]]
 	local ringColor
 	if IsUntracked(stop) then
-		ringColor = IsUntrackedOnlyIgnored(stop) and "ROUTE_IGNORED_RING" or "ROUTE_ALERT_RING"
+		ringColor = IsUntrackedOnlyIgnored(stop) and "ROUTE_IGNORED_RING" or "ROUTE_DUNGEON_RING"
 	elseif IsPartyStop(stop) then
 		ringColor = "ROUTE_PARTY_RING"
 	end

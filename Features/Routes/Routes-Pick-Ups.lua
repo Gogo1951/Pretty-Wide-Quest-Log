@@ -20,7 +20,7 @@ local _, ns = ...
 	(pickUpOtherZone). A dungeon or raid quest checked has its pick-up on the route, its objectives being
 	inside. A map-only one is a camp (Routes-Camps.lua):
 	a marker on the map, dimmed in the route's zone as camps are, with no route line to it, so the Quest
-	Arrow never points there. An escort's marker is green, map only or on the route, and isn't dimmed. A
+	Arrow never points there. An escort's marker isn't dimmed, map only or on the route. A
 	right-click on a map-only marker puts it on the route (routes.AddPickUp) until the zone is reset
 ]]
 local routes = ns.routes
@@ -88,7 +88,8 @@ end
 	ground in Mulgore) starts it at that object. One that several creatures or objects give could come from
 	anywhere, so it isn't a place to walk to
 ]]
-local function SoleSource(QuestieDB, itemID)
+-- The creatures and objects an item drops from, as Questie's database has them; nil without its item lookup
+local function ItemSources(QuestieDB, itemID)
 	local query = QuestieDB.QueryItemSingle
 	if type(query) ~= "function" then
 		return nil
@@ -97,13 +98,37 @@ local function SoleSource(QuestieDB, itemID)
 	objects = okObjects and type(objects) == "table" and objects or {}
 	local okNPCs, npcs = pcall(query, itemID, "npcDrops")
 	npcs = okNPCs and type(npcs) == "table" and npcs or {}
-	if #npcs + #objects ~= 1 then
+	return npcs, objects
+end
+
+local function SoleSource(QuestieDB, itemID)
+	local npcs, objects = ItemSources(QuestieDB, itemID)
+	if not npcs or #npcs + #objects ~= 1 then
 		return nil
 	end
 	if #npcs == 1 then
 		return "npc", npcs[1]
 	end
 	return "object", objects[1]
+end
+
+--[[
+	Whether a quest is started by an item that more than one kind of creature or object drops (Captain
+	Sander's Hidden Treasure, on Westfall's coast): it could start anywhere they are, so Questie's own icons
+	on each of them are the only place it shows (Routes-Map-Questie-Icons.lua)
+]]
+local function IsManySourceDrop(QuestieDB, questID)
+	local startedBy = QueryQuest(QuestieDB, questID, "startedBy")
+	if type(startedBy) ~= "table" or type(startedBy[3]) ~= "table" then
+		return false
+	end
+	for _, itemID in ipairs(startedBy[3]) do
+		local npcs, objects = ItemSources(QuestieDB, itemID)
+		if npcs and #npcs + #objects > 1 then
+			return true
+		end
+	end
+	return false
 end
 
 --[[
@@ -479,8 +504,10 @@ local function QuestInfo(QuestieDB, questID)
 	return { name = name, level = QuestLevel(QuestieDB, questID) }, name
 end
 
--- What Routes-Chains.lua shares from here
+-- What Routes-Chains.lua and the zone discs (Routes-Map-Zones.lua) share from here
 routes.pickUpHelpers = {
+	AvailableQuestIDs = AvailableQuestIDs,
+	ForEachStarter = ForEachStarter,
 	QueryQuest = QueryQuest,
 	QuestInfo = QuestInfo,
 	StarterBlobs = StarterBlobs,
@@ -488,6 +515,7 @@ routes.pickUpHelpers = {
 	IsGray = IsGray,
 	IsOutsideLevels = IsOutsideLevels,
 	IsElsewhere = IsElsewhere,
+	IsManySourceDrop = IsManySourceDrop,
 	Handling = Handling,
 	ROUTE = ROUTE,
 }
@@ -653,20 +681,26 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	end)
 	--[[
 		Past the nearest MAX_CHAIN_STARTS planned whole, a quest from across the zone waits for a later plan,
-		and one within the Search Range is picked up as any other nearby
+		on the map off the route ("far") as any giver past the Search Range is, so Questie's own icon for it is
+		hidden too; one within the Search Range is picked up as any other nearby
 	]]
 	local chainStarts, added = {}, 0
 	local free = FreeQuestSlots(log)
 	for _, entry in ipairs(onRoute) do
 		local task = entry.task
+		local starters -- A chain start past the limit with no giver in range: all its givers
 		if task.chained and #chainStarts >= routes.MAX_CHAIN_STARTS then
+			starters = task.blobs
 			task.chained = nil
 			task.blobs = (task.shared or task.wanted or task.added) and task.blobs
 				or nearby and InRange(task.blobs, start, range)
 				or {}
 			task.candidates = #task.blobs > 0 and Candidates(task.blobs, start, false) or nil
 		end
-		if added < free and task.candidates then
+		if starters and not task.candidates and #starters > 0 then
+			task.offRoute = "far"
+			mapOnly[#mapOnly + 1] = { task = task, blobs = starters, instance = start.instance }
+		elseif added < free and task.candidates then
 			added = added + 1
 			nodes[#nodes + 1] = task
 			if task.chained then
@@ -690,25 +724,34 @@ local TYPE_SETTINGS = { "pickUpElite", "pickUpPvP", "pickUpDungeon", "pickUpRaid
 
 --[[
 	What the settings add to the route's signature: the player's level, as Questie offers more quests with
-	each, and each What to Route choice. The set of available quests near enough to matter is
-	worked out again with every plan
+	each and Easiest First holds back those above it, and each What to Route choice. With Your Quests Only
+	only the asked-for pick-ups, the level and Route Focus count, as Route Focus still orders the log's
+	quests. The set of available quests near enough to matter is worked out again with every plan
 ]]
 function routes.LocalQuestSignature()
 	local settings = routes.Settings()
 	local wantedIDs = {}
 	for questID in pairs(WantedPickUps()) do
-		wantedIDs[#wantedIDs + 1] = questID
+		if routes.HasGiverHere(questID) then -- Not one for another zone, planned once the player gets there
+			wantedIDs[#wantedIDs + 1] = questID
+		end
 	end
-	-- The pick-ups put on the route from the map count as Zone Info's do
-	for key in pairs(routes.added) do
-		wantedIDs[#wantedIDs + 1] = key
+	-- The pick-ups put on the route from the map count as Zone Info's do, but those for another zone (routes.IsChangeHere)
+	for key, entry in pairs(routes.added) do
+		if routes.IsChangeHere(entry.zone) then
+			wantedIDs[#wantedIDs + 1] = key
+		end
 	end
 	table.sort(wantedIDs, function(a, b)
 		return tostring(a) < tostring(b)
 	end)
 	local wanted = "wanted=" .. table.concat(wantedIDs, ",")
 	if not routes.PlansPickUps() then
-		return "no-local:" .. wanted
+		return table.concat({
+			"no-local:" .. wanted,
+			tostring(UnitLevel("player")),
+			tostring(settings.routeFocus),
+		}, ":")
 	end
 	local types = {}
 	for _, key in ipairs(TYPE_SETTINGS) do

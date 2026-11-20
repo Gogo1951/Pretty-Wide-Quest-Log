@@ -126,7 +126,8 @@ function routes.BuildCamps(yield)
 							Cached(objective, routes.CountEntries(objective.spawnList), yield, GatherObjective)
 						local key = questID .. ":" .. objectiveKey
 						local task = ObjectiveTask(key, questID, quest, objective)
-						task.untracked = untracked
+						-- Or one objective's, inside an instance though the quest isn't tagged a dungeon's
+						task.untracked = untracked or routes.IsInsideOnly(objective) or nil
 						task.helping = helps == true or nil
 						AddCamps(camps, blobs, task)
 					end

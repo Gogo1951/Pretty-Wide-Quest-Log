@@ -47,13 +47,7 @@ end
 -- Returns false, tracking nothing, when Blizzard's watch list is full
 local function Track(questID)
 	if not ns.HasRoomToTrack(questID) then
-		UIErrorsFrame:AddMessage(
-			format(QUEST_WATCH_TOO_MANY, MAX_WATCHABLE_QUESTS),
-			RED_FONT_COLOR.r,
-			RED_FONT_COLOR.g,
-			RED_FONT_COLOR.b,
-			1.0
-		)
+		ns:Notice(format(QUEST_WATCH_TOO_MANY, MAX_WATCHABLE_QUESTS))
 		return false
 	end
 	local index = ns.GetLogIndexForQuestID(questID)
@@ -69,10 +63,13 @@ local function Redraw()
 	ns.RequestUpdate()
 end
 
--- Changing the watch list from add-on code in combat taints the objective tracker, so it waits for combat to end
+--[[
+	Changing the watch list from add-on code in combat taints the objective tracker, so it waits for combat to
+	end, saying so in chat
+]]
 local function RefusedInCombat()
 	if InCombatLockdown() then
-		UIErrorsFrame:AddMessage(ERR_NOT_IN_COMBAT, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, 1.0)
+		ns:PrintMessage(ERR_NOT_IN_COMBAT)
 		return true
 	end
 	return false

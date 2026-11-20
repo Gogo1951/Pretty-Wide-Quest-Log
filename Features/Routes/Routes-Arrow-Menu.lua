@@ -2,17 +2,17 @@ local _, ns = ...
 
 --[[
 	Routes: the Quest Arrow's menu, laid out as WIM's whisper list is: a dark plate with angled corners and a
-	row for each thing to do. The mouse over the arrow opens it under the arrow's list, or above the arrow in
-	the lower half of the screen. It stays open while the mouse is on the arrow or the menu and closes
-	CLOSE_DELAY after the mouse leaves both; Escape closes it.
+	row for each thing to do. The mouse over the arrow opens it SPACE.TIGHT under the arrow's list, or above
+	the arrow in the lower half of the screen. It stays open while the cursor is on the arrow or the menu and
+	closes CLOSE_DELAY after the cursor leaves both; Escape closes it.
 
 	Under the title and a line's room, groups under small gold labels, rows indented a space as the
 	tooltips are: Current Objective, each objective or turn-in at the waypoint the arrow shows, then at its
 	Next Objective (Next on the right), with a gray Ignore on the right under the mouse, clicked to leave it
 	off the route until the zone is reset
-	(routes.IgnoreTask), then a spacer. Then three labels with Blizzard's submenu arrow, each opening a flyout beside the
-	menu on the same plate. Route, what the route plans: under What to Route, Plan Ahead's three choices
-	(planAhead) as radio dots, one chosen; under Also Route, Flight Paths, showFlightPaths; in a party,
+	(routes.IgnoreTask), then a spacer. Then three labels with the submenu arrow, each opening a flyout
+	overlapping the menu on the same plate. Route, what the route plans, What to Route's choice in gray on its
+	right: under What to Route, Plan Ahead's three choices (planAhead), the chosen one checked; under Also Route, Flight Paths, showFlightPaths; in a party,
 	Party Objectives, partyQuests, and with it on an Objectives From switch for each member, a space further in.
 	Show, what only the arrow draws: Next Objective, showNextObjective. A switch that's off is gray, On
 	green. Ignored, with how many, only while something is: the ignore list, each row gray, brightening with
@@ -33,11 +33,11 @@ local panels = routes.arrowMenuPanels
 local menu, submenu = panels.menu, panels.submenu
 local Fill, OpenSubmenu, CloseSubmenu = panels.Fill, panels.OpenSubmenu, panels.CloseSubmenu
 
-local CLOSE_DELAY = 0.25 -- Seconds the menu stays once the mouse leaves it and the arrow
+local CLOSE_DELAY = 0.5 -- Seconds the menu stays once the cursor leaves it and the arrow, forgiving a slip
 local REFRESH_INTERVAL = 0.5 -- Seconds between checks for its rows changing
 local INDENT = " " -- Per level, as the tooltips indent their rows
--- Blizzard's own arrow on a dropdown row with a submenu, on the Route, Show and Ignored labels
-local SUBMENU_ARROW = "|TInterface\\ChatFrame\\ChatFrameExpandArrow:0|t"
+-- The game's check mark, on the right of the choice that's picked
+local CHECK_MARK = "|TInterface\\Buttons\\UI-CheckBox-Check:0|t"
 
 --------------------------------------------------------------------------------
 -- What's on it
@@ -112,16 +112,13 @@ end
 -- A key for a panel's rows that changes only when what they say does
 local EntriesKey = panels.EntriesKey
 
--- Blizzard's radio button, the line's height: the chosen dot, then the empty one (UI-RadioButton's first two)
-local RADIO_ON = "|TInterface\\Buttons\\UI-RadioButton:0:0:0:0:64:16:16:32:0:16|t"
-local RADIO_OFF = "|TInterface\\Buttons\\UI-RadioButton:0:0:0:0:64:16:0:16:0:16|t"
-
--- One choice of several: Blizzard's radio dot before the name, the chosen one filled, the others empty and gray
-local function RadioEntry(left, chosen, action)
+-- One choice of several, as Menu-Kit's are: the chosen one white with a check on the right, the others gray
+local function ChoiceEntry(left, chosen, action)
 	return {
-		kind = "radio",
-		left = INDENT .. (chosen and RADIO_ON or RADIO_OFF) .. " " .. left,
+		kind = "choice",
+		left = INDENT .. left,
 		leftColor = not chosen and "MUTED" or nil,
+		right = chosen and CHECK_MARK or nil,
 		action = action,
 	}
 end
@@ -138,11 +135,28 @@ local function ToggleEntry(left, on, action)
 	}
 end
 
+-- What to Route's Plan Ahead choices, in Options' order (Options-Routes-Map.lua)
+local PLAN_AHEAD_CHOICES = {
+	{ value = "yours", nameKey = "PLAN_AHEAD_YOURS" },
+	{ value = "nearby", nameKey = "PLAN_AHEAD_NEARBY" },
+	{ value = "zone", nameKey = "PLAN_AHEAD_ZONE" },
+}
+
+-- The name of What to Route's choice, as Route's row shows it on the right
+local function PlanAheadName()
+	local planAhead = routes.PlanAhead()
+	for _, choice in ipairs(PLAN_AHEAD_CHOICES) do
+		if choice.value == planAhead then
+			return L[choice.nameKey]
+		end
+	end
+end
+
 --[[
 	The menu's rows, each { kind, left, right, leftColor, rightColor, hover, action, submenu }: kind "header",
 	"spacer" (a line's room), "section" (a group's label), "separator", "action" (a row to click), "toggle" (a
-	row to click, On or Off on the right), "radio" (a row to click, one choice of several, its radio dot before
-	the name), "status" (a toggle that can't be switched now, its reason on the right), or "hint" (a click hint). hover, { right, rightColor }, is the right side under the mouse, the name
+	row to click, On or Off on the right), "choice" (a row to click, one choice of several, a check on the
+	right of the chosen one), "status" (a toggle that can't be switched now, its reason on the right), or "hint" (a click hint). hover, { right, rightColor }, is the right side under the mouse, the name
 	brightened. submenu, on a label, names the flyout it opens under the mouse or a click (panels.submenus).
 	Returns them and a key that changes only when what they say does
 ]]
@@ -157,12 +171,15 @@ local function Entries()
 	local function Section(left, right)
 		Add({ kind = "section", left = left, right = right, rightColor = "MUTED" })
 	end
-	-- A label that opens a flyout, Blizzard's submenu arrow on the right after anything it says there
-	local function Submenu(left, name, count)
+	--[[
+		A label that opens a flyout: what's set inside it on the right, in gray, then Menu-Kit's chevron in the
+		plate's arrow column (Routes-Arrow-Menu-Panel.lua)
+	]]
+	local function Submenu(left, name, value)
 		Add({
 			kind = "section",
 			left = left,
-			right = (count and tostring(count) .. " " or "") .. SUBMENU_ARROW,
+			right = value and tostring(value) or nil,
 			rightColor = "MUTED",
 			submenu = name,
 		})
@@ -204,8 +221,8 @@ local function Entries()
 		Add({ kind = "spacer" })
 	end
 
-	-- Route and Show, each a flyout of its switches (RouteEntries, ShowEntries)
-	Submenu(L["ROUTES_MENU_SECTION_ROUTE"], "route")
+	-- Route and Show, each a flyout of its switches (RouteEntries, ShowEntries); Route says What to Route's choice
+	Submenu(L["ROUTES_MENU_SECTION_ROUTE"], "route", PlanAheadName())
 	Submenu(L["ROUTES_MENU_SECTION_SHOW"], "show")
 
 	-- Ignored, with how many: the ignore list in a flyout (IgnoredEntries)
@@ -252,17 +269,10 @@ end
 
 --[[
 	Route's flyout: what the route plans, each as Options sets it and planned again at once. Under What to
-	Route, Plan Ahead's three choices as radio dots, one chosen; a spacer, then under Also Route the switches:
+	Route, Plan Ahead's three choices, the chosen one checked; a spacer, then under Also Route the switches:
 	Flight Paths, and in a party, where the setting does anything, Party Objectives, and with it on, a switch
 	for each member's objectives a space further in
 ]]
--- What to Route's Plan Ahead choices, in Options' order (Options-Routes-Map.lua)
-local PLAN_AHEAD_CHOICES = {
-	{ value = "yours", nameKey = "PLAN_AHEAD_YOURS" },
-	{ value = "nearby", nameKey = "PLAN_AHEAD_NEARBY" },
-	{ value = "zone", nameKey = "PLAN_AHEAD_ZONE" },
-}
-
 local function RouteEntries()
 	local settings = routes.Settings()
 	local entries = {}
@@ -270,7 +280,7 @@ local function RouteEntries()
 	entries[#entries + 1] = { kind = "section", left = L["WHAT_TO_ROUTE_HEADER"] }
 	local planAhead = routes.PlanAhead()
 	for _, choice in ipairs(PLAN_AHEAD_CHOICES) do
-		entries[#entries + 1] = RadioEntry(L[choice.nameKey], planAhead == choice.value, function()
+		entries[#entries + 1] = ChoiceEntry(L[choice.nameKey], planAhead == choice.value, function()
 			if routes.PlanAhead() ~= choice.value then
 				routes.SetSetting("planAhead", choice.value)
 				routes.RequestPlan()
@@ -376,9 +386,9 @@ local function Place()
 	local _, centerY = arrow:GetCenter()
 	local scale = arrow:GetEffectiveScale() / UIParent:GetEffectiveScale()
 	if not centerY or centerY * scale > UIParent:GetHeight() / 2 then
-		menu:SetPoint("TOP", arrow, "BOTTOM", 0, -SPACE.NEAR)
+		menu:SetPoint("TOP", arrow, "BOTTOM", 0, -SPACE.TIGHT)
 	else
-		menu:SetPoint("BOTTOM", arrow, "TOP", 0, SPACE.NEAR)
+		menu:SetPoint("BOTTOM", arrow, "TOP", 0, SPACE.TIGHT)
 	end
 end
 
@@ -390,7 +400,8 @@ menu:SetScript("OnUpdate", function(self, elapsed)
 		return
 	end
 	local now = GetTime()
-	if self:IsMouseOver() or routes.IsMouseOverArrow() or (submenu:IsShown() and submenu:IsMouseOver()) then
+	-- Read from the cursor's position, so a controller's on-screen cursor keeps it open too
+	if routes.IsCursorOver(self) or routes.IsMouseOverArrow() or routes.IsCursorOver(submenu) then
 		lastOver = now
 	elseif now - lastOver > CLOSE_DELAY then
 		self:Hide()

@@ -188,10 +188,9 @@ routes.ResetArrow = PlaceFrame
 -- The arrow's menu (Routes-Arrow-Menu.lua) opens with the mouse over it and stays open while the mouse is on the arrow or the menu
 routes.arrowFrame = frame
 
--- Whether the mouse is over the arrow and its list, not the empty width either side (frame.hitInset)
+-- Whether the cursor is over the arrow and its list, not the empty width either side (frame.hitInset)
 function routes.IsMouseOverArrow()
-	local inset = frame.hitInset or 0
-	return frame:IsVisible() and frame:IsMouseOver(0, 0, inset, -inset)
+	return routes.IsCursorOver(frame, frame.hitInset)
 end
 
 frame:SetScript("OnClick", function(_, button)
