@@ -2849,7 +2849,7 @@ ns.QUEST_ITEM_COUNTS = "\n"
 How We Got the Data
 
 Last Validated
-	2026-11-13, Classic Era 1.15.9.70576
+	2026-11-20, wago.tools, Classic Era 1.15.9.70576
 
 Notes
 	- How many of each item a quest asks the player to bring, for Zone Info's Things to Bring column
@@ -2873,8 +2873,8 @@ Wowhead
 	None.
 
 wago.tools
-	None.
+	https://wago.tools/db2/Item?build=1.15.9.70576
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/Classic/classicQuestDB.lua
 ]]

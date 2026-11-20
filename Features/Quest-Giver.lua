@@ -146,33 +146,43 @@ end
 	gradient is past its last letter, then shows the objectives and rewards and enables Accept. With the
 	window skinned (ElvUI) and laid out, the font string can say so after only the first few letters, and
 	the rest of the description stays invisible: a few words, then a blank stretch as tall as the text.
-	When the fade ends short of the description's length, the whole description is shown, over a few
-	frames so it takes once the text has settled. A fade that ran to the end, or instant text, is left
-	alone. This puts right Blizzard's own fade, so it runs whatever the cleanup switch says
+	WoW Forever has the same trouble with Instant Quest Text: Blizzard hides the text behind a gradient
+	from its first letter, then ends the fade by setting the gradient past the end, which doesn't take
+	there, so only the first few letters show.
+	Each showing of the page is checked once the fade has stopped, however soon that is (it can stop on
+	its very first frame, before this hook, which runs after Blizzard's, ever sees it running). Where the
+	client has ClearAlphaGradient (WoW Forever), the gradient is always cleared then, as the whole
+	description is meant to be showing. Elsewhere a fade that ended short of the description's length is
+	set past the end, and one that ran to the end, or instant text, is left alone. Either way over a few
+	frames, so it takes once the text has settled. This puts right Blizzard's own fade, so it runs
+	whatever the cleanup switch says
 ]]
 local detailPanel, descriptionText = QuestFrameDetailPanel, QuestInfoDescriptionText
 if detailPanel and descriptionText and descriptionText.SetAlphaGradient then
 	local REVEAL_FRAMES = 3
-	local wasFading, revealFrames, revealTo = false, 0, 0
+	local checked, revealFrames, revealTo = true, 0, 0
 	detailPanel:HookScript("OnShow", function()
-		wasFading, revealFrames = false, 0
+		checked, revealFrames = false, 0
 	end)
 	detailPanel:HookScript("OnUpdate", function(self)
 		if self.fading then
-			wasFading = true
 			return
 		end
-		if wasFading then
-			wasFading = false
+		if not checked then
+			checked = true
 			local length = strlenutf8(descriptionText:GetText() or "")
-			if (self.fadingProgress or 0) < length then
+			if descriptionText.ClearAlphaGradient or (self.fadingProgress or 0) < length then
 				revealFrames = REVEAL_FRAMES
 				revealTo = math.max(1024, length) + (QUEST_DESCRIPTION_GRADIENT_LENGTH or 30)
 			end
 		end
 		if revealFrames > 0 then
 			revealFrames = revealFrames - 1
-			descriptionText:SetAlphaGradient(revealTo, QUEST_DESCRIPTION_GRADIENT_LENGTH or 30)
+			if descriptionText.ClearAlphaGradient then
+				descriptionText:ClearAlphaGradient()
+			else
+				descriptionText:SetAlphaGradient(revealTo, QUEST_DESCRIPTION_GRADIENT_LENGTH or 30)
+			end
 		end
 	end)
 end

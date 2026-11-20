@@ -19,7 +19,7 @@ L["CHAT_KEY_BINDINGS_IN_COMBAT"] = "出于安全考虑，战斗中无法打开�
 L["KEY_BINDINGS_LOCATION"] =
 	"打开游戏菜单，点击 %s，再点击 %s，然后找到 Pretty Wide Quest Log 一栏。"
 L["CHAT_QUESTIE_MISSING_FEATURES"] =
-	"没有 Questie 时，任务地图显示的内容会变少，任务链和交付总计也会隐藏。请在插件列表中启用 Questie 以显示它们。"
+	"没有 Questie 时，没有任务路线和任务箭头，任务地图显示的内容会变少，任务链和交付总计也会隐藏。请在插件列表中启用 Questie 以显示它们。"
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus 也已启用，两者会争夺任务日志。请在插件列表中禁用 Wide Quest Log Plus，然后重新加载界面。"
 
@@ -27,6 +27,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 -- Options: General Panel
 --------------------------------------------------------------------------------
 
+L["OPTIONS_RESET"] = "重置"
 L["OPTIONS_DESCRIPTION"] =
 	"宽版任务日志与升级任务助手：一条串起你所选任务的任务路线、一个指向路径点的箭头，还有任务等级、标签、奖励、任务链、任务地图，以及与队伍分享任务。兼容 Questie、Spoken、VoiceOver 和 ElvUI。"
 L["ENABLE_WELCOME_MESSAGE"] = "启用欢迎消息"
@@ -105,12 +106,12 @@ L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
 L["NEEDS_QUESTIE_HINT"] = "启用 Questie 后才能使用此功能。"
 L["SHOW_ZONE_INFO"] = "显示区域信息"
 L["SHOW_ZONE_INFO_DESCRIPTION"] =
-	"在地图下方显示：为地图所示区域可在其他区域接取的任务，以及该区域任务要求带去的物品。地图会缩小到窗口高度的一半来腾出空间。"
+	"在地图下方列出：为地图所示区域可在其他区域接取的任务，以及该区域任务要求带去的物品。地图会缩小到窗口高度的一半来腾出空间。"
 L["WINDOW_SCALE"] = "任务日志缩放"
 L["WINDOW_SCALE_DESCRIPTION"] = "放大或缩小任务日志。旁边的地图会随之一起缩放。"
 L["MAP_SCALE"] = "地图缩放"
 L["MAP_SCALE_DESCRIPTION"] = "在任务日志缩放的基础上，放大或缩小任务日志旁的地图。"
-L["RESET_WINDOW_BUTTON"] = "重置窗口"
+L["RESET_WINDOW"] = "重置窗口"
 L["RESET_WINDOW_SCALE_DESCRIPTION"] = "将任务日志的高度和缩放以及地图缩放恢复为默认值。"
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
 	"将任务日志的高度和缩放以及地图缩放恢复为默认值，并将窗口移回初始位置。"
@@ -125,9 +126,9 @@ L["HANDY_CLICK_MENU_DESCRIPTION"] = "追踪、分享或放弃该任务。"
 L["HANDY_CLICK_ID"] = "点击任务ID"
 L["HANDY_CLICK_ID_DESCRIPTION"] = "获取其 Wowhead 链接。"
 L["QUEST_LOG_SUB_PANELS_DESCRIPTION"] =
-	"其设置位于此面板下方的各个面板中：任务列表、任务详情、窗口与地图，以及NPC对话。"
+	"其设置位于此页面下方的各个页面中：任务列表、任务详情、窗口与地图，以及NPC对话。"
 L["NEEDS_WIDE_QUEST_LOG"] =
-	"这些设置适用于宽版任务日志。请在宽版任务日志面板中勾选启用宽版任务日志后再使用。"
+	"宽版任务日志已关闭，因此这些设置不会生效。它的开关在宽版任务日志页面上。"
 L["TAB_QUEST_LIST"] = "任务列表"
 L["TAB_QUEST_LIST_DESCRIPTION"] = "你的任务，按区域列在任务日志左侧。"
 L["TAB_QUEST_DETAILS"] = "任务详情"
@@ -180,7 +181,8 @@ L["FONT_SHADOW_DESCRIPTION"] =
 L["FONT_SLUG"] = "更清晰的文字（Slug）"
 L["FONT_SLUG_DESCRIPTION"] =
 	"使用暴雪较新的 Slug 渲染器绘制文字，在任何字号下都更清晰。Slug 无法绘制粗描边或阴影，因此带有其中任一效果的文字会按常规方式绘制。"
-L["FONT_RESET_BUTTON"] = "重置字体"
+L["FONT_RESET"] = "重置字体"
+L["FONT_RESET_CONFIRM"] = "将此字体的字型、大小、描边、阴影和 Slug 恢复为默认值？"
 L["FONT_RESET_DESCRIPTION"] = "将此字体的设置恢复为默认值。"
 
 --------------------------------------------------------------------------------
@@ -194,20 +196,20 @@ L["QUEST_SHARING_HEADER"] = "任务分享"
 L["QUEST_SHARING_INTRO"] =
 	"在任务日志中将鼠标悬停在区域名称上并点击分享任务按钮，即可把该区域中你能分享的所有任务逐一分享给队伍。这些选项设置分享的节奏，以及有人错过任务时该怎么办。"
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"区域名称上的分享任务按钮需要启用宽版任务日志。地下城任务分享无需此项即可使用。"
+	"区域名称上的分享任务按钮需要宽版任务日志。地下城任务分享无需此项即可使用。"
 L["SHARE_INTERVAL"] = "分享间隔秒数"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"分享一个任务后到下一个任务之间的等待时间，适用于分享区域或地下城的任务时。时间越长，队友就有越多时间接受每个任务。"
 L["SHARE_WHISPERS"] = "分享失败时密语"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"当队友正忙、距离太远或任务日志已满时，密语告诉对方你尝试分享的任务，并请对方提醒你。如果对方不符合任务条件、已经接了该任务或已经完成，则不发送任何消息。"
-L["ZONE_SHARE_OFFERS"] = "新队友缺少我所在区域的任务时提醒我"
+L["ZONE_SHARE_OFFERS"] = "告诉我新队友需要什么"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"当你加入队伍，或有人加入你的队伍时，先等待20秒让 Questie 交换任务日志，然后在聊天框告诉你：你在所在区域有目标的任务中，有多少是新队友没有的，方便你点击分享任务。只计算你可以分享的任务，即使多位队友都没有也只算一次。不会向任何人发送消息。无法看到其任务的队友（没有 Questie、超出范围）不计入。每次有人加入时提醒一次，在地下城或团队中不会提醒。"
+	"有人加入你的队伍时，在聊天框告诉你：你在这个区域的任务中，有多少是对方没有而你可以分享的，方便你点击分享任务。不会向任何人发送消息。在地下城或团队中不会提醒。"
 L["ZONE_SHARE_OFFERS_SOUND"] = "播放声音"
 L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] = "在消息的同时播放提示音，适合聊天繁忙的时候。"
-L["ZONE_SHARE_SOUND_PREVIEW"] = "点击试听提示音。"
-L["SAMPLE_EXAMPLE"] = "示例：%s"
+L["OPTIONS_SOUND_PREVIEW_DESCRIPTION"] = "立即播放这个声音，无论声音是否开启。"
+L["SAMPLE_EXAMPLE"] = "示例"
 L["SAMPLE_QUEST_LOADING"] = "正在加载任务ID：%d"
 L["DUNGEON_QUESTS_HEADER"] = "地下城任务"
 L["DUNGEON_QUESTS_INTRO"] =
@@ -217,7 +219,7 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"告诉队友你在刚进入的地下城里还有哪些任务要做，让大家知道要留意什么。可以交付的任务不会列出。"
 L["DUNGEON_SHARE"] = "地下城任务自动分享"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"按任务分享中设定的节奏，在所有人都进入范围后（或一分钟后；在 WoW Forever 上立即）分享该地下城里所有游戏允许分享、且有队友还没有的任务。每位队友在每个地下城只会收到一次，所以之后加入的人也会收到，而离开再进入不会再次分享。开启分享失败时密语后，错过分享的队友会收到密语，可以再找你要。"
+	"按任务分享中设定的节奏，把你刚进入的地下城里的每个任务分享给还没有该任务的每位队友。每位队友在每个地下城只会收到一次，所以晚加入的人也会收到。"
 
 --------------------------------------------------------------------------------
 -- Options: Maps & Objectives Panels
@@ -227,8 +229,10 @@ L["TAB_MAPS_OBJECTIVES"] = "地图与目标"
 L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"区域地图上每个任务目标和交付地点各一个标记，代替成堆的任务图标。"
 L["MAPS_SUB_PANELS_DESCRIPTION"] =
-	"每张地图的设置位于此面板下方的各个面板中：小地图、区域地图，以及大陆与世界地图。"
-L["MAPS_NEED_MARKERS"] = "只有在启用路径点标记开启时才会显示这些标记。"
+	"每张地图的设置位于此页面下方的各个页面中：小地图、区域地图，以及大陆与世界地图。"
+L["ROUTES_NEED_QUESTIE"] = "Questie 已关闭，因此没有可显示的路线。请在插件列表中启用 Questie。"
+L["MAPS_NEED_MARKERS"] =
+	"路径点标记已关闭，因此这些设置不会生效。它的开关在地图与目标页面上。"
 L["TAB_MINIMAP"] = "小地图"
 L["TAB_MINIMAP_DESCRIPTION"] =
 	"小地图上的 Questie 图标会准确显示目标的刷新位置和拾取地点，因此始终保留。路线标记可以显示在它们旁边。"
@@ -273,7 +277,7 @@ L["TAB_QUEST_ROUTE"] = "任务路线"
 L["TAB_QUEST_ROUTE_DESCRIPTION"] =
 	"区域地图上的一条路线，从你所在的位置出发，按完成顺序经过你的路径点标记。"
 L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
-	"任务路线连接各个路径点标记，因此只有在启用路径点标记开启时才会显示。"
+	"任务路线连接各个路径点标记，因此只有在路径点标记开启时才会显示。"
 L["ROUTES_LINE_HEADER"] = "路线线条"
 L["ROUTES_LINE_DESCRIPTION"] = "从你的位置通向每个标记的移动圆点。"
 L["LINE_SPEED"] = "线条速度"
@@ -295,14 +299,13 @@ L["LOCAL_QUEST_RANGE"] = "搜索范围"
 L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"发布任务者离你多少码以内才算数。低于 400 时，在两次路线规划之间路过的任务发布者可能会被漏掉。"
 L["LOCAL_ESCORT_QUESTS"] = "护送任务"
-L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"需要一路保护 NPC 的任务，耗时且常需队伍。它们在地图上的标记为绿色。"
+L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] = "需要一路保护 NPC 的任务，耗时且常需队伍。"
 L["LOCAL_OTHER_ZONE_QUESTS"] = "目标在其他区域的任务"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"有目标或交任务地点只在你所在区域之外的任务，例如让你前往下一个城镇的任务。"
 L["LOCAL_QUEST_LEVEL"] = "最低任务等级"
 L["LOCAL_QUEST_LEVEL_DESCRIPTION"] =
-	"比你低这么多级以上的任务不计入。“无限制”也包括灰色任务，以 Questie 显示的为准。"
+	'比你低这么多级以上的任务不计入。"无限制"也包括灰色任务，以 Questie 显示的为准。'
 L["LOCAL_HIGHEST_QUEST_LEVEL"] = "最高任务等级"
 L["LOCAL_HIGHEST_QUEST_LEVEL_DESCRIPTION"] =
 	"比你高出这么多级以上的任务会在地图上显示为灰色，并标出它们加入路线的等级，这样路线不会把你带去仍然太难的任务。"
@@ -379,7 +382,6 @@ L["ARROW_SIZE_DESCRIPTION"] = "任务箭头及其下方文字的大小。"
 L["LOCK_ARROW"] = "锁定任务箭头"
 L["LOCK_ARROW_DESCRIPTION"] = "将任务箭头固定在原位，拖动不起作用。"
 L["RESET_ARROW"] = "箭头位置"
-L["RESET_ARROW_BUTTON"] = "重置"
 L["RESET_ARROW_CONFIRM"] = "将任务箭头移回初始位置？"
 L["RESET_ARROW_DESCRIPTION"] = "将任务箭头放回初始位置，即屏幕顶部中间。"
 L["QUEST_ARROW_TEXT_HEADER"] = "箭头下方"
@@ -397,7 +399,7 @@ L["QUESTS_LISTED_DESCRIPTION"] =
 	'任务箭头在一个路径点下方最多列出的任务数。其余的任务会在单独一行中计数，例如"%s"。'
 L["SHOW_ITEM_BUTTONS"] = "显示任务物品按钮"
 L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
-	"在任务箭头列出的每个有可用物品的任务旁放一个按钮，例如需要投掷、种下或对目标使用的物品。点击按钮即可使用该物品，也可以在 Pretty Wide Quest Log 面板的按键设置中为使用任务物品设置按键，以使用第一个物品。战斗中按钮会保持原位，直到战斗结束。"
+	"在任务箭头列出的每个有可用物品的任务旁放一个按钮，例如需要投掷、种下或对目标使用的物品。点击按钮即可使用该物品，也可以在 Pretty Wide Quest Log 页面的按键设置中为使用任务物品设置按键，以使用第一个物品。战斗中按钮会保持原位，直到战斗结束。"
 -- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_NEXT_OBJECTIVE
 L["SHOW_NEXT_OBJECTIVE"] = "显示下一个目标"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
@@ -484,8 +486,6 @@ L["ZONE_INFO_GIVER"] = "发布者：%s"
 L["ZONE_INFO_GIVER_PLACE"] = "%s，%s"
 L["ZONE_INFO_SHAREABLE"] = "可共享"
 L["ZONE_INFO_NOT_SHAREABLE"] = "不可共享"
-L["ZONE_INFO_TRACK"] = "加入路线"
-L["ZONE_INFO_UNTRACK"] = "移出路线"
 -- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "需要它的任务"
 L["ZONE_INFO_SHIFT_CLICK"] = "Shift-点击"
@@ -563,6 +563,7 @@ L["ROUTES_FLIGHT_PATH"] = "获取飞行点"
 L["ROUTES_FLIGHT_PATH_FROM"] = "从%s处获取飞行点"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "与%s交谈，飞往%s"
+-- TRANSLATORS: %s is where a city's gate leads, the zone around it or the city itself, such as "Durotar" or "Orgrimmar"
 L["ROUTES_EXIT_TO"] = "前往%s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "护送任务，不在路线上"
@@ -577,6 +578,8 @@ L["ROUTES_OFF_ROUTE_PVP"] = "PvP 任务，不在路线上"
 -- TRANSLATORS: %d is the player level at which the quest goes on the route
 L["ROUTES_OFF_ROUTE_LEVEL"] = "%d 级时加入路线"
 L["ROUTES_OFF_ROUTE_XP"] = "路程经验太少，不在路线上"
+-- TRANSLATORS: under a quest to pick up on the map of a zone you are not in; a right-click puts it on the route for when you get there
+L["ROUTES_OFF_ROUTE_ZONE"] = "其他区域，尚未加入路线"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "接受 %s 后"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -588,11 +591,11 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "队友交付 %s 后"
 L["ROUTES_CORPSE"] = "跑回你的尸体处"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "寻找"
--- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; in ROUTES_MORE_WAYPOINTS, %d is how many waypoints it hides
 L["ROUTES_MORE_WAYPOINT"] = "还有 1 个路径点"
 L["ROUTES_MORE_WAYPOINTS"] = "还有 %d 个路径点"
 L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
-	"悬停时显示的其余路线。在选项的区域地图中，用“显示的路径点”设置地图绘制多少个。"
+	'悬停时显示的其余路线。在选项的区域地图中，用"显示的路径点"设置地图绘制多少个。'
 L["ROUTES_CLICK_DRAG"] = "拖动"
 L["ROUTES_CLICK_RIGHT"] = "右键点击"
 L["ROUTES_CLICK_MIDDLE"] = "中键点击"
@@ -606,13 +609,31 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "忽略此路径点"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "忽略此目标"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "放回路线"
-L["ROUTES_RIGHT_CLICK_ADD"] = "加入路线"
+-- TRANSLATORS: beside ROUTES_CLICK or ROUTES_CLICK_RIGHT, on Zone Info and on a map marker for a quest to pick up; puts the quest on the route
+L["ROUTES_ADD_TO_ROUTE"] = "加入路线"
+-- TRANSLATORS: as ROUTES_ADD_TO_ROUTE, for a quest to pick up already put on the route; takes it back off
+L["ROUTES_TAKE_OFF_ROUTE"] = "移出路线"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "重置此区域"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "显示完整路线"
+-- TRANSLATORS: the rows of a zone's list on the continent and world maps, each with how many quests to pick up there have that level color (as WoW colors quests by level) on the right
+L["ROUTES_ZONE_AVAILABLE_RED"] = "可接的红色任务"
+L["ROUTES_ZONE_AVAILABLE_ORANGE"] = "可接的橙色任务"
+L["ROUTES_ZONE_AVAILABLE_YELLOW"] = "可接的黄色任务"
+L["ROUTES_ZONE_AVAILABLE_GREEN"] = "可接的绿色任务"
+L["ROUTES_ZONE_AVAILABLE_GRAY"] = "可接的灰色任务"
+-- TRANSLATORS: the zone menu's row counting the group, dungeon and raid quests to pick up, on the continent and world maps
+L["ROUTES_ZONE_AVAILABLE_GROUP"] = "可接的地下城和组队任务"
+-- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
+L["ROUTES_ZONE_OBJECTIVES"] = "目标"
+-- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
+L["ROUTES_ZONE_MORE"] = "还有 %d 个..."
+-- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
+L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "打开区域地图"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "忽略 %s，直到重置区域。"
-L["ROUTES_REROUTING"] = "正在重新规划路线…"
+-- TRANSLATORS: on the world map while the route is planned again after clicks on its markers
+L["ROUTES_REROUTING"] = "正在重新规划路线..."
 L["ROUTES_ZONE_RESET"] = "区域已重置：在此忽略的目标已回到路线上。"
 L["ROUTES_GROUP_LEFT_CLEARED"] = "已离开队伍：已忽略的队伍目标和队友已回到路线上。"
 -- TRANSLATORS: %s is a party member's name, or a list of them
@@ -637,6 +658,7 @@ L["ROUTES_MENU_PICK_UP"] = "接受 %s"
 L["ROUTES_MENU_FLIGHT_PATH"] = "%s飞行点"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "飞往%s"
+-- TRANSLATORS: %s is where a city's gate leads, such as "Durotar"
 L["ROUTES_MENU_EXIT"] = "通往%s"
 L["ROUTES_MENU_SHOWN_FLIGHTS"] = "飞行点"
 L["ROUTES_MENU_SHOWN_PARTY"] = "队友目标"
@@ -653,7 +675,10 @@ L["ROUTES_IGNORED"] = "忽略 %s（%s），直到重置区域。"
 L["ROUTES_IGNORED_PARTY"] = "忽略 %s（%s），直到有该任务的队友离开队伍。"
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s 已回到路线上。"
+-- TRANSLATORS: %s is a quest link
 L["ROUTES_ADDED"] = "%s 已加入路线，直到重置区域。"
+-- TRANSLATORS: %s is a quest link
+L["ROUTES_REMOVED"] = "%s 已移出路线。"
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "%s 的目标已移出路线。"
 -- TRANSLATORS: %s is a party member's name

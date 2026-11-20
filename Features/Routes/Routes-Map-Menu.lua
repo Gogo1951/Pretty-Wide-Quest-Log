@@ -3,10 +3,11 @@ local _, ns = ...
 --[[
 	Routes: the world map's menu, on the Quest Arrow menu's plate (Routes-Arrow-Menu-Panel.lua), in place of a
 	marker's tooltip so its clicks are rows a controller's cursor reaches too. Hovering a waypoint's or camp's
-	marker, or the "…" marker, opens it beside the marker (Routes-Map.lua): what the tooltip said, then a
+	marker, or the "…" marker, opens it beside the marker (Routes-Map.lua): a header, its first line with PWQL
+	on the right, then a spacer and the rest of what the tooltip said, then a
 	spacer, a line and the marker's click hints, what each does on the left in blue and the click that does
-	the same on the marker on the right in gray, each a row to click. It stays while the mouse is on the marker
-	or the menu, closes CLOSE_DELAY after it leaves both, once the marker is gone or a row is clicked, and on
+	the same on the marker on the right in gray, each a row to click. It stays while the cursor is on the
+	marker or the menu, closes CLOSE_DELAY after it leaves both, once the marker is gone or a row is clicked, and on
 	Escape
 ]]
 
@@ -15,7 +16,7 @@ local routes = ns.routes
 local SPACE = ns.LAYOUT.SPACE
 local panels = routes.arrowMenuPanels
 
-local CLOSE_DELAY = 0.25 -- Seconds the menu stays once the mouse leaves it and its marker
+local CLOSE_DELAY = 0.5 -- Seconds the menu stays once the cursor leaves it and its marker, forgiving a slip
 local REFRESH_INTERVAL = 0.5 -- Seconds between checks for its rows changing, as progress counts up
 
 -- Over the world map, whichever strata it's drawn in
@@ -89,6 +90,24 @@ function rowsMixin:AddHints(hints)
 	end
 end
 
+--[[
+	Makes the first row the menu's header, as every menu opens: what was hovered on the left, keeping its own
+	color, PWQL on the right in gray, then a spacer
+]]
+function rowsMixin:MakeHeader()
+	local first = self.entries[1]
+	if not (first and first.left) then
+		return
+	end
+	first.kind = "header"
+	first.right, first.rightColor = ns.L["ADDON_SHORT_NAME"], "MUTED"
+	first.wrap = nil
+	local second = self.entries[2]
+	if not (second and second.kind == "spacer") then
+		table.insert(self.entries, 2, { kind = "spacer" })
+	end
+end
+
 function routes.MapMenuRows()
 	return Mixin({ entries = {} }, rowsMixin)
 end
@@ -108,15 +127,15 @@ local function Refresh()
 	return true
 end
 
--- Beside the marker, as a tooltip anchored to its right is; to its left where the screen hasn't the room
+-- SPACE.TIGHT beside the marker, as a tooltip anchored to its right is; to its left where the screen hasn't the room
 local function Place()
 	menu:ClearAllPoints()
 	local right = owner:GetRight() or 0
 	local scale = owner:GetEffectiveScale() / menu:GetEffectiveScale()
-	if right * scale + SPACE.LINE + menu:GetWidth() > UIParent:GetWidth() then
-		menu:SetPoint("TOPRIGHT", owner, "TOPLEFT", -SPACE.LINE, 0)
+	if right * scale + SPACE.TIGHT + menu:GetWidth() > UIParent:GetWidth() then
+		menu:SetPoint("TOPRIGHT", owner, "TOPLEFT", -SPACE.TIGHT, 0)
 	else
-		menu:SetPoint("TOPLEFT", owner, "TOPRIGHT", SPACE.LINE, 0)
+		menu:SetPoint("TOPLEFT", owner, "TOPRIGHT", SPACE.TIGHT, 0)
 	end
 end
 
@@ -126,7 +145,8 @@ menu:SetScript("OnUpdate", function(self, elapsed)
 		return
 	end
 	local now = GetTime()
-	if self:IsMouseOver() or owner:IsMouseOver() then
+	-- Read from the cursor's position, so a controller's on-screen cursor keeps it open too
+	if routes.IsCursorOver(self) or routes.IsCursorOver(owner) then
 		lastOver = now
 	elseif now - lastOver > CLOSE_DELAY then
 		self:Hide()

@@ -104,7 +104,7 @@ L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
 L["NEEDS_QUESTIE_HINT"] = "Turn on Questie to use this."
 L["SHOW_ZONE_INFO"] = "Show Zone Info"
 L["SHOW_ZONE_INFO_DESCRIPTION"] =
-	"Under the map, the quests from other zones you could pick up for the zone it shows, and the items that zone's quests ask you to bring. The map shrinks to half the window's height to make room."
+	"Lists, under the map, the quests from other zones you can pick up for the zone it shows, and the items that zone's quests ask you to bring. The map shrinks to half the window's height to make room."
 L["WINDOW_SCALE"] = "Quest Log Scale"
 L["WINDOW_SCALE_DESCRIPTION"] = "Makes the quest log bigger or smaller. The map beside it grows and shrinks with it."
 L["MAP_SCALE"] = "Map Scale"
@@ -125,7 +125,7 @@ L["HANDY_CLICK_MENU_DESCRIPTION"] = "Track it, share it, or abandon it."
 L["HANDY_CLICK_ID"] = "Click a Quest ID"
 L["HANDY_CLICK_ID_DESCRIPTION"] = "Get its Wowhead link."
 L["QUEST_LOG_SUB_PANELS_DESCRIPTION"] =
-	"Its settings are on the panels under this one: Quest List, Quest Details, Window & Map, and NPC Dialogue."
+	"Its settings are on the pages under this one: Quest List, Quest Details, Window & Map, and NPC Dialogue."
 L["NEEDS_WIDE_QUEST_LOG"] =
 	"Wide Quest Log is off, so these settings aren't being used. Its switch is on the Wide Quest Log page."
 L["TAB_QUEST_LIST"] = "Quest List"
@@ -183,7 +183,7 @@ L["FONT_SLUG"] = "Sharper Text (Slug)"
 L["FONT_SLUG_DESCRIPTION"] =
 	"Draws the text with Blizzard's newer Slug renderer, for crisper letters at any size. Slug can't draw a thick outline or a shadow, so text with either is drawn the usual way."
 L["FONT_RESET"] = "Reset Font"
-L["FONT_RESET_CONFIRM"] = "Put this font's typeface, size, outline, shadow and Slug back to their defaults?"
+L["FONT_RESET_CONFIRM"] = "Put this font's typeface, size, outline, shadow, and Slug back to their defaults?"
 L["FONT_RESET_DESCRIPTION"] = "Puts this font's settings back to their defaults."
 
 --------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ L["QUEST_SHARING_HEADER"] = "Quest Sharing"
 L["QUEST_SHARING_INTRO"] =
 	"Hover a zone name in the quest log and click Share Quests to offer your party all of its quests you can share, one after another. These settings control the pace and what happens when someone misses one."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"Share Quests on a zone name needs Enable Wide Quest Log. Dungeon quest sharing works without it."
+	"Share Quests on a zone name needs Wide Quest Log. Dungeon quest sharing works without it."
 L["SHARE_INTERVAL"] = "Seconds Between Shares"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"How long to wait between one shared quest and the next, when you share a zone's quests or a dungeon's. Longer gives your party more time to accept each one."
@@ -221,6 +221,7 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 L["DUNGEON_SHARE"] = "Automatic Dungeon Quest Sharing"
 L["DUNGEON_SHARE_DESCRIPTION"] =
 	"Shares every quest for the dungeon you just entered with each party member who doesn't have it, at the pace set under Quest Sharing. Each member gets them once per dungeon, so someone who joins late gets them too."
+
 --------------------------------------------------------------------------------
 -- Options: Maps & Objectives Panels
 --------------------------------------------------------------------------------
@@ -229,7 +230,7 @@ L["TAB_MAPS_OBJECTIVES"] = "Maps & Objectives"
 L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"One marker on the zone map for each objective and turn-in, in place of a cluster of quest icons."
 L["MAPS_SUB_PANELS_DESCRIPTION"] =
-	"Each map's settings are on the panels under this one: Mini-map, Zone Map, and Continent & World Map."
+	"Each map's settings are on the pages under this one: Mini-map, Zone Map, and Continent & World Map."
 L["ROUTES_NEED_QUESTIE"] = "Questie is off, so there's no route to show. Turn on Questie in the AddOns list."
 L["MAPS_NEED_MARKERS"] =
 	"Waypoint Markers is off, so these settings aren't being used. Its switch is on the Maps & Objectives page."
@@ -277,7 +278,7 @@ L["TAB_QUEST_ROUTE"] = "Quest Route"
 L["TAB_QUEST_ROUTE_DESCRIPTION"] =
 	"A route on the zone map through your waypoint markers, in the order to do them, from where you stand."
 L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
-	"The Quest Route runs between the waypoint markers, so it shows only while Enable Waypoint Markers is on."
+	"The Quest Route runs between the waypoint markers, so it shows only while Waypoint Markers is on."
 L["ROUTES_LINE_HEADER"] = "Route Line"
 L["ROUTES_LINE_DESCRIPTION"] = "The marching dots that lead from you to each marker."
 L["LINE_SPEED"] = "Line Speed"
@@ -300,8 +301,8 @@ L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"How many yards from you a quest giver can be and still count. Under 400, a giver you walk past between the route's plans can be missed."
 L["LOCAL_ESCORT_QUESTS"] = "Escort Quests"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"Quests where you protect an NPC along the way, which take time and often a group. Their marker on the map is green."
-L["LOCAL_OTHER_ZONE_QUESTS"] = "Quests With Objectives in Another Zone"
+	"Quests where you protect an NPC along the way, which take time and often a group."
+L["LOCAL_OTHER_ZONE_QUESTS"] = "Quests with Objectives in Another Zone"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"Quests with an objective, or the turn-in, only outside the zone you're in, such as one that sends you on to the next town."
 L["LOCAL_QUEST_LEVEL"] = "Lowest Quest Level"
@@ -331,11 +332,11 @@ L["PLAN_AHEAD_NEARBY_DESCRIPTION"] = "Quest givers near you, as waypoints to pic
 -- TRANSLATORS: the same words as PLAN_AHEAD_HEADER: the choice that plans the whole zone ahead
 L["PLAN_AHEAD_ZONE"] = "Plan Ahead"
 L["PLAN_AHEAD_ZONE_DESCRIPTION"] =
-	"Pick-ups, objectives and turn-ins across the zone, with follow-up quests, so you pick up everything for a part of the zone before you go there. Objectives of quests you haven't picked up yet have a gray marker. Plans further ahead take longer to work out."
+	"Pick-ups, objectives, and turn-ins across the zone, with follow-up quests, so you pick up everything for a part of the zone before you go there. Objectives of quests you haven't picked up yet have a gray marker. Plans further ahead take longer to work out."
 L["QUEST_DIFFICULTY_HEADER"] = "Quest Difficulty"
 L["QUEST_DIFFICULTY_DESCRIPTION"] =
 	"The quest levels the route guides you to pick up. Quests already in your log stay on the route, whatever their level."
-L["QUEST_TYPES_HEADER"] = "Quest Types to Pick Up Along the Route"
+L["QUEST_TYPES_HEADER"] = "Quest Types to Pick up Along the Route"
 L["QUEST_TYPES_DESCRIPTION"] =
 	"The kinds of quests the route guides you to pick up. An unchecked kind still shows on the map, in gray with the reason, but the route won't take you to pick it up."
 -- TRANSLATORS: Era and Forever call quests with tag 1 Elite; TBC and later call them Group (PICK_UP_GROUP)
@@ -399,7 +400,7 @@ L["QUESTS_LISTED_DESCRIPTION"] =
 	'The most quests the Quest Arrow lists under itself for one waypoint. Any more are counted on a line of their own, such as "%s".'
 L["SHOW_ITEM_BUTTONS"] = "Show Quest Item Buttons"
 L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
-	"Puts a button beside each quest the Quest Arrow lists that has an item to use, such as one to throw, plant, or use on a target. Click it to use the item, or set a key for Use Quest Item under Key Bindings on the Pretty Wide Quest Log panel to use the first one. In combat the buttons stay where they are until it ends."
+	"Puts a button beside each quest the Quest Arrow lists that has an item to use, such as one to throw, plant, or use on a target. Click it to use the item, or set a key for Use Quest Item under Key Bindings on the Pretty Wide Quest Log page to use the first one. In combat the buttons stay where they are until it ends."
 -- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_NEXT_OBJECTIVE
 L["SHOW_NEXT_OBJECTIVE"] = "Show Next Objective"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
@@ -486,8 +487,6 @@ L["ZONE_INFO_GIVER"] = "Given by %s"
 L["ZONE_INFO_GIVER_PLACE"] = "%s in %s"
 L["ZONE_INFO_SHAREABLE"] = "Shareable"
 L["ZONE_INFO_NOT_SHAREABLE"] = "Not Shareable"
-L["ZONE_INFO_TRACK"] = "Add to Route"
-L["ZONE_INFO_UNTRACK"] = "Take off Route"
 -- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "Needed For"
 L["ZONE_INFO_SHIFT_CLICK"] = "Shift-Click"
@@ -562,7 +561,7 @@ L["ROUTES_PICK_UP"] = "Pick up Quest"
 L["ROUTES_PICK_UP_QUEST"] = "Pick up %s"
 L["ROUTES_FLIGHT_PATH"] = "Get Flight Path"
 -- TRANSLATORS: %s is the flight master's name, such as "Devrak"
-L["ROUTES_FLIGHT_PATH_FROM"] = "Get the Flight Path From %s"
+L["ROUTES_FLIGHT_PATH_FROM"] = "Get the Flight Path from %s"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "Talk to %s to Fly to %s"
 -- TRANSLATORS: %s is where a city's gate leads, the zone around it or the city itself, such as "Durotar" or "Orgrimmar"
@@ -580,6 +579,8 @@ L["ROUTES_OFF_ROUTE_PVP"] = "PvP Quest, Not on the Route"
 -- TRANSLATORS: %d is the player level at which the quest goes on the route
 L["ROUTES_OFF_ROUTE_LEVEL"] = "On the Route at Level %d"
 L["ROUTES_OFF_ROUTE_XP"] = "Low XP for the Walk, Not on the Route"
+-- TRANSLATORS: under a quest to pick up on the map of a zone you are not in; a right-click puts it on the route for when you get there
+L["ROUTES_OFF_ROUTE_ZONE"] = "Another Zone, Not on the Route Yet"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "After You Pick up %s"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -591,7 +592,7 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "After Your Party Turns in %s"
 L["ROUTES_CORPSE"] = "Run Back to Your Corpse"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Look For"
--- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; in ROUTES_MORE_WAYPOINTS, %d is how many waypoints it hides
 L["ROUTES_MORE_WAYPOINT"] = "1 More Waypoint"
 L["ROUTES_MORE_WAYPOINTS"] = "%d More Waypoints"
 L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
@@ -609,15 +610,31 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignore This Waypoint"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignore This Objective"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Back on the Route"
--- TRANSLATORS: right-clicking a map marker for a quest to pick up that is on the map only, which puts it on the route
-L["ROUTES_RIGHT_CLICK_ADD"] = "Add to the Route"
+-- TRANSLATORS: beside ROUTES_CLICK or ROUTES_CLICK_RIGHT, on Zone Info and on a map marker for a quest to pick up; puts the quest on the route
+L["ROUTES_ADD_TO_ROUTE"] = "Add to the Route"
+-- TRANSLATORS: as ROUTES_ADD_TO_ROUTE, for a quest to pick up already put on the route; takes it back off
+L["ROUTES_TAKE_OFF_ROUTE"] = "Take off the Route"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Reset This Zone"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Show the Whole Route"
+-- TRANSLATORS: the rows of a zone's list on the continent and world maps, each with how many quests to pick up there have that level color (as WoW colors quests by level) on the right
+L["ROUTES_ZONE_AVAILABLE_RED"] = "Available Red Quests"
+L["ROUTES_ZONE_AVAILABLE_ORANGE"] = "Available Orange Quests"
+L["ROUTES_ZONE_AVAILABLE_YELLOW"] = "Available Yellow Quests"
+L["ROUTES_ZONE_AVAILABLE_GREEN"] = "Available Green Quests"
+L["ROUTES_ZONE_AVAILABLE_GRAY"] = "Available Gray Quests"
+-- TRANSLATORS: the zone menu's row counting the group, dungeon and raid quests to pick up, on the continent and world maps
+L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Available Dungeon and Group Quests"
+-- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
+L["ROUTES_ZONE_OBJECTIVES"] = "Objectives"
+-- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
+L["ROUTES_ZONE_MORE"] = "And %d more..."
+-- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
+L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Open Zone Map"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Ignoring %s until you reset the zone."
 -- TRANSLATORS: on the world map while the route is planned again after clicks on its markers
-L["ROUTES_REROUTING"] = "Rerouting…"
+L["ROUTES_REROUTING"] = "Rerouting..."
 L["ROUTES_ZONE_RESET"] = "Zone reset: objectives ignored here are back on the route."
 L["ROUTES_GROUP_LEFT_CLEARED"] = "Left the group: party objectives and members you ignored are back on the route."
 -- TRANSLATORS: %s is a party member's name, or a list of them
@@ -652,7 +669,7 @@ L["ROUTES_MENU_OUT_OF_ZONE"] = "Out of Zone"
 L["ROUTES_MENU_NO_QUESTIE"] = "No Questie"
 L["ROUTES_MENU_OFFLINE"] = "Offline"
 -- TRANSLATORS: %s is a party member's name; On or Off shows beside it
-L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objectives From %s"
+L["ROUTES_MENU_MEMBER_OBJECTIVES"] = "Objectives from %s"
 -- TRANSLATORS: the first %s is an objective or ROUTES_MENU_TURN_IN, the second a quest link
 L["ROUTES_IGNORED"] = "Ignoring %s for %s until you reset the zone."
 -- TRANSLATORS: as ROUTES_IGNORED, for a party member's objective, a quest the player doesn't have
@@ -661,6 +678,8 @@ L["ROUTES_IGNORED_PARTY"] = "Ignoring %s for %s until the party members on it le
 L["ROUTES_UNIGNORED"] = "%s is back on the route."
 -- TRANSLATORS: %s is a quest link
 L["ROUTES_ADDED"] = "%s is on the route until you reset the zone."
+-- TRANSLATORS: %s is a quest link
+L["ROUTES_REMOVED"] = "%s is off the route."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "Leaving %s's objectives off the route."
 -- TRANSLATORS: %s is a party member's name

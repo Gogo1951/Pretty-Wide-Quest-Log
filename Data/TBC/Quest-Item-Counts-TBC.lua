@@ -3912,7 +3912,7 @@ ns.QUEST_ITEM_COUNTS = "\n"
 How We Got the Data
 
 Last Validated
-	2026-11-13, TBC Anniversary 2.5.6.70577
+	2026-11-20, wago.tools, TBC Anniversary 2.5.6.70577
 
 Notes
 	- How many of each item a quest asks the player to bring, for Zone Info's Things to Bring column
@@ -3936,8 +3936,8 @@ Wowhead
 	None.
 
 wago.tools
-	None.
+	https://wago.tools/db2/Item?build=2.5.6.70577
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/TBC/tbcQuestDB.lua
 ]]

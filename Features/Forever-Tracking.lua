@@ -97,7 +97,7 @@ end
 -- Returns false, tracking nothing, when Blizzard's watch list is full
 local function Track(questID)
 	if not ns.HasRoomToTrack(questID) then
-		UIErrorsFrame:AddMessage(OBJECTIVES_WATCH_TOO_MANY, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, 1.0)
+		ns:Notice(OBJECTIVES_WATCH_TOO_MANY)
 		return false
 	end
 	-- Adding a watch that already exists is harmless, and is what tells Questie to track it
@@ -105,10 +105,13 @@ local function Track(questID)
 	return true
 end
 
--- Changing the watch list from add-on code in combat taints the objective tracker, so it waits for combat to end
+--[[
+	Changing the watch list from add-on code in combat taints the objective tracker, so it waits for combat to
+	end, saying so in chat
+]]
 local function RefusedInCombat()
 	if InCombatLockdown() then
-		UIErrorsFrame:AddMessage(ERR_NOT_IN_COMBAT, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, 1.0)
+		ns:PrintMessage(ERR_NOT_IN_COMBAT)
 		return true
 	end
 	return false
@@ -125,7 +128,7 @@ function ns.ToggleTracking(questID)
 			warnedUntrackable[questID] = true
 			ns:PrintMessage(ns.QuestieCannotShowText(questID))
 		end
-		UIErrorsFrame:AddMessage(L["QUESTIE_CANNOT_TRACK"], RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, 1.0)
+		ns:Notice(L["QUESTIE_CANNOT_TRACK"])
 		return
 	end
 

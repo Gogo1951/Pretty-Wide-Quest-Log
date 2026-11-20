@@ -19,7 +19,7 @@ L["CHAT_KEY_BINDINGS_IN_COMBAT"] =
 -- TRANSLATORS: the first %s is the game menu's Options label, the second its Key Bindings label, both from the client
 L["KEY_BINDINGS_LOCATION"] = "Abre el menú del juego, ve a %s y luego a %s, y busca la sección Pretty Wide Quest Log."
 L["CHAT_QUESTIE_MISSING_FEATURES"] =
-	"Sin Questie, el mapa de misiones muestra menos, y las cadenas de misiones y el total de Entrega quedan ocultos. Activa Questie en la lista de accesorios para verlos."
+	"Sin Questie no hay ruta de misiones ni Flecha de misiones, el mapa de misiones muestra menos, y las cadenas de misiones y el total de Entrega quedan ocultos. Activa Questie en la lista de accesorios para verlos."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus también está activado y los dos se pelearán por el registro de misiones. Desactiva Wide Quest Log Plus en la lista de accesorios y luego recarga."
 
@@ -27,6 +27,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 -- Options: General Panel
 --------------------------------------------------------------------------------
 
+L["OPTIONS_RESET"] = "Restablecer"
 L["OPTIONS_DESCRIPTION"] =
 	"Registro de misiones ancho y asistente de misiones para subir de nivel: una ruta por las misiones que elijas, una flecha hacia cada punto de ruta, niveles de misión, etiquetas, recompensas, cadenas de misiones, un mapa de misiones y misiones compartidas con el grupo. Funciona con Questie, Spoken, VoiceOver y ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activar mensaje de bienvenida"
@@ -109,14 +110,14 @@ L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
 L["NEEDS_QUESTIE_HINT"] = "Activa Questie para usar esto."
 L["SHOW_ZONE_INFO"] = "Mostrar info de la zona"
 L["SHOW_ZONE_INFO_DESCRIPTION"] =
-	"Bajo el mapa, las misiones de otras zonas que podrías recoger para la zona que muestra, y los objetos que piden las misiones de esa zona. El mapa se reduce a la mitad de la altura de la ventana para dejar sitio."
+	"Enumera bajo el mapa las misiones de otras zonas que puedes recoger para la zona que muestra, y los objetos que piden las misiones de esa zona. El mapa se reduce a la mitad de la altura de la ventana para dejar sitio."
 L["WINDOW_SCALE"] = "Escala del registro de misiones"
 L["WINDOW_SCALE_DESCRIPTION"] =
 	"Hace el registro de misiones más grande o más pequeño. El mapa de al lado crece y encoge con él."
 L["MAP_SCALE"] = "Escala del mapa"
 L["MAP_SCALE_DESCRIPTION"] =
 	"Hace el mapa junto al registro de misiones más grande o más pequeño, además de la escala del registro de misiones."
-L["RESET_WINDOW_BUTTON"] = "Restablecer ventana"
+L["RESET_WINDOW"] = "Restablecer ventana"
 L["RESET_WINDOW_SCALE_DESCRIPTION"] =
 	"Devuelve la altura y la escala del registro de misiones, y la escala del mapa, a sus valores predeterminados."
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
@@ -132,9 +133,9 @@ L["HANDY_CLICK_MENU_DESCRIPTION"] = "Síguela, compártela o abandónala."
 L["HANDY_CLICK_ID"] = "Clic en un ID de misión"
 L["HANDY_CLICK_ID_DESCRIPTION"] = "Obtén su enlace de Wowhead."
 L["QUEST_LOG_SUB_PANELS_DESCRIPTION"] =
-	"Sus ajustes están en los paneles que hay bajo este: Lista de misiones, Detalles de la misión, Ventana y mapa, y Diálogo con PNJ."
+	"Sus ajustes están en las páginas que hay bajo esta: Lista de misiones, Detalles de la misión, Ventana y mapa, y Diálogo con PNJ."
 L["NEEDS_WIDE_QUEST_LOG"] =
-	"Estos ajustes son para el registro de misiones ancho. Marca Activar registro de misiones ancho en el panel Registro de misiones ancho para usarlos."
+	"Registro de misiones ancho está desactivado, así que estos ajustes no se usan. Su interruptor está en la página Registro de misiones ancho."
 L["TAB_QUEST_LIST"] = "Lista de misiones"
 L["TAB_QUEST_LIST_DESCRIPTION"] =
 	"Tus misiones, agrupadas por zona a lo largo del lado izquierdo del registro de misiones."
@@ -194,7 +195,9 @@ L["FONT_SHADOW_DESCRIPTION"] =
 L["FONT_SLUG"] = "Texto más nítido (Slug)"
 L["FONT_SLUG_DESCRIPTION"] =
 	"Dibuja el texto con Slug, el renderizador más reciente de Blizzard, para letras más nítidas a cualquier tamaño. Slug no puede dibujar un contorno grueso ni una sombra, así que el texto con cualquiera de los dos se dibuja de la forma habitual."
-L["FONT_RESET_BUTTON"] = "Restablecer fuente"
+L["FONT_RESET"] = "Restablecer fuente"
+L["FONT_RESET_CONFIRM"] =
+	"¿Devolver el tipo de letra, el tamaño, el contorno, la sombra y Slug de esta fuente a sus valores predeterminados?"
 L["FONT_RESET_DESCRIPTION"] = "Devuelve los ajustes de esta fuente a sus valores predeterminados."
 
 --------------------------------------------------------------------------------
@@ -208,20 +211,20 @@ L["QUEST_SHARING_HEADER"] = "Compartir misiones"
 L["QUEST_SHARING_INTRO"] =
 	"Pasa el ratón por el nombre de una zona del registro de misiones y haz clic en Compartir misiones para ofrecer a tu grupo, una tras otra, todas sus misiones que puedas compartir. Estas opciones fijan el ritmo y lo que pasa cuando a alguien se le escapa una."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"El botón Compartir misiones del nombre de una zona necesita Activar registro de misiones ancho. El envío de misiones de mazmorra funciona sin esta opción."
+	"El botón Compartir misiones del nombre de una zona necesita Registro de misiones ancho. El envío de misiones de mazmorra funciona sin esta opción."
 L["SHARE_INTERVAL"] = "Segundos entre envíos"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Cuánto esperar entre una misión compartida y la siguiente, cuando compartes las misiones de una zona o de una mazmorra. Cuanto más largo, más tiempo tiene tu grupo para aceptar cada una."
 L["SHARE_WHISPERS"] = "Susurrar cuando falle un envío"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Cuando un miembro del grupo está ocupado, demasiado lejos o tiene el registro de misiones lleno, le susurra qué misión intentaste compartir y le pide que te lo recuerde. No se envía nada si no cumple los requisitos de la misión, ya la tiene o ya la ha completado."
-L["ZONE_SHARE_OFFERS"] = "Avisarme cuando a los nuevos miembros del grupo les falten misiones de mi zona"
+L["ZONE_SHARE_OFFERS"] = "Decirme qué necesitan los nuevos miembros del grupo"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"Cuando te unes a un grupo, o alguien se une al tuyo, espera 20 segundos a que Questie intercambie los registros de misiones y luego te dice en el chat cuántas de tus misiones con objetivos en tu zona les faltan a los nuevos miembros, para que puedas hacer clic en Compartir misiones. Solo cuentan las misiones que puedes compartir, cada una una sola vez aunque les falte a varios. No se envía nada a nadie. No se cuentan los miembros cuyas misiones no se pueden ver (sin Questie, fuera de alcance). Una vez cada vez que alguien se une, nunca en una mazmorra ni en un grupo de banda."
+	"Cuando alguien se une a tu grupo, te dice en el chat cuántas de tus misiones de esta zona no tiene y puedes compartir, para que puedas hacer clic en Compartir misiones. No se envía nada a nadie. No funciona en mazmorras ni en grupos de banda."
 L["ZONE_SHARE_OFFERS_SOUND"] = "Reproducir sonido"
 L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] = "Reproduce un aviso junto al mensaje, para cuando el chat está muy movido."
-L["ZONE_SHARE_SOUND_PREVIEW"] = "Haz clic para oír el aviso."
-L["SAMPLE_EXAMPLE"] = "Ejemplo: %s"
+L["OPTIONS_SOUND_PREVIEW_DESCRIPTION"] = "Reproduce este sonido ahora, esté activado el sonido o no."
+L["SAMPLE_EXAMPLE"] = "Ejemplo"
 L["SAMPLE_QUEST_LOADING"] = "Cargando ID de misión: %d"
 L["DUNGEON_QUESTS_HEADER"] = "Misiones de mazmorra"
 L["DUNGEON_QUESTS_INTRO"] =
@@ -231,7 +234,7 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Le dice a tu grupo qué misiones te quedan por hacer en la mazmorra en la que acabas de entrar, para que todos sepan qué buscar. Se omiten las misiones listas para entregar."
 L["DUNGEON_SHARE"] = "Envío automático de misiones de mazmorra"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Comparte cada misión de la mazmorra que el juego te deja compartir y que a alguien del grupo aún le falta, al ritmo fijado en Compartir misiones, en cuanto todos estén a tu alcance (o pasado un minuto; al momento en WoW Forever). Cada miembro del grupo las recibe una vez por mazmorra, así que quien se une después también las recibe, y salir y volver a entrar no comparte nada. Con Susurrar cuando falle un envío activado, quien se pierda un envío recibe un susurro para que pueda volver a pedirla."
+	"Comparte cada misión de la mazmorra en la que acabas de entrar con cada miembro del grupo que no la tenga, al ritmo fijado en Compartir misiones. Cada miembro las recibe una vez por mazmorra, así que quien se une tarde también las recibe."
 
 --------------------------------------------------------------------------------
 -- Options: Maps & Objectives Panels
@@ -241,8 +244,11 @@ L["TAB_MAPS_OBJECTIVES"] = "Mapas y objetivos"
 L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Un marcador en el mapa de zona por cada objetivo y entrega, en lugar de un montón de iconos de misión."
 L["MAPS_SUB_PANELS_DESCRIPTION"] =
-	"Los ajustes de cada mapa están en los paneles que hay bajo este: Minimapa, Mapa de zona, y Mapa de continente y del mundo."
-L["MAPS_NEED_MARKERS"] = "Los marcadores solo se muestran mientras Activar Marcadores de puntos de ruta está activado."
+	"Los ajustes de cada mapa están en las páginas que hay bajo esta: Minimapa, Mapa de zona, y Mapa de continente y del mundo."
+L["ROUTES_NEED_QUESTIE"] =
+	"Questie está desactivado, así que no hay ruta que mostrar. Activa Questie en la lista de accesorios."
+L["MAPS_NEED_MARKERS"] =
+	"Marcadores de puntos de ruta está desactivado, así que estos ajustes no se usan. Su interruptor está en la página Mapas y objetivos."
 L["TAB_MINIMAP"] = "Minimapa"
 L["TAB_MINIMAP_DESCRIPTION"] =
 	"Los iconos de Questie en el minimapa muestran exactamente dónde aparecen las cosas y dónde despojarlas, así que siempre se mantienen. Los marcadores de la ruta pueden mostrarse junto a ellos."
@@ -287,7 +293,7 @@ L["TAB_QUEST_ROUTE"] = "Ruta de misiones"
 L["TAB_QUEST_ROUTE_DESCRIPTION"] =
 	"Una ruta por tus marcadores de puntos de ruta en el mapa de zona, en el orden en que hacerlos, desde donde estás."
 L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
-	"La Ruta de misiones va entre los marcadores de puntos de ruta, así que solo se muestra mientras Activar Marcadores de puntos de ruta está activado."
+	"La Ruta de misiones va entre los marcadores de puntos de ruta, así que solo se muestra mientras Marcadores de puntos de ruta está activado."
 L["ROUTES_LINE_HEADER"] = "Línea de ruta"
 L["ROUTES_LINE_DESCRIPTION"] = "Los puntos en marcha que van desde ti hasta cada marcador."
 L["LINE_SPEED"] = "Velocidad de la línea"
@@ -311,7 +317,7 @@ L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"A cuántos metros de ti puede estar quien da la misión para que cuente. Por debajo de 400, puedes pasar junto a uno entre dos planificaciones de la ruta sin que aparezca."
 L["LOCAL_ESCORT_QUESTS"] = "Misiones de escolta"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"Misiones en las que proteges a un PNJ por el camino; llevan tiempo y a menudo un grupo. Su marcador en el mapa es verde."
+	"Misiones en las que proteges a un PNJ por el camino; llevan tiempo y a menudo un grupo."
 L["LOCAL_OTHER_ZONE_QUESTS"] = "Misiones con objetivos en otra zona"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"Misiones con un objetivo, o la entrega, solo fuera de tu zona, como una que te envía al siguiente pueblo."
@@ -398,7 +404,6 @@ L["ARROW_SIZE_DESCRIPTION"] = "Lo grande que es la Flecha de misiones, con el te
 L["LOCK_ARROW"] = "Bloquear la Flecha de misiones"
 L["LOCK_ARROW_DESCRIPTION"] = "Deja la Flecha de misiones donde está, así que arrastrarla no hace nada."
 L["RESET_ARROW"] = "Posición de la flecha"
-L["RESET_ARROW_BUTTON"] = "Restablecer"
 L["RESET_ARROW_CONFIRM"] = "¿Devolver la Flecha de misiones a su sitio inicial?"
 L["RESET_ARROW_DESCRIPTION"] = "Devuelve la Flecha de misiones a su sitio inicial, arriba en el centro de la pantalla."
 L["QUEST_ARROW_TEXT_HEADER"] = "Bajo la flecha"
@@ -503,8 +508,6 @@ L["ZONE_INFO_GIVER"] = "La ofrece %s"
 L["ZONE_INFO_GIVER_PLACE"] = "%s en %s"
 L["ZONE_INFO_SHAREABLE"] = "Compartible"
 L["ZONE_INFO_NOT_SHAREABLE"] = "No compartible"
-L["ZONE_INFO_TRACK"] = "Añadir a la ruta"
-L["ZONE_INFO_UNTRACK"] = "Quitar de la ruta"
 -- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "Necesario para"
 L["ZONE_INFO_SHIFT_CLICK"] = "Mayús-clic"
@@ -582,6 +585,7 @@ L["ROUTES_FLIGHT_PATH"] = "Conseguir ruta de vuelo"
 L["ROUTES_FLIGHT_PATH_FROM"] = "Conseguir la ruta de vuelo de %s"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "Habla con %s para volar a %s"
+-- TRANSLATORS: %s is where a city's gate leads, the zone around it or the city itself, such as "Durotar" or "Orgrimmar"
 L["ROUTES_EXIT_TO"] = "Dirígete a %s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Misión de escolta, fuera de la ruta"
@@ -596,6 +600,8 @@ L["ROUTES_OFF_ROUTE_PVP"] = "Misión JcJ, fuera de la ruta"
 -- TRANSLATORS: %d is the player level at which the quest goes on the route
 L["ROUTES_OFF_ROUTE_LEVEL"] = "En la ruta a nivel %d"
 L["ROUTES_OFF_ROUTE_XP"] = "Poca experiencia para el camino, fuera de la ruta"
+-- TRANSLATORS: under a quest to pick up on the map of a zone you are not in; a right-click puts it on the route for when you get there
+L["ROUTES_OFF_ROUTE_ZONE"] = "Otra zona, aún fuera de la ruta"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "Después de aceptar %s"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -607,7 +613,7 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "Después de que tu grupo entregue %s"
 L["ROUTES_CORPSE"] = "Vuelve corriendo a tu cadáver"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Busca"
--- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; in ROUTES_MORE_WAYPOINTS, %d is how many waypoints it hides
 L["ROUTES_MORE_WAYPOINT"] = "1 punto de ruta más"
 L["ROUTES_MORE_WAYPOINTS"] = "%d puntos de ruta más"
 L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
@@ -625,13 +631,31 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorar este punto de ruta"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorar este objetivo"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Volver a la ruta"
-L["ROUTES_RIGHT_CLICK_ADD"] = "Añadir a la ruta"
+-- TRANSLATORS: beside ROUTES_CLICK or ROUTES_CLICK_RIGHT, on Zone Info and on a map marker for a quest to pick up; puts the quest on the route
+L["ROUTES_ADD_TO_ROUTE"] = "Añadir a la ruta"
+-- TRANSLATORS: as ROUTES_ADD_TO_ROUTE, for a quest to pick up already put on the route; takes it back off
+L["ROUTES_TAKE_OFF_ROUTE"] = "Quitar de la ruta"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Restablecer esta zona"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Mostrar la ruta completa"
+-- TRANSLATORS: the rows of a zone's list on the continent and world maps, each with how many quests to pick up there have that level color (as WoW colors quests by level) on the right
+L["ROUTES_ZONE_AVAILABLE_RED"] = "Misiones rojas disponibles"
+L["ROUTES_ZONE_AVAILABLE_ORANGE"] = "Misiones naranjas disponibles"
+L["ROUTES_ZONE_AVAILABLE_YELLOW"] = "Misiones amarillas disponibles"
+L["ROUTES_ZONE_AVAILABLE_GREEN"] = "Misiones verdes disponibles"
+L["ROUTES_ZONE_AVAILABLE_GRAY"] = "Misiones grises disponibles"
+-- TRANSLATORS: the zone menu's row counting the group, dungeon and raid quests to pick up, on the continent and world maps
+L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Misiones de mazmorra y grupo disponibles"
+-- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
+L["ROUTES_ZONE_OBJECTIVES"] = "Objetivos"
+-- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
+L["ROUTES_ZONE_MORE"] = "Y %d más..."
+-- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
+L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Abrir el mapa de la zona"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "Ignorando %s hasta que restablezcas la zona."
-L["ROUTES_REROUTING"] = "Recalculando la ruta…"
+-- TRANSLATORS: on the world map while the route is planned again after clicks on its markers
+L["ROUTES_REROUTING"] = "Recalculando la ruta..."
 L["ROUTES_ZONE_RESET"] = "Zona restablecida: los objetivos ignorados aquí vuelven a estar en la ruta."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"Has dejado el grupo: los objetivos de grupo y los miembros ignorados vuelven a estar en la ruta."
@@ -657,6 +681,7 @@ L["ROUTES_MENU_PICK_UP"] = "Aceptación de %s"
 L["ROUTES_MENU_FLIGHT_PATH"] = "Ruta de vuelo de %s"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Vuelo a %s"
+-- TRANSLATORS: %s is where a city's gate leads, such as "Durotar"
 L["ROUTES_MENU_EXIT"] = "Camino a %s"
 L["ROUTES_MENU_SHOWN_FLIGHTS"] = "Rutas de vuelo"
 L["ROUTES_MENU_SHOWN_PARTY"] = "Objetivos del grupo"
@@ -673,7 +698,10 @@ L["ROUTES_IGNORED"] = "Ignorando %s de %s hasta que restablezcas la zona."
 L["ROUTES_IGNORED_PARTY"] = "Ignorando %s de %s hasta que los miembros del grupo que la tienen dejen el grupo."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s vuelve a estar en la ruta."
+-- TRANSLATORS: %s is a quest link
 L["ROUTES_ADDED"] = "%s está en la ruta hasta que restablezcas la zona."
+-- TRANSLATORS: %s is a quest link
+L["ROUTES_REMOVED"] = "%s ya no está en la ruta."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "Los objetivos de %s quedan fuera de la ruta."
 -- TRANSLATORS: %s is a party member's name

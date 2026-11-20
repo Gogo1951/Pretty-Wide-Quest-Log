@@ -1,8 +1,9 @@
 local _, ns = ...
 
 --[[
-	Routes: Questie's own map icons for what the route's markers stand in for, hidden on every map while the
-	Routes map shows, but for the hovered marker's, and the textures the markers borrow from them
+	Routes: Questie's own map icons for what the route's markers stand in for, and its ! for every quest to
+	pick up but a many-source drop, hidden on every map while the Routes map shows, but for the hovered
+	marker's, and those in other zones on a zone's map, and the textures the markers borrow from them
 ]]
 
 local routes = ns.routes
@@ -90,6 +91,36 @@ local function IsPartyIcon(data)
 	return objective and objective.IsPartyObjective == true or false
 end
 
+--[[
+	Whether a quest's Questie ! stays while every other is hidden: one started by an item that several kinds
+	of creature or object drop, which the route has no marker for (routes.pickUpHelpers.IsManySourceDrop).
+	Kept by quest ID once Questie's database answers; the database doesn't change
+]]
+local keepsIcon = {}
+local function KeepsQuestieIcon(questID)
+	local kept = keepsIcon[questID]
+	if kept == nil then
+		local helpers = routes.pickUpHelpers
+		local QuestieDB = ns.ImportQuestieModule("QuestieDB")
+		if not (helpers and QuestieDB and type(QuestieDB.QueryQuestSingle) == "function" and questID) then
+			return true -- Nothing to tell by yet: Questie's icon stays
+		end
+		kept = helpers.IsManySourceDrop(QuestieDB, questID)
+		keepsIcon[questID] = kept
+	end
+	return kept
+end
+
+--[[
+	Questie's ! for a quest to pick up, hidden whatever its kind while the route draws pick-ups (Nearby
+	Pick-Ups or Plan Ahead): dungeon, raid, elite and group quests, ones below Lowest Quest Level and ones
+	whose giver has no place, as much as those with a marker. Only a many-source drop's stays
+	(KeepsQuestieIcon). With Your Quests Only the route draws none, so Questie's stay but for those on the route
+]]
+local function IsHiddenPickUp(data, current)
+	return data.Type == "available" and current.allPickUps and not KeepsQuestieIcon(data.Id)
+end
+
 -- The sets a pin is checked against, worked out at most once a frame: Questie places pins a batch at a time
 local sets, setsTime = {}, nil
 local function Sets()
@@ -97,26 +128,65 @@ local function Sets()
 	if setsTime ~= now then
 		setsTime = now
 		-- Not on a continent's or the world's map while it has no markers to stand in for them
-		sets.hide = routes.IsMapShownOn(WorldMapFrame and WorldMapFrame:GetMapID())
-			and routes.Settings().hideQuestieIcons
+		local mapID = WorldMapFrame and WorldMapFrame:GetMapID()
+		sets.hide = routes.IsMapShownOn(mapID) and routes.Settings().hideQuestieIcons
+		sets.zoneMapID = mapID and not routes.IsWideMap(mapID) and mapID or nil -- A zone's map keeps to its zone
+		sets.allPickUps = routes.PlansPickUps() -- Every Questie ! but a many-source drop's hides (IsHiddenPickUp)
 		sets.objectives, sets.turnIns, sets.pickUps = RouteTasks()
+		--[[
+			Every quest to pick up the map's zone discs count, on a continent's or the world's map, or that has
+			a marker on a zone's map in place of the route's (Routes-Map-Zones.lua)
+		]]
+		for questID in pairs(routes.zoneDiscQuests or {}) do
+			sets.pickUps[questID] = true
+		end
 		sets.hoveredObjectives, sets.hoveredTurnIns, sets.hoveredPickUps = HoveredTasks()
 	end
 	return sets
 end
 
 --[[
-	Hides the pins holding Questie's icons for what the route stands in for, and for every party member's
-	objective, but for the hovered stop's, and shows again any it hid before that no longer are. The pins
-	are HereBeDragons', which Questie never shows or hides itself, so Questie's own icon state is left
-	alone, and a pin handed out again shows on its own
+	Whether a pin stands outside the zone a zone's map is of, as the route's markers keep to it
+	(routes.IsInMapZone): a zone's map reaches over its neighbors' edges, and their icons there are theirs.
+	A city in it or a zone linked to it counts as in it, so Thunder Bluff's show on Mulgore's map. Worked
+	out once for each pin's place on the map, a pin being handed out again for another icon
+]]
+local function IsOtherZonePin(pin, mapID)
+	local x, y = pin:GetPosition()
+	if not (mapID and x and y) then
+		return false
+	end
+	local place = pin.routeZonePlace
+	if not (place and place.mapID == mapID and place.x == x and place.y == y) then
+		local hereBeDragons = routes.HereBeDragons()
+		local worldX, worldY, instance
+		if hereBeDragons then
+			worldX, worldY, instance = hereBeDragons:GetWorldCoordinatesFromZone(x, y, mapID)
+		end
+		place = place or {}
+		place.mapID, place.x, place.y = mapID, x, y
+		place.outside = worldX ~= nil and not routes.IsInMapZone({ x = worldX, y = worldY, instance = instance }, mapID)
+		pin.routeZonePlace = place
+	end
+	return place.outside
+end
+
+--[[
+	Hides the pins holding Questie's icons for what the route stands in for, for every party member's
+	objective and for every quest to pick up but a many-source drop (IsHiddenPickUp), but for the hovered
+	stop's, and every one in another zone on a zone's map (IsOtherZonePin), and shows again any it hid
+	before that no longer are. The pins are HereBeDragons', which Questie never shows or hides itself, so
+	Questie's own icon state is left alone, and a pin handed out again shows on its own
 ]]
 local function ApplyToPin(pin, current)
 	local data = pin.icon and pin.icon.data
-	local hidden = current.hide
-		and data
-		and (IsRouteIcon(data, current.objectives, current.turnIns, current.pickUps) or IsPartyIcon(data))
-		and not IsRouteIcon(data, current.hoveredObjectives, current.hoveredTurnIns, current.hoveredPickUps)
+	local covered = false
+	if data then
+		local onRoute = IsRouteIcon(data, current.objectives, current.turnIns, current.pickUps)
+		local hovered = IsRouteIcon(data, current.hoveredObjectives, current.hoveredTurnIns, current.hoveredPickUps)
+		covered = (onRoute or IsPartyIcon(data) or IsHiddenPickUp(data, current)) and not hovered
+	end
+	local hidden = current.hide and (covered or IsOtherZonePin(pin, current.zoneMapID))
 	if hidden then
 		pin:Hide()
 		pin.hiddenByRoute = true

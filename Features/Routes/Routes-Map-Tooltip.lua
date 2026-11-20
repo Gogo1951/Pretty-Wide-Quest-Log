@@ -30,6 +30,7 @@ local OFF_ROUTE_REASONS = {
 	pvp = "ROUTES_OFF_ROUTE_PVP",
 	level = "ROUTES_OFF_ROUTE_LEVEL", -- Formatted with the level it goes on the route at (task.opensAt)
 	xp = "ROUTES_OFF_ROUTE_XP",
+	zone = "ROUTES_OFF_ROUTE_ZONE", -- In a zone the route isn't planned in (Routes-Map-Zones.lua)
 }
 
 -- A name in its class color, where the client says the class

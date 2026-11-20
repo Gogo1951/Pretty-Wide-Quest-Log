@@ -2849,7 +2849,7 @@ ns.QUEST_ITEM_COUNTS = "\n"
 How We Got the Data
 
 Last Validated
-	2026-11-13, Season of Discovery 1.15.9.70576
+	2026-11-20, wago.tools, Season of Discovery 1.15.9.70576
 
 Notes
 	- How many of each item a quest asks the player to bring, for Zone Info's Things to Bring column
@@ -2860,6 +2860,8 @@ Notes
 	- A quest missing from here, one of the server's own or one the dump doesn't have, takes its count from
 	  the quest's objective text where the item is named after a number, and from the quest log once the
 	  player has the quest.
+	- QuestieDB lists 534 quests of Season of Discovery's own that ask for items. No open database has their
+	  counts, so they're left to the objective text and the quest log.
 
 SQL (CMaNGOS)
 	CMaNGOS classic-db, Full_DB/ClassicDB_1_12_1_z2815.sql.gz (https://github.com/cmangos/classic-db)
@@ -2873,8 +2875,9 @@ Wowhead
 	None.
 
 wago.tools
-	None.
+	https://wago.tools/db2/Item?build=1.15.9.70576
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/Classic/classicQuestDB.lua
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/src/corrections/Sod/sodBaseQuests.lua
 ]]

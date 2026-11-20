@@ -120,13 +120,17 @@ function routes.TaskText(task)
 	return routes.ObjectiveText(task.objective or {})
 end
 
--- The color Questie gave the task's objective, the turn-in's gold, an escort pick-up's, a flight path's, a flight's or a gate's green, or the corpse's white
+--[[
+	The color Questie gave the task's objective, the turn-in's gold, a flight path's, a flight's or a gate's
+	green, the corpse's white, or a pick-up's level color (routes.QuestColorKey), an escort's too
+]]
 function routes.TaskColor(task)
 	if task.kind == "corpse" then
 		return ns.GetColorRGB("TEXT")
 	end
-	if task.kind == "pickUp" and task.escort then
-		return ns.GetColorRGB("ROUTE_ESCORT")
+	local levelColor = task.kind == "pickUp" and routes.QuestColorKey(task.questID)
+	if levelColor then
+		return routes.ZoneColorRGB(levelColor)
 	end
 	if task.kind == "flightPath" or task.kind == "fly" or task.kind == "exit" then
 		return ns.GetColorRGB("ROUTE_FLIGHT")

@@ -20,7 +20,7 @@ L["CHAT_KEY_BINDINGS_IN_COMBAT"] =
 L["KEY_BINDINGS_LOCATION"] =
 	"게임 메뉴를 열고 %s, %s 순서로 들어간 다음 Pretty Wide Quest Log 항목을 찾으세요."
 L["CHAT_QUESTIE_MISSING_FEATURES"] =
-	"Questie가 없으면 퀘스트 지도에 표시되는 내용이 줄고, 연계 퀘스트와 완료 보상 합계가 숨겨집니다. 보려면 애드온 목록에서 Questie를 켜세요."
+	"Questie가 없으면 퀘스트 경로와 퀘스트 화살표가 없고, 퀘스트 지도에 표시되는 내용이 줄며, 연계 퀘스트와 완료 보상 합계가 숨겨집니다. 보려면 애드온 목록에서 Questie를 켜세요."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus도 켜져 있어 두 애드온이 퀘스트 목록을 두고 충돌합니다. 애드온 목록에서 Wide Quest Log Plus를 끈 다음 UI를 다시 불러오세요."
 
@@ -28,6 +28,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 -- Options: General Panel
 --------------------------------------------------------------------------------
 
+L["OPTIONS_RESET"] = "초기화"
 L["OPTIONS_DESCRIPTION"] =
 	"레벨업을 위한 넓은 퀘스트 목록이자 퀘스트 도우미입니다. 직접 고른 퀘스트를 잇는 퀘스트 경로, 경유지 화살표, 퀘스트 레벨, 태그, 보상, 연계 퀘스트, 퀘스트 지도, 파티 퀘스트 공유를 지원합니다. Questie, Spoken, VoiceOver, ElvUI와 함께 작동합니다."
 L["ENABLE_WELCOME_MESSAGE"] = "환영 메시지 사용"
@@ -110,14 +111,14 @@ L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
 L["NEEDS_QUESTIE_HINT"] = "이 기능을 사용하려면 Questie를 켜세요."
 L["SHOW_ZONE_INFO"] = "지역 정보 표시"
 L["SHOW_ZONE_INFO_DESCRIPTION"] =
-	"지도 아래에 지도가 보여 주는 지역을 위해 다른 지역에서 받을 수 있는 퀘스트와, 그 지역 퀘스트가 요구하는 아이템을 보여 줍니다. 자리를 만들기 위해 지도가 창 높이의 절반으로 줄어듭니다."
+	"지도 아래에 지도가 보여 주는 지역을 위해 다른 지역에서 받을 수 있는 퀘스트와, 그 지역 퀘스트가 요구하는 아이템을 나열합니다. 자리를 만들기 위해 지도가 창 높이의 절반으로 줄어듭니다."
 L["WINDOW_SCALE"] = "퀘스트 목록 크기 비율"
 L["WINDOW_SCALE_DESCRIPTION"] =
 	"퀘스트 목록을 크게 또는 작게 만듭니다. 옆의 지도도 함께 커지고 작아집니다."
 L["MAP_SCALE"] = "지도 크기 비율"
 L["MAP_SCALE_DESCRIPTION"] =
 	"퀘스트 목록 옆의 지도를 크게 또는 작게 만듭니다. 퀘스트 목록 크기 비율에 더해 적용됩니다."
-L["RESET_WINDOW_BUTTON"] = "창 초기화"
+L["RESET_WINDOW"] = "창 초기화"
 L["RESET_WINDOW_SCALE_DESCRIPTION"] =
 	"퀘스트 목록의 높이와 크기 비율, 지도 크기 비율을 기본값으로 되돌립니다."
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
@@ -134,9 +135,9 @@ L["HANDY_CLICK_MENU_DESCRIPTION"] = "추적, 공유 또는 포기합니다."
 L["HANDY_CLICK_ID"] = "퀘스트 ID 클릭"
 L["HANDY_CLICK_ID_DESCRIPTION"] = "Wowhead 링크를 받습니다."
 L["QUEST_LOG_SUB_PANELS_DESCRIPTION"] =
-	"세부 설정은 이 패널 아래에 있는 퀘스트 리스트, 퀘스트 세부 정보, 창 및 지도, NPC 대화 패널에 있습니다."
+	"세부 설정은 이 페이지 아래에 있는 퀘스트 리스트, 퀘스트 세부 정보, 창 및 지도, NPC 대화 페이지에 있습니다."
 L["NEEDS_WIDE_QUEST_LOG"] =
-	"넓은 퀘스트 목록을 위한 설정입니다. 사용하려면 넓은 퀘스트 목록 패널에서 넓은 퀘스트 목록 사용을 켜세요."
+	"넓은 퀘스트 목록이 꺼져 있어 이 설정은 사용되지 않습니다. 켜는 스위치는 넓은 퀘스트 목록 페이지에 있습니다."
 L["TAB_QUEST_LIST"] = "퀘스트 리스트"
 L["TAB_QUEST_LIST_DESCRIPTION"] = "퀘스트 목록 왼쪽에 지역별로 나열되는 내 퀘스트입니다."
 L["TAB_QUEST_DETAILS"] = "퀘스트 세부 정보"
@@ -196,7 +197,8 @@ L["FONT_SHADOW_DESCRIPTION"] =
 L["FONT_SLUG"] = "더 선명한 글자 (Slug)"
 L["FONT_SLUG_DESCRIPTION"] =
 	"블리자드의 새 Slug 렌더러로 글자를 그려, 어떤 크기에서도 글자가 더 선명해집니다. Slug는 두꺼운 외곽선이나 그림자를 그릴 수 없으므로, 둘 중 하나가 있는 글자는 원래 방식으로 그립니다."
-L["FONT_RESET_BUTTON"] = "글꼴 초기화"
+L["FONT_RESET"] = "글꼴 초기화"
+L["FONT_RESET_CONFIRM"] = "이 글꼴의 서체, 크기, 외곽선, 그림자, Slug를 기본값으로 되돌릴까요?"
 L["FONT_RESET_DESCRIPTION"] = "이 글꼴의 설정을 기본값으로 되돌립니다."
 
 --------------------------------------------------------------------------------
@@ -210,21 +212,21 @@ L["QUEST_SHARING_HEADER"] = "퀘스트 공유"
 L["QUEST_SHARING_INTRO"] =
 	"퀘스트 목록에서 지역 이름에 마우스를 올리고 퀘스트 공유를 클릭하면 그 지역에서 공유할 수 있는 퀘스트를 모두 하나씩 차례로 파티에 제안합니다. 이 설정에서 그 속도와 누군가 퀘스트를 놓쳤을 때 어떻게 할지 정합니다."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"지역 이름의 퀘스트 공유 버튼을 사용하려면 넓은 퀘스트 목록 사용이 필요합니다. 던전 퀘스트 공유는 이 설정 없이도 작동합니다."
+	"지역 이름의 퀘스트 공유 버튼을 사용하려면 넓은 퀘스트 목록이 필요합니다. 던전 퀘스트 공유는 이 설정 없이도 작동합니다."
 L["SHARE_INTERVAL"] = "공유 간격(초)"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"공유한 퀘스트 하나와 다음 퀘스트 사이에 기다리는 시간으로, 지역이나 던전의 퀘스트를 공유할 때 적용됩니다. 길수록 파티원이 각 퀘스트를 수락할 시간이 늘어납니다."
 L["SHARE_WHISPERS"] = "공유 실패 시 귓속말"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"파티원이 다른 일을 하고 있거나, 너무 멀리 있거나, 퀘스트 목록이 가득 찼을 때 공유하려던 퀘스트를 귓속말로 알려 주고 다시 말해 달라고 부탁합니다. 파티원이 퀘스트를 받을 자격이 없거나, 이미 진행 중이거나, 이미 완료했다면 아무것도 보내지 않습니다."
-L["ZONE_SHARE_OFFERS"] = "새 파티원에게 내 지역 퀘스트가 없을 때 알림"
+L["ZONE_SHARE_OFFERS"] = "새 파티원에게 필요한 퀘스트 알림"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"파티에 들어가거나 누군가 내 파티에 들어오면 Questie가 퀘스트 목록을 주고받도록 20초 기다린 뒤, 내 지역에 목표가 있는 내 퀘스트 중 새 파티원에게 없는 퀘스트 수를 대화창에 알려 주어 퀘스트 공유를 누를 수 있게 합니다. 공유할 수 있는 퀘스트만 세며, 여러 명에게 없어도 한 번만 셉니다. 누구에게도 메시지를 보내지 않습니다. 퀘스트를 확인할 수 없는 파티원(Questie 없음, 거리 밖)은 세지 않습니다. 누군가 들어올 때마다 한 번 알리며, 던전이나 공격대에서는 알리지 않습니다."
+	"누군가 파티에 들어오면, 이 지역의 내 퀘스트 중 그 사람에게 없고 내가 공유할 수 있는 퀘스트 수를 대화창에 알려 주어 퀘스트 공유를 누를 수 있게 합니다. 누구에게도 메시지를 보내지 않습니다. 던전이나 공격대에서는 알리지 않습니다."
 L["ZONE_SHARE_OFFERS_SOUND"] = "소리 재생"
 L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] =
 	"대화창이 바쁠 때를 위해 알림과 함께 경고음을 재생합니다."
-L["ZONE_SHARE_SOUND_PREVIEW"] = "클릭하면 경고음을 들어 볼 수 있습니다."
-L["SAMPLE_EXAMPLE"] = "예시: %s"
+L["OPTIONS_SOUND_PREVIEW_DESCRIPTION"] = "소리가 켜져 있든 꺼져 있든 이 소리를 지금 재생합니다."
+L["SAMPLE_EXAMPLE"] = "예시"
 L["SAMPLE_QUEST_LOADING"] = "퀘스트 ID 불러오는 중: %d"
 L["DUNGEON_QUESTS_HEADER"] = "던전 퀘스트"
 L["DUNGEON_QUESTS_INTRO"] =
@@ -234,7 +236,7 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"방금 들어간 던전에서 아직 해야 할 퀘스트를 파티에 알려, 모두가 무엇을 챙겨야 할지 알 수 있게 합니다. 완료 보고만 남은 퀘스트는 빠집니다."
 L["DUNGEON_SHARE"] = "던전 퀘스트 자동 공유"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"그 던전의 퀘스트 중 게임이 공유를 허용하고 아직 없는 파티원이 있는 퀘스트를 모두, 퀘스트 공유에서 정한 속도로, 모두가 거리 안에 들어오면(또는 1분 뒤, WoW Forever에서는 바로) 공유합니다. 파티원마다 던전당 한 번 받으므로 나중에 들어온 사람도 받으며, 나갔다 다시 들어와도 다시 공유하지 않습니다. 공유 실패 시 귓속말이 켜져 있으면 공유를 놓친 파티원에게 귓속말을 보내 다시 요청할 수 있게 합니다."
+	"방금 들어간 던전의 퀘스트를, 퀘스트 공유에서 정한 속도로, 그 퀘스트가 없는 파티원 모두에게 공유합니다. 파티원마다 던전당 한 번 받으므로 늦게 들어온 사람도 받습니다."
 
 --------------------------------------------------------------------------------
 -- Options: Maps & Objectives Panels
@@ -244,8 +246,11 @@ L["TAB_MAPS_OBJECTIVES"] = "지도 및 목표"
 L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"여러 퀘스트 아이콘 대신, 지역 지도에 목표와 완료 보고 장소마다 표식을 하나씩 표시합니다."
 L["MAPS_SUB_PANELS_DESCRIPTION"] =
-	"각 지도의 설정은 이 패널 아래에 있는 미니맵, 지역 지도, 대륙 및 세계 지도 패널에 있습니다."
-L["MAPS_NEED_MARKERS"] = "표식은 경유지 표식 사용이 켜져 있을 때만 표시됩니다."
+	"각 지도의 설정은 이 페이지 아래에 있는 미니맵, 지역 지도, 대륙 및 세계 지도 페이지에 있습니다."
+L["ROUTES_NEED_QUESTIE"] =
+	"Questie가 꺼져 있어 표시할 경로가 없습니다. 애드온 목록에서 Questie를 켜세요."
+L["MAPS_NEED_MARKERS"] =
+	"경유지 표식이 꺼져 있어 이 설정은 사용되지 않습니다. 켜는 스위치는 지도 및 목표 페이지에 있습니다."
 L["TAB_MINIMAP"] = "미니맵"
 L["TAB_MINIMAP_DESCRIPTION"] =
 	"미니맵의 Questie 아이콘은 무엇이 어디에 나타나고 어디서 획득하는지 정확히 보여 주므로 항상 그대로 둡니다. 경로 표식은 그 옆에 표시할 수 있습니다."
@@ -290,7 +295,7 @@ L["TAB_QUEST_ROUTE"] = "퀘스트 경로"
 L["TAB_QUEST_ROUTE_DESCRIPTION"] =
 	"현재 위치에서 시작해 경유지 표식을 할 순서대로 잇는, 지역 지도 위의 경로입니다."
 L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
-	"퀘스트 경로는 경유지 표식 사이를 잇기 때문에, 경유지 표식 사용이 켜져 있을 때만 표시됩니다."
+	"퀘스트 경로는 경유지 표식 사이를 잇기 때문에, 경유지 표식이 켜져 있을 때만 표시됩니다."
 L["ROUTES_LINE_HEADER"] = "경로선"
 L["ROUTES_LINE_DESCRIPTION"] = "내 위치에서 각 표식까지 이어지는 움직이는 점입니다."
 L["LINE_SPEED"] = "경로선 속도"
@@ -314,7 +319,7 @@ L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"퀘스트를 주는 대상이 몇 미터 안에 있어야 포함되는지 정합니다. 400 미만이면 경로를 다시 계산하는 사이에 지나친 대상을 놓칠 수 있습니다."
 L["LOCAL_ESCORT_QUESTS"] = "호위 퀘스트"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"가는 길에 NPC를 지켜야 하는 퀘스트로, 시간이 걸리고 파티가 필요한 경우가 많습니다. 지도 표식은 초록색입니다."
+	"가는 길에 NPC를 지켜야 하는 퀘스트로, 시간이 걸리고 파티가 필요한 경우가 많습니다."
 L["LOCAL_OTHER_ZONE_QUESTS"] = "다른 지역에 목표가 있는 퀘스트"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"목표나 보고 장소가 현재 지역 밖에만 있는 퀘스트입니다. 다음 마을로 보내는 퀘스트 등이 해당합니다."
@@ -400,7 +405,6 @@ L["ARROW_SIZE_DESCRIPTION"] = "퀘스트 화살표와 그 아래 글자의 크�
 L["LOCK_ARROW"] = "퀘스트 화살표 잠금"
 L["LOCK_ARROW_DESCRIPTION"] = "퀘스트 화살표를 제자리에 고정해 끌어도 움직이지 않게 합니다."
 L["RESET_ARROW"] = "화살표 위치"
-L["RESET_ARROW_BUTTON"] = "초기화"
 L["RESET_ARROW_CONFIRM"] = "퀘스트 화살표를 처음 위치로 되돌릴까요?"
 L["RESET_ARROW_DESCRIPTION"] = "퀘스트 화살표를 처음 위치인 화면 위쪽 가운데로 되돌립니다."
 L["QUEST_ARROW_TEXT_HEADER"] = "화살표 아래"
@@ -418,7 +422,7 @@ L["QUESTS_LISTED_DESCRIPTION"] =
 	'퀘스트 화살표가 한 경유지에 대해 아래에 나열하는 최대 퀘스트 수입니다. 나머지는 "%s"처럼 별도의 줄에 개수로 표시됩니다.'
 L["SHOW_ITEM_BUTTONS"] = "퀘스트 아이템 버튼 표시"
 L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
-	"퀘스트 화살표가 나열하는 퀘스트 중 사용할 아이템이 있는 퀘스트 옆에 버튼을 놓습니다. 던지거나, 심거나, 대상에게 사용하는 아이템 등이 해당됩니다. 버튼을 클릭해 아이템을 사용하거나, Pretty Wide Quest Log 패널의 단축키 설정에서 퀘스트 아이템 사용에 키를 지정해 첫 번째 아이템을 사용하세요. 전투 중에는 전투가 끝날 때까지 버튼이 제자리에 있습니다."
+	"퀘스트 화살표가 나열하는 퀘스트 중 사용할 아이템이 있는 퀘스트 옆에 버튼을 놓습니다. 던지거나, 심거나, 대상에게 사용하는 아이템 등이 해당됩니다. 버튼을 클릭해 아이템을 사용하거나, Pretty Wide Quest Log 페이지의 단축키 설정에서 퀘스트 아이템 사용에 키를 지정해 첫 번째 아이템을 사용하세요. 전투 중에는 전투가 끝날 때까지 버튼이 제자리에 있습니다."
 -- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_NEXT_OBJECTIVE
 L["SHOW_NEXT_OBJECTIVE"] = "다음 목표 표시"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
@@ -506,8 +510,6 @@ L["ZONE_INFO_GIVER"] = "제공: %s"
 L["ZONE_INFO_GIVER_PLACE"] = "%s - %s"
 L["ZONE_INFO_SHAREABLE"] = "공유 가능"
 L["ZONE_INFO_NOT_SHAREABLE"] = "공유 불가"
-L["ZONE_INFO_TRACK"] = "경로에 추가"
-L["ZONE_INFO_UNTRACK"] = "경로에서 빼기"
 -- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "필요한 퀘스트"
 L["ZONE_INFO_SHIFT_CLICK"] = "Shift-클릭"
@@ -586,6 +588,7 @@ L["ROUTES_FLIGHT_PATH"] = "비행 경로 얻기"
 L["ROUTES_FLIGHT_PATH_FROM"] = "%s에게서 비행 경로 얻기"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "%s에게 말을 걸어 %s(으)로 비행하기"
+-- TRANSLATORS: %s is where a city's gate leads, the zone around it or the city itself, such as "Durotar" or "Orgrimmar"
 L["ROUTES_EXIT_TO"] = "%s(으)로 이동"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "호위 퀘스트, 경로에 없음"
@@ -600,6 +603,8 @@ L["ROUTES_OFF_ROUTE_PVP"] = "PvP 퀘스트, 경로에 없음"
 -- TRANSLATORS: %d is the player level at which the quest goes on the route
 L["ROUTES_OFF_ROUTE_LEVEL"] = "%d레벨에 경로에 추가"
 L["ROUTES_OFF_ROUTE_XP"] = "거리 대비 경험치 적음, 경로에 없음"
+-- TRANSLATORS: under a quest to pick up on the map of a zone you are not in; a right-click puts it on the route for when you get there
+L["ROUTES_OFF_ROUTE_ZONE"] = "다른 지역, 아직 경로에 없음"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "%s 받은 후"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -611,7 +616,7 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "파티원이 %s 완료 보고 후"
 L["ROUTES_CORPSE"] = "내 시체로 달려가세요"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "찾을 대상"
--- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; in ROUTES_MORE_WAYPOINTS, %d is how many waypoints it hides
 L["ROUTES_MORE_WAYPOINT"] = "경유지 1개 더"
 L["ROUTES_MORE_WAYPOINTS"] = "경유지 %d개 더"
 L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
@@ -629,13 +634,31 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "이 경유지 무시"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "이 목표 무시"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "다시 경로에 포함"
-L["ROUTES_RIGHT_CLICK_ADD"] = "경로에 추가"
+-- TRANSLATORS: beside ROUTES_CLICK or ROUTES_CLICK_RIGHT, on Zone Info and on a map marker for a quest to pick up; puts the quest on the route
+L["ROUTES_ADD_TO_ROUTE"] = "경로에 추가"
+-- TRANSLATORS: as ROUTES_ADD_TO_ROUTE, for a quest to pick up already put on the route; takes it back off
+L["ROUTES_TAKE_OFF_ROUTE"] = "경로에서 제외"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "이 지역 초기화"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "전체 경로 표시"
+-- TRANSLATORS: the rows of a zone's list on the continent and world maps, each with how many quests to pick up there have that level color (as WoW colors quests by level) on the right
+L["ROUTES_ZONE_AVAILABLE_RED"] = "수락 가능한 빨간색 퀘스트"
+L["ROUTES_ZONE_AVAILABLE_ORANGE"] = "수락 가능한 주황색 퀘스트"
+L["ROUTES_ZONE_AVAILABLE_YELLOW"] = "수락 가능한 노란색 퀘스트"
+L["ROUTES_ZONE_AVAILABLE_GREEN"] = "수락 가능한 초록색 퀘스트"
+L["ROUTES_ZONE_AVAILABLE_GRAY"] = "수락 가능한 회색 퀘스트"
+-- TRANSLATORS: the zone menu's row counting the group, dungeon and raid quests to pick up, on the continent and world maps
+L["ROUTES_ZONE_AVAILABLE_GROUP"] = "수락 가능한 던전 및 파티 퀘스트"
+-- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
+L["ROUTES_ZONE_OBJECTIVES"] = "목표"
+-- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
+L["ROUTES_ZONE_MORE"] = "그 외 %d개..."
+-- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
+L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "지역 지도 열기"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "지역을 초기화할 때까지 %s 항목을 무시합니다."
-L["ROUTES_REROUTING"] = "경로 재계산 중…"
+-- TRANSLATORS: on the world map while the route is planned again after clicks on its markers
+L["ROUTES_REROUTING"] = "경로 재계산 중..."
 L["ROUTES_ZONE_RESET"] = "지역 초기화: 이곳에서 무시한 목표가 다시 경로에 포함되었습니다."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"파티를 떠났습니다: 무시한 파티 목표와 파티원이 다시 경로에 포함되었습니다."
@@ -662,6 +685,7 @@ L["ROUTES_MENU_PICK_UP"] = "%s 받기"
 L["ROUTES_MENU_FLIGHT_PATH"] = "%s 비행 경로"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "%s(으)로 비행"
+-- TRANSLATORS: %s is where a city's gate leads, such as "Durotar"
 L["ROUTES_MENU_EXIT"] = "%s 가는 길"
 L["ROUTES_MENU_SHOWN_FLIGHTS"] = "비행 경로"
 L["ROUTES_MENU_SHOWN_PARTY"] = "파티 목표"
@@ -679,7 +703,10 @@ L["ROUTES_IGNORED_PARTY"] =
 	"%s 항목(%s)을 해당 퀘스트를 가진 파티원이 파티를 떠날 때까지 무시합니다."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s 항목이 다시 경로에 포함되었습니다."
+-- TRANSLATORS: %s is a quest link
 L["ROUTES_ADDED"] = "지역을 초기화할 때까지 %s 퀘스트가 경로에 포함됩니다."
+-- TRANSLATORS: %s is a quest link
+L["ROUTES_REMOVED"] = "%s 퀘스트가 경로에서 제외되었습니다."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "%s 님의 목표를 경로에서 제외합니다."
 -- TRANSLATORS: %s is a party member's name

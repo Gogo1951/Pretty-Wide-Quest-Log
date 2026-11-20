@@ -38,10 +38,13 @@ local function OutOfMicro(mapID)
 	return mapID
 end
 
+routes.OutOfMicro = OutOfMicro -- For the markers a zone's map keeps to that zone (Routes-Map.lua)
+
 local function ZoneOf(mapID)
 	mapID = OutOfMicro(mapID)
 	return mapID and CITY_ZONES[mapID] or mapID
 end
+routes.ZoneOf = ZoneOf -- The zone a map's pick-ups belong to, a city's its zone's (Routes-Map-Zones.lua)
 
 -- The city the player is standing in, its own map, or nothing outside one (Routes-Cities.lua)
 function routes.PlayerCity()

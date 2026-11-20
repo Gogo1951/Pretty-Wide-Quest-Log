@@ -7,7 +7,7 @@ ns.CORPSE_ICON_COORDS = { 0.56640625, 0.6328125, 0.001953125, 0.03515625 }
 How We Got the Data
 
 Last Validated
-	2026-11-13, WoW Forever 1.60.1.70938
+	2026-11-20, wago.tools, WoW Forever 1.60.1.70959
 
 Notes
 	- The cell of the POI icons (Interface\\Minimap\\POIIcons) holding the corpse's gravestone, as this client's
@@ -24,7 +24,7 @@ Wowhead
 	None.
 
 wago.tools
-	None.
+	https://wago.tools/db2/ManifestInterfaceData?build=1.60.1.70959
 
 QuestieDB
 	None.

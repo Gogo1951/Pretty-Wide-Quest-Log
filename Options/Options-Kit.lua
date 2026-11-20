@@ -369,9 +369,30 @@ function Kit.SubLabelRow(order, hidden, caption, control, desc)
 	})
 end
 
--- An on/off choice under the control it belongs to.
-function Kit.SubToggleRow(order, hidden, toggle)
+--[[
+    A lone button on a row of its own: its own name on it, at the control
+    column's width, in the control column, never at the left edge at its
+    default width. caption, when given, sits in the label column.
+]]
+function Kit.ButtonRow(order, hidden, button, caption)
+	local name = button.name
+	local row = Kit.LabelRow(order, hidden, caption or " ", button, caption and button.desc or nil)
+	button.name = name
+	return row
+end
+
+--[[
+    An on/off choice under the control it belongs to. preview, when given, is
+    a sound switch's speaker (Kit.SoundPreview) past the row's end, where
+    Kit.ToggleRow puts every other speaker. It stays while the switch is off:
+    it plays whether or not the sound is on, and hearing it first is the point.
+]]
+function Kit.SubToggleRow(order, hidden, toggle, preview)
 	toggle.name = Kit.SubLabel(toggle.name)
+	if preview then
+		toggle.width = Kit.ROW_WIDTH - Kit.SUB_INDENT_WIDTH
+		return Kit.SubRow(order, hidden, { toggle, preview })
+	end
 	toggle.width = Kit.ROW_WIDTH - Kit.SUB_INDENT_WIDTH - 0.2
 	return Kit.SubRow(order, hidden, { toggle })
 end
@@ -654,7 +675,8 @@ function Kit.Example(order, hidden, getLines)
 					type = "description",
 					name = function()
 						local lines = getLines()
-						return type(lines) == "table" and table.concat(lines, "\n") or lines
+						-- A blank line between lines, so each reads as its own chat line.
+						return type(lines) == "table" and table.concat(lines, "\n\n") or lines
 					end,
 					fontSize = "medium",
 					width = Kit.ROW_WIDTH - Kit.SUB_INDENT_WIDTH,

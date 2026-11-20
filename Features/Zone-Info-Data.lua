@@ -536,7 +536,8 @@ function data.SetWanted(questID, wanted)
 		return
 	end
 	list[questID] = wanted and true or nil
-	if ns.routes then
+	-- One whose giver is in another zone is planned once the player gets there (routes.HasGiverHere)
+	if ns.routes and not (ns.routes.HasGiverHere and not ns.routes.HasGiverHere(questID)) then
 		ns.routes.RequestPlan()
 	end
 end

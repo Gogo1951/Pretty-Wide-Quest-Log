@@ -19,7 +19,7 @@ L["CHAT_KEY_BINDINGS_IN_COMBAT"] =
 -- TRANSLATORS: the first %s is the game menu's Options label, the second its Key Bindings label, both from the client
 L["KEY_BINDINGS_LOCATION"] = "Ouvrez le menu du jeu, puis %s, puis %s, et cherchez la section Pretty Wide Quest Log."
 L["CHAT_QUESTIE_MISSING_FEATURES"] =
-	"Sans Questie, la carte de quêtes en montre moins, et les suites de quêtes ainsi que le total À rendre restent masqués. Activez Questie dans la liste des AddOns pour les voir."
+	"Sans Questie, il n'y a ni itinéraire de quête ni Flèche de quête, la carte de quêtes en montre moins, et les suites de quêtes ainsi que le total À rendre restent masqués. Activez Questie dans la liste des AddOns pour les voir."
 L["CHAT_PREDECESSOR_LOADED"] =
 	"Wide Quest Log Plus est aussi activé, et les deux vont se disputer le journal de quêtes. Désactivez Wide Quest Log Plus dans la liste des AddOns, puis rechargez."
 
@@ -27,6 +27,7 @@ L["CHAT_PREDECESSOR_LOADED"] =
 -- Options: General Panel
 --------------------------------------------------------------------------------
 
+L["OPTIONS_RESET"] = "Réinitialiser"
 L["OPTIONS_DESCRIPTION"] =
 	"Journal de quêtes large et assistant de quêtes pour monter de niveau : un itinéraire à travers les quêtes que vous choisissez, une flèche vers chaque point de passage, niveau des quêtes, repères, récompenses, suites de quêtes, carte de quête et partage de quêtes avec le groupe. Compatible avec Questie, Spoken, VoiceOver et ElvUI."
 L["ENABLE_WELCOME_MESSAGE"] = "Activer le message de bienvenue"
@@ -107,14 +108,14 @@ L["SHOW_OBJECTIVE_AREAS_DESCRIPTION"] =
 L["NEEDS_QUESTIE_HINT"] = "Activez Questie pour utiliser cette option."
 L["SHOW_ZONE_INFO"] = "Afficher les infos de zone"
 L["SHOW_ZONE_INFO_DESCRIPTION"] =
-	"Sous la carte, les quêtes d'autres zones que vous pourriez prendre pour la zone affichée, et les objets que demandent les quêtes de cette zone. La carte rétrécit à la moitié de la hauteur de la fenêtre pour faire de la place."
+	"Liste sous la carte les quêtes d'autres zones que vous pouvez prendre pour la zone affichée, et les objets que demandent les quêtes de cette zone. La carte rétrécit à la moitié de la hauteur de la fenêtre pour faire de la place."
 L["WINDOW_SCALE"] = "Échelle du journal de quêtes"
 L["WINDOW_SCALE_DESCRIPTION"] =
 	"Agrandit ou réduit le journal de quêtes. La carte à côté grandit et rétrécit avec lui."
 L["MAP_SCALE"] = "Échelle de la carte"
 L["MAP_SCALE_DESCRIPTION"] =
 	"Agrandit ou réduit la carte à côté du journal de quêtes, en plus de l'échelle du journal de quêtes."
-L["RESET_WINDOW_BUTTON"] = "Réinitialiser la fenêtre"
+L["RESET_WINDOW"] = "Réinitialiser la fenêtre"
 L["RESET_WINDOW_SCALE_DESCRIPTION"] =
 	"Remet la hauteur et l'échelle du journal de quêtes, ainsi que l'échelle de la carte, à leurs valeurs par défaut."
 L["RESET_WINDOW_MOVE_DESCRIPTION"] =
@@ -131,9 +132,9 @@ L["HANDY_CLICK_MENU_DESCRIPTION"] = "Suivez-la, partagez-la ou abandonnez-la."
 L["HANDY_CLICK_ID"] = "Clic sur un ID de quête"
 L["HANDY_CLICK_ID_DESCRIPTION"] = "Obtenez son lien Wowhead."
 L["QUEST_LOG_SUB_PANELS_DESCRIPTION"] =
-	"Ses paramètres se trouvent dans les panneaux sous celui-ci : Liste des quêtes, Détails de la quête, Fenêtre et carte, et Dialogue des PNJ."
+	"Ses paramètres se trouvent sur les pages sous celle-ci : Liste des quêtes, Détails de la quête, Fenêtre et carte, et Dialogue des PNJ."
 L["NEEDS_WIDE_QUEST_LOG"] =
-	"Ces paramètres concernent le journal de quêtes large. Cochez Activer le journal de quêtes large dans le panneau Journal de quêtes large pour les utiliser."
+	"Journal de quêtes large est désactivé, ces paramètres ne servent donc pas. Son interrupteur se trouve sur la page Journal de quêtes large."
 L["TAB_QUEST_LIST"] = "Liste des quêtes"
 L["TAB_QUEST_LIST_DESCRIPTION"] = "Vos quêtes, classées par zone sur le côté gauche du journal de quêtes."
 L["TAB_QUEST_DETAILS"] = "Détails de la quête"
@@ -192,7 +193,9 @@ L["FONT_SHADOW_DESCRIPTION"] =
 L["FONT_SLUG"] = "Texte plus net (Slug)"
 L["FONT_SLUG_DESCRIPTION"] =
 	"Dessine le texte avec le nouveau moteur de rendu Slug de Blizzard, pour des lettres plus nettes à toutes les tailles. Slug ne peut pas dessiner de contour épais ni d'ombre, donc le texte qui a l'un ou l'autre est dessiné comme d'habitude."
-L["FONT_RESET_BUTTON"] = "Réinitialiser la police"
+L["FONT_RESET"] = "Réinitialiser la police"
+L["FONT_RESET_CONFIRM"] =
+	"Remettre la police, la taille, le contour, l'ombre et Slug de ce texte à leurs valeurs par défaut ?"
 L["FONT_RESET_DESCRIPTION"] = "Remet les paramètres de cette police à leurs valeurs par défaut."
 
 --------------------------------------------------------------------------------
@@ -206,21 +209,21 @@ L["QUEST_SHARING_HEADER"] = "Partage de quêtes"
 L["QUEST_SHARING_INTRO"] =
 	"Survolez le nom d'une zone dans le journal de quêtes et cliquez sur Partager les quêtes pour proposer à votre groupe, l'une après l'autre, toutes ses quêtes que vous pouvez partager. Ces options règlent le rythme et ce qui se passe quand quelqu'un en rate une."
 L["ZONE_SHARE_NEEDS_WIDE_LOG"] =
-	"Le bouton Partager les quêtes sur un nom de zone nécessite Activer le journal de quêtes large. Le partage des quêtes de donjon fonctionne sans."
+	"Le bouton Partager les quêtes sur un nom de zone nécessite Journal de quêtes large. Le partage des quêtes de donjon fonctionne sans."
 L["SHARE_INTERVAL"] = "Secondes entre les partages"
 L["SHARE_INTERVAL_DESCRIPTION"] =
 	"Le temps d'attente entre une quête partagée et la suivante, quand vous partagez les quêtes d'une zone ou d'un donjon. Plus il est long, plus votre groupe a le temps d'accepter chacune."
 L["SHARE_WHISPERS"] = "Chuchoter quand un partage échoue"
 L["SHARE_WHISPERS_DESCRIPTION"] =
 	"Quand un membre du groupe est occupé, trop loin ou a un journal de quêtes plein, lui chuchote la quête que vous avez essayé de partager et lui demande de vous la rappeler. Rien n'est envoyé s'il ne remplit pas les conditions de la quête, l'a déjà ou l'a déjà terminée."
-L["ZONE_SHARE_OFFERS"] = "Me prévenir quand il manque des quêtes de ma zone aux nouveaux membres du groupe"
+L["ZONE_SHARE_OFFERS"] = "Me dire ce qu'il manque aux nouveaux membres du groupe"
 L["ZONE_SHARE_OFFERS_DESCRIPTION"] =
-	"Quand vous rejoignez un groupe, ou que quelqu'un rejoint le vôtre, attend 20 secondes que Questie échange les journaux de quêtes, puis vous indique dans le chat combien de vos quêtes ayant des objectifs dans votre zone manquent aux nouveaux membres, pour que vous puissiez cliquer sur Partager les quêtes. Seules les quêtes que vous pouvez partager comptent, chacune une seule fois même si elle manque à plusieurs membres. Rien n'est envoyé à personne. Les membres dont les quêtes ne sont pas visibles (sans Questie, hors de portée) ne sont pas comptés. Une fois à chaque arrivée, jamais dans un donjon ni dans un groupe de raid."
+	"Quand quelqu'un rejoint votre groupe, vous indique dans le chat combien de vos quêtes de cette zone il n'a pas et que vous pouvez partager, pour que vous puissiez cliquer sur Partager les quêtes. Rien n'est envoyé à personne. Pas dans les donjons ni dans les groupes de raid."
 L["ZONE_SHARE_OFFERS_SOUND"] = "Jouer un son"
 L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"] =
 	"Joue une alerte en même temps que le message, pour quand le chat est chargé."
-L["ZONE_SHARE_SOUND_PREVIEW"] = "Cliquez pour écouter l'alerte."
-L["SAMPLE_EXAMPLE"] = "Exemple : %s"
+L["OPTIONS_SOUND_PREVIEW_DESCRIPTION"] = "Joue ce son maintenant, que le son soit activé ou non."
+L["SAMPLE_EXAMPLE"] = "Exemple"
 L["SAMPLE_QUEST_LOADING"] = "Chargement de l'ID de quête : %d"
 L["DUNGEON_QUESTS_HEADER"] = "Quêtes de donjon"
 L["DUNGEON_QUESTS_INTRO"] =
@@ -230,7 +233,7 @@ L["DUNGEON_ANNOUNCE_DESCRIPTION"] =
 	"Indique à votre groupe quelles quêtes il vous reste à faire dans le donjon où vous venez d'entrer, pour que tout le monde sache quoi surveiller. Les quêtes prêtes à être rendues sont omises."
 L["DUNGEON_SHARE"] = "Partage automatique des quêtes de donjon"
 L["DUNGEON_SHARE_DESCRIPTION"] =
-	"Partage chaque quête du donjon que le jeu vous laisse partager et qu'il manque encore à quelqu'un du groupe, au rythme réglé dans Partage de quêtes, dès que tout le monde est à portée (ou au bout d'une minute ; immédiatement sur WoW Forever). Chaque membre du groupe les reçoit une fois par donjon, donc quelqu'un qui rejoint plus tard les reçoit aussi, et sortir de l'instance puis y revenir ne partage rien. Avec Chuchoter quand un partage échoue activé, quiconque rate un partage reçoit un chuchotement pour pouvoir la redemander."
+	"Partage chaque quête du donjon où vous venez d'entrer avec chaque membre du groupe qui ne l'a pas, au rythme réglé dans Partage de quêtes. Chaque membre les reçoit une fois par donjon, donc quelqu'un qui arrive en retard les reçoit aussi."
 
 --------------------------------------------------------------------------------
 -- Options: Maps & Objectives Panels
@@ -240,9 +243,11 @@ L["TAB_MAPS_OBJECTIVES"] = "Cartes et objectifs"
 L["TAB_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Un marqueur sur la carte de zone pour chaque objectif et chaque remise de quête, à la place d'un amas d'icônes de quête."
 L["MAPS_SUB_PANELS_DESCRIPTION"] =
-	"Les paramètres de chaque carte se trouvent dans les panneaux sous celui-ci : Mini-carte, Carte de zone, et Carte du continent et du monde."
+	"Les paramètres de chaque carte se trouvent sur les pages sous celle-ci : Mini-carte, Carte de zone, et Carte du continent et du monde."
+L["ROUTES_NEED_QUESTIE"] =
+	"Questie est désactivé, il n'y a donc aucun itinéraire à afficher. Activez Questie dans la liste des AddOns."
 L["MAPS_NEED_MARKERS"] =
-	"Les marqueurs ne s'affichent que lorsque Activer les Marqueurs de points de passage est coché."
+	"Marqueurs de points de passage est désactivé, ces paramètres ne servent donc pas. Son interrupteur se trouve sur la page Cartes et objectifs."
 L["TAB_MINIMAP"] = "Mini-carte"
 L["TAB_MINIMAP_DESCRIPTION"] =
 	"Les icônes de Questie sur la mini-carte montrent exactement où les choses apparaissent et où les ramasser, elles restent donc toujours affichées. Les marqueurs de l'itinéraire peuvent s'afficher à côté."
@@ -287,7 +292,7 @@ L["TAB_QUEST_ROUTE"] = "Itinéraire de quête"
 L["TAB_QUEST_ROUTE_DESCRIPTION"] =
 	"Un itinéraire passant par vos marqueurs de points de passage sur la carte de zone, dans l'ordre où les faire, depuis l'endroit où vous êtes."
 L["FEATURE_QUEST_ROUTE_NEEDS_MARKERS"] =
-	"L'Itinéraire de quête passe entre les marqueurs de points de passage, il ne s'affiche donc que lorsque Activer les Marqueurs de points de passage est coché."
+	"L'Itinéraire de quête passe entre les marqueurs de points de passage, il ne s'affiche donc que lorsque Marqueurs de points de passage est activé."
 L["ROUTES_LINE_HEADER"] = "Ligne d'itinéraire"
 L["ROUTES_LINE_DESCRIPTION"] = "Les points qui défilent de vous jusqu'à chaque marqueur."
 L["LINE_SPEED"] = "Vitesse de la ligne"
@@ -310,7 +315,7 @@ L["LOCAL_QUEST_RANGE_DESCRIPTION"] =
 	"À combien de mètres de vous un donneur de quête peut se trouver pour compter. En dessous de 400, un donneur croisé entre deux calculs de la route peut être manqué."
 L["LOCAL_ESCORT_QUESTS"] = "Quêtes d'escorte"
 L["LOCAL_ESCORT_QUESTS_DESCRIPTION"] =
-	"Quêtes où vous protégez un PNJ en chemin ; elles prennent du temps et souvent un groupe. Leur marqueur sur la carte est vert."
+	"Quêtes où vous protégez un PNJ en chemin ; elles prennent du temps et souvent un groupe."
 L["LOCAL_OTHER_ZONE_QUESTS"] = "Quêtes avec des objectifs dans une autre zone"
 L["LOCAL_OTHER_ZONE_QUESTS_DESCRIPTION"] =
 	"Quêtes dont un objectif, ou le rendu, se trouve uniquement hors de votre zone, comme une quête qui vous envoie à la ville suivante."
@@ -397,7 +402,6 @@ L["ARROW_SIZE_DESCRIPTION"] = "La taille de la Flèche de quête, avec le texte 
 L["LOCK_ARROW"] = "Verrouiller la Flèche de quête"
 L["LOCK_ARROW_DESCRIPTION"] = "Garde la Flèche de quête à sa place, pour que la faire glisser n'ait aucun effet."
 L["RESET_ARROW"] = "Position de la flèche"
-L["RESET_ARROW_BUTTON"] = "Réinitialiser"
 L["RESET_ARROW_CONFIRM"] = "Remettre la Flèche de quête à sa place de départ ?"
 L["RESET_ARROW_DESCRIPTION"] = "Remet la Flèche de quête à sa place de départ, en haut au centre de l'écran."
 L["QUEST_ARROW_TEXT_HEADER"] = "Sous la flèche"
@@ -415,7 +419,7 @@ L["QUESTS_LISTED_DESCRIPTION"] =
 	'Le nombre maximal de quêtes que la Flèche de quête liste sous elle pour un point de passage. Les suivantes sont comptées sur une ligne à part, comme "%s".'
 L["SHOW_ITEM_BUTTONS"] = "Afficher les boutons d'objets de quête"
 L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
-	"Place un bouton à côté de chaque quête listée par la Flèche de quête qui a un objet à utiliser, par exemple à lancer, à planter ou à utiliser sur une cible. Cliquez dessus pour utiliser l'objet, ou attribuez une touche à Utiliser l'objet de quête sous Raccourcis dans le panneau Pretty Wide Quest Log pour utiliser le premier. En combat, les boutons restent où ils sont jusqu'à la fin du combat."
+	"Place un bouton à côté de chaque quête listée par la Flèche de quête qui a un objet à utiliser, par exemple à lancer, à planter ou à utiliser sur une cible. Cliquez dessus pour utiliser l'objet, ou attribuez une touche à Utiliser l'objet de quête sous Raccourcis sur la page Pretty Wide Quest Log pour utiliser le premier. En combat, les boutons restent où ils sont jusqu'à la fin du combat."
 -- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_NEXT_OBJECTIVE
 L["SHOW_NEXT_OBJECTIVE"] = "Afficher l'objectif suivant"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
@@ -503,8 +507,6 @@ L["ZONE_INFO_GIVER"] = "Donnée par %s"
 L["ZONE_INFO_GIVER_PLACE"] = "%s (%s)"
 L["ZONE_INFO_SHAREABLE"] = "Partageable"
 L["ZONE_INFO_NOT_SHAREABLE"] = "Non partageable"
-L["ZONE_INFO_TRACK"] = "Ajouter à l'itinéraire"
-L["ZONE_INFO_UNTRACK"] = "Retirer de l'itinéraire"
 -- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "Requis pour"
 L["ZONE_INFO_SHIFT_CLICK"] = "Maj-clic"
@@ -582,6 +584,7 @@ L["ROUTES_FLIGHT_PATH"] = "Obtenir le trajet aérien"
 L["ROUTES_FLIGHT_PATH_FROM"] = "Obtenir le trajet aérien auprès de %s"
 -- TRANSLATORS: first %s is the flight master's name, such as "Omusa Thunderhorn"; second is where the flight lands, as the flight map names it, such as "Camp Taurajo"
 L["ROUTES_FLY_FROM"] = "Parlez à %s pour voler vers %s"
+-- TRANSLATORS: %s is where a city's gate leads, the zone around it or the city itself, such as "Durotar" or "Orgrimmar"
 L["ROUTES_EXIT_TO"] = "Allez vers %s"
 -- TRANSLATORS: under a quest to pick up on the world map, why the route doesn't go there
 L["ROUTES_OFF_ROUTE_ESCORT"] = "Quête d'escorte, hors de la route"
@@ -596,6 +599,8 @@ L["ROUTES_OFF_ROUTE_PVP"] = "Quête JcJ, hors de la route"
 -- TRANSLATORS: %d is the player level at which the quest goes on the route
 L["ROUTES_OFF_ROUTE_LEVEL"] = "Sur la route au niveau %d"
 L["ROUTES_OFF_ROUTE_XP"] = "Peu d'expérience pour la marche, hors de la route"
+-- TRANSLATORS: under a quest to pick up on the map of a zone you are not in; a right-click puts it on the route for when you get there
+L["ROUTES_OFF_ROUTE_ZONE"] = "Autre zone, pas encore sur l'itinéraire"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"; over a quest's objectives planned before it's picked up
 L["ROUTES_AFTER_PICK_UP"] = "Après avoir pris %s"
 -- TRANSLATORS: %s is the quest's title with its level; under a quest to pick up once another is turned in
@@ -607,7 +612,7 @@ L["ROUTES_AFTER_PARTY_TURN_IN"] = "Après que votre groupe a rendu %s"
 L["ROUTES_CORPSE"] = "Retournez à votre cadavre"
 -- TRANSLATORS: heads the list of NPCs, mobs and objects found at a route waypoint
 L["ROUTES_LOOK_FOR"] = "Cherchez"
--- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; %d is how many waypoints it hides
+-- TRANSLATORS: the title of the "…" marker's tooltip where the zone map stops drawing the route; in ROUTES_MORE_WAYPOINTS, %d is how many waypoints it hides
 L["ROUTES_MORE_WAYPOINT"] = "1 point de passage de plus"
 L["ROUTES_MORE_WAYPOINTS"] = "%d points de passage de plus"
 L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
@@ -625,13 +630,31 @@ L["ROUTES_RIGHT_CLICK_IGNORE_WAYPOINT"] = "Ignorer ce point de passage"
 -- TRANSLATORS: right-clicking a map marker for one objective, which leaves it off the route or puts it back
 L["ROUTES_RIGHT_CLICK_IGNORE"] = "Ignorer cet objectif"
 L["ROUTES_RIGHT_CLICK_UNIGNORE"] = "Remettre sur l'itinéraire"
-L["ROUTES_RIGHT_CLICK_ADD"] = "Ajouter à l'itinéraire"
+-- TRANSLATORS: beside ROUTES_CLICK or ROUTES_CLICK_RIGHT, on Zone Info and on a map marker for a quest to pick up; puts the quest on the route
+L["ROUTES_ADD_TO_ROUTE"] = "Ajouter à l'itinéraire"
+-- TRANSLATORS: as ROUTES_ADD_TO_ROUTE, for a quest to pick up already put on the route; takes it back off
+L["ROUTES_TAKE_OFF_ROUTE"] = "Retirer de l'itinéraire"
 L["ROUTES_MIDDLE_CLICK_RESET_ZONE"] = "Réinitialiser cette zone"
 -- TRANSLATORS: beside ROUTES_CLICK on the "…" marker's tooltip; the whole route shows until the map closes
 L["ROUTES_CLICK_SHOW_ROUTE"] = "Afficher l'itinéraire complet"
+-- TRANSLATORS: the rows of a zone's list on the continent and world maps, each with how many quests to pick up there have that level color (as WoW colors quests by level) on the right
+L["ROUTES_ZONE_AVAILABLE_RED"] = "Quêtes rouges disponibles"
+L["ROUTES_ZONE_AVAILABLE_ORANGE"] = "Quêtes orange disponibles"
+L["ROUTES_ZONE_AVAILABLE_YELLOW"] = "Quêtes jaunes disponibles"
+L["ROUTES_ZONE_AVAILABLE_GREEN"] = "Quêtes vertes disponibles"
+L["ROUTES_ZONE_AVAILABLE_GRAY"] = "Quêtes grises disponibles"
+-- TRANSLATORS: the zone menu's row counting the group, dungeon and raid quests to pick up, on the continent and world maps
+L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Quêtes de donjon et de groupe disponibles"
+-- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
+L["ROUTES_ZONE_OBJECTIVES"] = "Objectifs"
+-- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
+L["ROUTES_ZONE_MORE"] = "Et %d de plus..."
+-- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
+L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Ouvrir la carte de la zone"
 -- TRANSLATORS: %s is a quest link or a list of them
 L["ROUTES_SKIPPED"] = "L'itinéraire ignore %s jusqu'à ce que vous réinitialisiez la zone."
-L["ROUTES_REROUTING"] = "Recalcul de l'itinéraire…"
+-- TRANSLATORS: on the world map while the route is planned again after clicks on its markers
+L["ROUTES_REROUTING"] = "Recalcul de l'itinéraire..."
 L["ROUTES_ZONE_RESET"] = "Zone réinitialisée : les objectifs ignorés ici sont de retour sur l'itinéraire."
 L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"Groupe quitté : les objectifs de groupe et membres ignorés sont de retour sur l'itinéraire."
@@ -658,6 +681,7 @@ L["ROUTES_MENU_PICK_UP"] = "Prise de %s"
 L["ROUTES_MENU_FLIGHT_PATH"] = "Trajet aérien de %s"
 -- TRANSLATORS: %s is where the flight lands, such as "Camp Taurajo"
 L["ROUTES_MENU_FLY"] = "Vol vers %s"
+-- TRANSLATORS: %s is where a city's gate leads, such as "Durotar"
 L["ROUTES_MENU_EXIT"] = "Chemin vers %s"
 L["ROUTES_MENU_SHOWN_FLIGHTS"] = "Trajets aériens"
 L["ROUTES_MENU_SHOWN_PARTY"] = "Objectifs du groupe"
@@ -675,7 +699,10 @@ L["ROUTES_IGNORED_PARTY"] =
 	"L'itinéraire ignore %s pour %s jusqu'à ce que les membres du groupe qui l'ont quittent le groupe."
 -- TRANSLATORS: %s is an objective or ROUTES_MENU_TURN_IN
 L["ROUTES_UNIGNORED"] = "%s est de retour sur l'itinéraire."
+-- TRANSLATORS: %s is a quest link
 L["ROUTES_ADDED"] = "%s est sur l'itinéraire jusqu'à ce que vous réinitialisiez la zone."
+-- TRANSLATORS: %s is a quest link
+L["ROUTES_REMOVED"] = "%s n'est plus sur l'itinéraire."
 -- TRANSLATORS: %s is a party member's name
 L["ROUTES_MEMBER_IGNORED"] = "Les objectifs de %s sont retirés de l'itinéraire."
 -- TRANSLATORS: %s is a party member's name

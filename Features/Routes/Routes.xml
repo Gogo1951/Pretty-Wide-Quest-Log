@@ -31,6 +31,7 @@
 	<Script file="Routes-Map-Questie-Icons.lua"/>
 	<Script file="Routes-Map-Blizzard-Quests.lua"/>
 	<Script file="Routes-Map-Tooltip.lua"/>
+	<Script file="Routes-Map-Zones.lua"/>
 	<Script file="Routes-Map.lua"/>
 	<Script file="Routes-Map-Meet.lua"/>
 	<Script file="Routes-Minimap.lua"/>
@@ -65,6 +66,15 @@
 				</Texture>
 			</Layer>
 		</Layers>
+	</Frame>
+
+	<!--
+		A zone's discs on a continent's or the world's map (Routes-Map-Zones.lua): a gold !, a gold ? and a gray !,
+		each with how many on its corner, side by side. Each disc's parts are made in Routes-Map.lua as it's first
+		needed, and the pin sized to the discs it shows
+	-->
+	<Frame name="PrettyWideQuestLogRouteZonePinTemplate" mixin="PrettyWideQuestLogRoutePinMixin" enableMouse="true" virtual="true">
+		<Size x="32" y="32"/>
 	</Frame>
 
 	<!--

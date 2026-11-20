@@ -4,49 +4,21 @@ Wide quest log and quest helper for leveling: a quest route through the quests y
 
 **TL;DR:** Quest with confidence and speed. A clean route through every quest you picked, an arrow to follow, the quest log Blizzard should have shipped, and your whole group on the same quests without typing a word.
 
-## Turns Icon Soup into an Actionable Route
+### Quest Route
 
 <img width="1568" height="1003" alt="737aac09-3a75-4d7b-8920-a377804dda53" src="https://github.com/user-attachments/assets/cb0945fb-0070-4694-a57b-7c7ee5553bce" />
 
-## With an Easy-to-Follow Guide Arrow
-
-<img width="1568" height="1003" alt="fea02be3-b311-4eb7-966c-892d1789ab91" src="https://github.com/user-attachments/assets/9a40b2b5-05fd-4c7f-ad6b-49789af4b359" />
-
-## Just a Little Easier to Read All Over
-
-<img width="1568" height="1003" alt="78dbcb62-77bb-438a-9c8f-51205fd4c4ad" src="https://github.com/user-attachments/assets/1ae61368-407a-4204-931e-8f06dc95dca3" />
-
-### Quest Route
-
-<img width="800" alt="README-Infographic-Routes-on-Zone-Map" src="https://github.com/user-attachments/assets/67e326f3-5914-4dde-8843-d3ed55af852a" />
-
-* **Every Quest, One Route** // Pick your quests and the zone map lays them out as one route, nearest first, turn-ins included.
-* **Predictive Quest Routes** // The route plans the quests you'll pick up next and the ones that follow, so you clear each part of the zone in one trip. That's 18-38% less running than a plain route, which already beats questing by hand.
-* **Your Party's Quests Too** // Quests your friends carry join your route when they run Questie too, and you stick around to help them finish before everyone turns in.
-* **Group Up** // When someone in your zone drifts off your mini-map, the Quest Arrow leads you all to a meeting spot so you can quest together.
-* **Your Route, Your Rules** // Ignore any objective and the route plans around it, or switch off the parts you don't need.
-
-Simulated runs through every quest in a zone, on foot, against the plain nearest-first route the add-on started with:
-
-| Zone | Quests | Less Running | Time Saved |
-|---|---|---|---|
-| Darkshore | 57 | 38% | 47 min |
-| Redridge Mountains | 31 | 37% | 15 min |
-| Elwynn Forest | 61 | 29% | 20 min |
-| Durotar | 41 | 26% | 17 min |
-| Westfall | 27 | 22% | 10 min |
-| Loch Modan | 33 | 18% | 9 min |
-
-<img width="800" alt="Pasted 2026-11-12 at 1 11 10 AM" src="https://github.com/user-attachments/assets/fe0201b0-d666-4b08-887a-04999a445db0" />
+* **Icon Soup, Sorted** // Each objective's pile of quest icons becomes one marker, joined into a single route on your zone map, nearest first, turn-ins included.
+* **Plan Ahead** // Switch it on and the route lines up the quests you'll pick up next and their follow-ups, so you clear each part of the zone in one trip with 18-38% less running.
+* **Cleaner World and Continent Maps** // One small marker per objective and turn-in instead of a sea of icons.
+* **Your Route, Your Rules** // Skip any objective, pick which quests it guides you to pick up, or switch off the parts you don't need.
 
 ### Quest Arrow
 
-<img width="400" src="https://github.com/user-attachments/assets/345a94f6-3897-4820-8cd3-8415e1cc7d27" />
+<img width="1568" height="1003" alt="fea02be3-b311-4eb7-966c-892d1789ab91" src="https://github.com/user-attachments/assets/9a40b2b5-05fd-4c7f-ad6b-49789af4b359" />
 
-* **Always Know Where to Go** // An arrow on screen points to the next waypoint, with the distance in yards.
-* **What to Do When You Get There** // The quests and objectives at that waypoint are listed right under it.
+* **Always Know Where to Go** // An arrow on screen points to the next waypoint, with the distance in yards and what to do when you get there.
 * **Quest Items One Click Away** // A quest with an item to use gets a button beside it, or set one key for Use Quest Item.
-* **Flight Paths, Found and Flown** // Flight masters you haven't met join the route, and the arrow sends you through the ones you know when flying beats running.
 * **Out of the Way When It Should Be** // It hides in raids and instances, and you choose what it shows, how big it is, and where it sits.
 
 ### Wide Quest Log
@@ -55,9 +27,18 @@ Simulated runs through every quest in a zone, on foot, against the plain nearest
 
 * **Everything at a Glance** // Your quests by zone, the selected quest's details, and its map side by side, with one shaded area per objective instead of icon soup.
 * **Spot the Tough Ones** // Level and type tags like [40D] flag dungeon, raid, elite, group, and PvP quests before you read a word.
-* **Ready for the Next Zone** // Under the map, see the quests from other towns you can pick up for that zone, and the items its quests will ask you to bring.
-* **Quest Givers Match** // Quest giver windows get the same clean layout, level tags, and a quest ID that links to Wowhead.
-* **Read It Your Way** // Pick the font, size, outline, and shadow for the quest log and NPC dialogue, SharedMedia fonts included, and sort zones and quests how you like.
+* **Zone Info** // Under the map, see the quests from other towns you can pick up for that zone and the items its quests ask you to bring, so you never run back to town mid-trip.
+* **Never Lose Your Place in a Chain** // With Questie, a quest's details list every step of its chain, checking off the ones you've done.
+* **Read It Your Way** // Pick the font, size, and sort order, or switch back to Blizzard's quest log anytime.
+
+### NPC Dialogue
+
+<img width="1568" height="1003" alt="78dbcb62-77bb-438a-9c8f-51205fd4c4ad" src="https://github.com/user-attachments/assets/1ae61368-407a-4204-931e-8f06dc95dca3" />
+
+* **Easier on the Eyes** // Quest giver windows get the quest log's clean headings and line spacing.
+* **Know What You're Signing Up For** // A quest giver's list shows level tags like [40D] before you accept.
+* **One Click to Wowhead** // The quest ID under every quest links straight to Wowhead.
+* **Your Look, Your Call** // Pick the font for quest giver and gossip windows, or switch the cleanup off.
 
 ### Quest Sharing
 
@@ -65,61 +46,32 @@ Simulated runs through every quest in a zone, on foot, against the plain nearest
 
 * **Dungeon Quests, Sorted** // Walk into a dungeon and your party hears which of your quests are inside, then gets every one they're missing.
 * **A Whole Zone in One Click** // Share all of a zone's quests from the quest log, skipping any your whole party already has.
-* **Welcome to the Party** // Join a group, or have someone join yours, and you hear a ping and see how many of your quests in the zone the new members could use, ready for Share Quests.
-* **Nobody Gets Left Behind** // Anyone a share misses gets a friendly whisper so they can ask again.
+* **Welcome to the Party** // When someone joins, you see how many of your quests in the zone they could use, ready to share.
 * **Your Call** // Each helper has its own switch, and you set the pace between shares.
 
 > Sample Messages
 
 > **Enter a Dungeon, Party:** I have 2 quests to do here: [The Defias Brotherhood], [Red Silk Bandanas] // PWQL
 
-> **Someone Joins Your Party, Message To Katz:** I have 4 quests in Westfall that you don't have. Would you like me to try to share them? // PWQL
-
 ## Setup
 
 1. Install the add-on, ideally using [CurseForge](https://www.curseforge.com/wow/addons/pretty-wide-quest-log) or [Wago](https://addons.wago.io/addons/pretty-wide-quest-log).
 2. Type `/pwql` to open the Options Interface.
 3. With Questie on, open your zone map (M) to see your route, then follow the Quest Arrow.
-4. Press your quest log key (L), or click the quest log button on the micro menu.
-5. Drag the grip in the bottom-right corner to make the window as tall as you like.
-6. _"Your quest log's sorted. Now go find Mankrik's wife."_
+4. Press your quest log key (L) to open the Wide Quest Log.
+5. _"Your quest log's sorted. Now go find Mankrik's wife."_
 
 ## Tips & Tricks
 
-### Routes & the Quest Arrow
+### Good to Know
 
-🧠 Routes and the Quest Arrow need Questie.
+* **Skip and Reset** // Hover the Quest Arrow for a menu to skip any objective, and middle-click it to put back everything you skipped in the zone.
+* **Group Up** // In a party, when a friend in your zone drifts off your mini-map, the arrow leads you all to a meeting spot.
+* **Your Party's Quests Too** // When your friends run Questie too, their quests join your route.
 
-* While the route is on your zone map, the add-on keeps the game's Mini World Map setting off, so the map opens full size with room for the route. Turn off Open the Zone Map Full Size in the Options Interface to keep yours small.
-* Waypoint markers can show on the mini-map too. They start off, since Questie's mini-map icons already show where things spawn and drop.
+### The Zone Map Opens Full Size
 
-Fun fact: Questie once planned a Routes feature for TBC Classic, but it never made it out of development. Much of this add-on's user experience grew out of Aero's and my work on that project.
-
-<img width="800" alt="Questie Routes" src="https://github.com/user-attachments/assets/1453ba73-15ec-4aaa-b546-a351246cc8d0" />
-
-### Plan Ahead
-
-With Zone Notes you'll never have to stop mid-run to go back to town. Also take advantage of unlimited quest sharing distance in Forever and ask /4 for quests you haven't picked up yet.
-
-<img width="580" height="572" alt="image" src="https://github.com/user-attachments/assets/5631ba87-d663-4b22-9953-9995f0c21897" />
-
-### Quest Chains
-
-Never lose your place in a long chain again. With Questie installed, the selected quest's details list every step of its chain, checking off the ones you've turned in and highlighting the one you're on. Hover any step for Questie's tooltip on it.
-
-<img width="800" src="https://github.com/user-attachments/assets/6cf6eebe-5eaf-4b0e-98d3-b9811741f6ed" />
-
-### The Quest Log on Each Client
-
-Spoken and VoiceOver keep their play buttons on your quest list, so the narration doesn't skip a beat.
-
-**Forever**
-
-<img width="800" src="https://github.com/user-attachments/assets/2fc1879e-a781-4310-b90b-dbbae9391b64" />
-
-**TBC & Era**
-
-<img width="800" src="https://github.com/user-attachments/assets/052eb021-d91b-45b3-849d-5202897f6baa" />
+While the route is on your zone map, the add-on keeps the game's Mini World Map setting off, so the map opens full size with room for the route. Turn off Open the Zone Map Full Size in the Options Interface to keep yours small.
 
 ## Testing & Localization Status
 
@@ -150,6 +102,10 @@ Spoken and VoiceOver keep their play buttons on your quest list, so the narratio
 * austenlo\_ol's [Wide Quest Log IDs](https://www.curseforge.com/wow/addons/widequestlogids)
 * StormtrooperTK421's [Wide Quest Log Plus](https://www.curseforge.com/wow/addons/wide-quest-log-plus)
 
+### Special Thanks
+
+* **Aero** // Much of this add-on's look and feel grew out of our work together on Questie's Routes feature, which never made it out of development.
+
 ## Get Involved
 
 ❤️ **You can help make this better!** Feedback, code contributions, testing, and localization assistance are always appreciated. If you'd like to get involved, please reach out.
@@ -166,11 +122,3 @@ Spoken and VoiceOver keep their play buttons on your quest list, so the narratio
 * rustykey's [Spoken](https://www.curseforge.com/wow/addons/spoken)
 * jnwhiteh's [TomTom](https://www.curseforge.com/wow/addons/tomtom)
 * MrThinger's [VoiceOver (Classic)](https://www.curseforge.com/wow/addons/voiceover)
-
-### 🔴 Alternatives
-
-* AnacondaGaming's [ForeverQuest](https://www.curseforge.com/wow/addons/foreverquest)
-* Kerzo's [Kerzo Classic Quest Log](https://www.curseforge.com/wow/addons/kerzo-classic-quest-log)
-* JugoBetrugoTV's [Quest Master - Forever](https://www.curseforge.com/wow/addons/quest-master)
-* guardycmw's [Questie Automatic Arrow](https://www.curseforge.com/wow/addons/questie-automatic-arrow)
-* bitekenny's [StBu MasterQuestLog | The Burning Crusade](https://www.curseforge.com/wow/addons/stbu-masterquestlog)

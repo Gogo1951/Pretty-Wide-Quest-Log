@@ -58,7 +58,7 @@ ns.NOT_FLIGHT_PATH_NPC_IDS = {
 How We Got the Data
 
 Last Validated
-	2026-11-13, Classic Era 1.15.9.70576
+	2026-11-20, wago.tools, Classic Era 1.15.9.70576
 
 Notes
 	- CITY_ZONE_MAP_IDS: the six old-world capitals, each city's own map ID to the map ID of the zone it sits in
@@ -87,5 +87,5 @@ wago.tools
 	https://wago.tools/db2/UiMap?build=1.15.9.70576
 
 QuestieDB
-	None.
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/Classic/classicNpcDB.lua
 ]]

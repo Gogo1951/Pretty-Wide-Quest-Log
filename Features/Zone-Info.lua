@@ -460,7 +460,7 @@ ns.AddWideQuestLogPart(function()
 			rows:AddHints({
 				{
 					L["ROUTES_CLICK"],
-					L[wanted and "ZONE_INFO_UNTRACK" or "ZONE_INFO_TRACK"],
+					L[wanted and "ROUTES_TAKE_OFF_ROUTE" or "ROUTES_ADD_TO_ROUTE"],
 					function()
 						if row.quest == quest then
 							ToggleWanted(row)

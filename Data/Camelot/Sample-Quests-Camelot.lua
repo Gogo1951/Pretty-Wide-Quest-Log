@@ -14,7 +14,7 @@ ns.SAMPLE_ZONE_AREA_ID = 40 -- Westfall
 How We Got the Data
 
 Last Validated
-	2026-11-13, WoW Forever 1.60.1.70938
+	2026-11-20, wago.tools, WoW Forever 1.60.1.70959
 
 Notes
 	- Three quests from The Deadmines, a dungeon every current client has, that the Quality of Life panel's
@@ -35,9 +35,10 @@ Wowhead
 	https://www.wowhead.com/classic/quest=214
 
 wago.tools
-	https://wago.tools/db2/QuestV2?build=1.60.1.70888
-	https://wago.tools/db2/AreaTable?build=1.60.1.70888
+	https://wago.tools/db2/QuestV2?build=1.60.1.70959
+	https://wago.tools/db2/AreaTable?build=1.60.1.70959
 
 QuestieDB
 	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/Forever/foreverQuestDB.lua
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/src/corrections/Forever/generated/foreverBaseQuest.lua
 ]]

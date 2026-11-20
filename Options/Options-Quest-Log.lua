@@ -37,7 +37,8 @@ local MARK_UNTRACKED_TEXT = L["MARK_UNTRACKED_DESCRIPTION"]:format(
 
 --[[
 	While the Quest Log switch (atop the Wide Quest Log panel) is off, its Handy Clicks hide. The panels under
-	it keep their settings in view, gray, under a line saying where the switch is
+	it keep their settings in view and editable, under a line saying where the switch is, so they can be set
+	up first
 ]]
 local function QuestLogOff()
 	return not ns.db.profile.enableWideQuestLog
@@ -45,10 +46,18 @@ end
 
 --[[
 	The wide quest log runs this session or it doesn't (Core.lua). With the switch turned on but the
-	reload still to come, there's no quest log to apply the settings to, so they show grayed out
+	reload still to come, its settings show grayed out until it runs
 ]]
-local function Inactive()
-	return not ns.wideQuestLogActive
+local function ReloadPending()
+	return ns.db.profile.enableWideQuestLog and not ns.wideQuestLogActive
+end
+
+--[[
+	A setting changed while the quest log isn't running is only saved: on Classic Era and TBC what applies
+	it (ns.RefreshQuestLog and the rest) exists only once the quest log has run
+]]
+local function Running()
+	return ns.wideQuestLogActive
 end
 
 --------------------------------------------------------------------------------
@@ -60,7 +69,7 @@ local function SortRow(key, nameKey, values, sorting, order)
 	return Kit.LabelRow(order, nil, L[nameKey], {
 		type = "select",
 		desc = L[nameKey .. "_DESCRIPTION"],
-		disabled = Inactive,
+		disabled = ReloadPending,
 		values = values,
 		sorting = sorting,
 		get = function()
@@ -68,7 +77,9 @@ local function SortRow(key, nameKey, values, sorting, order)
 		end,
 		set = function(_, value)
 			ns.db.profile[key] = value
-			ns.RefreshQuestLog()
+			if Running() then
+				ns.RefreshQuestLog()
+			end
 			ns.RefreshSettings()
 		end,
 	})
@@ -82,13 +93,15 @@ local function QuestLogToggle(key, nameKey, desc, order)
 		desc = desc or L[nameKey .. "_DESCRIPTION"],
 		width = "full",
 		order = order,
-		disabled = Inactive,
+		disabled = ReloadPending,
 		get = function()
 			return ns.db.profile[key]
 		end,
 		set = function(_, value)
 			ns.db.profile[key] = value
-			ns.RefreshQuestLog()
+			if Running() then
+				ns.RefreshQuestLog()
+			end
 			ns.RefreshSettings()
 		end,
 	}
@@ -111,7 +124,7 @@ local function ObjectiveAreasToggle(order)
 	local toggle = QuestLogToggle("showObjectiveAreas", "SHOW_OBJECTIVE_AREAS", nil, order)
 	toggle.hidden = MapHidden
 	toggle.disabled = function()
-		return Inactive() or not QuestieLoaded()
+		return ReloadPending() or not QuestieLoaded()
 	end
 	toggle.desc = function()
 		if QuestieLoaded() then
@@ -121,7 +134,9 @@ local function ObjectiveAreasToggle(order)
 	end
 	toggle.set = function(_, value)
 		ns.db.profile.showObjectiveAreas = value
-		ns.questMap.RequestRefresh()
+		if Running() then
+			ns.questMap.RequestRefresh()
+		end
 		ns.RefreshSettings()
 	end
 	return toggle
@@ -135,7 +150,7 @@ local function ZoneInfoToggle(order)
 	local toggle = QuestLogToggle("showZoneInfo", "SHOW_ZONE_INFO", nil, order)
 	toggle.hidden = MapHidden
 	toggle.disabled = function()
-		return Inactive() or not QuestieLoaded()
+		return ReloadPending() or not QuestieLoaded()
 	end
 	toggle.desc = function()
 		if QuestieLoaded() then
@@ -160,7 +175,7 @@ end
 local function SortSubOption(key, nameKey, order)
 	local toggle = QuestLogToggle(key, nameKey, nil, 2)
 	toggle.name = function()
-		return Inactive() and L[nameKey] or Kit.SubLabel(L[nameKey])
+		return ReloadPending() and L[nameKey] or Kit.SubLabel(L[nameKey])
 	end
 	toggle.width = ns.OPTIONS_ROW_WIDTH - ns.OPTIONS_SUB_INDENT_WIDTH - 0.2
 	return Kit.SubRow(order, nil, { toggle })
@@ -202,7 +217,7 @@ local function NeedsWideQuestLogText()
 	return ns.QuestLogReloadPendingText()
 end
 
--- A sub-panel's opening: its description, then the line saying why its settings are grayed out
+-- A sub-panel's opening: its description, then the line saying the switch is off or its reload is to come
 local function SubPanelIntro(args, descriptionKey)
 	args.descIntro = Kit.Desc(L[descriptionKey], 1)
 	args.needsWideQuestLog = Kit.StatusLine(NeedsWideQuestLogText, 2)
@@ -272,7 +287,7 @@ function ns.BuildQuestListOptions()
 	SubPanelIntro(args, "TAB_QUEST_LIST_DESCRIPTION")
 	Kit.Section(args, "Sorting", 5, L["QUEST_LOG_SORTING_HEADER"], L["QUEST_LOG_SORTING_DESCRIPTION"])
 	Kit.Section(args, "QuestRows", 20, L["QUEST_LOG_ROWS_HEADER"], L["QUEST_LOG_ROWS_DESCRIPTION"])
-	ns.AddFontOptions(args, "list", 30, nil, Inactive)
+	ns.AddFontOptions(args, "list", 30, nil, ReloadPending)
 	return { type = "group", name = L["TAB_QUEST_LIST"], args = args }
 end
 
@@ -283,7 +298,7 @@ end
 function ns.BuildQuestDetailsOptions()
 	local args = {}
 	SubPanelIntro(args, "TAB_QUEST_DETAILS_DESCRIPTION")
-	ns.AddFontOptions(args, "details", 10, nil, Inactive)
+	ns.AddFontOptions(args, "details", 10, nil, ReloadPending)
 	return { type = "group", name = L["TAB_QUEST_DETAILS"], args = args }
 end
 
@@ -296,7 +311,7 @@ local function ScaleRow(key, nameKey, order, hidden, apply)
 	return Kit.LabelRow(order, hidden, L[nameKey], {
 		type = "range",
 		desc = L[nameKey .. "_DESCRIPTION"],
-		disabled = Inactive,
+		disabled = ReloadPending,
 		min = 0.7,
 		max = 1.3,
 		step = 0.05,
@@ -306,7 +321,9 @@ local function ScaleRow(key, nameKey, order, hidden, apply)
 		end,
 		set = function(_, value)
 			ns.db.global[key] = value
-			ns[apply]()
+			if Running() then
+				ns[apply]()
+			end
 			ns.RefreshSettings()
 		end,
 	})
@@ -332,14 +349,31 @@ function ns.BuildWindowMapOptions()
 			nil,
 			L["RESET_WINDOW"],
 			L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_DESCRIPTION"],
-			Inactive,
+			-- Gray while a reload is pending, and while the window's size, place and scales are as a reset leaves them
 			function()
-				ns.ResetWindow()
+				if ReloadPending() then
+					return true
+				end
+				local saved, defaults = ns.db.global, ns.DATABASE_DEFAULTS.global
+				return saved.height == nil
+					and saved.point == nil
+					and saved.scale == defaults.scale
+					and saved.mapScale == defaults.mapScale
+			end,
+			function()
+				if Running() then
+					ns.ResetWindow()
+				else
+					-- Height and point have no default, so clearing restores them
+					local saved, defaults = ns.db.global, ns.DATABASE_DEFAULTS.global
+					saved.height, saved.point = nil, nil
+					saved.scale, saved.mapScale = defaults.scale, defaults.mapScale
+				end
 			end,
 			L["RESET_WINDOW_" .. RESET_WINDOW_KIND .. "_CONFIRM"]
 		),
 	}
 	SubPanelIntro(args, "QUEST_LOG_WINDOW_MAP_DESCRIPTION")
-	ns.AddFontOptions(args, "window", 50, nil, Inactive)
+	ns.AddFontOptions(args, "window", 50, nil, ReloadPending)
 	return { type = "group", name = L["TAB_WINDOW_MAP"], args = args }
 end

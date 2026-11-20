@@ -91,7 +91,10 @@ function ns.BuildQuestArrowOptions()
 			spaceLock = Kit.Spacer(15, ArrowHidden),
 			lockArrow = Toggle("lockArrow", "LOCK_ARROW", 16, ArrowHidden),
 			spaceReset = Kit.Spacer(16.5, ArrowHidden),
-			resetArrow = Kit.ResetRow(17, ArrowHidden, L["RESET_ARROW"], L["RESET_ARROW_DESCRIPTION"], nil, function()
+			-- Gray while the arrow hasn't been moved from where a reset puts it
+			resetArrow = Kit.ResetRow(17, ArrowHidden, L["RESET_ARROW"], L["RESET_ARROW_DESCRIPTION"], function()
+				return ns.routes.ArrowPoint() == nil
+			end, function()
 				ns.routes.ResetArrowPosition()
 			end, L["RESET_ARROW_CONFIRM"]),
 

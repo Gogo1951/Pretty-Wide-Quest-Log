@@ -49,11 +49,23 @@ local function CurrentZone()
 end
 
 --[[
-	Puts one task on the ignore list, as the Quest Arrow's menu lists it, with the zone the player is in. A
-	party member's also keeps who has its quest, so it goes once they've all left the group; the player's
-	own is saved
+	Whether a change kept by a zone is the route's: the player's zone, a city in it or a zone linked to it
+	(routes.IsInZone), or no zone given. A change for another zone, made on its map, isn't planned till the
+	player gets there, when the new zone plans the route anyway, and the route's signature leaves it out
+	(routes.Signature) so nothing plans it meanwhile
 ]]
-local function Ignore(task)
+local function IsHere(zone)
+	local here = CurrentZone()
+	return zone == nil or zone == here or routes.IsInZone(zone, here)
+end
+routes.IsChangeHere = IsHere
+
+--[[
+	Puts one task on the ignore list, as the Quest Arrow's menu lists it, with the zone it's for: the one the
+	player is in, or zone, for one ignored on another zone's map. A party member's also keeps who has its
+	quest, so it goes once they've all left the group; the player's own is saved
+]]
+local function Ignore(task, zone)
 	-- A planned objective or turn-in of a quest not taken yet goes with its pick-up (Routes-Chains.lua)
 	task = task.pickUpNode or task
 	if routes.skipped[task.key] then
@@ -65,7 +77,7 @@ local function Ignore(task)
 		questID = task.questID,
 		npcID = task.npcID, -- A flight path's flight master, which has no quest
 		order = ignoredCount,
-		zone = CurrentZone(),
+		zone = zone or CurrentZone(),
 	}
 	if IsPartyKey(task.key) then
 		-- Who has the quest, or for a follow-up planned ahead, the quest it follows (holdersOf)
@@ -106,25 +118,42 @@ end)
 
 --[[
 	Puts a map-only pick-up (a dungeon or raid quest's, an escort's or one leading to another zone) on the
-	route, a right-click on its map marker, until the zone it was added in is reset
+	route, a right-click on its map marker, until the zone it was added in is reset. One in another zone
+	(task.homeZone, Routes-Map-Zones.lua) goes on the route once the player is there, and resetting that
+	zone takes it off
 ]]
 function routes.AddPickUp(task)
 	if not (task and task.kind == "pickUp" and task.key) then
 		return
 	end
-	local entry = { questID = task.questID, zone = CurrentZone() }
+	local entry = { questID = task.questID, zone = task.homeZone or CurrentZone() }
 	routes.added[task.key] = entry
 	if SavedAdded() then
 		SavedAdded()[task.key] = entry
 	end
 	routes.Print(string.format(L["ROUTES_ADDED"], routes.QuestLink(task.questID, task.questName)))
-	routes.RequestPlan()
+	if IsHere(entry.zone) then
+		routes.RequestPlan()
+	end
 end
 
 local function ForgetAdded(key)
 	routes.added[key] = nil
 	if SavedAdded() then
 		SavedAdded()[key] = nil
+	end
+end
+
+-- Takes a pick-up put on the route back off it, back to the map only, a right-click on its map marker
+function routes.RemovePickUp(task)
+	local entry = task and task.key and routes.added[task.key]
+	if not entry then
+		return
+	end
+	ForgetAdded(task.key)
+	routes.Print(string.format(L["ROUTES_REMOVED"], routes.QuestLink(task.questID, task.questName)))
+	if IsHere(entry.zone) then
+		routes.RequestPlan()
 	end
 end
 
@@ -186,13 +215,16 @@ function routes.BuildIgnoredMessage(label, questID, questName, party)
 	)
 end
 
--- Leaves one objective or turn-in out of the route, from the Quest Arrow's menu or a right-click
-function routes.IgnoreTask(task)
+--[[
+	Leaves one objective or turn-in out of the route, from the Quest Arrow's menu or a right-click; zone, for
+	one right-clicked on another zone's map, planned once the player gets there
+]]
+function routes.IgnoreTask(task, zone)
 	if not (task and task.key) or task.kind == "corpse" then
 		return
 	end
 	task = task.pickUpNode or task -- One of a quest not taken yet goes with its pick-up, and says so
-	Ignore(task)
+	Ignore(task, zone)
 	if task.kind == "flightPath" or task.kind == "fly" or task.kind == "exit" then
 		-- No quest to name: "Ignoring Devrak Flight Path until you reset the zone."
 		routes.Print(routes.BuildSkippedMessage({ routes.TaskLabel(task) }))
@@ -201,7 +233,9 @@ function routes.IgnoreTask(task)
 			routes.BuildIgnoredMessage(routes.TaskLabel(task), task.questID, task.questName, IsPartyKey(task.key))
 		)
 	end
-	routes.RequestPlan()
+	if IsHere(zone) then
+		routes.RequestPlan()
+	end
 end
 
 -- Puts one ignored objective or turn-in back on the route, from the Quest Arrow's menu
@@ -212,7 +246,9 @@ function routes.UnignoreTask(key)
 	end
 	Forget(key)
 	routes.Print(string.format(L["ROUTES_UNIGNORED"], entry.label))
-	routes.RequestPlan()
+	if IsHere(entry.zone) then
+		routes.RequestPlan()
+	end
 end
 
 --[[

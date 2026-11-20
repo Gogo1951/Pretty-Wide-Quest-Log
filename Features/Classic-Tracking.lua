@@ -42,13 +42,7 @@ ns.AddWideQuestLogPart(function()
 		for _, index in ipairs(indexes) do
 			if IsTrackable(index) then
 				if not HasRoomToTrack() then
-					UIErrorsFrame:AddMessage(
-						format(QUEST_WATCH_TOO_MANY, MAX_WATCHABLE_QUESTS),
-						RED_FONT_COLOR.r,
-						RED_FONT_COLOR.g,
-						RED_FONT_COLOR.b,
-						1.0
-					)
+					ns:Notice(format(QUEST_WATCH_TOO_MANY, MAX_WATCHABLE_QUESTS))
 					break
 				end
 				AutoQuestWatch_Insert(index, QUEST_WATCH_NO_EXPIRE)

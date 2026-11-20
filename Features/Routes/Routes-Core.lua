@@ -188,6 +188,26 @@ function routes.SpawnName(objective, spawnData)
 	return not event and spawnData.Name or nil
 end
 
+--[[
+	Whether the cursor is over a shown frame, inset from its left and right edges by inset. Read from the
+	cursor's position rather than IsMouseOver, so a controller's on-screen cursor counts too, as Menu-Kit's
+	Kit.IsCursorOver does
+]]
+function routes.IsCursorOver(frame, inset)
+	if not (frame and frame:IsVisible()) then
+		return false
+	end
+	local left, right, top, bottom = frame:GetLeft(), frame:GetRight(), frame:GetTop(), frame:GetBottom()
+	if not left then
+		return false
+	end
+	inset = inset or 0
+	local scale = frame:GetEffectiveScale()
+	local x, y = GetCursorPosition()
+	x, y = x / scale, y / scale
+	return x >= left + inset and x <= right - inset and y >= bottom and y <= top
+end
+
 --------------------------------------------------------------------------------
 -- The route
 --------------------------------------------------------------------------------
