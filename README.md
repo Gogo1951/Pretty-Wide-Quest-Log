@@ -10,7 +10,7 @@ Wide quest log and quest helper for leveling: a quest route through the quests y
 
 * **Icon Soup, Sorted** // Each objective's pile of quest icons becomes one marker, joined into a single route on your zone map, nearest first, turn-ins included.
 * **Plan Ahead** // Switch it on and the route lines up the quests you'll pick up next and their follow-ups, so you clear each part of the zone in one trip with 18-38% less running.
-* **Cleaner World and Continent Maps** // One small marker per objective and turn-in instead of a sea of icons.
+* **Cleaner World and Continent Maps** // One disc per zone in the color of its quests, instead of a sea of icons. Hover it to see what's there to pick up and do.
 * **Your Route, Your Rules** // Skip any objective, pick which quests it guides you to pick up, or switch off the parts you don't need.
 
 ### Quest Arrow
@@ -68,6 +68,7 @@ Wide quest log and quest helper for leveling: a quest route through the quests y
 * **Skip and Reset** // Hover the Quest Arrow for a menu to skip any objective, and middle-click it to put back everything you skipped in the zone.
 * **Group Up** // In a party, when a friend in your zone drifts off your mini-map, the arrow leads you all to a meeting spot.
 * **Your Party's Quests Too** // When your friends run Questie too, their quests join your route.
+* **Tidier Quest Tooltips** // Questie's quest lines on mobs, objects, and items read like the Quest Arrow, with your party's progress under each objective.
 
 ### The Zone Map Opens Full Size
 

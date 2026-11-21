@@ -369,6 +369,9 @@ function routes.BuildNodes(yield)
 		end
 	end
 
+	-- A pick-up only one creature drops waits for the route's trip to kill it (Routes-Chains.lua)
+	routes.WaitForDropperKills(nodes)
+
 	-- Flight paths not yet discovered, with Discover Flight Paths on (Routes-Flights.lua)
 	routes.AddFlightPathNodes(nodes, start, yield)
 

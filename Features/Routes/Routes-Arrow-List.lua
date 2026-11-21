@@ -159,7 +159,8 @@ local function ListQuests(view, noteText, passing, nextStop, meet, underArrow)
 		A stop's quests, dimmed under "While You're Here" when on the way. Each quest's title has its own
 		little arrow, to the middle of its objective area, or to the giver of one to pick up
 		(routes.ForEachStopLine), so in an area with several the player sees which way each one is. Under the
-		big arrow, the first quest has none: the big arrow is its arrow. Under the eye it keeps its own
+		big arrow, the first quest has none, nor its room: the big arrow is its arrow, and its title sits flush
+		with the list's edge. Under the eye it keeps its own
 	]]
 	local function AddStop(stop, dim, skipFirst)
 		routes.ForEachStopLine(
@@ -168,7 +169,7 @@ local function ListQuests(view, noteText, passing, nextStop, meet, underArrow)
 			function(kind, text, red, green, blue, right, questID, point)
 				local icon = point and "arrow" or nil
 				if skipFirst and kind == "title" then
-					icon, point, skipFirst = "blank", nil, false
+					icon, point, skipFirst = nil, nil, false
 				end
 				Add(kind, text, red, green, blue, right, dim, icon, nil, questID, point)
 				if kind == "title" then
@@ -223,19 +224,6 @@ local function ListQuests(view, noteText, passing, nextStop, meet, underArrow)
 		nextDistance:SetText("")
 	end
 
-	--[[
-		The first quest under the big arrow keeps its arrow's room only when another quest's title has one,
-		so the titles stay aligned; alone it sits centered with no gap
-	]]
-	local otherArrow = false
-	for index = 1, count do
-		local entry = pending[index]
-		if entry.kind == "title" and entry.icon == "arrow" then
-			otherArrow = true
-			break
-		end
-	end
-
 	local used, blockWidth, previous = 0, 0, nil
 	wipe(pointing)
 	for index = 1, count do
@@ -270,8 +258,7 @@ local function ListQuests(view, noteText, passing, nextStop, meet, underArrow)
 		line:SetAlpha(alpha)
 		line.count:SetAlpha(alpha)
 		line.icon:SetAlpha(alpha)
-		local reserve = entry.icon and (entry.icon ~= "blank" or otherArrow)
-		line.iconWidth = reserve and (ICON_SIZE + SPACE.LINE) or 0
+		line.iconWidth = entry.icon and (ICON_SIZE + SPACE.LINE) or 0
 		line.point = nil
 		if entry.icon == "eye" then
 			line.icon:SetTexture(EYE_TEXTURE)

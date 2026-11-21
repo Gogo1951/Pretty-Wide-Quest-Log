@@ -27,9 +27,10 @@ local function List(value)
 end
 
 --[[
-	Each objective of a quest as Questie's database has it, { text, icon, sources }, sources the spawn
+	Each objective of a quest as Questie's database has it, { text, icon, sources, npcs }, sources the spawn
 	tables where it's done, each { spawns, name }: a creature, an object, an item where it drops, a kill
-	credit's creatures, the place to reach. The icon is Questie's for that kind
+	credit's creatures, the place to reach. The icon is Questie's for that kind, and npcs the IDs of the
+	creatures it has the player kill, as a set
 ]]
 local function ObjectiveSpecs(QuestieDB, questID)
 	local NPC, Object, Item = QuestieDB.QueryNPCSingle, QuestieDB.QueryObjectSingle, QuestieDB.QueryItemSingle
@@ -42,6 +43,7 @@ local function ObjectiveSpecs(QuestieDB, questID)
 			text = entry[2] or name,
 			icon = slay,
 			sources = { { Field(NPC, entry[1], "spawns"), name } },
+			npcs = { [entry[1]] = true },
 		}
 	end
 	for _, entry in ipairs(List(objectives[2])) do
@@ -53,9 +55,10 @@ local function ObjectiveSpecs(QuestieDB, questID)
 		}
 	end
 	for _, entry in ipairs(List(objectives[3])) do
-		local sources = {}
+		local sources, npcs = {}, {}
 		for _, npcID in ipairs(List(Field(Item, entry[1], "npcDrops"))) do
 			sources[#sources + 1] = { Field(NPC, npcID, "spawns"), Field(NPC, npcID, "name") }
+			npcs[npcID] = true
 		end
 		for _, objectID in ipairs(List(Field(Item, entry[1], "objectDrops"))) do
 			sources[#sources + 1] = { Field(Object, objectID, "spawns"), Field(Object, objectID, "name") }
@@ -64,17 +67,20 @@ local function ObjectiveSpecs(QuestieDB, questID)
 			text = entry[2] or Field(Item, entry[1], "name"),
 			icon = Questie and Questie.ICON_TYPE_LOOT,
 			sources = sources,
+			npcs = npcs,
 		}
 	end
 	for _, entry in ipairs(List(objectives[5])) do
-		local sources = {}
+		local sources, npcs = {}, {}
 		for _, npcID in ipairs(List(entry[1])) do
 			sources[#sources + 1] = { Field(NPC, npcID, "spawns"), Field(NPC, npcID, "name") }
+			npcs[npcID] = true
 		end
 		specs[#specs + 1] = {
 			text = entry[3] or Field(NPC, entry[2], "name"),
 			icon = slay,
 			sources = sources,
+			npcs = npcs,
 		}
 	end
 	local trigger = QueryQuest(QuestieDB, questID, "triggerEnd")
@@ -89,7 +95,7 @@ local function ObjectiveSpecs(QuestieDB, questID)
 end
 
 --[[
-	A quest's plan in the zone: { objectives, turnIn }, objectives each { text, icon, blobs } for every
+	A quest's plan in the zone: { objectives, turnIn }, objectives each { text, icon, blobs, npcs } for every
 	objective with spawns here (one with none, bought or made, is left off), turnIn the blobs of every
 	NPC and object out in the world that takes it. Worked out once a quest and zone: spawns don't move
 ]]
@@ -144,7 +150,8 @@ function routes.QuestPlan(QuestieDB, questID, start, yield)
 		if points.count > 0 then
 			local blobs = Cluster(points, yield)
 			blobs.spawns = { x = points.x, y = points.y, count = points.count }
-			plan.objectives[#plan.objectives + 1] = { text = spec.text or "", icon = spec.icon, blobs = blobs }
+			plan.objectives[#plan.objectives + 1] =
+				{ text = spec.text or "", icon = spec.icon, blobs = blobs, npcs = spec.npcs }
 		end
 	end
 	plan.turnIn = TurnInBlobs(QuestieDB, questID, start, yield)

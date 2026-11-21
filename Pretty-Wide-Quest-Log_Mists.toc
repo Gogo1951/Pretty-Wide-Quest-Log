@@ -117,6 +117,7 @@ Features/Questie-Map-Area-Layer.lua
 Features/Forever-Quest-Map.lua
 Features/Quest-Map-Reveal.lua
 Features/Routes/Routes.xml
+Features/Questie-Tooltips.lua
 Features/Zone-Info-Data.lua
 Features/Zone-Info.lua
 Features/Mists-Quest-Portrait.lua

@@ -42,6 +42,10 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Включить удобные функции"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	'Помогает группе получить ваши задания: темп передачи, шёпот тем, до кого передача не дошла, а также объявление и передача заданий подземелья. Кнопка "Поделиться заданиями" у зоны в журнале заданий работает и при выключенном параметре.'
+L["QUEST_TOOLTIPS"] = "Подсказки заданий"
+L["ENABLE_QUEST_TOOLTIPS"] = "Включить Подсказки заданий"
+L["FEATURE_QUEST_TOOLTIPS_DESCRIPTION"] =
+	"Выстраивает строки заданий, которые Questie добавляет в подсказки существ, объектов, предметов и значков на карте, так же, как Стрелка заданий показывает путевую точку, с прогрессом группы под каждой целью. Выключите, чтобы видеть строки самого Questie."
 L["ENABLE_WAYPOINT_MARKERS"] = "Включить Метки путевых точек"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Собирает значки заданий для каждой цели на карте зоны в одну метку, путевую точку, там, где больше всего её существ или предметов, и ставит по метке на каждое место сдачи. Наведите курсор на метку, чтобы увидеть значки, которые она заменяет."
@@ -683,7 +687,7 @@ L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Доступные задания для п�
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
 L["ROUTES_ZONE_OBJECTIVES"] = "Цели"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "И ещё %d..."
+L["ROUTES_ZONE_MORE"] = "Ещё %d"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Открыть карту зоны"
 -- TRANSLATORS: %s is a quest link or a list of them

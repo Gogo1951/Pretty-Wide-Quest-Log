@@ -40,6 +40,10 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "편의 기능 사용"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"파티원이 내 퀘스트를 받도록 돕습니다. 공유 속도 조절, 공유를 놓친 파티원에게 귓속말, 던전 퀘스트 알림과 공유가 포함됩니다. 퀘스트 목록에서 지역마다 있는 퀘스트 공유 버튼은 이 설정을 꺼도 작동합니다."
+L["QUEST_TOOLTIPS"] = "퀘스트 툴팁"
+L["ENABLE_QUEST_TOOLTIPS"] = "퀘스트 툴팁 사용"
+L["FEATURE_QUEST_TOOLTIPS_DESCRIPTION"] =
+	"Questie가 몬스터, 사물, 아이템, 지도 아이콘의 툴팁에 넣는 퀘스트 줄을 퀘스트 화살표가 경유지를 보여 주는 방식으로 정리하고, 각 목표 아래에 파티원의 진행도를 표시합니다. 끄면 Questie의 원래 줄이 표시됩니다."
 L["ENABLE_WAYPOINT_MARKERS"] = "경유지 표식 사용"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"지역 지도에서 각 목표의 퀘스트 아이콘을 몬스터나 물체가 가장 많은 곳의 표식 하나, 즉 경유지로 묶고, 완료 보고 장소마다 표식을 하나씩 둡니다. 표식에 마우스를 올리면 그 표식이 대신하는 아이콘을 볼 수 있습니다."
@@ -652,7 +656,7 @@ L["ROUTES_ZONE_AVAILABLE_GROUP"] = "수락 가능한 던전 및 파티 퀘스트
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
 L["ROUTES_ZONE_OBJECTIVES"] = "목표"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "그 외 %d개..."
+L["ROUTES_ZONE_MORE"] = "그 외 %d개"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "지역 지도 열기"
 -- TRANSLATORS: %s is a quest link or a list of them

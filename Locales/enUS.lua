@@ -38,6 +38,10 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Enable Quality of Life"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Helps your party get on your quests: share pacing, whispers when a share misses someone, and dungeon quest announcements and sharing. A zone's Share Quests button in the quest log works with this off too."
+L["QUEST_TOOLTIPS"] = "Quest Tooltips"
+L["ENABLE_QUEST_TOOLTIPS"] = "Enable Quest Tooltips"
+L["FEATURE_QUEST_TOOLTIPS_DESCRIPTION"] =
+	"Lays out the quest lines Questie adds to mob, object, item, and map icon tooltips the way the Quest Arrow lists a waypoint, with your party's progress under each objective. Turn it off to see Questie's own lines."
 L["ENABLE_WAYPOINT_MARKERS"] = "Enable Waypoint Markers"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Gathers each objective's quest icons on the zone map into one marker, a waypoint, where most of its mobs or objects are, with one for each turn-in too. Hover a marker to see the icons it stands in for."
@@ -628,7 +632,7 @@ L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Available Dungeon and Group Quests"
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
 L["ROUTES_ZONE_OBJECTIVES"] = "Objectives"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "And %d more..."
+L["ROUTES_ZONE_MORE"] = "%d more"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Open Zone Map"
 -- TRANSLATORS: %s is a quest link or a list of them

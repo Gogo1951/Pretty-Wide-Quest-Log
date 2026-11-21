@@ -22,12 +22,6 @@
 - **Instead:** The Track All and Untrack All buttons and the Show Quest Levels option use the add-on's own strings on every client, though WoW Forever has Blizzard labels for them.
 - **Why:** The labels read the same on every client.
 
-### Quest log title leads with Quest Log
-
-- **Departs from:** ADD-ON NAMES, window titles shaped `Full Name // Title`.
-- **Instead:** The quest log window's title is the game's own Quest Log label, then the Short Name (`Quest Log // PWQL`).
-- **Why:** The window stands in for Blizzard's quest log, so its title leads with the game's own name for it.
-
 ### Quest log window keeps Blizzard's layout
 
 - **Departs from:** WINDOWS, the title at the left of the title bar and Reset Position putting the window back in the center.
@@ -51,12 +45,6 @@
 - **Departs from:** MESSAGES → Editable Messages, a message sent straight to one player is the player's to word.
 - **Instead:** The Zone Share Offer whisper and the whisper sent when a quest share fails go out as the add-on's own localized text, with no message box, Send Messages In or Send Test to Me.
 - **Why:** They are short, fixed notices about a quest share, not messages written in the player's voice.
-
-### Font sections carry Reset Font
-
-- **Departs from:** SAVED VARIABLES → Reset, no control resets settings Reset Profile can reach beyond a text input's Reset.
-- **Instead:** Each area's font section ends with a Reset Font button that puts that area's font settings back to their defaults.
-- **Why:** A player trying fonts can undo one area without resetting every other setting on the profile.
 
 ### Per-character route state on the Simple model
 

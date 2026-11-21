@@ -81,13 +81,6 @@ local function QueryQuest(QuestieDB, questID, field)
 	return ok and value or nil
 end
 
---[[
-	The one thing an item comes from, as "npc" or "object" and its ID, or nil: an item dropped by a single
-	named creature (Hoof of Lakota'mani, from Lakota'mani) starts its quest at that creature, however many
-	places it spawns or walks, and one looted from a single object (the Dirt-stained Map, lying on the
-	ground in Mulgore) starts it at that object. One that several creatures or objects give could come from
-	anywhere, so it isn't a place to walk to
-]]
 -- The creatures and objects an item drops from, as Questie's database has them; nil without its item lookup
 local function ItemSources(QuestieDB, itemID)
 	local query = QuestieDB.QueryItemSingle
@@ -101,6 +94,13 @@ local function ItemSources(QuestieDB, itemID)
 	return npcs, objects
 end
 
+--[[
+	The one thing an item comes from, as "npc" or "object" and its ID, or nil: an item dropped by a single
+	named creature (Hoof of Lakota'mani, from Lakota'mani) starts its quest at that creature, however many
+	places it spawns or walks, and one looted from a single object (the Dirt-stained Map, lying on the
+	ground in Mulgore) starts it at that object. One that several creatures or objects give could come from
+	anywhere, so it isn't a place to walk to
+]]
 local function SoleSource(QuestieDB, itemID)
 	local npcs, objects = ItemSources(QuestieDB, itemID)
 	if not npcs or #npcs + #objects ~= 1 then
@@ -129,6 +129,31 @@ local function IsManySourceDrop(QuestieDB, questID)
 		end
 	end
 	return false
+end
+
+--[[
+	The one creature a quest can only be started from, as its ID, or nil: no NPC or object gives it, and every
+	item that starts it drops from that creature alone (Fizsprocket's Notes, from Supervisor Fizsprocket)
+]]
+local function SoleDropper(QuestieDB, questID)
+	local startedBy = QueryQuest(QuestieDB, questID, "startedBy")
+	if type(startedBy) ~= "table" or type(startedBy[3]) ~= "table" then
+		return nil
+	end
+	for index = 1, 2 do
+		if type(startedBy[index]) == "table" and #startedBy[index] > 0 then
+			return nil
+		end
+	end
+	local dropper
+	for _, itemID in ipairs(startedBy[3]) do
+		local kind, id = SoleSource(QuestieDB, itemID)
+		if kind ~= "npc" or (dropper and dropper ~= id) then
+			return nil
+		end
+		dropper = id
+	end
+	return dropper
 end
 
 --[[
@@ -516,6 +541,7 @@ routes.pickUpHelpers = {
 	IsOutsideLevels = IsOutsideLevels,
 	IsElsewhere = IsElsewhere,
 	IsManySourceDrop = IsManySourceDrop,
+	SoleDropper = SoleDropper,
 	Handling = Handling,
 	ROUTE = ROUTE,
 }

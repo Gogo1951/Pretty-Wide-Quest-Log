@@ -40,6 +40,10 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Attiva funzioni di comodità"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Aiuta il tuo gruppo a prendere le tue missioni: ritmo di condivisione, sussurri quando una condivisione non raggiunge qualcuno, e annuncio e condivisione delle missioni delle spedizioni. Il pulsante Condividi missioni di una zona nel registro delle missioni funziona anche con questa opzione disattivata."
+L["QUEST_TOOLTIPS"] = "Descrizioni delle missioni"
+L["ENABLE_QUEST_TOOLTIPS"] = "Attiva Descrizioni delle missioni"
+L["FEATURE_QUEST_TOOLTIPS_DESCRIPTION"] =
+	"Dispone le righe di missione che Questie aggiunge alle descrizioni di nemici, oggetti interattivi, oggetti e icone della mappa nello stesso modo in cui la Freccia delle missioni elenca un punto di passaggio, con i progressi del tuo gruppo sotto ogni obiettivo. Disattivalo per vedere le righe di Questie."
 L["ENABLE_WAYPOINT_MARKERS"] = "Attiva Indicatori dei punti di passaggio"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Raccoglie le icone delle missioni di ogni obiettivo sulla mappa della zona in un solo indicatore, un punto di passaggio, dove si trova la maggior parte dei suoi nemici od oggetti, più uno per ogni consegna. Passa il mouse su un indicatore per vedere le icone che sostituisce."
@@ -651,7 +655,7 @@ L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Missioni di spedizione e di gruppo disponibi
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
 L["ROUTES_ZONE_OBJECTIVES"] = "Obiettivi"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "E altre %d..."
+L["ROUTES_ZONE_MORE"] = "Altre %d"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Apri la mappa della zona"
 -- TRANSLATORS: %s is a quest link or a list of them

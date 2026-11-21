@@ -169,6 +169,9 @@ local SHARE_WHISPER_KEYS = {
 	"WHISPER_SHARE_FAILED_AGAIN",
 }
 
+-- The longest channel prefix Zone Info writes before its Ask for Shares line (Zone-Info.lua's LFG_CHANNEL)
+local ASK_CHANNEL_PREFIX = "/4 "
+
 --[[
 	The quest with the longest title in the log, in bytes: its ID and title, and how many zones went
 	uncounted. Read through ns.DiagnosticLogQuests, which never opens a zone or selects a quest, so a
@@ -230,6 +233,43 @@ function ns:BuildMessageLengthReport()
 			#message
 		)
 		lines[#lines + 1] = "    " .. ShownText(message)
+	end
+
+	--[[
+		Zone Info's Ask for Shares line naming every quest in the log as shareable and nobody in the party on it,
+		with room for the longest channel prefix Zone-Info.lua writes before it ("/4 "). The builder names only
+		the quests that fit, so the count shows how many a full line holds
+	]]
+	local askQuests = {}
+	for _, quest in ipairs((ns.DiagnosticLogQuests())) do
+		if quest.questID and quest.title then
+			askQuests[#askQuests + 1] = { questID = quest.questID, name = quest.title, shareable = true }
+		end
+	end
+	local room = ns.CHAT_MESSAGE_MAX_LENGTH - #ASK_CHANNEL_PREFIX
+	local ask = ns.BuildAskForSharesMessage(askQuests, room, function()
+		return 0
+	end)
+	lines[#lines + 1] = ""
+	if not ask then
+		lines[#lines + 1] = "Ask for Shares: no line, as no quest fits"
+	else
+		-- Every way the builder names a quest carries its title
+		local named = 0
+		for _, quest in ipairs(askQuests) do
+			if ask:find(quest.name, 1, true) then
+				named = named + 1
+			end
+		end
+		lines[#lines + 1] = string.format(
+			"[%s] ZONE_INFO_ASK_MESSAGE: %d bytes of %d after the channel prefix, %d of %d quests named",
+			#ask > room and "OVER" or "OK",
+			#ask,
+			room,
+			named,
+			#askQuests
+		)
+		lines[#lines + 1] = "    " .. ShownText(ask)
 	end
 	return table.concat(lines, "\n")
 end
