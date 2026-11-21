@@ -45,7 +45,7 @@
 		One stop on the route, or one camp: a disc in its objective's color with Questie's icon for the objective
 		on it. The disc's black ring is part of its art. A party member's marker, and a waypoint's or camp's
 		whose every objective the route won't take, draws the fill alone (Route-Stop-Fill) with a ring over it
-		in place of the black one: red (ROUTE_ALERT_RING) for a dungeon or raid quest's, light gray
+		in place of the black one: blue (ROUTE_DUNGEON_RING) for a dungeon or raid quest's, light gray
 		(ROUTE_IGNORED_RING) for one ignored, white (ROUTE_PARTY_RING) for a party member's
 	-->
 	<Frame name="PrettyWideQuestLogRouteStopPinTemplate" mixin="PrettyWideQuestLogRoutePinMixin" enableMouse="true" virtual="true">
@@ -69,9 +69,9 @@
 	</Frame>
 
 	<!--
-		A zone's discs on a continent's or the world's map (Routes-Map-Zones.lua): a gold !, a gold ? and a gray !,
-		each with how many on its corner, side by side. Each disc's parts are made in Routes-Map.lua as it's first
-		needed, and the pin sized to the discs it shows
+		A zone's disc on a continent's or the world's map (Routes-Map-Zones.lua): one disc in the zone's level
+		color with Questie's ! on it, no counts. Its parts are made in Routes-Map.lua (AddZonePin) the first time
+		the pin is used, and the pin sized as a marker on that map times ZONE_SCALE
 	-->
 	<Frame name="PrettyWideQuestLogRouteZonePinTemplate" mixin="PrettyWideQuestLogRoutePinMixin" enableMouse="true" virtual="true">
 		<Size x="32" y="32"/>

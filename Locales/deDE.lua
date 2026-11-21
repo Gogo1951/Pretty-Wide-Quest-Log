@@ -39,6 +39,10 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Komfortfunktionen aktivieren"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Hilft deiner Gruppe, deine Quests zu bekommen: Tempo beim Teilen, Flüsternachrichten, wenn eine geteilte Quest bei jemandem nicht ankommt, sowie Ansage und Teilen von Dungeonquests. Die Schaltfläche Quests teilen an einer Zone im Questlog funktioniert auch, wenn dies ausgeschaltet ist."
+L["QUEST_TOOLTIPS"] = "Quest-Tooltips"
+L["ENABLE_QUEST_TOOLTIPS"] = "Quest-Tooltips aktivieren"
+L["FEATURE_QUEST_TOOLTIPS_DESCRIPTION"] =
+	"Ordnet die Questzeilen, die Questie den Tooltips von Gegnern, Objekten, Gegenständen und Kartensymbolen hinzufügt, so an, wie der Questpfeil einen Wegpunkt auflistet, mit dem Fortschritt deiner Gruppe unter jedem Ziel. Schalte es aus, um Questies eigene Zeilen zu sehen."
 L["ENABLE_WAYPOINT_MARKERS"] = "Wegpunkt-Markierungen aktivieren"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Fasst die Questsymbole jedes Questziels auf der Zonenkarte zu einer Markierung zusammen, einem Wegpunkt, dort, wo die meisten seiner Gegner oder Objekte sind, dazu eine für jede Abgabe. Fahre mit der Maus über eine Markierung, um die Symbole zu sehen, für die sie steht."
@@ -644,7 +648,7 @@ L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Verfügbare Dungeon- und Gruppenquests"
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
 L["ROUTES_ZONE_OBJECTIVES"] = "Ziele"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "Und %d weitere..."
+L["ROUTES_ZONE_MORE"] = "%d weitere"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Zonenkarte öffnen"
 -- TRANSLATORS: %s is a quest link or a list of them

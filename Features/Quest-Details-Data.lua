@@ -143,8 +143,8 @@ end
 --[[
 	The selected quest's details: title, failed, objectivesText, description, waypoint (WoW Forever's next
 	waypoint, or nil), timeLeft, groupSize, requiredMoney, objectives ({ text, finished }), and its rewards:
-	choices, rewards and spells (as above), money and experience. Rewards are empty for a quest whose
-	rewards Blizzard keeps hidden
+	choices, rewards and spells (as above), money and experience. Choices, rewards, money and experience
+	are empty for a quest whose rewards Blizzard keeps hidden; spells are filled either way
 ]]
 function ns.GetSelectedQuestDetails(questID)
 	local description, objectivesText = GetQuestLogQuestText()

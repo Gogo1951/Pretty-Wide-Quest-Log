@@ -217,7 +217,11 @@ local function IsPinnable(node, wasPinned, destination, planned, blob)
 	return IsWorkingOn(node) or (blob ~= nil and planned[node.key] == BlobKey(blob))
 end
 
--- Every node not in the set waits on every node in it
+--[[
+	Every node not in the set waits on every node in it, except a member that already waits on that node
+	(a pick-up's dropper kill, a party member's objective on the player's pick-up), which would leave neither
+	able to go first
+]]
 local function WaitOn(nodes, set, members)
 	if #members == 0 then
 		return
@@ -229,7 +233,9 @@ local function WaitOn(nodes, set, members)
 				requires[#requires + 1] = required
 			end
 			for _, required in ipairs(members) do
-				requires[#requires + 1] = required
+				if not routes.WaitsFor(required, node, {}) then
+					requires[#requires + 1] = required
+				end
 			end
 			node.requires = requires
 		end

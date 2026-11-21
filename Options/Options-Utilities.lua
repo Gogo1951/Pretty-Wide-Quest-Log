@@ -69,6 +69,14 @@ ns.FEATURES[#ns.FEATURES + 1] = {
 		ns.ApplyQualityOfLifeSettings()
 	end,
 }
+-- Read at each hover (Questie-Tooltips.lua), so it needs no apply
+ns.FEATURES[#ns.FEATURES + 1] = {
+	store = "profile",
+	setting = "questTooltips",
+	name = "QUEST_TOOLTIPS",
+	caption = "ENABLE_QUEST_TOOLTIPS",
+	desc = "FEATURE_QUEST_TOOLTIPS_DESCRIPTION",
+}
 
 --[[
 	A feature's Enable switch. The Quest Route is drawn between the Waypoint Markers, so its switch is grayed

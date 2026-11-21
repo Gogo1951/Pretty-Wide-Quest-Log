@@ -328,6 +328,7 @@ local function PlanQuest(QuestieDB, pickUp, start, yield, nodes)
 			spawns = entry.blobs.spawns,
 			requires = { pickUp },
 			predicted = true,
+			npcs = entry.npcs, -- The creatures it has the player kill (WaitForDropperKills)
 			pickUpNode = pickUp,
 			party = pickUp.party,
 			holdersOf = pickUp.holdersOf,
@@ -403,11 +404,13 @@ function routes.AddChainNodes(nodes, start, log, chainStarts, yield)
 	end
 
 	--[[
-		The quests whose follow-ups come next, each { questID, depth }: the log's first, by quest ID, then the
-		chain starts, then the party's, each also with the units who have the quest it grew from and that
-		quest (holdersOf), whose holders an ignore is for
+		The quests whose follow-ups come next, each { questID, depth }: the player's (queue), the log's first,
+		by quest ID, then the chain starts; and the party's (partyQueue), each also with the units who have the
+		quest it grew from and that quest (holdersOf), whose holders an ignore is for. Every one of the player's
+		goes before any of the party's, so a member a quest ahead in a chain doesn't take the player's own
+		follow-up (planned) as theirs
 	]]
-	local queue, planned, count = {}, {}, 0
+	local queue, partyQueue, planned, count = {}, {}, {}, 0
 	local logged = {}
 	for questID in pairs(turnInOf) do
 		logged[#logged + 1] = questID
@@ -435,14 +438,19 @@ function routes.AddChainNodes(nodes, start, log, chainStarts, yield)
 	for _, questID in ipairs(partyQuests) do
 		local units = routes.PartyQuestHolderUnits(questID)
 		if #units > 0 then
-			queue[#queue + 1] = { questID = questID, depth = 0, party = true, units = units, holdersOf = questID }
+			partyQueue[#partyQueue + 1] =
+				{ questID = questID, depth = 0, party = true, units = units, holdersOf = questID }
 		end
 	end
 
-	local head = 1
-	while head <= #queue and count < MAX_PLANNED_QUESTS do
-		local item = queue[head]
-		head = head + 1
+	local head, partyHead = 1, 1
+	while count < MAX_PLANNED_QUESTS and (head <= #queue or partyHead <= #partyQueue) do
+		local item
+		if head <= #queue then
+			item, head = queue[head], head + 1
+		else
+			item, partyHead = partyQueue[partyHead], partyHead + 1
+		end
 		local list = {}
 		for _, questID in ipairs(followUps[item.questID] or {}) do
 			list[#list + 1] = questID
@@ -527,7 +535,8 @@ function routes.AddChainNodes(nodes, start, log, chainStarts, yield)
 							turnInOf[questID] = turnIn
 						end
 						if item.depth + 1 < MAX_CHAIN_DEPTH then
-							queue[#queue + 1] = {
+							local into = party and partyQueue or queue
+							into[#into + 1] = {
 								questID = questID,
 								depth = item.depth + 1,
 								party = party,
@@ -540,5 +549,85 @@ function routes.AddChainNodes(nodes, start, log, chainStarts, yield)
 			end
 		end
 		yield()
+	end
+end
+
+--------------------------------------------------------------------------------
+-- Pick-ups that drop from a creature the route already has the player kill
+--------------------------------------------------------------------------------
+
+-- The creatures a quest log objective has the player kill, as a set: Questie keys each by "m_" and its ID
+local function LoggedTargets(objective)
+	local npcs = {}
+	if type(objective) == "table" and type(objective.spawnList) == "table" then
+		for _, spawnData in pairs(objective.spawnList) do
+			local npcID = type(spawnData) == "table"
+				and type(spawnData.TooltipKey) == "string"
+				and tonumber(spawnData.TooltipKey:match("^m_(%d+)$"))
+			if npcID then
+				npcs[npcID] = true
+			end
+		end
+	end
+	return npcs
+end
+
+-- Whether node waits on target, through what it waits on and what those wait on (also Routes-Pinning.lua)
+function routes.WaitsFor(node, target, seen)
+	if node == target then
+		return true
+	end
+	if seen[node] then
+		return false
+	end
+	seen[node] = true
+	for _, required in ipairs(node.requires or {}) do
+		if routes.WaitsFor(required, target, seen) then
+			return true
+		end
+	end
+	return false
+end
+
+--[[
+	A pick-up whose quest only one creature can start, by an item it drops (helpers.SoleDropper), waits on
+	every objective of another quest on the route that has the player kill that creature, logged or planned:
+	the route then goes there once, for both, rather than for the pick-up first and again for the kill
+	(Fizsprocket's Notes, from Supervisor Fizsprocket, waits for the Supervisor Fizsprocket quest). Not on
+	one that itself waits on the pick-up, which would leave neither able to go first
+]]
+function routes.WaitForDropperKills(nodes)
+	local QuestieDB = ns.ImportQuestieModule("QuestieDB")
+	if not (QuestieDB and type(QuestieDB.QueryQuestSingle) == "function") then
+		return
+	end
+	local killsOf = {}
+	for _, node in ipairs(nodes) do
+		if node.kind == "objective" then
+			for npcID in pairs(node.npcs or LoggedTargets(node.objective)) do
+				local list = killsOf[npcID]
+				if not list then
+					list = {}
+					killsOf[npcID] = list
+				end
+				list[#list + 1] = node
+			end
+		end
+	end
+	if not next(killsOf) then
+		return
+	end
+	for _, node in ipairs(nodes) do
+		local dropper = node.kind == "pickUp" and helpers.SoleDropper(QuestieDB, node.questID)
+		for _, kill in ipairs(dropper and killsOf[dropper] or {}) do
+			if kill.questID ~= node.questID and not routes.WaitsFor(kill, node, {}) then
+				local requires = {}
+				for _, required in ipairs(node.requires or {}) do
+					requires[#requires + 1] = required
+				end
+				requires[#requires + 1] = kill
+				node.requires = requires
+			end
+		end
 	end
 end

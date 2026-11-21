@@ -9,6 +9,7 @@ ns.DATABASE_DEFAULTS = {
 	profile = {
 		showWelcome = true,
 		enableQualityOfLife = true,
+		questTooltips = true, -- Questie's quest lines in the Quest Arrow's layout (Questie-Tooltips.lua)
 		giverCleanup = true,
 		giverLevels = true,
 		shareInterval = 3,

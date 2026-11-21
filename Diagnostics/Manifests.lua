@@ -717,6 +717,9 @@ Append(ns.DIAGNOSTIC_API_CHECKS, ZONE_INFO_ROUTES)
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "Enum.UIMapType.Continent", "Enum.UIMapType.Zone" }))
 -- How far into the quest text the quest giver window's fade starts; without it, 30 (Quest-Giver.lua)
 Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "QUEST_DESCRIPTION_GRADIENT_LENGTH" }))
+-- Quest Tooltips (Questie-Tooltips.lua): the tooltip and minimap it hooks at load, and the party reads it makes with no fallback
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("table", { "GameTooltip", "Minimap" }))
+Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", { "Ambiguate", "GetUnitName", "UnitInParty" }))
 -- Routes is one TOC line (Routes.xml), so a release can leave it out
 if ns.routes then
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("function", ROUTES_FUNCTIONS))
@@ -2380,6 +2383,98 @@ function ns:BuildMapContextReport()
 end
 
 --------------------------------------------------------------------------------
+-- Quest Tooltips Context
+--------------------------------------------------------------------------------
+
+-- Questie's tooltip handlers Questie-Tooltips.lua wraps at load, before Questie hooks them to the tooltips
+local QUESTIE_TOOLTIP_HANDLERS = { "AddUnitDataToTooltip", "AddItemDataToTooltip", "AddObjectDataToTooltip" }
+
+-- The add-on whose code last wrote a field, as issecurevariable names it, or "missing" where it holds nothing
+local function WrittenBy(owner, key)
+	if type(owner) ~= "table" or owner[key] == nil then
+		return "missing"
+	end
+	local secure, taintedBy = issecurevariable(owner, key)
+	return secure and "the game" or tostring(taintedBy)
+end
+
+-- The state behind "the tooltips still look like Questie's" and "my party's progress isn't listed" reports. Reads only.
+function ns:BuildQuestTooltipsContextReport()
+	local lines = { GetClientHeader(), "" }
+	-- Read at each hover, so a change applies on the next tooltip (Questie-Tooltips.lua)
+	lines[#lines + 1] = string.format("Saved settings loaded: %s", YesNo(ns.db))
+	Setting(lines, "Enable Quest Tooltips switch", "questTooltips")
+
+	--[[
+		The feature sets itself up at load only where Questie's tooltip module has its handlers and GetTooltip;
+		without them every tooltip stays Questie's own. Each one it wrapped reads as written by this add-on
+	]]
+	lines[#lines + 1] = ""
+	lines[#lines + 1] = string.format("Questie: %s", Loaded(ns.QUESTIE_ADDON_NAME))
+	lines[#lines + 1] =
+		string.format("Questie started: %s", tostring(type(Questie) == "table" and Questie.started or nil))
+	local tooltips = ns.ImportQuestieModule("QuestieTooltips")
+	local handlers = tooltips and tooltips.private
+	local ready = type(handlers) == "table" and type(tooltips.GetTooltip) == "function"
+	lines[#lines + 1] = string.format(
+		"Questie's tooltip module (QuestieTooltips with its handlers and GetTooltip): %s",
+		ready and "found" or "not found, so every tooltip is Questie's own"
+	)
+	if ready then
+		lines[#lines + 1] =
+			string.format("QuestieTooltips.GetTooltip last written by: %s", WrittenBy(tooltips, "GetTooltip"))
+		for _, name in ipairs(QUESTIE_TOOLTIP_HANDLERS) do
+			lines[#lines + 1] = string.format(
+				"Questie handler %s: %s",
+				name,
+				type(handlers[name]) == "function" and ("found, last written by " .. WrittenBy(handlers, name))
+					or "missing, so those tooltips stay Questie's own"
+			)
+		end
+		lines[#lines + 1] = string.format(
+			"Mobs, objects and items Questie has quest lines for (QuestieTooltips.lookupByKey): %s",
+			type(tooltips.lookupByKey) == "table" and tostring(CountKeys(tooltips.lookupByKey)) or "not found"
+		)
+	end
+	local mapIcons = ns.ImportQuestieModule("MapIconTooltip")
+	lines[#lines + 1] = string.format(
+		"Questie's map icon tooltips (MapIconTooltip.ShowOnTooltip): %s",
+		(mapIcons and type(mapIcons.ShowOnTooltip) == "function")
+				and ("found, last written by " .. WrittenBy(mapIcons, "ShowOnTooltip"))
+			or "not found, so map icon tooltips stay Questie's own"
+	)
+	-- The block's quest titles, objective names and counts come from Routes' helpers
+	lines[#lines + 1] = string.format(
+		"Routes: %s",
+		ns.routes and "loaded" or "not loaded (Features/Routes/Routes.xml missing), so the block can't be drawn"
+	)
+
+	-- Questie's own settings the block follows: givers' quests, drop chances, and whose progress shows
+	local profile = QuestieProfile() or {}
+	lines[#lines + 1] = ""
+	lines[#lines + 1] =
+		string.format("Questie: quests on quest givers' tooltips: %s", tostring(profile.showQuestsInNpcTooltip))
+	lines[#lines + 1] = string.format("Questie: drop chances on tooltips: %s", tostring(profile.enableTooltipDroprates))
+	lines[#lines + 1] = string.format("Questie: only party members' progress: %s", tostring(profile.onlyPartyShared))
+
+	-- Everyone else's progress: Questie's shared logs, and on WoW Forever the game's own lines for members without Questie
+	lines[#lines + 1] = ""
+	lines[#lines + 1] = string.format("In a group, where names show under each objective: %s", YesNo(IsInGroup()))
+	local comms = ns.ImportQuestieModule("QuestieComms")
+	lines[#lines + 1] = string.format(
+		"Questie's shared quest logs (QuestieComms): %s",
+		(comms and type(comms.data) == "table") and "found" or "not found, so only your own progress shows"
+	)
+	local forever = ns.ImportQuestieModule("Forever")
+	lines[#lines + 1] = string.format(
+		"Party progress from the game's own tooltip lines (Questie's Forever.GetNativePartyProgress): %s",
+		(forever and type(forever.GetNativePartyProgress) == "function") and "found" or "not found"
+	)
+
+	return table.concat(lines, "\n")
+end
+
+--------------------------------------------------------------------------------
 -- Routes Context
 --------------------------------------------------------------------------------
 
@@ -2387,8 +2482,13 @@ end
 local ROUTE_LINE_TEMPLATE = "PrettyWideQuestLogRouteLinePinTemplate"
 local ROUTE_STOP_TEMPLATE = "PrettyWideQuestLogRouteStopPinTemplate"
 
--- The QuestieDB lookups a plan makes: turn-in NPCs and objects, and escort and instance quests (Routes-Nodes.lua, Routes-Questie.lua)
-local ROUTE_QUESTIE_QUERIES = { "QueryNPCSingle", "QueryObjectSingle", "QueryQuestSingle", "GetQuestTagInfo" }
+--[[
+	The QuestieDB lookups a plan makes: turn-in NPCs and objects, escort and instance quests, and the items an
+	objective or a quest to pick up drops from (Routes-Nodes.lua, Routes-Questie.lua, Routes-Pick-Ups.lua,
+	Routes-Quest-Plans.lua)
+]]
+local ROUTE_QUESTIE_QUERIES =
+	{ "QueryNPCSingle", "QueryObjectSingle", "QueryQuestSingle", "QueryItemSingle", "GetQuestTagInfo" }
 
 local function RouteSetting(lines, label, key)
 	lines[#lines + 1] = string.format("%s: %s", label, tostring(ns.routes.Settings()[key]))
@@ -2627,6 +2727,13 @@ local function ArrowLines(lines)
 	lines[#lines + 1] = string.format("Quest log room for pick-ups: %d free of %d", math.max(most - taken, 0), most)
 	-- Waypoints of quests not taken yet, planned ahead with Plan Ahead (Routes-Chains.lua)
 	lines[#lines + 1] = string.format("Waypoints planned ahead for quests not taken yet: %d", predicted)
+	-- Follow-ups are found by reading every quest Questie lists; without that list nothing is planned ahead (Routes-Chains.lua)
+	local questPointers = questieDB and questieDB.QuestPointers
+	lines[#lines + 1] = string.format(
+		"Questie's quest list for finding follow-ups (QuestieDB.QuestPointers): %s",
+		type(questPointers) == "table" and (tostring(CountKeys(questPointers)) .. " quests")
+			or "not found, so nothing is planned ahead"
+	)
 	-- A party member's race is matched to a follow-up through Questie's race masks (Routes-Chains.lua)
 	local raceMasks = LibQuestieDB and LibQuestieDB.Enum and LibQuestieDB.Enum.raceMaskById
 	lines[#lines + 1] = string.format(

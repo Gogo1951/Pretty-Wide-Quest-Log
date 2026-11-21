@@ -39,6 +39,10 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Activer les améliorations de confort"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Aide votre groupe à prendre vos quêtes : rythme de partage, chuchotements quand un partage rate quelqu'un, et annonce et partage des quêtes de donjon. Le bouton Partager les quêtes d'une zone dans le journal de quêtes fonctionne aussi quand cette option est désactivée."
+L["QUEST_TOOLTIPS"] = "Infobulles de quête"
+L["ENABLE_QUEST_TOOLTIPS"] = "Activer les Infobulles de quête"
+L["FEATURE_QUEST_TOOLTIPS_DESCRIPTION"] =
+	"Présente les lignes de quête que Questie ajoute aux infobulles des monstres, des objets interactifs, des objets et des icônes de carte, de la même façon que la Flèche de quête présente un point de passage, avec la progression de votre groupe sous chaque objectif. Désactivez cette option pour voir les lignes de Questie."
 L["ENABLE_WAYPOINT_MARKERS"] = "Activer les Marqueurs de points de passage"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Regroupe les icônes de quête de chaque objectif sur la carte de zone en un seul marqueur, un point de passage, là où se trouvent la plupart de ses monstres ou objets, avec un marqueur pour chaque remise de quête. Survolez un marqueur pour voir les icônes qu'il remplace."
@@ -648,7 +652,7 @@ L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Quêtes de donjon et de groupe disponibles"
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
 L["ROUTES_ZONE_OBJECTIVES"] = "Objectifs"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "Et %d de plus..."
+L["ROUTES_ZONE_MORE"] = "%d de plus"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Ouvrir la carte de la zone"
 -- TRANSLATORS: %s is a quest link or a list of them

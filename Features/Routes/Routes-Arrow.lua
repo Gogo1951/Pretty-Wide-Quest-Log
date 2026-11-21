@@ -11,7 +11,8 @@ local ADDON_NAME, ns = ...
 	with the player's facing, and its color follows where they're going: their facing, or while they back
 	up or strafe, the way they're moving (ColorHeading), so closing in backwards isn't red. It points
 	to the next stop, all the way to one that's one place (an NPC, an object, the corpse), and becomes a
-	blue eye that breathes within 10 yards of it, "You're There".
+	blue eye that breathes within 10 yards of an NPC or object, "You're There". The corpse keeps the arrow,
+	with "You're There" once within its radius.
 
 	Heading for an area, it points at the camp's nearest spawn and counts down to its edge, routes.AREA_REACH
 	short of it, where the eye takes over. In an area (within routes.AREA_REACH of an objective's spawns) it
@@ -24,7 +25,7 @@ local ADDON_NAME, ns = ...
 	(Routes-Arrow-Survey.lua).
 
 	Under the list, dimmed, with showNextObjective, the Next Objective: the waypoint after the area, or
-	heading to a waypoint, the one after that. On the left a 16px arrow turning toward it, colored as the
+	heading to a waypoint, the one after that, past what "While You're Here" already lists. On the left a 16px arrow turning toward it, colored as the
 	big one is, with how far it is under it; on the right "Next Objective", its first quest and what's to
 	do there, with counts (and in a party, who needs each).
 
@@ -361,6 +362,7 @@ local function PointNext(hereBeDragons, x, y, instance, facing, heading, rewrite
 	if nextAngle then
 		nextArrow:SetRotation(nextAngle - facing)
 		nextArrow:SetVertexColor(Shade(nextAngle - heading))
+		nextArrow:Show()
 		if rewrite then
 			local text = routes.Settings().showDistance and routes.YardsText(nextYards) or ""
 			if text ~= nextDistance:GetText() then
@@ -389,6 +391,14 @@ local function PointLines(hereBeDragons, x, y, instance, facing, heading)
 	end
 end
 
+-- With the big arrow hidden, the little ones go too, until PointNext and PointLines turn them again
+local function HideLittleArrows()
+	nextArrow:Hide()
+	for _, line in ipairs(routes.arrowPointingLines or {}) do
+		line.icon:Hide()
+	end
+end
+
 --[[
 	Joining up: the arrow points to the party member, or the middle of everyone, as it moves, with "Join Up
 	with Group" under it, and with showNextObjective the route's next waypoint dimmed below as the Next
@@ -411,6 +421,7 @@ local function PointToMember(meet, survey, rewrite, hereBeDragons, x, y, instanc
 		arrow:Hide()
 		away:Hide()
 		distance:SetText("")
+		HideLittleArrows()
 		return
 	end
 	away:Hide()
@@ -486,6 +497,7 @@ local function Point(self, elapsed)
 		arrow:Hide()
 		distance:SetText("")
 		away:SetShown(x ~= nil and instance ~= stop.instance)
+		HideLittleArrows()
 		return
 	end
 	away:Hide()

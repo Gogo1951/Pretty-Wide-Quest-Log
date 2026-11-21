@@ -40,6 +40,10 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Activar mejoras de comodidad"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Ayuda a tu grupo a hacerse con tus misiones: ritmo al compartir, susurros cuando un envío no le llega a alguien, y anuncio y envío de misiones de mazmorra. El botón Compartir misiones de una zona en el registro de misiones funciona también con esto desactivado."
+L["QUEST_TOOLTIPS"] = "Descripciones de misiones"
+L["ENABLE_QUEST_TOOLTIPS"] = "Activar Descripciones de misiones"
+L["FEATURE_QUEST_TOOLTIPS_DESCRIPTION"] =
+	"Ordena las líneas de misión que Questie añade a las descripciones de enemigos, objetos interactivos, objetos e iconos del mapa igual que la Flecha de misiones muestra un punto de ruta, con el progreso de tu grupo bajo cada objetivo. Desactívalo para ver las líneas propias de Questie."
 L["ENABLE_WAYPOINT_MARKERS"] = "Activar Marcadores de puntos de ruta"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Reúne los iconos de misión de cada objetivo en el mapa de zona en un solo marcador, un punto de ruta, donde están la mayoría de sus enemigos u objetos, y uno más por cada entrega. Pasa el ratón sobre un marcador para ver los iconos a los que sustituye."
@@ -421,7 +425,7 @@ L["QUESTS_LISTED_DESCRIPTION"] =
 	'Cuántas misiones como máximo muestra la Flecha de misiones debajo de ella para un punto de ruta. Las demás se cuentan en una línea aparte, como "%s".'
 L["SHOW_ITEM_BUTTONS"] = "Mostrar botones de objetos de misión"
 L["SHOW_ITEM_BUTTONS_DESCRIPTION"] =
-	"Pone un botón junto a cada misión de la lista de la Flecha de misiones que tenga un objeto para usar, como uno para lanzar, plantar o usar sobre un objetivo. Haz clic en él para usar el objeto, o asigna una tecla a Usar objeto de misión en Asignación de teclas, en el panel Pretty Wide Quest Log, para usar el primero. En combate, los botones se quedan donde están hasta que termina."
+	"Pone un botón junto a cada misión de la lista de la Flecha de misiones que tenga un objeto para usar, como uno para lanzar, plantar o usar sobre un objetivo. Haz clic en él para usar el objeto, o asigna una tecla a Usar objeto de misión en Asignación de teclas, en la página Pretty Wide Quest Log, para usar el primero. En combate, los botones se quedan donde están hasta que termina."
 -- TRANSLATORS: the same setting is a switch on the Quest Arrow's menu, labeled ROUTES_NEXT_OBJECTIVE
 L["SHOW_NEXT_OBJECTIVE"] = "Mostrar el siguiente objetivo"
 -- TRANSLATORS: the first %s is ROUTES_OBJECTIVE_AREA and the second is ROUTES_NEXT_OBJECTIVE, as the Quest Arrow shows them
@@ -649,7 +653,7 @@ L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Misiones de mazmorra y grupo disponibles"
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
 L["ROUTES_ZONE_OBJECTIVES"] = "Objetivos"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "Y %d más..."
+L["ROUTES_ZONE_MORE"] = "%d más"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Abrir el mapa de la zona"
 -- TRANSLATORS: %s is a quest link or a list of them

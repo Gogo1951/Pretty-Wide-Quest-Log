@@ -39,6 +39,10 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "Ativar melhorias de conveniência"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"Ajuda seu grupo a pegar suas missões: ritmo de compartilhamento, sussurros quando um compartilhamento não chega a alguém, e anúncio e compartilhamento de missões de masmorra. O botão Compartilhar missões de uma zona no registro de missões também funciona com isto desativado."
+L["QUEST_TOOLTIPS"] = "Dicas de missões"
+L["ENABLE_QUEST_TOOLTIPS"] = "Ativar Dicas de missões"
+L["FEATURE_QUEST_TOOLTIPS_DESCRIPTION"] =
+	"Organiza as linhas de missão que o Questie adiciona às dicas de inimigos, objetos, itens e ícones do mapa como a Seta de missões lista um ponto de passagem, com o progresso do seu grupo sob cada objetivo. Desative para ver as linhas do próprio Questie."
 L["ENABLE_WAYPOINT_MARKERS"] = "Ativar Marcadores de pontos de passagem"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"Junta os ícones de missão de cada objetivo no mapa da zona em um só marcador, um ponto de passagem, onde está a maioria dos seus inimigos ou objetos, mais um para cada entrega. Passe o mouse sobre um marcador para ver os ícones que ele substitui."
@@ -645,7 +649,7 @@ L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Missões de masmorra e grupo disponíveis"
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
 L["ROUTES_ZONE_OBJECTIVES"] = "Objetivos"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "E mais %d..."
+L["ROUTES_ZONE_MORE"] = "Mais %d"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Abrir o mapa da zona"
 -- TRANSLATORS: %s is a quest link or a list of them

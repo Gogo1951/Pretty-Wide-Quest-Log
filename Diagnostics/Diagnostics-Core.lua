@@ -158,6 +158,8 @@ ns.DiagnosticsStrings = {
 	SHARING_CONTEXT_DESCRIPTION = "Shows what Share Quests can share right now, every switch and setting that decides whether a failed share sends a whisper, and, inside a dungeon, which quests count for it and the announcement as it would go out.",
 	MAP_CONTEXT_TITLE = "Quest Map Context",
 	MAP_CONTEXT_DESCRIPTION = "Shows whether the map beside the quest log is open, the zone it shows, whether its unexplored areas can be filled in, whether Questie has icons for the selected quest, and what Zone Info needs to list a zone's quests and items.",
+	TOOLTIPS_CONTEXT_TITLE = "Quest Tooltips Context",
+	TOOLTIPS_CONTEXT_DESCRIPTION = "Shows the Quest Tooltips switch, whether Questie's tooltips were taken over, the Questie settings they follow, and what they need to list your party's progress.",
 	ROUTES_CONTEXT_TITLE = "Routes Context",
 	ROUTES_CONTEXT_DESCRIPTION = "Shows the Routes switches, what a route needs from Questie and from where you stand, the route as last planned, and where the Quest Arrow and the zone map's route stand.",
 	VALIDATE_TITLE = "Validate Data: %s",
@@ -184,7 +186,7 @@ ns.DiagnosticsStrings = {
 	MESSAGES_TITLE = "Message Length",
 	MESSAGES_DESCRIPTION = "Builds each whisper "
 		.. TITLE
-		.. " can send, with the longest quest title in your log, and the dungeon announcement for every quest in your log, and shows each one's length against the chat limit. Nothing is sent.",
+		.. " can send, with the longest quest title in your log, the dungeon announcement for every quest in your log, and Zone Info's Ask for Shares line naming them, and shows each one's length against the chat limit. Nothing is sent.",
 
 	STATUS_WAITING = "Waiting",
 	STATUS_RUNNING = "Running",

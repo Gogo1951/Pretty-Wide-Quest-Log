@@ -39,6 +39,10 @@ L["FEATURE_QUEST_LOG_DESCRIPTION"] =
 L["ENABLE_QUALITY_OF_LIFE"] = "啟用便利功能"
 L["FEATURE_QUALITY_OF_LIFE_SUMMARY"] =
 	"幫助隊友接到你的任務：分享節奏、分享漏掉某人時的密語，以及地城任務的通報和分享。即使關閉此項，任務日誌中每個區域的分享任務按鈕仍然可用。"
+L["QUEST_TOOLTIPS"] = "任務滑鼠提示"
+L["ENABLE_QUEST_TOOLTIPS"] = "啟用任務滑鼠提示"
+L["FEATURE_QUEST_TOOLTIPS_DESCRIPTION"] =
+	"將Questie加入怪物、物件、物品和地圖圖示滑鼠提示中的任務行，依任務箭頭列出路徑點的方式排列，並在每個目標下顯示隊友的進度。關閉後顯示Questie自己的任務行。"
 L["ENABLE_WAYPOINT_MARKERS"] = "啟用路徑點標記"
 L["FEATURE_WAYPOINT_MARKERS_DESCRIPTION"] =
 	"將區域地圖上每個任務目標的任務圖示合併為一個標記，也就是一個路徑點，放在其怪物或物品最多的地方，每個回報地點也各有一個。將滑鼠移到標記上可查看它所取代的圖示。"
@@ -627,7 +631,7 @@ L["ROUTES_ZONE_AVAILABLE_GROUP"] = "可接的地城和組隊任務"
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
 L["ROUTES_ZONE_OBJECTIVES"] = "目標"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "還有 %d 個..."
+L["ROUTES_ZONE_MORE"] = "還有 %d 個"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "開啟區域地圖"
 -- TRANSLATORS: %s is a quest link or a list of them

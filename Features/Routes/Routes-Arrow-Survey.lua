@@ -171,6 +171,32 @@ local function View(stop, tasks)
 end
 
 --[[
+	The first stop from index from on with a task left that skip doesn't hold, as a view of those tasks, and
+	its index
+]]
+local function FirstStopLeft(stops, from, skip)
+	for index = from, #stops do
+		local stop = stops[index]
+		local rest = {}
+		for _, task in ipairs(stop.tasks) do
+			if not skip[task.key] and routes.IsTaskLeft(task) then
+				rest[#rest + 1] = task
+			end
+		end
+		if #rest > 0 then
+			return View(stop, rest), index
+		end
+	end
+	return nil
+end
+
+-- The waypoint after the one at index, as FirstStopLeft finds it; never a corpse
+local function AfterStop(stops, index, skip)
+	local after = FirstStopLeft(stops, index + 1, skip)
+	return after and not after.corpse and after or nil
+end
+
+--[[
 	Looks around. The waypoint the route sends the player to is its first stop with a task left. Every task
 	whose area the player is in (routes.InArea) is either work, at that waypoint or pinned there for being
 	worked (routes.engaged), or on the way, planned for a later waypoint. The next destination is the first
@@ -226,25 +252,10 @@ local function Survey(x, y)
 	local instance = stops[1].instance
 	local here = #work > 0 and { tasks = work, instance = instance } or nil
 	local areaNote = here and AreaNote(work, stops, sentTo) or nil
-	local destination, afterDestination, destinationIndex
-	for index, stop in ipairs(stops) do
-		local rest = {}
-		for _, task in ipairs(stop.tasks) do
-			if not workKeys[task.key] and routes.IsTaskLeft(task) then
-				rest[#rest + 1] = task
-			end
-		end
-		if #rest > 0 then
-			if destination then
-				afterDestination = not stop.corpse and View(stop, rest) or nil
-				break
-			end
-			destination, destinationIndex = View(stop, rest), index
-			if stop.corpse then
-				break -- Dead, nothing's next until the corpse is reached
-			end
-		end
-	end
+	local destination, destinationIndex = FirstStopLeft(stops, 1, workKeys)
+	-- Dead, nothing's next until the corpse is reached
+	local afterDestination = destination and not destination.corpse and AfterStop(stops, destinationIndex, workKeys)
+		or nil
 	--[[
 		A quest to pick up nearby is on the way, listed under "While You're Here": while the player works an
 		area always, as the list shows only the area then; else unless the arrow already points to it
@@ -256,6 +267,24 @@ local function Survey(x, y)
 	end
 	local listed = ListPassing(onTheWay, yards, wasListed)
 	local passing = #listed > 0 and { tasks = listed, instance = instance } or nil
+	--[[
+		What "While You're Here" lists isn't the Next Objective too: that skips it, to the waypoint after.
+		Working an area the Next Objective is the destination, else the waypoint after it
+	]]
+	if passing then
+		local skip = {}
+		for key in pairs(workKeys) do
+			skip[key] = true
+		end
+		for _, task in ipairs(listed) do
+			skip[task.key] = true
+		end
+		if here then
+			destination = FirstStopLeft(stops, 1, skip)
+		elseif afterDestination then
+			afterDestination = AfterStop(stops, destinationIndex, skip)
+		end
+	end
 	return here, passing, areaNote, destination, afterDestination
 end
 
