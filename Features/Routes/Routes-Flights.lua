@@ -375,7 +375,7 @@ end
 	What the flight map calls each flight path, by flight master NPC ID ("Camp Taurajo"), kept once found:
 	C_TaxiMap.GetTaxiNodesForMap names the zone's flight paths anywhere, and each is matched to the flight
 	master standing within MATCH_REACH of where it puts it. The part before a comma, as the flight map adds
-	the zone ("Camp Taurajo, The Barrens")
+	the zone ("Camp Taurajo, The Barrens"). Retired flight paths, named "zz...", are passed over
 ]]
 local placeNames = {}
 
