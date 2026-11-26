@@ -865,7 +865,7 @@ ns.MAP_REVEAL_OVERLAYS = {
 How We Got the Data
 
 Last Validated
-	2026-11-20, wago.tools, TBC Anniversary 2.5.6.70577
+	2026-11-25, wago.tools, TBC Anniversary 2.5.6.70577
 
 Notes
 	- Every area of a zone's map that starts hidden until the character explores it, so the quest map can show the

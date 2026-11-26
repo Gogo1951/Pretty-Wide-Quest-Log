@@ -58,7 +58,7 @@ function linePinMixin:DressLeg(leg, alpha)
 end
 
 --[[
-	How solid leg i is: past the last waypoint shown (Waypoints Shown, Routes-Map.lua) a leg is the route's
+	How solid leg i is: past the last waypoint shown (Waypoints Shown, Routes-Map-More.lua) a leg is the route's
 	hidden tail, drawn at tailAlpha, 0 until the "…" marker is hovered. The leg out of that last waypoint is
 	the stub running to the marker, and stays solid
 ]]
@@ -148,12 +148,51 @@ function linePinMixin:MapPoint(into, x, y, instance)
 	return into
 end
 
+-- Whether the player is at or through the first waypoint's gate, going out of a city (routes.ExitPlace)
+function linePinMixin:IsThroughGate()
+	local exit = self.exit
+	if not exit then
+		return false
+	end
+	local x, y = routes.PlayerPosition()
+	return x ~= nil and routes.ExitPlace(exit.task, exit.gate, x, y) == exit.task.aim
+end
+
+--[[
+	Through the first waypoint's gate, or back: the leg out of it starts at the gate's hidden point, or at the
+	gate again. That leg is the stub to the "…" marker when the gate is the last waypoint shown
+]]
+function linePinMixin:PlaceGateLeg(through)
+	self.landings[1] = through and self.exit.position or nil
+	if self.lastShown == 1 then
+		self:PlaceStubLeg()
+		return
+	end
+	local leg = self.legs[2]
+	local from, to = self.landings[1] or self.positions[1], self.positions[2]
+	if leg and from and to then
+		self:PlaceLeg(leg, from, to)
+	elseif leg then
+		self:HideLeg(leg)
+	end
+end
+
 --[[
 	The player's end of the first leg moves with the player. While joining up, the first leg runs from the
-	join-up spot instead, as it moves, and the join-up leg from the player to it
+	join-up spot instead, as it moves, and the join-up leg from the player to it. At or through a city's
+	gate going out, the first leg runs to the gate's hidden point past the city map's edge instead, and on
+	from there to the next waypoint
 ]]
 function linePinMixin:PlacePlayerLeg()
 	local leg, first = self.legs[1], self.positions[1]
+	local through = self:IsThroughGate()
+	if self.exit and through ~= self.through then
+		self.through = through
+		self:PlaceGateLeg(through)
+	end
+	if first and through then
+		first = self.exit.position
+	end
 	local player = first and self:MapPoint(playerPosition, routes.PlayerPosition())
 	local target = routes.groupUpTarget
 	local meet = player and target and self:MapPoint(meetPosition, target.x, target.y, target.instance)
@@ -178,15 +217,21 @@ end
 	Draws every leg: the player's to the first stop, then stop to stop. positions[i] is stop i's, or false;
 	landings[i], for a fly waypoint, where the leg after it starts, at the flight master it lands at. The
 	flight itself has no leg. With lastShown, the last waypoint the map shows, the legs past it are hidden
-	and the one out of it runs only to stub, the "…" marker's place (or nowhere, if it has none)
+	and the one out of it runs only to stub, the "…" marker's place (or nowhere, if it has none). exit, for a
+	first waypoint at a city's gate going out: its task, the gate and its hidden point's place on this map
 ]]
-function linePinMixin:Draw(mapID, positions, landings, lastShown, stub)
+function linePinMixin:Draw(mapID, positions, landings, lastShown, stub, exit)
 	local settings = routes.Settings()
 	if not settings.showLine then
 		positions = {} -- Quest Route off, Waypoint Markers only: no legs, and nothing to follow the player with
 	end
 	self.mapID, self.positions, self.speed = mapID, positions, settings.lineSpeed
-	self.landings = landings or {}
+	-- A copy, as PlaceGateLeg changes the first; the map draws the fly waypoints' markers from the original
+	self.landings = {}
+	for i, landing in pairs(landings or {}) do
+		self.landings[i] = landing
+	end
+	self.exit, self.through = exit, nil -- PlacePlayerLeg works out through again
 	if lastShown and lastShown >= #positions then
 		lastShown = nil
 	end

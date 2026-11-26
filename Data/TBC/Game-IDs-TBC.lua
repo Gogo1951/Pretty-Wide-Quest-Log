@@ -68,11 +68,23 @@ ns.NOT_FLIGHT_PATH_NPC_IDS = {
 	[11800] = true, -- Silva Fil'naveth
 }
 
+-- Quest ID = quest ID that hands out an item it needs, -- Quest: Sub-Quest
+ns.SUB_QUEST_IDS = {
+	[592] = 593, -- Saving Yenniku: Filling the Soul Gem
+	[812] = 813, -- Need for a Cure: Finding the Antidote
+	[1712] = 1714, -- Cyclonian: Essence of the Exile
+	[3909] = 4041, -- The Videre Elixir: The Videre Elixir
+	[6571] = 6581, -- Warsong Supplies: Warsong Saw Blades
+	[7643] = 7645, -- Ancient Equine Spirit: Manna-Enriched Horse Feed
+	[8507] = 8508, -- Field Duty: Field Duty Papers
+	[8731] = 8732, -- Field Duty: Field Duty Papers
+}
+
 --[[
 How We Got the Data
 
 Last Validated
-	2026-11-20, wago.tools, TBC Anniversary 2.5.6.70577
+	2026-11-25, wago.tools, TBC Anniversary 2.5.6.70577
 
 Notes
 	- CITY_ZONE_MAP_IDS: the six old-world capitals, plus The Exodar, Silvermoon City and Shattrath City, each
@@ -90,6 +102,14 @@ Notes
 	- NOT_FLIGHT_PATH_NPC_IDS: flight masters that are no flight path to discover, the druids' own to Moonglade:
 	  Bunthen Plainswind in Thunder Bluff and Silva Fil'naveth in Rut'theran Village
 	  (Features/Routes/Routes-Flights.lua).
+	- SUB_QUEST_IDS: quests that need an item only another quest hands out, each quest's ID to that sub-quest's
+	  (Features/Routes/Routes-Sub-Quests.lua). While the quest is in the log and the sub-quest isn't turned in,
+	  the route does the sub-quest first and holds every waypoint of the quest it's for until then.
+	- Found in QuestieDB: a sub-quest Questie lists as a child of the quest, offered only while the quest is
+	  in the log, whose reward is an item the quest asks for, with no drop or vendor for that item.
+	- Left out: quests that need several sub-quests, since a row holds one (The Green Hills of Stranglethorn's
+	  four chapters, The Warsong Reports' three updates, and the Hallow's End treats for Jesper and Spoops, four
+	  each), and Catch of the Day's Fish in a Bucket, which Questie's corrections no longer tie to that quest.
 
 SQL (CMaNGOS)
 	TODO: Add SQL Query
@@ -102,4 +122,8 @@ wago.tools
 
 QuestieDB
 	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/TBC/tbcNpcDB.lua
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/TBC/tbcQuestDB.lua
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/TBC/tbcItemDB.lua
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/src/corrections/Era/classicQuestFixes.lua
+	https://raw.githubusercontent.com/Questie/QuestieDB/master/src/corrections/Tbc/tbcQuestFixes.lua
 ]]

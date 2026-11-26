@@ -46,14 +46,26 @@
 - **Instead:** The Zone Share Offer whisper and the whisper sent when a quest share fails go out as the add-on's own localized text, with no message box, Send Messages In or Send Test to Me.
 - **Why:** They are short, fixed notices about a quest share, not messages written in the player's voice.
 
-### Per-character route state on the Simple model
+### Per-character state on the Simple model
 
 - **Departs from:** SAVED VARIABLES → The Two Models, an add-on storing per-character data uses Per-Character.
-- **Instead:** Settings live on one shared profile, while the route's ignore list and the flight paths each character knows live in AceDB's per-character section, which Reset Profile doesn't clear.
-- **Why:** Every character shares the same settings, but what a character has ignored and which flight paths it knows belong to that character alone.
+- **Instead:** Settings live on one shared profile, while what one character has done or chosen in play (its ignores and added pick-ups, Zone Info's picks, the flight paths and flight maps it knows, the party members it has offered quests, and its last route in each zone) lives in AceDB's per-character section, which Reset Profile doesn't clear.
+- **Why:** Every character shares the same settings, but what a character has done in play belongs to that character alone.
+
+### Quest Arrow and map marker menus name every click
+
+- **Departs from:** MINIMAP MENU → Button Clicks, at most one other click, a Right-Click, and no other row names a click.
+- **Instead:** The Quest Arrow and the world map's route markers keep every click they answer to, and their menus name each one on its row's right in gray (Drag, Right-Click, Middle-Click).
+- **Why:** The maintainer keeps these clicks for players who use them mid-quest, and the menus are where they learn them.
 
 ### Prints lead with the Short Name
 
 - **Departs from:** MESSAGES, every print leads with the Full Name.
 - **Instead:** Every line printed to the player's own chat window, and every Example line drawn as one, leads with the Short Name (`PWQL // ...`).
 - **Why:** The add-on prints often while questing, and a short lead keeps those lines short.
+
+### Questie installs with the add-on
+
+- **Departs from:** REQUIRED LIBRARIES → .pkgmeta, everything but `package-as` and the externals copied verbatim from Thanks for the Buff.
+- **Instead:** The `.pkgmeta` lists Questie, QuestieDB and QuestieTrace as required dependencies, so the CurseForge app installs them alongside the add-on.
+- **Why:** The add-on's quest map, chains, tooltips and route read Questie's quest data, and the maintainer wants players to get Questie and its data add-ons with it.

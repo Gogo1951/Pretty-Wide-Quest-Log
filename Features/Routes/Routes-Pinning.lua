@@ -113,6 +113,7 @@ local function EngagedBlob(node, x, y, wasEngaged)
 	end
 	return best
 end
+routes.EngagedBlob = EngagedBlob -- Reaching the objective the player headed for (Routes-Heading.lua)
 
 --[[
 	The camps the last plan pinned that the player has now walked out of, having made progress there, for a
@@ -165,6 +166,7 @@ local function DestinationKeys()
 	end
 	return keys
 end
+routes.DestinationKeys = DestinationKeys -- For the player's pick (Routes-Heading.lua)
 
 --[[
 	Where the last plan does each task, by key: the blob it chose (BlobKey), for telling a camp the route
@@ -276,7 +278,47 @@ local function UrgentQuests(nodes)
 end
 
 --[[
-	What goes first on the route, ahead of the rest, which waits on it. First of all:
+	The node the player is heading for (routes.heading, Routes-Heading.lua), pinned to the blob they're
+	heading to, or nothing. Not one that waits on another, as a pick-up waiting on its dropper's kill: it
+	can't go first however the player heads
+]]
+local function PinHeading(nodes, start)
+	local heading = routes.heading
+	if not heading then
+		return nil
+	end
+	for _, node in ipairs(nodes) do
+		if node.key == heading.key then
+			if #(node.requires or {}) > 0 or (node.kind == "turnIn" and not node.ready) or node.predicted then
+				return nil
+			end
+			local pin, pinYards
+			for _, blob in ipairs(node.blobs or {}) do
+				if BlobKey(blob) == heading.blobKey then
+					pin = blob
+					break
+				end
+				local dx, dy = blob.x - start.x, blob.y - start.y
+				local yards = dx * dx + dy * dy
+				if not pinYards or yards < pinYards then
+					pin, pinYards = blob, yards
+				end
+			end
+			if not pin then
+				return nil
+			end
+			pin.penalty = 0
+			node.candidates = { pin }
+			start.heading = node.key
+			return node
+		end
+	end
+	return nil
+end
+
+--[[
+	What goes first on the route, ahead of the rest, which waits on it. First of all, the objective the
+	player is heading for (PinHeading), even ahead of a timed or escort quest: they chose where to go. Then:
 
 	Every timed or escort quest (node.urgent), its objectives then its turn-in, or once done, its turn-in.
 	A timer won't wait while the route sends the player around the zone, nor will an escorted NPC, so
@@ -302,10 +344,21 @@ function routes.PinEngaged(nodes, start)
 	local previous = routes.engaged or {}
 	local destination, planned = DestinationKeys(), PlannedPlaces()
 	local hurrying = IsHurrying(nodes)
+
+	-- Where the player is heading goes ahead of everything, a timed or escort quest's too
+	local before = {}
+	local headingNode = PinHeading(nodes, start)
+	if headingNode then
+		before[headingNode] = true
+		WaitOn(nodes, before, { headingNode })
+	end
+
 	for _, node in ipairs(nodes) do
 		-- During a timed or escort quest only its own nodes are pinned to the blob the player is in
 		local wasPinned = previous[node.key]
-		local blob = (node.urgent or not hurrying) and EngagedBlob(node, start.x, start.y, wasPinned)
+		local blob = node ~= headingNode
+			and (node.urgent or not hurrying)
+			and EngagedBlob(node, start.x, start.y, wasPinned)
 		if blob and not IsPinnable(node, wasPinned, destination, planned, blob) then
 			blob = nil
 		end
@@ -326,7 +379,6 @@ function routes.PinEngaged(nodes, start)
 	end
 
 	-- Each timed or escort quest ahead of the ones turned in further off, and all of them ahead of the rest
-	local before = {}
 	if hurrying then
 		for _, quest in ipairs(UrgentQuests(nodes)) do
 			for _, node in ipairs(quest.nodes) do
@@ -343,6 +395,38 @@ function routes.PinEngaged(nodes, start)
 	end
 	WaitOn(nodes, before, first)
 	return engaged
+end
+
+--[[
+	The nodes at the waypoint the last plan sent the player to, for a plan made only because the player
+	moved on (Routes-Planner.lua), so it can keep them first: walking toward the waypoint mustn't swap it
+	for another. Nothing where something else goes first already (the player's pick, a camp being worked, a
+	timed or escort quest) or a node there now waits on another
+]]
+function routes.KeepFirstNodes(nodes, start, engaged)
+	if start.heading or next(engaged or {}) or IsHurrying(nodes) then
+		return nil
+	end
+	local destination = DestinationKeys()
+	local keep = {}
+	for _, node in ipairs(nodes) do
+		if destination[node.key] and not node.hidden then
+			if #(node.requires or {}) > 0 then
+				return nil
+			end
+			keep[#keep + 1] = node
+		end
+	end
+	return #keep > 0 and keep or nil
+end
+
+-- Puts the members ahead of every other node, which waits on them (WaitOn)
+function routes.PutFirst(nodes, members)
+	local set = {}
+	for _, node in ipairs(members) do
+		set[node] = true
+	end
+	WaitOn(nodes, set, members)
 end
 
 --------------------------------------------------------------------------------

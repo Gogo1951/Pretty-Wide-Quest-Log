@@ -69,7 +69,7 @@ function ns.BuildQuestArrowOptions()
 		args = {
 			descIntro = Kit.Desc(L["TAB_QUEST_ARROW_DESCRIPTION"], 1),
 			spaceIntro = Kit.Spacer(2),
-			enableQuestArrow = ns.FeatureSwitch("routes.showArrow", 3),
+			enableQuestArrow = Kit.FeatureSwitch("routes.showArrow", 3),
 			needsQuestie = ns.RoutesNeedQuestieLine(3.1),
 			-- Ignoring comes from the arrow as a whole, so its Example closes the arrow's own switch
 			ignoredExample = ns.OptionsExample(3.2, ArrowHidden, IgnoredPrintExample),

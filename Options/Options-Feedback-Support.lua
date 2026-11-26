@@ -2,12 +2,6 @@ local _, ns = ...
 local L = ns.L
 local GetColor = ns.GetColor
 
---[[
-	The link labels are one short word each, so they take only what a word needs and give the rest of
-	the row to the URL.
-]]
-local LINK_LABEL_WIDTH = 0.6
-
 local PARAGRAPHS = {
 	"OPTIONS_LEVEL_UP_INTRO",
 	"OPTIONS_LEVEL_UP_WAYS",
@@ -54,19 +48,8 @@ function ns.BuildFeedbackSupportOptions()
 			args["linkSpace" .. index] = ns.OptionsKit.Spacer(order)
 			order = order + 1
 		end
-		args["linkLabel" .. index] =
-			ns.OptionsKit.Label(GetColor("TITLE") .. L[captionKey] .. "|r", order, LINK_LABEL_WIDTH)
-		args["linkValue" .. index] = {
-			type = "input",
-			name = "",
-			width = ns.OPTIONS_ROW_WIDTH - LINK_LABEL_WIDTH,
-			order = order + 1,
-			get = function()
-				return ns.LINKS[linkKey]
-			end,
-			set = function() end,
-		}
-		order = order + 2
+		args["link" .. index] = ns.OptionsKit.LinkRow(order, L[captionKey], ns.LINKS[linkKey])
+		order = order + 1
 	end
 
 	args.spaceCopyLink = ns.OptionsKit.Spacer(order)

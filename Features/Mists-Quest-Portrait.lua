@@ -8,10 +8,10 @@ local state = ns.questLog
 local holder = ns.questMap.holder -- The map docked to the window's right (Quest-Map.lua)
 
 local MODEL_WIDTH, MODEL_HEIGHT = 198, 230 -- Blizzard's own quest giver model
-local NAME_HEIGHT = 20 -- The strip under the model the giver's name sits in
+local NAME_HEIGHT = LAYOUT.SPACE.GROUP -- The strip under the model the giver's name sits in
 local GAP = LAYOUT.SPACE.LINE -- Between the map and the box under it
 local SPACE_TIGHT = LAYOUT.SPACE.TIGHT -- The box's border over the map's, beside it
-local MIN_MODEL_HEIGHT = 60 -- Any less room under the map and the box hides
+local MIN_MODEL_HEIGHT = 64 -- Any less room under the map and the box hides
 -- Where the box goes beside the window while the map is closed, as Blizzard's quest log puts its own
 local BESIDE_X, BESIDE_Y = -5, -42
 

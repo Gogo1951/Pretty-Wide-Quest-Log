@@ -9,7 +9,7 @@ end
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT_NAME"] = "PWQL"
--- TRANSLATORS: joins the items of a list, such as quest links or the letters after a quest's level
+-- TRANSLATORS: joins the items of a list, such as quest links, party members' names, or the QUEST_LEVEL_LEGEND_ENTRY pairs
 L["LIST_SEPARATOR"] = ", "
 L["CHAT_LOADED"] =
 	"버전 %s. 설정(이 메시지를 끄는 옵션 포함)은 설정 > 애드온 > Pretty Wide Quest Log에 있습니다. 이 애드온이 마음에 드시나요? 친구에게 알려 주시거나, CurseForge에서 즐겨찾기에 추가하시거나, GitHub에서 Star를 눌러 주세요. (="
@@ -178,9 +178,10 @@ L["FONT_DETAILS_DESCRIPTION"] =
 L["FONT_DIALOGUE_DESCRIPTION"] =
 	"퀘스트 NPC 창과 대화 창의 제목, 소제목, 퀘스트 내용에 쓰는 글꼴입니다."
 L["FONT_WINDOW_DESCRIPTION"] = "창 제목, 퀘스트 개수, 완료 보상 줄에 쓰는 글꼴입니다."
-L["FONT_FACE"] = "글꼴"
+L["FONT_FACE"] = "서체"
 L["FONT_FACE_DESCRIPTION"] =
 	"글자 모양입니다. 게임 기본값은 게임 글꼴을 따르며, 게임 글꼴을 바꾸는 애드온도 따릅니다. SharedMedia로 추가한 글꼴도 목록에 표시됩니다."
+-- TRANSLATORS: the first choice of both the Typeface (FONT_FACE) and Outline (FONT_OUTLINE) dropdowns
 L["FONT_GAME_DEFAULT"] = "게임 기본값"
 L["FONT_GAME_STANDARD"] = "일반 텍스트"
 L["FONT_GAME_NAMES"] = "캐릭터 이름"
@@ -191,7 +192,6 @@ L["FONT_SIZE_DESCRIPTION"] =
 L["FONT_OUTLINE"] = "외곽선"
 L["FONT_OUTLINE_DESCRIPTION"] =
 	"각 글자 둘레의 검은 외곽선입니다. 게임 기본값은 게임 글꼴의 외곽선을 그대로 유지하고, 없음은 외곽선을 없앱니다."
-L["FONT_OUTLINE_DEFAULT"] = "게임 기본값"
 L["FONT_OUTLINE_NONE"] = "없음"
 L["FONT_OUTLINE_THIN"] = "얇게"
 L["FONT_OUTLINE_THICK"] = "두껍게"
@@ -346,7 +346,7 @@ L["WHAT_TO_ROUTE_DESCRIPTION"] =
 	"받은 퀘스트는 언제나 경로에 포함됩니다. 이 설정은 내 퀘스트 방식에 맞춰, 가는 길에 어떤 퀘스트를 받으러 안내할지 정합니다."
 L["PLAN_AHEAD_HEADER"] = "미리 계획"
 L["PLAN_AHEAD_DESCRIPTION"] = "경로가 받을 퀘스트를 얼마나 멀리까지 찾는지입니다."
--- TRANSLATORS: Plan Ahead's three choices are also switches on the Quest Arrow's menu
+-- TRANSLATORS: Plan Ahead's three choices are also choices on the Quest Arrow's menu
 L["PLAN_AHEAD_YOURS"] = "내 퀘스트만"
 L["PLAN_AHEAD_YOURS_DESCRIPTION"] = "퀘스트 목록에 있는 퀘스트만, 예전 QuestHelper 애드온처럼."
 L["PLAN_AHEAD_NEARBY"] = "내 퀘스트와 주변에서 받을 퀘스트"
@@ -379,9 +379,6 @@ L["ROUTE_FOCUS_HEADER"] = "경로 우선순위"
 L["ROUTE_FOCUS_DESCRIPTION"] = "경로가 받을 퀘스트를 고르고 순서를 정하는 방식입니다."
 L["ROUTE_FOCUS_FASTEST"] = "가장 빠른 완료"
 L["ROUTE_FOCUS_FASTEST_DESCRIPTION"] = "설정이 허용하는 모든 퀘스트를 가장 적게 걸어서."
-L["ROUTE_FOCUS_EASIEST"] = "쉬운 것부터"
-L["ROUTE_FOCUS_EASIEST_DESCRIPTION"] =
-	"걷는 거리가 조금만 늘어난다면 쉬운 퀘스트를 어려운 퀘스트보다 먼저."
 -- TRANSLATORS: Experimental: the option is new and may change
 L["ROUTE_FOCUS_XP"] = "시간당 최대 경험치 (실험적)"
 L["ROUTE_FOCUS_XP_DESCRIPTION"] =
@@ -487,6 +484,8 @@ L["QUEST_LEVEL_LEGEND"] = "레벨 뒤 글자: %s."
 -- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s(%s)"
 L["QUEST_ID"] = "퀘스트 ID %d"
+-- TRANSLATORS: a quest reward choice's tooltip line, under the item; it has the coin that marks the choice worth the most at a vendor
+L["REWARD_SELLS_MOST"] = "이 보상 중 상점에 가장 비싸게 팔립니다."
 -- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "연계 퀘스트 (%d/%d)"
 -- TRANSLATORS: %s is the time left as the game writes it, such as "3 Hr 12 Min"
@@ -516,7 +515,6 @@ L["ZONE_INFO_SHAREABLE"] = "공유 가능"
 L["ZONE_INFO_NOT_SHAREABLE"] = "공유 불가"
 -- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "필요한 퀘스트"
-L["ZONE_INFO_SHIFT_CLICK"] = "Shift-클릭"
 L["ZONE_INFO_LINK_ITEM"] = "대화창에 링크"
 L["ZONE_INFO_MENU_QUEST"] = "이 퀘스트"
 L["ZONE_INFO_MENU_HERE"] = "현재 위치"
@@ -575,6 +573,12 @@ L["ROUTES_AREA_MORE"] = "경로상에 더 있음"
 L["ROUTES_NEXT_OBJECTIVE"] = "다음 목표"
 -- TRANSLATORS: heads the dimmed objectives the player is passing through, planned for later on the route
 L["ROUTES_WHILE_HERE"] = "여기 온 김에"
+-- TRANSLATORS: heads the quests on a ticking clock under the Quest Arrow, a quest timer or an item that runs out
+L["ROUTES_TIMED_QUESTS"] = "타이머 작동 중!"
+-- TRANSLATORS: printed to chat after "PWQL //" when a timed quest has 5 minutes left; %s is the quest's link
+L["TIMER_WARNING_FIVE"] = "%s: 5분 남았습니다."
+-- TRANSLATORS: as TIMER_WARNING_FIVE, at 1 minute left
+L["TIMER_WARNING_ONE"] = "%s: 1분 남았습니다."
 -- TRANSLATORS: %d is a distance in yards
 L["ROUTES_YARDS"] = "%d미터"
 -- TRANSLATORS: ROUTES_YARDS for a distance of exactly 1
@@ -584,6 +588,8 @@ L["ROUTES_MORE_TASKS"] = "여기에 +%d개 더"
 L["ROUTES_TURN_IN"] = "퀘스트 완료 보고"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "%s 완료 보고"
+-- TRANSLATORS: as ROUTES_TURN_IN_QUEST, for a turn-in planned ahead on the route, one that can't be handed in yet
+L["ROUTES_FUTURE_TURN_IN_QUEST"] = "나중에 %s 완료 보고"
 L["ROUTES_PICK_UP"] = "퀘스트 받기"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "%s 받기"
@@ -624,7 +630,7 @@ L["ROUTES_LOOK_FOR"] = "찾을 대상"
 L["ROUTES_MORE_WAYPOINT"] = "경유지 1개 더"
 L["ROUTES_MORE_WAYPOINTS"] = "경유지 %d개 더"
 L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
-	"마우스를 올린 동안 보이는 나머지 경로입니다. 설정의 지역 지도에 있는 표시할 경유지에서 지도에 그릴 수를 정합니다."
+	"마우스를 올린 동안 보이는 나머지 경로입니다. 설정 창의 지역 지도에 있는 표시할 경유지에서 지도에 그릴 수를 정합니다."
 L["ROUTES_CLICK_DRAG"] = "끌기"
 L["ROUTES_CLICK_RIGHT"] = "오른쪽 클릭"
 L["ROUTES_CLICK_MIDDLE"] = "가운데 클릭"
@@ -652,11 +658,11 @@ L["ROUTES_ZONE_AVAILABLE_YELLOW"] = "수락 가능한 노란색 퀘스트"
 L["ROUTES_ZONE_AVAILABLE_GREEN"] = "수락 가능한 초록색 퀘스트"
 L["ROUTES_ZONE_AVAILABLE_GRAY"] = "수락 가능한 회색 퀘스트"
 -- TRANSLATORS: the zone menu's row counting the group, dungeon and raid quests to pick up, on the continent and world maps
-L["ROUTES_ZONE_AVAILABLE_GROUP"] = "수락 가능한 던전 및 파티 퀘스트"
+L["ROUTES_ZONE_AVAILABLE_GROUP"] = "수락 가능한 파티, 던전 및 공격대 퀘스트"
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
-L["ROUTES_ZONE_OBJECTIVES"] = "목표"
+L["ROUTES_ZONE_OBJECTIVES"] = "현재 목표"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "그 외 %d개"
+L["ROUTES_ZONE_MORE"] = "+%d개 더"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "지역 지도 열기"
 -- TRANSLATORS: %s is a quest link or a list of them
@@ -669,17 +675,20 @@ L["ROUTES_GROUP_LEFT_CLEARED"] =
 -- TRANSLATORS: %s is a party member's name, or a list of them
 L["ROUTES_MEMBER_LEFT_CLEARED"] =
 	"%s 님이 파티를 떠났습니다: 무시했던 해당 목표가 다시 경로에 포함되었습니다."
--- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
+-- TRANSLATORS: the Quest Arrow menu's label over the current objective's rows
 L["ROUTES_MENU_SECTION_CURRENT"] = "현재 목표"
+-- TRANSLATORS: beside an objective under the mouse on the Quest Arrow's menu; a click leaves it off the route
 L["ROUTES_MENU_IGNORE"] = "무시"
+-- TRANSLATORS: rows on the Quest Arrow's menu that each open a sub-menu of its switches
 L["ROUTES_MENU_SECTION_ROUTE"] = "경로"
 L["ROUTES_MENU_SECTION_SHOW"] = "표시"
+-- TRANSLATORS: the label over the switches under the Plan Ahead choices, in the Quest Arrow menu's Route sub-menu
 L["ROUTES_MENU_SECTION_ALSO_ROUTE"] = "경로에 추가"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "다음"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
 L["ROUTES_MENU_PUT_BACK"] = "되돌리기"
--- TRANSLATORS: the Quest Arrow menu's label over its ignore list
+-- TRANSLATORS: the Quest Arrow menu's row that opens its ignore list, with how many are ignored
 L["ROUTES_MENU_IGNORED"] = "무시됨"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_TURN_IN"] = "%s 완료 보고"

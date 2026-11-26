@@ -45,7 +45,15 @@ ns.FEATURES = {
 if ns.routes then
 	for _, feature in ipairs({
 		{ key = "showMap", name = "TAB_MAPS_OBJECTIVES", feature = "WAYPOINT_MARKERS" },
-		{ key = "showLine", name = "TAB_QUEST_ROUTE", feature = "QUEST_ROUTE" },
+		-- The Quest Route is drawn between the Waypoint Markers, so its switch is grayed out while they're off
+		{
+			key = "showLine",
+			name = "TAB_QUEST_ROUTE",
+			feature = "QUEST_ROUTE",
+			disabled = function()
+				return not ns.routes.Settings().showMap
+			end,
+		},
 		{ key = "showArrow", name = "TAB_QUEST_ARROW", feature = "QUEST_ARROW" },
 	}) do
 		ns.FEATURES[#ns.FEATURES + 1] = {
@@ -55,6 +63,7 @@ if ns.routes then
 			caption = "ENABLE_" .. feature.feature,
 			desc = "FEATURE_" .. feature.feature .. "_DESCRIPTION",
 			apply = RoutesApply(feature.key),
+			disabled = feature.disabled,
 		}
 	end
 end
@@ -77,29 +86,6 @@ ns.FEATURES[#ns.FEATURES + 1] = {
 	caption = "ENABLE_QUEST_TOOLTIPS",
 	desc = "FEATURE_QUEST_TOOLTIPS_DESCRIPTION",
 }
-
---[[
-	A feature's Enable switch. The Quest Route is drawn between the Waypoint Markers, so its switch is grayed
-	out while they're off
-]]
-function ns.FeatureSwitch(setting, order, width)
-	local switch = Kit.FeatureSwitch(setting, order, width)
-	if setting == "routes.showLine" then
-		switch.disabled = function()
-			return not ns.routes.Settings().showMap
-		end
-	end
-	return switch
-end
-
--- The root panel's Features switches, two to a line, in ns.FEATURES order
-function ns.FeatureSwitches(order)
-	local switches = {}
-	for _, feature in ipairs(ns.FEATURES) do
-		switches[#switches + 1] = ns.FeatureSwitch(feature.setting)
-	end
-	return Kit.Pairs(order, nil, switches)
-end
 
 --------------------------------------------------------------------------------
 -- Routes Settings

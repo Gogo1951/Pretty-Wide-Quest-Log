@@ -123,7 +123,7 @@ function routes.QuestsAt(stop, x, y)
 		end
 		entry.tasks[#entry.tasks + 1] = task
 		if task.kind == "turnIn" then
-			entry.turnIn = true
+			entry.turnIn, entry.turnInReady = true, task.ready == true
 		elseif task.kind == "pickUp" then
 			entry.pickUp, entry.pickUpTask = true, task
 		elseif task.kind == "flightPath" then
@@ -340,7 +340,9 @@ function routes.ForEachStopLine(stop, maxQuests, callback)
 			point = routes.TaskPoint(entry.pickUpTask or entry.task)
 			callback("title", string.format(L["ROUTES_PICK_UP_QUEST"], title), red, green, blue, nil, nil, point)
 		elseif entry.turnIn and #toDo == 0 then
-			local text = string.format(L["ROUTES_TURN_IN_QUEST"], routes.QuestTitle(entry.task))
+			-- One not done yet is planned ahead: "Future Turn in", as it can't be handed in now
+			local format = L[entry.turnInReady and "ROUTES_TURN_IN_QUEST" or "ROUTES_FUTURE_TURN_IN_QUEST"]
+			local text = string.format(format, routes.QuestTitle(entry.task))
 			local red, green, blue = ns.GetColorRGB("TITLE")
 			callback("title", text, red, green, blue, nil, entry.task.questID, point)
 		else

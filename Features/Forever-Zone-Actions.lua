@@ -81,6 +81,11 @@ function ns.QuestsPartyNeeds(questIDs, units)
 	return needed
 end
 
+-- Runs work, as the quest log here finds every quest by ID whether its zone is open or not
+function ns.WithEveryZoneOpen(work)
+	return work()
+end
+
 --------------------------------------------------------------------------------
 -- Acting on Quests
 --------------------------------------------------------------------------------

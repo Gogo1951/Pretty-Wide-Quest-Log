@@ -121,7 +121,8 @@ routes.IsEscort = IsEscort
 	C_QuestLog.GetQuestTimers names each timer's quest and its seconds; elsewhere GetQuestTimers gives each
 	timer's seconds and GetQuestIndexForTimer finds that timer's quest log entry, which says its quest ID, so
 	the quest log's selection is never touched. Asked fresh each time: a timer starts and ends with no change
-	Questie sees
+	Questie sees. A quest whose item is running out counts too, with that item's time left where it's the
+	sooner (routes.TimedItemQuests, Routes-Timed-Items.lua)
 ]]
 local function TimedQuests()
 	local timed = {}
@@ -141,7 +142,26 @@ local function TimedQuests()
 			end
 		end
 	end
-	return timed
+	for questID, seconds in pairs(routes.TimedItemQuests()) do
+		timed[questID] = math.min(timed[questID] or seconds, seconds)
+	end
+	--[[
+		A quest in the log that hands out an item a timed quest needs has its time left (Routes-Sub-Quests.lua).
+		Returned second: those with no clock of their own, so the timer warnings name each clock once
+		(Timer-Warnings.lua)
+	]]
+	local borrowed = {}
+	local log = QuestLog()
+	for subID, parentID in pairs(routes.SubQuests(log)) do
+		local seconds = timed[parentID]
+		if seconds and type(log[subID]) == "table" then
+			if timed[subID] == nil then
+				borrowed[subID] = true
+			end
+			timed[subID] = math.min(timed[subID] or seconds, seconds)
+		end
+	end
+	return timed, borrowed
 end
 routes.TimedQuests = TimedQuests
 
@@ -218,7 +238,7 @@ routes.HasSpawns = HasSpawns
 	What the route depends on, as text: each quest's state, whether it's in an instance and whether its
 	timer is running, each objective's being done and having spawns, and of those done whether the party
 	still needs it (routes.PartyNeeds), the party's quests' progress
-	(routes.PartyProgress), the ignored objectives and party members, the members in another zone, Plan Ahead, the local quests' and flight paths' settings (routes.LocalQuestSignature, routes.FlightPathSignature), the player's zone and whether they're a ghost. The route is
+	(routes.PartyProgress), the ignored objectives and party members, the members in another zone, Plan Ahead, the local quests' and flight paths' settings (routes.LocalQuestSignature, routes.FlightPathSignature), the items quests need that the player lacks (routes.MissingItemSignature), the player's zone and whether they're a ghost. The route is
 	planned again when this changes. Nil until Questie is ready
 ]]
 function routes.Signature()
@@ -284,6 +304,7 @@ function routes.Signature()
 	parts[#parts + 1] = routes.LocalQuestSignature()
 	parts[#parts + 1] = routes.FlightPathSignature()
 	parts[#parts + 1] = routes.FlyingSignature()
+	parts[#parts + 1] = routes.MissingItemSignature() -- Routes-Missing-Items.lua
 	parts[#parts + 1] = tostring(routes.PlayerZone())
 	parts[#parts + 1] = routes.CitySignature()
 	parts[#parts + 1] = UnitIsGhost("player") and "ghost" or "alive"

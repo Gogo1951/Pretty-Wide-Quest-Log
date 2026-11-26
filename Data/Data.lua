@@ -53,6 +53,7 @@ ns.PALETTE = {
 	OFF = "CC3333", -- Red: Off
 	SEPARATOR = "AAAAAA", -- Gray: Separators, Dividers
 	MUTED = "808080", -- Dark Gray: Meta-data, Version Numbers
+	VALUE = "FFFF99", -- Light Yellow: What a Setting Is Set To, in a Menu
 	ARROW_ON_COURSE = "00FF00", -- Green: The Quest Arrow Pointing Ahead
 	ARROW_TURN = "FFFF00", -- Yellow: The Quest Arrow Pointing to the Side
 	ARROW_WRONG_WAY = "FF3333", -- Red: The Quest Arrow Pointing Behind
@@ -66,6 +67,7 @@ ns.PALETTE = {
 	ROUTE_MORE = "FFFFFF", -- White: The "…" Marker's Fill Where the Zone Map Stops Drawing the Route, Its Ring and Dots the Line's
 	QUEST_TIMER_LOW = "FF3333", -- Red: A Timed Quest's Last Minute on the Quest Arrow
 	PARCHMENT_GAIN = "1D6B1D", -- Deep Green: A Skin's Experience Share, Read on the Parchment
+	PARCHMENT_TIMER = "1A4FA0", -- Deep Blue: A Timed Quest's Time Remaining, Read on the Parchment
 }
 
 ns.CLASS_COLORS = {

@@ -9,7 +9,7 @@ end
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT_NAME"] = "PWQL"
--- TRANSLATORS: joins the items of a list, such as quest links or the letters after a quest's level
+-- TRANSLATORS: joins the items of a list, such as quest links, party members' names, or the QUEST_LEVEL_LEGEND_ENTRY pairs
 L["LIST_SEPARATOR"] = ", "
 L["CHAT_LOADED"] =
 	"Version %s. Die Einstellungen (einschließlich der Option, diese Nachricht zu deaktivieren) findest du unter Optionen > AddOns > Pretty Wide Quest Log. Gefällt dir dieses Add-on? Erzähl einem Freund davon, füge es auf CurseForge zu deinen Favoriten hinzu oder gib ihm auf GitHub einen Star. (="
@@ -173,6 +173,7 @@ L["FONT_WINDOW_DESCRIPTION"] = "Die Schrift des Fenstertitels, der Questanzahl u
 L["FONT_FACE"] = "Schriftart"
 L["FONT_FACE_DESCRIPTION"] =
 	"Die Schriftart. Spielstandard folgt der Schrift des Spiels und jedem Add-on, das sie ändert. Über SharedMedia hinzugefügte Schriftarten stehen ebenfalls zur Auswahl."
+-- TRANSLATORS: the first choice of both the Typeface (FONT_FACE) and Outline (FONT_OUTLINE) dropdowns
 L["FONT_GAME_DEFAULT"] = "Spielstandard"
 L["FONT_GAME_STANDARD"] = "Standardtext"
 L["FONT_GAME_NAMES"] = "Charakternamen"
@@ -183,7 +184,6 @@ L["FONT_SIZE_DESCRIPTION"] =
 L["FONT_OUTLINE"] = "Kontur"
 L["FONT_OUTLINE_DESCRIPTION"] =
 	"Eine schwarze Kontur um jeden Buchstaben. Spielstandard behält die Kontur bei, die die Schrift des Spiels hat, und Keine entfernt sie."
-L["FONT_OUTLINE_DEFAULT"] = "Spielstandard"
 L["FONT_OUTLINE_NONE"] = "Keine"
 L["FONT_OUTLINE_THIN"] = "Dünn"
 L["FONT_OUTLINE_THICK"] = "Dick"
@@ -339,7 +339,7 @@ L["WHAT_TO_ROUTE_DESCRIPTION"] =
 	"Jede Quest, die du annimmst, ist immer auf der Route. Diese Einstellungen legen fest, zu welchen Quests dich die Route unterwegs zum Annehmen führt, passend dazu, wie du gerne questest."
 L["PLAN_AHEAD_HEADER"] = "Vorausplanen"
 L["PLAN_AHEAD_DESCRIPTION"] = "Wie weit die Route nach Quests zum Annehmen vorausschaut."
--- TRANSLATORS: Plan Ahead's three choices are also switches on the Quest Arrow's menu
+-- TRANSLATORS: Plan Ahead's three choices are also choices on the Quest Arrow's menu
 L["PLAN_AHEAD_YOURS"] = "Nur deine Quests"
 L["PLAN_AHEAD_YOURS_DESCRIPTION"] = "Nur die Quests in deinem Questlog, wie beim alten Add-on QuestHelper."
 L["PLAN_AHEAD_NEARBY"] = "Deine Quests und Quests in der Nähe"
@@ -373,8 +373,6 @@ L["ROUTE_FOCUS_HEADER"] = "Routenschwerpunkt"
 L["ROUTE_FOCUS_DESCRIPTION"] = "Wie die Route auswählt und ordnet, was du annimmst."
 L["ROUTE_FOCUS_FASTEST"] = "Am schnellsten durch"
 L["ROUTE_FOCUS_FASTEST_DESCRIPTION"] = "Jede Quest, die deine Einstellungen erlauben, mit dem kürzesten Laufweg."
-L["ROUTE_FOCUS_EASIEST"] = "Leichteste zuerst"
-L["ROUTE_FOCUS_EASIEST_DESCRIPTION"] = "Leichtere Quests vor schwereren, wo es kaum mehr Laufweg kostet."
 -- TRANSLATORS: Experimental: the option is new and may change
 L["ROUTE_FOCUS_XP"] = "Meiste EP pro Stunde (experimentell)"
 L["ROUTE_FOCUS_XP_DESCRIPTION"] =
@@ -480,6 +478,8 @@ L["QUEST_LEVEL_LEGEND"] = "Buchstaben nach der Stufe: %s."
 -- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s %s"
 L["QUEST_ID"] = "Quest-ID %d"
+-- TRANSLATORS: a quest reward choice's tooltip line, under the item; it has the coin that marks the choice worth the most at a vendor
+L["REWARD_SELLS_MOST"] = "Bringt beim Händler am meisten von diesen Belohnungen."
 -- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "Questreihe (%d von %d)"
 -- TRANSLATORS: %s is the time left as the game writes it, such as "3 Hr 12 Min"
@@ -509,7 +509,6 @@ L["ZONE_INFO_SHAREABLE"] = "Teilbar"
 L["ZONE_INFO_NOT_SHAREABLE"] = "Nicht teilbar"
 -- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "Benötigt für"
-L["ZONE_INFO_SHIFT_CLICK"] = "Umschalt-Klick"
 L["ZONE_INFO_LINK_ITEM"] = "Im Chat verlinken"
 L["ZONE_INFO_MENU_QUEST"] = "Diese Quest"
 L["ZONE_INFO_MENU_HERE"] = "Wo du bist"
@@ -567,6 +566,12 @@ L["ROUTES_AREA_MORE"] = "Weitere entlang der Route"
 L["ROUTES_NEXT_OBJECTIVE"] = "Nächstes Ziel"
 -- TRANSLATORS: heads the dimmed objectives the player is passing through, planned for later on the route
 L["ROUTES_WHILE_HERE"] = "Wenn du schon hier bist"
+-- TRANSLATORS: heads the quests on a ticking clock under the Quest Arrow, a quest timer or an item that runs out
+L["ROUTES_TIMED_QUESTS"] = "Timer aktiv!"
+-- TRANSLATORS: printed to chat after "PWQL //" when a timed quest has 5 minutes left; %s is the quest's link
+L["TIMER_WARNING_FIVE"] = "%s hat noch 5 Minuten."
+-- TRANSLATORS: as TIMER_WARNING_FIVE, at 1 minute left
+L["TIMER_WARNING_ONE"] = "%s hat noch 1 Minute."
 -- TRANSLATORS: %d is a distance in yards
 L["ROUTES_YARDS"] = "%d Meter"
 -- TRANSLATORS: ROUTES_YARDS for a distance of exactly 1
@@ -576,6 +581,8 @@ L["ROUTES_MORE_TASKS"] = "+%d weitere hier"
 L["ROUTES_TURN_IN"] = "Quest abgeben"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "%s abgeben"
+-- TRANSLATORS: as ROUTES_TURN_IN_QUEST, for a turn-in planned ahead on the route, one that can't be handed in yet
+L["ROUTES_FUTURE_TURN_IN_QUEST"] = "Später abgeben: %s"
 L["ROUTES_PICK_UP"] = "Quest annehmen"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "%s annehmen"
@@ -616,7 +623,7 @@ L["ROUTES_LOOK_FOR"] = "Suche nach"
 L["ROUTES_MORE_WAYPOINT"] = "1 weiterer Wegpunkt"
 L["ROUTES_MORE_WAYPOINTS"] = "%d weitere Wegpunkte"
 L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
-	"Der Rest der Route, angezeigt, solange du darauf zeigst. Angezeigte Wegpunkte unter Zonenkarte in den Optionen legt fest, wie viele die Karte zeichnet."
+	"Der Rest der Route, angezeigt, solange du darauf zeigst. Angezeigte Wegpunkte unter Zonenkarte im Optionsmenü legt fest, wie viele die Karte zeichnet."
 L["ROUTES_CLICK_DRAG"] = "Ziehen"
 L["ROUTES_CLICK_RIGHT"] = "Rechtsklick"
 L["ROUTES_CLICK_MIDDLE"] = "Mittelklick"
@@ -644,11 +651,11 @@ L["ROUTES_ZONE_AVAILABLE_YELLOW"] = "Verfügbare gelbe Quests"
 L["ROUTES_ZONE_AVAILABLE_GREEN"] = "Verfügbare grüne Quests"
 L["ROUTES_ZONE_AVAILABLE_GRAY"] = "Verfügbare graue Quests"
 -- TRANSLATORS: the zone menu's row counting the group, dungeon and raid quests to pick up, on the continent and world maps
-L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Verfügbare Dungeon- und Gruppenquests"
+L["ROUTES_ZONE_AVAILABLE_GROUP"] = "Verfügbare Gruppen-, Dungeon- und Schlachtzugsquests"
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
-L["ROUTES_ZONE_OBJECTIVES"] = "Ziele"
+L["ROUTES_ZONE_OBJECTIVES"] = "Aktuelle Ziele"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "%d weitere"
+L["ROUTES_ZONE_MORE"] = "+%d weitere"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "Zonenkarte öffnen"
 -- TRANSLATORS: %s is a quest link or a list of them
@@ -660,17 +667,20 @@ L["ROUTES_GROUP_LEFT_CLEARED"] =
 	"Gruppe verlassen: ignorierte Gruppenziele und Gruppenmitglieder sind wieder auf der Route."
 -- TRANSLATORS: %s is a party member's name, or a list of them
 L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s hat die Gruppe verlassen: die dafür ignorierten Ziele sind wieder auf der Route."
--- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
+-- TRANSLATORS: the Quest Arrow menu's label over the current objective's rows
 L["ROUTES_MENU_SECTION_CURRENT"] = "Aktuelles Ziel"
+-- TRANSLATORS: beside an objective under the mouse on the Quest Arrow's menu; a click leaves it off the route
 L["ROUTES_MENU_IGNORE"] = "Ignorieren"
+-- TRANSLATORS: rows on the Quest Arrow's menu that each open a sub-menu of its switches
 L["ROUTES_MENU_SECTION_ROUTE"] = "Route"
 L["ROUTES_MENU_SECTION_SHOW"] = "Anzeigen"
+-- TRANSLATORS: the label over the switches under the Plan Ahead choices, in the Quest Arrow menu's Route sub-menu
 L["ROUTES_MENU_SECTION_ALSO_ROUTE"] = "Auch auf die Route"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "Nächstes"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
 L["ROUTES_MENU_PUT_BACK"] = "Zurückholen"
--- TRANSLATORS: the Quest Arrow menu's label over its ignore list
+-- TRANSLATORS: the Quest Arrow menu's row that opens its ignore list, with how many are ignored
 L["ROUTES_MENU_IGNORED"] = "Ignoriert"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_TURN_IN"] = "Abgabe von %s"

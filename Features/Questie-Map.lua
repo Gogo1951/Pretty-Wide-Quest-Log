@@ -20,7 +20,7 @@ ns.AddWideQuestLogPart(function()
 	questMap.QUESTIE_PIN_TEMPLATE = PIN_TEMPLATE -- For the pins' tooltip (Questie-Map-Tooltip.lua)
 	local ICON_SIZE = 16 -- Sized for a UI scale of 1, on the doubling scale; before Questie's scale for the icon's kind
 	local REFRESH_DELAY = 0.2 -- Questie draws in batches over several frames
-	local ZONE_DROPDOWN_WIDTH = 180
+	local ZONE_DROPDOWN_WIDTH = 176
 
 	local shownQuestID
 
@@ -431,7 +431,10 @@ ns.AddWideQuestLogPart(function()
 		for _, mapID in ipairs(zones) do
 			rootDescription:CreateRadio(ZoneName(mapID), function(data)
 				return data == shownMapID and not questMap.browseMapID
-			end, questMap.PickQuestZone, mapID)
+			end, function(pickedMapID)
+				-- Nothing returned, so the menu closes as a radio's does; PickQuestZone's answer is Zone Info's
+				questMap.PickQuestZone(pickedMapID)
+			end, mapID)
 		end
 		if zoneInfo then
 			questMap.AddZoneInfoMenu(rootDescription)

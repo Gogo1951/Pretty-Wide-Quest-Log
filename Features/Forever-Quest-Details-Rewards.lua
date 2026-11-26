@@ -45,6 +45,7 @@ local UNUSABLE_RED, UNUSABLE_GREEN, UNUSABLE_BLUE = 0.9, 0, 0 -- Blizzard's tint
 
 local function FillRewardButton(button, reward)
 	button.reward = reward
+	ns.rewardCoin.SetCoin(button, false) -- Back on the choice worth the most only (set.MarkBest)
 	button.Icon:SetTexture(reward.texture)
 	button.Name:SetText(reward.name or "")
 	local quality = reward.quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[reward.quality]
@@ -109,6 +110,24 @@ function ns.CreateRewardButtons(parent)
 			AskForItem(reward.itemID)
 		end
 		return button
+	end
+	--[[
+		The coin on the choice worth the most at a vendor (Quest-Reward-Coin.lua), choices filled from the
+		button at first on. A currency sells for nothing; an item not loaded yet puts no coin on any, and the
+		details are drawn again once it arrives (AskForItem)
+	]]
+	function set.MarkBest(first, choices)
+		local list = {}
+		for index, reward in ipairs(choices) do
+			list[index] = { item = reward.kind == "item" and reward.itemID or false, amount = reward.count }
+			if reward.kind == "item" and not reward.itemID then
+				list[index].item = nil
+			end
+		end
+		local best, missing = ns.rewardPick.MostValuable(list)
+		if best and not missing and rewardButtons[first + best - 1] then
+			ns.rewardCoin.SetCoin(rewardButtons[first + best - 1], true)
+		end
 	end
 	function set.HideFrom(index)
 		for later = index, #rewardButtons do

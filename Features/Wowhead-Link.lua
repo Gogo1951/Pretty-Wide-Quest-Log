@@ -12,7 +12,7 @@ StaticPopupDialogs.PRETTYWIDEQUESTLOG_WOWHEAD = {
 	text = L["WOWHEAD_LINK_COPY"],
 	button1 = CLOSE,
 	hasEditBox = true,
-	editBoxWidth = 280,
+	editBoxWidth = 288,
 	OnShow = function(self, url)
 		local editBox = self.GetEditBox and self:GetEditBox() or self.editBox
 		editBox:SetText(url)

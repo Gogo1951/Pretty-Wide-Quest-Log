@@ -88,7 +88,7 @@ function ns.BuildMapsObjectivesOptions()
 			descIntro = Kit.Desc(L["TAB_WAYPOINT_MARKERS_DESCRIPTION"], 1),
 			spaceIntro = Kit.Spacer(2),
 			-- The same setting as the root panel's Waypoint Markers switch
-			enableWaypointMarkers = ns.FeatureSwitch("routes.showMap", 3),
+			enableWaypointMarkers = Kit.FeatureSwitch("routes.showMap", 3),
 			needsQuestie = ns.RoutesNeedQuestieLine(3.1),
 			skippedExample = ns.OptionsExample(3.6, MarkersOff, SkippedExample),
 			spaceSubPanels = Kit.Spacer(4),

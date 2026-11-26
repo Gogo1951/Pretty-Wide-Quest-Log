@@ -69,6 +69,7 @@ end
 local titleText = Text("QuestTitleFont")
 local objectivesText = Text("QuestFont")
 local timerText = Text("QuestFont")
+local timerNumber -- The time left, right-aligned on the timer's line (made with the gold and experience numbers)
 local timerExpires -- When the shown quest's timer runs out (GetTime), while the pane shows one
 local sinceTimer = 0
 --[[
@@ -82,7 +83,7 @@ local function CountDown(_, elapsed)
 	end
 	sinceTimer = 0
 	if timerText:IsShown() then
-		timerText:SetText(TIME_REMAINING .. " " .. SecondsToTime(math.max(0, timerExpires - GetTime())))
+		timerNumber:SetText(SecondsToTime(math.max(0, timerExpires - GetTime())))
 	end
 end
 local groupSizeText = Text("QuestFont")
@@ -100,7 +101,10 @@ local receiveText = Text("QuestFont")
 local experienceText = Text("QuestFont")
 experienceText:SetText(EXPERIENCE_COLON)
 
--- Gold and experience, right-aligned two spaces in from the right edge of the text column like the objective counts
+--[[
+	Gold, experience and the time left, right-aligned two spaces in from the right edge of the text column like
+	the objective counts
+]]
 local function Number()
 	local number = detailChild:CreateFontString(nil, "ARTWORK")
 	number:SetFontObject(ns.AreaFont("details", "QuestFont"))
@@ -110,6 +114,7 @@ local function Number()
 end
 local moneyNumber = Number()
 local experienceNumber = Number()
+timerNumber = Number()
 
 -- Objective lines, one per objective, styled by ns.StyleObjective
 local objectiveLines = {}
@@ -126,8 +131,12 @@ end
 local FALLBACK_TEXT_COLOR, FALLBACK_TITLE_COLOR = { 0.18, 0.12, 0.06 }, { 0, 0, 0 }
 local FINISHED_COLOR = { 0.2, 0.2, 0.2 } -- A finished objective, as Blizzard grays it on Mists
 
+local function UseLightText()
+	return QuestTextContrast and QuestTextContrast.UseLightText and QuestTextContrast.UseLightText()
+end
+
 local function TextColors()
-	local lightText = QuestTextContrast and QuestTextContrast.UseLightText and QuestTextContrast.UseLightText()
+	local lightText = UseLightText()
 	local textColor, titleColor
 	if GetMaterialTextColors then
 		textColor, titleColor = GetMaterialTextColors(lightText and "Stone" or "Default")
@@ -206,6 +215,7 @@ local function HideEverything()
 	wipe(placed)
 	moneyNumber:Hide()
 	experienceNumber:Hide()
+	timerNumber:Hide()
 	ns.ClearObjectiveCounts()
 	last, height = nil, 0
 end
@@ -249,7 +259,9 @@ local function PlaceRewards(details)
 
 	if #choices > 0 then
 		PlaceText(choiceText, #choices == 1 and REWARD_ITEMS_ONLY or REWARD_CHOICES, gap)
+		local firstChoice = nextButton
 		nextButton = PlaceRewardButtons(choices, nextButton)
+		rewardButtons.MarkBest(firstChoice, choices)
 		gap = LAYOUT.REWARD_BUTTONS_SPACE
 	end
 
@@ -302,7 +314,6 @@ end
 local TITLE_COLOR_REGIONS = { titleText, descriptionHeading, rewardsHeading }
 local TEXT_COLOR_REGIONS = {
 	objectivesText,
-	timerText,
 	groupSizeText,
 	requiredMoneyText,
 	descriptionText,
@@ -351,14 +362,28 @@ function ns.DisplayQuestDetails(resetScroll)
 	PlaceText(objectivesText, details.objectivesText, LAYOUT.TITLE_SPACE_BELOW)
 	timerExpires = details.timeLeft and (GetTime() + details.timeLeft) or nil
 	detailChild:SetScript("OnUpdate", timerExpires and CountDown or nil)
+	--[[
+		The timer in blue on a line of its own, a blank line above and below it, the time left right-aligned
+		like the objective counts. The parchment's deep blue, or the info blue on Quest Text Contrast's dark
+		background
+	]]
+	local gap = SPACE.NEAR
 	if details.timeLeft then
-		PlaceText(timerText, TIME_REMAINING .. " " .. SecondsToTime(details.timeLeft), SPACE.NEAR)
+		local timerColor = { ns.GetColorRGB(UseLightText() and "INFO" or "PARCHMENT_TIMER") }
+		SetColor(timerText, timerColor)
+		SetColor(timerNumber, timerColor)
+		PlaceText(timerText, TIME_REMAINING, SPACE.GROUP)
+		timerNumber:SetText(SecondsToTime(details.timeLeft))
+		timerNumber:SetPoint("TOPRIGHT", timerText, "TOPLEFT", WIDTH - ns.TwoSpacesWide(descriptionText), 0)
+		timerNumber:Show()
+		gap = SPACE.GROUP
 	end
 	if details.groupSize > 0 then
-		PlaceText(groupSizeText, QUEST_SUGGESTED_GROUP_NUM:format(details.groupSize), SPACE.NEAR)
+		PlaceText(groupSizeText, QUEST_SUGGESTED_GROUP_NUM:format(details.groupSize), gap)
+		gap = SPACE.NEAR
 	end
 	if details.requiredMoney > 0 and CoinText then
-		PlaceText(requiredMoneyText, REQUIRED_MONEY .. " " .. CoinText(details.requiredMoney), SPACE.NEAR)
+		PlaceText(requiredMoneyText, REQUIRED_MONEY .. " " .. CoinText(details.requiredMoney), gap)
 	end
 	PlaceObjectives(details, textColor)
 

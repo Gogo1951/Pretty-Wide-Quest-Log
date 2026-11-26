@@ -39,13 +39,21 @@ local function PlayerName(unit, name)
 	return string.format("|cff%02x%02x%02x%s|r", red * 255, green * 255, blue * 255, name)
 end
 
--- One objective line: its check, name, and "4 / 12" on the right, where it has a count
+--[[
+	One objective line: its check, name, and "4 / 12" on the right, where it has a count. In the world map's
+	menu (routes.MapMenuRows) a count not yet done is light yellow, as a menu's values are; on a tooltip it's
+	white, as the name is
+]]
 local function AddObjective(tooltip, objective, have, need, done)
 	local left = ROW_INDENT .. ns.CheckIcon(GameTooltipText, done) .. " " .. routes.ObjectiveName(objective)
 	local red, green, blue = ns.GetColorRGB(done and "HELP" or "TEXT")
 	if need then
 		local count = routes.CountText(have, need)
-		tooltip:AddDoubleLine(left, count, red, green, blue, red, green, blue)
+		local countRed, countGreen, countBlue = red, green, blue
+		if tooltip.isMenu and not done then
+			countRed, countGreen, countBlue = ns.GetColorRGB("VALUE")
+		end
+		tooltip:AddDoubleLine(left, count, red, green, blue, countRed, countGreen, countBlue)
 	else
 		tooltip:AddLine(left, red, green, blue)
 	end
@@ -114,7 +122,7 @@ end
 --[[
 	Adds a stop's quests to the tooltip, a blank line between them: each quest's title, then its objectives
 	at the stop, done or not, in the quest log's order. Where nothing's left but the turn-in, the quest is
-	one line, "Turn in [2] Wayward Weapons". A corpse is one line too, "Run Back to Your Corpse"
+	one line, "Turn in [2] Wayward Weapons" ("Future Turn in" while it can't be handed in yet). A corpse is one line too, "Run Back to Your Corpse"
 ]]
 function routes.AddStopTooltip(tooltip, stop)
 	if stop.corpse then
@@ -153,8 +161,10 @@ function routes.AddStopTooltip(tooltip, stop)
 				tooltip:AddLine(ROW_INDENT .. string.format(text, unlocker), ns.GetColorRGB("HELP"))
 			end
 		elseif entry.turnIn and not anyLeft then
+			-- One not done yet is planned ahead: "Future Turn in", as it can't be handed in now
 			local title = routes.QuestTitle(entry.task)
-			tooltip:AddLine(string.format(L["ROUTES_TURN_IN_QUEST"], title), ns.GetColorRGB("TITLE"))
+			local format = L[entry.turnInReady and "ROUTES_TURN_IN_QUEST" or "ROUTES_FUTURE_TURN_IN_QUEST"]
+			tooltip:AddLine(string.format(format, title), ns.GetColorRGB("TITLE"))
 		else
 			tooltip:AddLine(routes.ObjectivesTitle(entry.task))
 			AddProgress(tooltip, entry, objectives)

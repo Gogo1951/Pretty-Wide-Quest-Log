@@ -12,7 +12,7 @@ ns.AddWideQuestLogPart(function()
 	--------------------------------------------------------------------------------
 
 	QuestLogNoQuestsText:ClearAllPoints()
-	QuestLogNoQuestsText:SetPoint("TOP", QuestLogListScrollFrame, 0, -90)
+	QuestLogNoQuestsText:SetPoint("TOP", QuestLogListScrollFrame, 0, -96)
 
 	--[[
 		A zone name shows its Share Quests button on hover (Zone-Share.lua). The row's ID points at its

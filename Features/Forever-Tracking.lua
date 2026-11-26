@@ -106,8 +106,8 @@ local function Track(questID)
 end
 
 --[[
-	Changing the watch list from add-on code in combat taints the objective tracker, so it waits for combat to
-	end, saying so in chat
+	Changing the watch list from add-on code in combat taints the objective tracker, so it's refused in combat,
+	saying so in chat
 ]]
 local function RefusedInCombat()
 	if InCombatLockdown() then

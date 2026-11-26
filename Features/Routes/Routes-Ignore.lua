@@ -253,22 +253,22 @@ end
 
 --[[
 	The ignore list as the Quest Arrow's menu shows it, in the order they were ignored: each { key, label }.
-	Only those ignored in the zone the player is in, the ones Reset This Zone would put back, and of those
+	Only those ignored here (IsHere: the player's zone, a city in it or a zone linked to it), the ones Reset
+	This Zone would put back, and of those
 	only the ones still in play: a quest the player or the party still has, so a quest turned in or dropped
 	leaves it; a pick-up of a quest not yet taken or done; a party follow-up while someone it's for is in the
 	group (PruneGroupIgnores drops it once they've all gone); flight paths not yet discovered; and fly
-	waypoints, until the zone is reset
+	and city gate waypoints, until the zone is reset
 ]]
 function routes.IgnoredTasks()
 	local log = routes.IsQuestieReady() and routes.QuestLog() or {}
 	local partyLog
 	local list = {}
-	local zone = CurrentZone()
 	for key, entry in pairs(routes.skipped) do
 		local held = entry.questID ~= nil and log[entry.questID]
-		if (entry.zone or 0) ~= zone then
+		if not IsHere(entry.zone) then
 			held = false
-		elseif key:find("^fly:") then
+		elseif key:find("^fly:") or key:find("^exit:") then
 			held = true
 		elseif entry.npcID then
 			held = not routes.IsFlightMasterKnown(entry.npcID)
@@ -292,19 +292,19 @@ end
 
 --[[
 	Resets the zone the player is in, a middle-click on the Quest Arrow or a map marker: every objective
-	and turn-in ignored here back on the route, saved or a party member's, every pick-up added here back to
-	the map only, as it is by default, and no camp held first for having been in it, so only one the player
-	stands in now goes first again. Other zones' ignores, and party members switched off, stay
+	and turn-in ignored here (IsHere: this zone, a city in it or a zone linked to it) back on the route,
+	saved or a party member's, every pick-up added here back to the map only, as it is by default, and no
+	camp held first for having been in it, so only one the player stands in now goes first again. Other
+	zones' ignores, and party members switched off, stay
 ]]
 function routes.ResetZone()
-	local zone = CurrentZone()
 	for key, entry in pairs(routes.skipped) do
-		if (entry.zone or 0) == zone then
+		if IsHere(entry.zone) then
 			Forget(key)
 		end
 	end
 	for key, entry in pairs(routes.added) do
-		if (entry.zone or 0) == zone then
+		if IsHere(entry.zone) then
 			ForgetAdded(key)
 		end
 	end

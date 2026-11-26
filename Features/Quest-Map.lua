@@ -4,7 +4,7 @@ local _, ns = ...
 ns.hasQuestMap = true
 
 --[[
-	The mixin of the quest map's own pin templates (Questie-Map.xml, which loads after this file). The map
+	The mixin of the quest map's own pin templates (Quest-Map.xml and Questie-Map.xml). The map
 	canvas calls SetPassThroughButtons on every pin it acquires, which WoW blocks in combat, so these pins
 	skip it, as HereBeDragons-Pins does for Questie's
 ]]

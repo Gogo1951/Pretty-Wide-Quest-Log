@@ -7,7 +7,7 @@ ns.WOWHEAD_QUEST_URL = "https://www.wowhead.com/classic/quest="
 How We Got the Data
 
 Last Validated
-	2026-11-20, wago.tools, WoW Forever 1.60.1.70959
+	2026-11-25, wago.tools, WoW Forever 1.60.1.71139
 
 Notes
 	- The page the quest log's Wowhead link opens, with the quest ID added on the end

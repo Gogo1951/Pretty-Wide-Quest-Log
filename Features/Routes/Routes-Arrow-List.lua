@@ -160,8 +160,10 @@ local function ListQuests(view, noteText, passing, nextStop, meet, underArrow)
 		little arrow, to the middle of its objective area, or to the giver of one to pick up
 		(routes.ForEachStopLine), so in an area with several the player sees which way each one is. Under the
 		big arrow, the first quest has none, nor its room: the big arrow is its arrow, and its title sits flush
-		with the list's edge. Under the eye it keeps its own
+		with the list's edge. Under the eye it keeps its own. A timed quest at the waypoint itself has "Timer
+		Active!" in blue over its title, as it would under the timed quests' own heading
 	]]
+	local listedQuests = {} -- The quests listed under the arrow itself, so Timer Active! doesn't list them again
 	local function AddStop(stop, dim, skipFirst)
 		routes.ForEachStopLine(
 			stop,
@@ -171,17 +173,79 @@ local function ListQuests(view, noteText, passing, nextStop, meet, underArrow)
 				if skipFirst and kind == "title" then
 					icon, point, skipFirst = nil, nil, false
 				end
+				local seconds = kind == "title" and not dim and questID and timed[questID]
+				if seconds and seconds > 0 then
+					Add("section", L["ROUTES_TIMED_QUESTS"], ns.GetColorRGB("INFO"))
+				end
 				Add(kind, text, red, green, blue, right, dim, icon, nil, questID, point)
 				if kind == "title" then
 					AddTimer(questID, dim)
+					if questID and not dim then
+						listedQuests[questID] = true
+					end
 				end
 			end
 		)
 	end
+	--[[
+		Every quest on a ticking clock not listed above, wherever it's done, this zone or another: under
+		"Timer Active!" in blue, the one with the least time left first, each as the list writes a quest, its time left
+		under its title, then what's left of it, its objectives with their counts, or once they're done, "Turn
+		in" it in the turn-in's gold
+	]]
+	local function AddTimedQuests()
+		local log, order = routes.QuestLog(), {}
+		for questID, seconds in pairs(timed) do
+			if seconds > 0 and not listedQuests[questID] and type(log[questID]) == "table" then
+				order[#order + 1] = questID
+			end
+		end
+		if #order == 0 then
+			return
+		end
+		table.sort(order, function(a, b)
+			if timed[a] ~= timed[b] then
+				return timed[a] < timed[b]
+			end
+			return a < b
+		end)
+		Add("section", L["ROUTES_TIMED_QUESTS"], ns.GetColorRGB("INFO"))
+		for _, questID in ipairs(order) do
+			local quest = log[questID]
+			local task = { quest = quest, questID = questID, questName = quest.name or tostring(questID) }
+			local left = {}
+			for _, objective in ipairs(routes.QuestObjectives({ task = task, here = {} })) do
+				if type(objective) == "table" and not objective.Completed then
+					left[#left + 1] = objective
+				end
+			end
+			if #left == 0 then
+				local red, green, blue = ns.GetColorRGB("TITLE")
+				local text = string.format(L["ROUTES_TURN_IN_QUEST"], routes.QuestTitle(task))
+				Add("title", text, red, green, blue, nil, false, nil, nil, questID)
+				AddTimer(questID, false)
+			else
+				local text, red, green, blue = routes.QuestTitle(task)
+				Add("title", text, red, green, blue, nil, false, nil, nil, questID)
+				AddTimer(questID, false)
+				for _, objective in ipairs(left) do
+					local progress = objective.Needed and routes.CountText(objective.Collected, objective.Needed)
+					red, green, blue = ns.GetColorRGB("TEXT")
+					Add("objective", routes.ObjectiveName(objective), red, green, blue, progress or nil)
+				end
+			end
+		end
+	end
 	if meet then
 		Add("title", L["ROUTES_GROUP_UP"], ns.GetColorRGB("TITLE"))
+		if settings.showQuests then
+			AddTimedQuests()
+		end
+	elseif settings.showQuests and not view then
+		AddTimedQuests() -- Nothing on the route here, only timed quests elsewhere
 	elseif settings.showQuests and view then
 		AddStop(view, false, underArrow)
+		AddTimedQuests()
 		if passing then
 			local red, green, blue = ns.GetColorRGB("HELP")
 			Add("section", L["ROUTES_WHILE_HERE"], red, green, blue, nil, true, "eye")

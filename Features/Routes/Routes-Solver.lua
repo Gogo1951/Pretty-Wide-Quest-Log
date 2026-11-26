@@ -11,7 +11,9 @@ local _, ns = ...
 	A move that would put a turn-in before one of its objectives is refused. Last, nothing far off is left
 	between two places of one camp (KeepCampsWhole). Moves are weighed without
 	building the routes they'd make: a route of 90 stops weighs hundreds of thousands, and building each
-	would make over 100 MB of garbage a plan.
+	would make over 100 MB of garbage a plan. Only the moves round what last changed are weighed again
+	(LocalSearch), and each leg's cost is worked out once a plan (Distance): played through offline, a
+	plan of 100 stops took a third to a fifth of the time it did, for routes as short.
 
 	The caller passes a yield function, called often, which can pause the work and pick it up on the next
 	frame.
@@ -25,12 +27,14 @@ local _, ns = ...
 	leave a camp half done for a turn-in or another camp and come back, when finishing the camp first is
 	all but as short; this keeps it to finishing what's around before setting off
 
-	Flight paths are shortcuts: between two flight masters in the zone whose flight paths the character has
-	(start.flights, Routes-Flights.lua), a flight takes no time. A leg costs the shorter of walking it and
-	walking from its start to the nearest such flight master, flying, and walking on from the flight master
-	nearest its end, plus FLIGHT_COST. The nearest at each end is always the best pair, so a leg stays a
+	Flight paths are shortcuts, and a flight costs nothing (start.flights, Routes-Flights.lua). A flight
+	sets off from any flight master of the player's in the zone, as talking to one the character hasn't
+	discovered discovers it, and lands at one whose flight path the character has. A leg costs the shorter
+	of walking it and walking from its start to the nearest flight master, flying, and walking on from the
+	known one nearest its end. So a flight path not yet discovered that's closer than the way back is
+	walked on to and flown back from. The nearest at each end is always the best pair, so a leg stays a
 	lookup however many flight masters there are. A flight the player ignored (start.skippedFlights) is
-	walked instead
+	walked instead. A flight can't always be flown back, so a leg can cost more one way than the other
 ]]
 
 local Solver = {}
@@ -38,54 +42,59 @@ ns.routesSolver = Solver
 
 local EPSILON = 0.01 -- Yards: a move has to save more than this to count
 local MAX_SEGMENT = 3 -- Longest run of nodes or-opt moves at once
-local MAX_PASSES = 300 -- Improvement passes at most; each makes at most one or-opt and one 2-opt move
-local SHAKES = 16 -- Times the finished route is shaken up and improved again, for a short route
-local MIN_SHAKES = 4 -- For a long one
-local SHAKE_WORK = 800 -- Shakes times nodes, which sets how many a route of some length gets
+local MAX_MOVES = 1000 -- Moves at most one local search makes
+local SHAKES = 32 -- Times the finished route is shaken up and improved again, for a short route
+local MIN_SHAKES = 8 -- For a long one
+local SHAKE_WORK = 1600 -- Shakes times nodes, which sets how many a route of some length gets
 local THROWS = 2 -- Nodes thrown somewhere else in each shake
-local WARM_SHAKES = 8 -- Shakes at most for a route started from the last one, which was shaken already
+local WARM_SHAKES = 16 -- Shakes at most for a route started from the last one, which was shaken already
 local WARM_REACH = 150 -- Yards a candidate can be from where the last route had a node and still be its place
 
 local TRIP_NEAR = 100 -- Yards a leg can be and still be within one camp
 local TRIP_FAR = 300 -- Yards past which a leg is a trip somewhere else
 local TRIP_COST = 150 -- Yards a trip somewhere else counts for more than its length
 local CAMP_SPAN = 200 -- Yards apart two places in a row can be and still be one camp, and yards out of the way a side trip from it can't be
---[[
-	Yards a flight counts for, though it takes no time: stopping to talk to the flight master. A flight that
-	saves less than this walks instead
-]]
-local FLIGHT_COST = 200
+local FLIGHT_COST = 0 -- Yards a flight counts for: none, so any flight that saves a step is taken
 
 local sqrt = math.sqrt
 
 --[[
-	The flight masters the plan underway can fly between, each { x, y, ... }, or nil, and a count that
-	changes with each plan, so a place's nearest flight master (FlightYards) is worked out again for it
+	The flight masters the plan underway can fly from, each { x, y, known, ... } (known: it can be flown to
+	as well), or nil, and a count that changes with each plan, so a place's nearest flight masters
+	(FlightYards) are worked out again for it
 ]]
 local flights, flightPlan = nil, 0
 
 -- The flights the player ignored, from flight master NPC ID to a set of the ones to fly to, or nil
 local skippedFlights = nil
 
--- Yards from a place to the nearest flight master it can fly from, and which: worked out once a plan
+--[[
+	Yards from a place to the nearest flight master to fly from, and which, then to the nearest one to land
+	at, and which: worked out once a plan
+]]
 local function FlightYards(point)
 	if point.flightPlan ~= flightPlan then
-		local nearest, nearestIndex = math.huge, nil
+		local fromYards, fromIndex, toYards, toIndex = math.huge, nil, math.huge, nil
 		for i, flight in ipairs(flights) do
 			local dx, dy = flight.x - point.x, flight.y - point.y
 			local yards = sqrt(dx * dx + dy * dy)
-			if yards < nearest then
-				nearest, nearestIndex = yards, i
+			if yards < fromYards then
+				fromYards, fromIndex = yards, i
+			end
+			if flight.known and yards < toYards then
+				toYards, toIndex = yards, i
 			end
 		end
-		point.flightYards, point.flightIndex, point.flightPlan = nearest, nearestIndex, flightPlan
+		point.flightFromYards, point.flightFrom = fromYards, fromIndex
+		point.flightToYards, point.flightTo = toYards, toIndex
+		point.flightPlan = flightPlan
 	end
-	return point.flightYards, point.flightIndex
+	return point.flightFromYards, point.flightFrom, point.flightToYards, point.flightTo
 end
 
 -- Whether the plan may fly between two of its flight masters, by index: two different ones, not ignored
 local function CanFly(from, to)
-	if from == to then
+	if not (from and to) or from == to then
 		return false
 	end
 	local skippedFrom = skippedFlights and skippedFlights[flights[from].npcID]
@@ -93,12 +102,12 @@ local function CanFly(from, to)
 end
 
 -- What a leg costs: its yards, walked or partly flown, plus a share of TRIP_COST for setting off somewhere else
-local function Distance(a, b)
+local function LegCost(a, b)
 	local dx, dy = a.x - b.x, a.y - b.y
 	local yards = sqrt(dx * dx + dy * dy)
 	if flights then
 		local fromYards, from = FlightYards(a)
-		local toYards, to = FlightYards(b)
+		local _, _, toYards, to = FlightYards(b)
 		local flown = fromYards + toYards + FLIGHT_COST
 		if flown < yards and CanFly(from, to) then
 			yards = flown
@@ -110,6 +119,29 @@ local function Distance(a, b)
 		return yards + TRIP_COST
 	end
 	return yards + TRIP_COST * (yards - TRIP_NEAR) / (TRIP_FAR - TRIP_NEAR)
+end
+
+--[[
+	Each leg's cost, by its two places, for the plan underway: the searches weigh the same legs over and
+	over, and with flight paths a leg is more than a square root. Kept for every Solve of one plan (Route
+	Focus solves twice), as its legs cost the same; a new plan starts it again
+]]
+local legs, legsFor
+
+local function Distance(a, b)
+	local row = legs[a]
+	if row then
+		local d = row[b]
+		if d then
+			return d
+		end
+	else
+		row = {}
+		legs[a] = row
+	end
+	local d = LegCost(a, b)
+	row[b] = d
+	return d
 end
 
 local function NoYield() end
@@ -234,28 +266,28 @@ local function LocalCost(previous, candidate, nextPoint)
 	return cost
 end
 
--- Gives each node the candidate that fits best between its neighbors
-local function ImproveChoices(start, route, yield)
-	local improved = false
-	for i, node in ipairs(route) do
-		if #node.candidates > 1 then
-			local previous = i == 1 and start or Point(route[i - 1])
-			local nextPoint = route[i + 1] and Point(route[i + 1])
-			local bestChoice, bestCost = node.choice, LocalCost(previous, Point(node), nextPoint)
-			for choice, candidate in ipairs(node.candidates) do
-				local cost = LocalCost(previous, candidate, nextPoint)
-				if cost < bestCost - EPSILON then
-					bestChoice, bestCost = choice, cost
-				end
-			end
-			if bestChoice ~= node.choice then
-				node.choice = bestChoice
-				improved = true
-			end
-		end
-		yield()
+--[[
+	Gives the node at index i the candidate that fits best between its neighbors. Returns whether it changed
+]]
+local function ImproveChoice(start, route, i)
+	local node = route[i]
+	if #node.candidates < 2 then
+		return false
 	end
-	return improved
+	local previous = i == 1 and start or Point(route[i - 1])
+	local nextPoint = route[i + 1] and Point(route[i + 1])
+	local bestChoice, bestCost = node.choice, LocalCost(previous, Point(node), nextPoint)
+	for choice, candidate in ipairs(node.candidates) do
+		local cost = LocalCost(previous, candidate, nextPoint)
+		if cost < bestCost - EPSILON then
+			bestChoice, bestCost = choice, cost
+		end
+	end
+	if bestChoice == node.choice then
+		return false
+	end
+	node.choice = bestChoice
+	return true
 end
 
 --[[
@@ -298,71 +330,86 @@ local function IsValidMove(route, positions, NewIndex, first, last, gap, reverse
 end
 
 --[[
-	Or-opt: takes a run of one to MAX_SEGMENT nodes out and puts it back, either way round, wherever it
-	shortens the route most. Returns the new route, or nil when no move helps.
+	What reversing the stretch first..last adds to its own legs: walked backward less walked forward. Nothing
+	where every leg costs the same either way; a flight can't always be taken back (Distance)
+]]
+local function Reversal(route, first, last)
+	local added = 0
+	for i = first, last - 1 do
+		local a, b = Point(route[i]), Point(route[i + 1])
+		added = added + Distance(b, a) - Distance(a, b)
+	end
+	return added
+end
+
+--[[
+	Or-opt for one run: takes the nodes first..last out and puts them back, either way round, in the first
+	gap from fromGap to toGap (in the route without the run) where that shortens the route; a lone node may
+	also change candidate there. Returns the moved route and the nodes whose legs changed, or nil.
 
 	The route without the run is never built: its node at index j is the route's at j, or at j + length
 	past the run. Nor is a moved route, until a move is taken
 ]]
-local function TryOrOpt(start, route, yield)
+local function TrySegment(start, route, positions, first, last, fromGap, toGap)
 	local count = #route
-	local positions = Positions(route)
-	for length = 1, math.min(MAX_SEGMENT, count - 1) do
-		for first = 1, count - length + 1 do
-			local last = first + length - 1
-			local firstPoint, lastPoint = Point(route[first]), Point(route[last])
-			local previous = first == 1 and start or Point(route[first - 1])
-			local following = route[last + 1] and Point(route[last + 1])
+	local length = last - first + 1
+	local restCount = count - length
+	local firstPoint, lastPoint = Point(route[first]), Point(route[last])
+	local previous = first == 1 and start or Point(route[first - 1])
+	local following = route[last + 1] and Point(route[last + 1])
 
-			-- What taking the run out saves
-			local saving = Distance(previous, firstPoint)
-			if following then
-				saving = saving + Distance(lastPoint, following) - Distance(previous, following)
-			end
+	-- What taking the run out saves
+	local saving = Distance(previous, firstPoint)
+	if following then
+		saving = saving + Distance(lastPoint, following) - Distance(previous, following)
+	end
+	local reversal = length > 1 and Reversal(route, first, last) or 0
 
-			local restCount = count - length
+	-- A lone node may also change candidate where it lands
+	local single = length == 1 and route[first]
+	local currentPenalty = firstPoint.penalty or 0
 
-			-- A lone node may also change candidate where it lands
-			local single = length == 1 and route[first]
-			local currentPenalty = firstPoint.penalty or 0
-
-			for gap = 0, restCount do
-				local before = gap == 0 and start or Point(route[gap < first and gap or gap + length])
-				local afterNode = gap < restCount and route[gap + 1 < first and gap + 1 or gap + 1 + length]
-				local after = afterNode and Point(afterNode)
-				local join = after and Distance(before, after) or 0
-				local forward = Distance(before, firstPoint) + (after and Distance(lastPoint, after) or 0) - join
-				local backward = Distance(before, lastPoint) + (after and Distance(firstPoint, after) or 0) - join
-				local reverse = backward < forward
-				local cost = reverse and backward or forward
-				local choice
-				if single then
-					for index, candidate in ipairs(single.candidates) do
-						local candidateCost = Distance(before, candidate)
-							+ (after and Distance(candidate, after) or 0)
-							- join
-							+ (candidate.penalty or 0)
-							- currentPenalty
-						if candidateCost < cost - EPSILON then
-							cost, choice = candidateCost, index
-						end
-					end
-				end
-				local unchanged = gap == first - 1 and not reverse and not choice
-				if not unchanged and cost < saving - EPSILON then
-					if IsValidMove(route, positions, OrOptIndex, first, last, gap, reverse) then
-						local moved = {}
-						for i = 1, count do
-							moved[OrOptIndex(i, first, last, gap, reverse)] = route[i]
-						end
-						if choice then
-							single.choice = choice
-						end
-						return moved
-					end
+	for gap = math.max(0, fromGap), math.min(restCount, toGap) do
+		local before = gap == 0 and start or Point(route[gap < first and gap or gap + length])
+		local afterNode = gap < restCount and route[gap + 1 < first and gap + 1 or gap + 1 + length]
+		local after = afterNode and Point(afterNode)
+		local join = after and Distance(before, after) or 0
+		local forward = Distance(before, firstPoint) + (after and Distance(lastPoint, after) or 0) - join
+		local backward = Distance(before, lastPoint) + (after and Distance(firstPoint, after) or 0) - join + reversal
+		local reverse = backward < forward
+		local cost = reverse and backward or forward
+		local choice
+		if single then
+			for index, candidate in ipairs(single.candidates) do
+				local candidateCost = Distance(before, candidate)
+					+ (after and Distance(candidate, after) or 0)
+					- join
+					+ (candidate.penalty or 0)
+					- currentPenalty
+				if candidateCost < cost - EPSILON then
+					cost, choice = candidateCost, index
 				end
 			end
-			yield()
+		end
+		local unchanged = gap == first - 1 and not reverse and not choice
+		if not unchanged and cost < saving - EPSILON then
+			if IsValidMove(route, positions, OrOptIndex, first, last, gap, reverse) then
+				local touched = { route[first - 1], route[last + 1], afterNode }
+				if gap > 0 then
+					touched[#touched + 1] = route[gap < first and gap or gap + length]
+				end
+				local moved = {}
+				for i = 1, count do
+					moved[OrOptIndex(i, first, last, gap, reverse)] = route[i]
+				end
+				for i = first, last do
+					touched[#touched + 1] = route[i]
+				end
+				if choice then
+					single.choice = choice
+				end
+				return moved, touched
+			end
 		end
 	end
 	return nil
@@ -375,47 +422,118 @@ local function Reverse(route, first, last)
 	end
 end
 
--- 2-opt: reverses the first stretch whose reversal shortens the route. Returns whether it found one
-local function TryTwoOpt(start, route, yield)
+--[[
+	2-opt for one stretch: reverses first..last where that shortens the route. Returns the nodes whose legs
+	changed, or nil
+]]
+local function TryReverse(start, route, positions, first, last)
+	local previous = first == 1 and start or Point(route[first - 1])
+	local firstPoint, lastPoint = Point(route[first]), Point(route[last])
+	local following = route[last + 1] and Point(route[last + 1])
+	local delta = Distance(previous, lastPoint) - Distance(previous, firstPoint)
+	if following then
+		delta = delta + Distance(firstPoint, following) - Distance(lastPoint, following)
+	end
+	if delta >= -EPSILON or delta + Reversal(route, first, last) >= -EPSILON then
+		return nil
+	end
+	if not IsValidMove(route, positions, TwoOptIndex, first, last) then
+		return nil
+	end
+	local touched = { route[first - 1], route[first], route[last], route[last + 1] }
+	Reverse(route, first, last)
+	return touched
+end
+
+--[[
+	Every move that changes a leg of the node at index p: a new candidate for it, a run of one to
+	MAX_SEGMENT nodes starting or ending with it moved anywhere (or-opt), any such run moved in beside it, and
+	a stretch reversed (2-opt) whose ends meet it. The first that helps is taken. Returns the route, the
+	nodes whose legs changed, nil when no move helped
+]]
+local function TryNode(start, route, positions, p)
 	local count = #route
-	local positions = Positions(route)
-	for first = 1, count - 1 do
-		local previous = first == 1 and start or Point(route[first - 1])
-		local firstPoint = Point(route[first])
-		for last = first + 1, count do
-			local lastPoint = Point(route[last])
-			local following = route[last + 1] and Point(route[last + 1])
-			local delta = Distance(previous, lastPoint) - Distance(previous, firstPoint)
-			if following then
-				delta = delta + Distance(firstPoint, following) - Distance(lastPoint, following)
-			end
-			if delta < -EPSILON then
-				if IsValidMove(route, positions, TwoOptIndex, first, last) then
-					Reverse(route, first, last)
-					return true
+	if ImproveChoice(start, route, p) then
+		return route, { route[p - 1], route[p], route[p + 1] }
+	end
+	for length = 1, math.min(MAX_SEGMENT, count - 1) do
+		for side = 1, length == 1 and 1 or 2 do
+			local first = side == 1 and p or p - length + 1 -- The run starting with it, then ending with it
+			local last = first + length - 1
+			if first >= 1 and last <= count then
+				local moved, touched = TrySegment(start, route, positions, first, last, 0, count)
+				if moved then
+					return moved, touched
 				end
 			end
 		end
-		yield()
 	end
-	return false
+	for length = 1, math.min(MAX_SEGMENT, count - 1) do
+		for first = 1, count - length + 1 do
+			local last = first + length - 1
+			if p < first or p > last then
+				local at = p < first and p or p - length -- Its index in the route without the run
+				local moved, touched = TrySegment(start, route, positions, first, last, at - 1, at)
+				if moved then
+					return moved, touched
+				end
+			end
+		end
+	end
+	for first = p, p + 1 do
+		for last = first + 1, count do
+			local touched = TryReverse(start, route, positions, first, last)
+			if touched then
+				return route, touched
+			end
+		end
+	end
+	for last = p - 1, p do
+		for first = 1, last - 1 do
+			local touched = TryReverse(start, route, positions, first, last)
+			if touched then
+				return route, touched
+			end
+		end
+	end
+	return route, nil
 end
 
--- Every move, over and over, until none helps
-local function LocalSearch(start, route, yield)
-	for _ = 1, MAX_PASSES do
-		local improved = ImproveChoices(start, route, yield)
-		local moved = TryOrOpt(start, route, yield)
-		if moved then
+--[[
+	Every move, over and over, until none helps. Only the nodes in active (all of them without it) are looked
+	at first, and then each whose legs a move changed: a move far from any change was weighed already and
+	still doesn't help. A shake throws a couple of nodes elsewhere, so it weighs the moves round those and not
+	every move of the whole route again
+]]
+local function LocalSearch(start, route, yield, active)
+	local queue, queued, head, tail = {}, {}, 1, 0
+	local function Activate(node)
+		if node and not queued[node] then
+			queued[node] = true
+			tail = tail + 1
+			queue[tail] = node
+		end
+	end
+	for _, node in ipairs(route) do
+		if not active or active[node] then
+			Activate(node)
+		end
+	end
+	local positions, moves = Positions(route), 0
+	while head <= tail and moves < MAX_MOVES do
+		local node = queue[head]
+		queue[head], queued[node], head = nil, nil, head + 1
+		local moved, touched = TryNode(start, route, positions, positions[node])
+		if touched then
+			moves = moves + 1
 			route = moved
-			improved = true
+			positions = Positions(route)
+			Activate(node)
+			for _, other in pairs(touched) do
+				Activate(other)
+			end
 		end
-		if TryTwoOpt(start, route, yield) then
-			improved = true
-		end
-		if not improved then
-			break
-		end
+		yield()
 	end
 	return route
 end
@@ -479,17 +597,23 @@ local function Shake(start, route, yield, most)
 	for _ = 1, shakes do
 		local trial = Copy(best)
 		RestoreChoices(trial, bestChoices)
+		local thrown = {} -- Each node thrown and its neighbors, before and after, for the search to start from
 		for _ = 1, THROWS do
-			local node = table.remove(trial, Random(count))
+			local index = Random(count)
+			local node = table.remove(trial, index)
 			node.choice = Random(#node.candidates)
 			local positions = Positions(trial)
 			local firstSlot, lastSlot = FirstSlot(node, positions), #trial + 1
 			for _, dependent in ipairs(dependents[node] or NONE) do
 				lastSlot = math.min(lastSlot, positions[dependent])
 			end
-			table.insert(trial, firstSlot + Random(lastSlot - firstSlot + 1) - 1, node)
+			local slot = firstSlot + Random(lastSlot - firstSlot + 1) - 1
+			table.insert(trial, slot, node)
+			for _, other in pairs({ trial[index - 1], trial[index], trial[slot - 1], node, trial[slot + 1] }) do
+				thrown[other] = true
+			end
 		end
-		trial = LocalSearch(start, trial, yield)
+		trial = LocalSearch(start, trial, yield, thrown)
 		local cost = Solver.Cost(start, trial)
 		if cost < bestCost - EPSILON then
 			best, bestCost, bestChoices = trial, cost, SaveChoices(trial)
@@ -660,6 +784,39 @@ local function WarmRoute(nodes, previous)
 end
 
 --[[
+	The nodes of a route started from the last one (WarmRoute) whose legs aren't the last route's: next to a
+	node new since, or done since, or moved to wait on another, and the first, as the player has moved. The
+	rest of the route was searched already, so the local search starts from these
+]]
+local function Changed(start, route, previous)
+	local order = {}
+	for index, key in pairs(previous.keys) do
+		order[key] = index
+	end
+	-- Nothing left to route (the last waypoint done since): nothing changed
+	local changed = {}
+	if not route[1] then
+		return changed
+	end
+	changed[route[1]] = true
+	for i = 1, #route - 1 do
+		local a, b = order[route[i].key], order[route[i + 1].key]
+		if not (a and b and b == a + 1) then
+			changed[route[i]], changed[route[i + 1]] = true, true
+		end
+	end
+	for i, node in ipairs(route) do
+		if ImproveChoice(start, route, i) then
+			changed[route[i - 1] or node], changed[node] = true, true
+			if route[i + 1] then
+				changed[route[i + 1]] = true
+			end
+		end
+	end
+	return changed
+end
+
+--[[
 	The nodes in route order, each with node.choice set to the candidate it uses, and the route's cost.
 	start is { x, y }. Nodes with no candidates are left out.
 
@@ -674,6 +831,9 @@ function Solver.Solve(start, nodes, yield, previous)
 	flights = start.flights
 	skippedFlights = start.skippedFlights
 	flightPlan = flightPlan + 1
+	if start ~= legsFor then
+		legs, legsFor = {}, start
+	end
 	local usable = {}
 	for _, node in ipairs(nodes) do
 		if node.candidates and #node.candidates > 0 then
@@ -701,7 +861,8 @@ function Solver.Solve(start, nodes, yield, previous)
 
 	local route
 	if previous then
-		route = LocalSearch(start, Construct(start, usable, yield, WarmRoute(usable, previous)), yield)
+		route = Construct(start, usable, yield, WarmRoute(usable, previous))
+		route = LocalSearch(start, route, yield, Changed(start, route, previous))
 		route = KeepCampsWhole(start, Shake(start, route, yield, WARM_SHAKES), yield)
 	else
 		route = LocalSearch(start, Construct(start, usable, yield), yield)
@@ -719,7 +880,7 @@ function Solver.FlightLeg(a, b)
 		return nil
 	end
 	local fromYards, from = FlightYards(a)
-	local toYards, to = FlightYards(b)
+	local _, _, toYards, to = FlightYards(b)
 	local dx, dy = a.x - b.x, a.y - b.y
 	if CanFly(from, to) and fromYards + toYards + FLIGHT_COST < sqrt(dx * dx + dy * dy) then
 		return flights[from], flights[to]

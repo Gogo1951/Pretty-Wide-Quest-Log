@@ -19,6 +19,11 @@ externals:
   Includes/Libraries/LibSharedMedia-3.0:
     url: https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0/
 
+required-dependencies:
+  - questie
+  - questiedb
+  - questietrace
+
 ignore:
   - .DS_Store
   - .git

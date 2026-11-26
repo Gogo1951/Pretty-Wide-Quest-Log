@@ -11,7 +11,7 @@ ns.CORPSE_ICON_COORDS = { 0.875, 1, 0, 0.125 }
 How We Got the Data
 
 Last Validated
-	2026-11-20, wago.tools, Classic Era 1.15.9.70576
+	2026-11-25, wago.tools, Classic Era 1.15.9.70576
 
 Notes
 	- The cell of the POI icons (Interface\\Minimap\\POIIcons) holding the corpse's gravestone, as this client's

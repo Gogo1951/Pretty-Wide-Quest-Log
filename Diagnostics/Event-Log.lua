@@ -32,8 +32,9 @@ ns.DIAGNOSTIC_EVENT_EXCLUDE = {}
     wholesale. UI_INFO_MESSAGE (Routes) fires for every yellow line in the
     middle of the screen, each quest kill and item among them, and Routes acts
     on one alone: "New flight path discovered". GET_ITEM_INFO_RECEIVED (Zone
-    Info) fires for every item any add-on or window asks the game for, keyed by
-    item ID, and Zone Info acts only on the items it's waiting on.
+    Info, the reward pick and the reward coin) fires for every item any add-on
+    or window asks the game for, keyed by item ID, and Zone Info acts only on
+    the items it's waiting on, the reward files only while reward choices show.
 ]]
 ns.MESSAGE_ID_FILTERED_EVENTS = {
 	UI_INFO_MESSAGE = 1,
@@ -91,14 +92,30 @@ end
     run time, and Zone-Info-Data.lua's ItemArrived looks the item up in the
     items it's waiting on, which the log reads before the handler clears it. A
     secret line can't be compared, so it is never one of these.
+
+    Quest-Reward-Pick.lua and Quest-Reward-Coin.lua weigh the choices again on
+    any item that arrives while one of them hadn't loaded. That wait is kept
+    inside those files, so the log keeps every arrival while two or more reward
+    choices show: on the quest giver's page, or in Blizzard's quest log on
+    Classic Era and TBC.
 ]]
+local function RewardChoicesShown()
+	if QuestInfoRewardsFrame and QuestInfoRewardsFrame:IsVisible() and GetNumQuestChoices() >= 2 then
+		return true
+	end
+	return _G.QuestLog_UpdateQuestDetails ~= nil
+		and QuestLogFrame ~= nil
+		and QuestLogFrame:IsVisible()
+		and GetNumQuestLogChoices() >= 2
+end
+
 local CORRELATED_MESSAGES = {
 	UI_INFO_MESSAGE = function(_, message)
 		return ERR_NEWTAXIPATH ~= nil and IsPlain(message) and message == ERR_NEWTAXIPATH
 	end,
 	GET_ITEM_INFO_RECEIVED = function(itemID)
 		local waiting = ns.zoneInfoData and ns.zoneInfoData.pendingItems
-		return IsPlain(itemID) and type(waiting) == "table" and waiting[itemID] == true
+		return IsPlain(itemID) and (type(waiting) == "table" and waiting[itemID] == true or RewardChoicesShown())
 	end,
 }
 

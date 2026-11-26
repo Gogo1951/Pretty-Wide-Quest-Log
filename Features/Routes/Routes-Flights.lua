@@ -375,7 +375,7 @@ end
 	What the flight map calls each flight path, by flight master NPC ID ("Camp Taurajo"), kept once found:
 	C_TaxiMap.GetTaxiNodesForMap names the zone's flight paths anywhere, and each is matched to the flight
 	master standing within MATCH_REACH of where it puts it. The part before a comma, as the flight map adds
-	the zone ("Camp Taurajo, The Barrens")
+	the zone ("Camp Taurajo, The Barrens"). Retired flight paths, named "zz...", are passed over
 ]]
 local placeNames = {}
 
@@ -395,7 +395,8 @@ local function NamePlaces(flights, start)
 	for _, node in ipairs(nodes) do
 		local x, y = NodePosition(node)
 		local worldX, worldY, instance
-		if x and type(node.name) == "string" then
+		-- "zz" marks a retired flight path the game still lists ("zzOLDPowderfuse Port"), never a real name
+		if x and type(node.name) == "string" and not node.name:lower():match("^zz") then
 			worldX, worldY, instance = hereBeDragons:GetWorldCoordinatesFromZone(x, y, start.zone)
 		end
 		if worldX and instance == start.instance then
@@ -415,24 +416,29 @@ local function NamePlaces(flights, start)
 end
 
 --[[
-	The flight masters in the zone whose flight path the character has, each { x, y, npcID, name, place },
-	for the route to fly between (Routes-Solver.lua), or nil for fewer than two. place is what the flight map
-	calls the flight path, or the flight master's name where it can't be found
+	The flight masters of the player's faction in the zone, each { x, y, npcID, name, place, known }, for the
+	route to fly from (Routes-Solver.lua), or nil where there aren't two or none is known. known: the
+	character has its flight path, so the route can fly to it too. One not known can still be flown from, as
+	talking to it discovers it, but not one whose flight path the player ignored. place is what the flight
+	map calls the flight path, or the flight master's name where it can't be found
 ]]
 function routes.KnownFlights(start, yield)
 	if start.corpse then
 		return nil -- A ghost runs back to the corpse; the plan after it lives again flies
 	end
-	local flights = {}
+	local flights, anyKnown = {}, false
 	for _, master in ipairs(FlightMasters()) do
-		if routes.IsFlightMasterKnown(master.npcID) then
+		local known = routes.IsFlightMasterKnown(master.npcID)
+		if known or not routes.skipped["flight:" .. master.npcID] then
 			local blob = FlightMasterBlobs(master, start, yield)[1]
 			if blob then
-				flights[#flights + 1] = { x = blob.x, y = blob.y, npcID = master.npcID, name = master.name or "" }
+				flights[#flights + 1] =
+					{ x = blob.x, y = blob.y, npcID = master.npcID, name = master.name or "", known = known }
+				anyKnown = anyKnown or known
 			end
 		end
 	end
-	if #flights < 2 then
+	if #flights < 2 or not anyKnown then
 		return nil
 	end
 	NamePlaces(flights, start)

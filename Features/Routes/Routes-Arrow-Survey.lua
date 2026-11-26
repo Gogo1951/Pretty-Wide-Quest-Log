@@ -197,6 +197,20 @@ local function AfterStop(stops, index, skip)
 end
 
 --[[
+	The gate task of a waypoint the player is at or through, going out of a city, whose hidden point past
+	the city map's edge the arrow points to now (routes.ExitPlace)
+]]
+local function ThroughGate(view, x, y)
+	for _, task in ipairs(view.tasks) do
+		local point = task.kind == "exit" and task.aim and routes.TaskPoint(task)
+		if point and routes.ExitPlace(task, point, x, y) == task.aim then
+			return task
+		end
+	end
+	return nil
+end
+
+--[[
 	Looks around. The waypoint the route sends the player to is its first stop with a task left. Every task
 	whose area the player is in (routes.InArea) is either work, at that waypoint or pinned there for being
 	worked (routes.engaged), or on the way, planned for a later waypoint. The next destination is the first
@@ -271,8 +285,9 @@ local function Survey(x, y)
 		What "While You're Here" lists isn't the Next Objective too: that skips it, to the waypoint after.
 		Working an area the Next Objective is the destination, else the waypoint after it
 	]]
+	local skip = workKeys
 	if passing then
-		local skip = {}
+		skip = {}
 		for key in pairs(workKeys) do
 			skip[key] = true
 		end
@@ -285,14 +300,32 @@ local function Survey(x, y)
 			afterDestination = AfterStop(stops, destinationIndex, skip)
 		end
 	end
+	--[[
+		At or through a city's gate going out: the destination is the waypoint past it, in the zone, by way of
+		the gate's hidden point (via), so the arrow lists that waypoint and counts the yards through the point
+	]]
+	local gate = not here and afterDestination and ThroughGate(destination, x, y)
+	if gate then
+		local beyond, beyondIndex = FirstStopLeft(stops, destinationIndex + 1, skip)
+		if beyond and not beyond.corpse then
+			beyond.via = gate.aim
+			destination, afterDestination = beyond, AfterStop(stops, beyondIndex, skip)
+		end
+	end
 	return here, passing, areaNote, destination, afterDestination
 end
 
--- Where in a stop the arrow points: its nearest place still to go to, or the nearest edge of an area, and whose it is
+--[[
+	Where in a stop the arrow points: its nearest place still to go to, or the nearest edge of an area, and
+	whose it is. A city's gate, its hidden point past the city map's edge once through it (Routes-Cities.lua)
+]]
 local function NearestPlace(stop, x, y)
 	local nearest, nearestYards, nearestTask
 	for _, task in ipairs(stop.tasks) do
 		local point = routes.IsTaskLeft(task) and routes.TaskPoint(task)
+		if point and task.kind == "exit" then
+			point = routes.ExitPlace(task, point, x, y)
+		end
 		if point then
 			local dx, dy = point.x - x, point.y - y
 			local yards = math.sqrt(dx * dx + dy * dy)
@@ -335,7 +368,7 @@ local function NearestSpawn(task, blob, x, y)
 	return bestX, bestY
 end
 
--- Point asks these each second, or each turn (Routes-Arrow.lua)
+-- Point asks Survey each second, and the nearest place and spawn as the distance is rewritten or the stop changes (Routes-Arrow.lua)
 routes.ArrowSurvey = Survey
 routes.ArrowNearestPlace = NearestPlace
 routes.ArrowNearestSpawn = NearestSpawn

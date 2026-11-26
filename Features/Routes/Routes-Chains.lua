@@ -10,7 +10,8 @@ local _, ns = ...
 	Only quests the zone can finish count (routes.IsChainQuest): an NPC or object that starts it, every
 	objective and the turn-in all in the zone. An objective with nowhere to go, such as cloth or anything
 	else bought or made, never counts against a quest, as it's done wherever the player is. A chain
-	stops at the first quest that leads elsewhere, or is started by an item, or asks for anything this
+	stops at the first quest that leads elsewhere, or is started by an item more than one
+	creature or object gives, or asks for anything this
 	can't tell from Questie's database (a profession, reputation, a spell).
 
 	Questie's database has no counts, so a planned objective is its name alone. Each is a node of its own
@@ -46,7 +47,7 @@ local Candidates = routes.Candidates
 local QueryQuest = helpers.QueryQuest
 local QuestPlan = routes.QuestPlan -- Routes-Quest-Plans.lua
 
-local MAX_CHAIN_STARTS = 16 -- Quests available now that are planned whole, nearest giver first
+local MAX_CHAIN_STARTS = 16 -- Quests available now that are planned whole, by area, then nearest giver first
 local MAX_PLANNED_QUESTS = 24 -- Quests planned whole at most, those and their follow-ups, so a plan stays quick
 local MAX_CHAIN_DEPTH = 6 -- Follow-ups planned at most after any one quest
 
@@ -377,7 +378,7 @@ end
 
 --[[
 	With Plan Ahead, plans whole each quest Routes-Pick-Ups.lua put on the route from across the
-	zone (chainStarts, nearest first), and then the quests that follow the log's quests and those, each
+	zone (chainStarts, by area, then nearest first), and then the quests that follow the log's quests and those, each
 	follow-up's pick-up waiting on the turn-in that unlocks it (WaitsOn), up to MAX_PLANNED_QUESTS in all
 	and MAX_CHAIN_DEPTH after any one quest. A follow-up is the zone's to finish (routes.IsChainQuest),
 	its giver in the zone, one the character could take (CouldTake), and one the What to Route

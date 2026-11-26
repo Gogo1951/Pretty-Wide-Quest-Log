@@ -38,6 +38,7 @@ Wide quest log and quest helper for leveling: a quest route through the quests y
 * **Easier on the Eyes** // Quest giver windows get the quest log's clean headings and line spacing.
 * **Know What You're Signing Up For** // A quest giver's list shows level tags like [40D] before you accept.
 * **One Click to Wowhead** // The quest ID under every quest links straight to Wowhead.
+* **Best Reward, Already Picked** // A gold coin marks the reward that sells for the most, and it's picked for you at turn-in, or Pawn's upgrade if you run Pawn.
 * **Your Look, Your Call** // Pick the font for quest giver and gossip windows, or switch the cleanup off.
 
 ### Quest Sharing
@@ -69,6 +70,7 @@ Wide quest log and quest helper for leveling: a quest route through the quests y
 * **Group Up** // In a party, when a friend in your zone drifts off your mini-map, the arrow leads you all to a meeting spot.
 * **Your Party's Quests Too** // When your friends run Questie too, their quests join your route.
 * **Tidier Quest Tooltips** // Questie's quest lines on mobs, objects, and items read like the Quest Arrow, with your party's progress under each objective.
+* **Beat the Clock** // A timed quest jumps to the front of the route, shows its time left on the Quest Arrow, and warns you in chat before it runs out.
 
 ### The Zone Map Opens Full Size
 
@@ -118,8 +120,8 @@ While the route is on your zone map, the add-on keeps the game's Mini World Map 
 
 ### 🟢 Pairs With
 
+* Gogo1951's [GogoLoot](https://www.curseforge.com/wow/addons/gogoloot)
+* Gogo1951's [Good to Go](https://www.curseforge.com/wow/addons/good-to-go)
+* Gogo1951's [Magic Eraser](https://www.curseforge.com/wow/addons/magic-eraser)
+* Gogo1951's [Play It Forward](https://www.curseforge.com/wow/addons/play-it-forward)
 * TheCrux\_BB's [Questie](https://www.curseforge.com/wow/addons/questie)
-* RestedXP's [RestedXP Guide](https://www.curseforge.com/wow/addons/restedxp-guide)
-* rustykey's [Spoken](https://www.curseforge.com/wow/addons/spoken)
-* jnwhiteh's [TomTom](https://www.curseforge.com/wow/addons/tomtom)
-* MrThinger's [VoiceOver (Classic)](https://www.curseforge.com/wow/addons/voiceover)
