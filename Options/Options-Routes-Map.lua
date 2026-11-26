@@ -88,8 +88,8 @@ local PLAN_AHEAD = { yours = "PLAN_AHEAD_YOURS", nearby = "PLAN_AHEAD_NEARBY", z
 local PLAN_AHEAD_ORDER = { "yours", "nearby", "zone" }
 
 -- Route Focus: how the route chooses and orders what to pick up (Routes-Focus.lua)
-local ROUTE_FOCUS = { fastest = "ROUTE_FOCUS_FASTEST", easiest = "ROUTE_FOCUS_EASIEST", xp = "ROUTE_FOCUS_XP" }
-local ROUTE_FOCUS_ORDER = { "fastest", "easiest", "xp" }
+local ROUTE_FOCUS = { fastest = "ROUTE_FOCUS_FASTEST", xp = "ROUTE_FOCUS_XP" }
+local ROUTE_FOCUS_ORDER = { "fastest", "xp" }
 
 -- The Search Range matters only where the route looks for pick-ups near the player
 local function RangeHidden()
@@ -225,7 +225,7 @@ function ns.BuildQuestRouteOptions()
 		args = {
 			descIntro = Kit.Desc(L["TAB_QUEST_ROUTE_DESCRIPTION"], 1),
 			spaceIntro = Kit.Spacer(2),
-			enableQuestRoute = ns.FeatureSwitch("routes.showLine", 3),
+			enableQuestRoute = Kit.FeatureSwitch("routes.showLine", 3),
 			needsMarkers = Kit.StatusLine(NeedsMarkersText, 4),
 			needsQuestie = ns.RoutesNeedQuestieLine(4.1),
 

@@ -3,10 +3,10 @@ local _, ns = ...
 --[[
 	Routes: the world map's menu, on the Quest Arrow menu's plate (Routes-Arrow-Menu-Panel.lua), in place of a
 	marker's tooltip so its clicks are rows a controller's cursor reaches too. Hovering a waypoint's or camp's
-	marker, or the "…" marker, opens it beside the marker (Routes-Map.lua): a header, its first line with PWQL
+	marker, or the "…" marker, opens it beside the marker (Routes-Map-Clicks.lua, Routes-Map-More.lua): a header, its first line with PWQL
 	on the right, then a spacer and the rest of what the tooltip said, then a
-	spacer, a line and the marker's click hints, what each does on the left in blue and the click that does
-	the same on the marker on the right in gray, each a row to click. It stays while the cursor is on the
+	spacer, a line and the marker's click hints, what each does on the left in blue and, on a waypoint's or
+	camp's marker, the click that does the same on the marker on the right in gray, each a row to click. It stays while the cursor is on the
 	marker or the menu, closes CLOSE_DELAY after it leaves both, once the marker is gone or a row is clicked, and on
 	Escape
 ]]
@@ -68,9 +68,10 @@ function rowsMixin:AddDoubleLine(left, right, red, green, blue, rightRed, rightG
 	})
 end
 
--- A group's small gold label, a spacer above it unless it opens the menu
+-- A group's small gold label, a spacer above it unless it opens the menu or already follows one
 function rowsMixin:AddSection(text)
-	if #self.entries > 0 then
+	local last = self.entries[#self.entries]
+	if last and last.kind ~= "spacer" then
 		self:Add({ kind = "spacer" })
 	end
 	self:Add({ kind = "section", left = text })
@@ -78,7 +79,8 @@ end
 
 --[[
 	The footer: a spacer and a line, then each hint, { click, what it does, action }, as a row: what it does
-	on the left in blue, the click on the right in gray
+	on the left in blue, the click on the right in gray. A hint with no click (nil) has nothing on the right:
+	only the route's markers name their clicks (README-Notes.md)
 ]]
 function rowsMixin:AddHints(hints)
 	if #self.entries > 0 then
@@ -108,8 +110,9 @@ function rowsMixin:MakeHeader()
 	end
 end
 
+-- isMenu tells a line written for a tooltip that it's a menu row, so a count can take a menu's value color
 function routes.MapMenuRows()
-	return Mixin({ entries = {} }, rowsMixin)
+	return Mixin({ entries = {}, isMenu = true }, rowsMixin)
 end
 
 --------------------------------------------------------------------------------

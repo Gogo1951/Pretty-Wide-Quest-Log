@@ -56,7 +56,7 @@ local function RouteTasks()
 end
 
 -- The stop under the mouse, whose objectives' icons Questie shows again while it's hovered
-routes.hoveredStop = nil -- Set and cleared by the stop pins (Routes-Map.lua)
+routes.hoveredStop = nil -- Set and cleared by the stop pins (Routes-Map-Clicks.lua, Routes-Map.lua)
 
 local function HoveredTasks()
 	local objectives, turnIns, pickUps = {}, {}, {}

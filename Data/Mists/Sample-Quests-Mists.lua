@@ -14,7 +14,7 @@ ns.SAMPLE_ZONE_AREA_ID = 40 -- Westfall
 How We Got the Data
 
 Last Validated
-	2026-11-20, wago.tools, MoP Classic 5.5.4.71060
+	2026-11-25, wago.tools, MoP Classic 5.5.4.71089
 
 Notes
 	- Three quests from The Deadmines, a dungeon every current client has, that the Quality of Life panel's
@@ -38,8 +38,8 @@ Wowhead
 	https://www.wowhead.com/mop-classic/quest=27781
 
 wago.tools
-	https://wago.tools/db2/QuestV2?build=5.5.4.71060
-	https://wago.tools/db2/AreaTable?build=5.5.4.71060
+	https://wago.tools/db2/QuestV2?build=5.5.4.71089
+	https://wago.tools/db2/AreaTable?build=5.5.4.71089
 
 QuestieDB
 	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/MoP/mopQuestDB.lua

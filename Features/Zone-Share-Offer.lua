@@ -34,22 +34,25 @@ local function MissingQuests(unit, zoneQuests)
 	if not (hasQuestie or gameSees) then
 		return nil
 	end
-	local missing = {}
-	for _, quest in ipairs(zoneQuests) do
-		if quest.pushable then
-			local answer = ns.IsUnitOnQuest(unit, quest.questID)
-			local readable = ns.IsReadable(answer)
-			local onQuest = readable and answer and true or false
-			if not onQuest and hasQuestie then
-				onQuest = routes.QuestieHasUnitOnQuest(unit, quest.questID)
-			end
-			-- A secret answer, without Questie to say, is never counted as missing
-			if not onQuest and (hasQuestie or readable) then
-				missing[#missing + 1] = quest.questID
+	-- Every zone open, as a client that asks by log index can't find a quest under a collapsed zone
+	return ns.WithEveryZoneOpen(function()
+		local missing = {}
+		for _, quest in ipairs(zoneQuests) do
+			if quest.pushable then
+				local answer = ns.IsUnitOnQuest(unit, quest.questID, ns.GetLogIndexForQuestID(quest.questID))
+				local readable = ns.IsReadable(answer)
+				local onQuest = readable and answer and true or false
+				if not onQuest and hasQuestie then
+					onQuest = routes.QuestieHasUnitOnQuest(unit, quest.questID)
+				end
+				-- A secret answer, without Questie to say, is never counted as missing
+				if not onQuest and (hasQuestie or readable) then
+					missing[#missing + 1] = quest.questID
+				end
 			end
 		end
-	end
-	return missing
+		return missing
+	end)
 end
 
 --[[

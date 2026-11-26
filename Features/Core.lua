@@ -87,6 +87,11 @@ local EVENTS = {
 	{ "PLAYER_LEVEL_UP", "OnPlayerLevelUp", "zoneInfo" },
 	{ "SKILL_LINES_CHANGED", "OnSkillLinesChanged", "zoneInfo" },
 	{ "GET_ITEM_INFO_RECEIVED", "OnGetItemInfoReceived", "zoneInfo" },
+	{ "GET_ITEM_INFO_RECEIVED", "OnGetItemInfoReceived", "rewardPick" },
+	{ "GET_ITEM_INFO_RECEIVED", "OnGetItemInfoReceived", "rewardCoin" },
+	{ "PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld", "timerWarnings" },
+	{ "QUEST_LOG_UPDATE", "OnQuestLogUpdate", "timerWarnings" },
+	{ "BAG_UPDATE_DELAYED", "OnBagUpdateDelayed", "timerWarnings" },
 	{ "GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate", "zoneInfo" },
 	{ "UNIT_QUEST_LOG_CHANGED", "OnUnitQuestLogChanged", "zoneInfo" },
 }

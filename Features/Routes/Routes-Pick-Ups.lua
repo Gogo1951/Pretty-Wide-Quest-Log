@@ -546,6 +546,103 @@ routes.pickUpHelpers = {
 	ROUTE = ROUTE,
 }
 
+--------------------------------------------------------------------------------
+-- Plan by area
+--------------------------------------------------------------------------------
+
+--[[
+	Yards apart two places can be and still count as one area: a blob's spawns lie within 180 yards of its
+	middle (CLUSTER_RADIUS in Routes-Blobs.lua), so two blobs whose middles are this close overlap
+]]
+local SAME_AREA = 360
+local AREA_BLOBS = 3 -- Densest blobs of each objective that count as where it's done
+
+-- Where a quest planned whole has the player work: each objective's densest blobs, from Questie's database
+local function PlannedSpots(QuestieDB, questID, start, yield)
+	local spots = {}
+	local plan = routes.QuestPlan and routes.QuestPlan(QuestieDB, questID, start, yield)
+	for _, objective in ipairs(plan and plan.objectives or {}) do
+		for i = 1, math.min(AREA_BLOBS, #objective.blobs) do
+			spots[#spots + 1] = objective.blobs[i]
+		end
+	end
+	return spots
+end
+
+-- Whether any of the spots lies in the same area as any of the others
+local function SharesArea(spots, others)
+	local reach = SAME_AREA * SAME_AREA
+	for _, spot in ipairs(spots) do
+		for _, other in ipairs(others) do
+			local dx, dy = spot.x - other.x, spot.y - other.y
+			if dx * dx + dy * dy <= reach then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+--[[
+	Plan Ahead picks by area. The wanted, right-clicked and party pick-ups keep their place at the front;
+	the rest (entries, nearest giver first) are taken in turn: next the nearest quest planned whole with an
+	objective in an area the route goes to already (the objectives on it so far, the log's and the party's,
+	and those of the quests taken before it), else the nearest of them all. Each quest planned whole adds
+	its own objectives' areas. So a quest with work where the route goes anyway is taken ahead of a nearer
+	one that sends the player somewhere new, and the route picks it up before going there, so it goes
+	once: the Samophlange from Ratchet before the trip to the Sludge Fen for Ignition. Returns the new order
+]]
+local function OrderByArea(entries, nodes, QuestieDB, start, yield)
+	local ordered, rest = {}, {}
+	for _, entry in ipairs(entries) do
+		local task = entry.task
+		if task.wanted or task.added or task.shared then
+			ordered[#ordered + 1] = entry
+		else
+			rest[#rest + 1] = entry
+		end
+	end
+	local spotsOf, touches = {}, {}
+	for _, entry in ipairs(entries) do
+		if entry.task.chained then
+			spotsOf[entry] = PlannedSpots(QuestieDB, entry.task.questID, start, yield)
+		end
+	end
+	-- An area the route goes to: marks each quest still to take with work there
+	local function AddArea(spots)
+		if #spots == 0 then
+			return
+		end
+		for _, entry in ipairs(rest) do
+			if not touches[entry] and spotsOf[entry] and SharesArea(spotsOf[entry], spots) then
+				touches[entry] = true
+			end
+		end
+		yield()
+	end
+	for _, node in ipairs(nodes) do
+		if node.kind == "objective" and node.candidates then
+			AddArea(node.candidates)
+		end
+	end
+	for _, entry in ipairs(ordered) do
+		AddArea(spotsOf[entry] or {})
+	end
+	while #rest > 0 do
+		local index = 1
+		for i, entry in ipairs(rest) do
+			if touches[entry] then
+				index = i
+				break
+			end
+		end
+		local entry = table.remove(rest, index)
+		ordered[#ordered + 1] = entry
+		AddArea(spotsOf[entry] or {})
+	end
+	return ordered
+end
+
 --[[
 	Adds a "pickUp" node to nodes for every quest the player can pick up nearby that the settings put on the
 	route. Each is { key, kind, questID, questName, quest, candidates, blobs, ready, escort }, quest a small
@@ -555,11 +652,11 @@ routes.pickUpHelpers = {
 	With Plan Ahead (routes.PlansZone), a quest that can be done in the zone from start to finish
 	(routes.IsChainQuest) counts from anywhere in the zone, not only within the Search Range, and
 	Routes-Chains.lua plans its objectives, its turn-in and the quests that follow it. Those are returned,
-	nearest giver first. A quest Zone Info's + asked for (task.wanted) counts from anywhere in the zone too,
+	by area (OrderByArea), then nearest giver first. A quest Zone Info's + asked for (task.wanted) counts from anywhere in the zone too,
 	whatever its level or kind, ahead of every other. A quest someone in the party has (Party Objectives on)
 	counts from anywhere in the zone as well. With Your Quests Only, those are the only quests to pick up.
 	One above Highest Quest Level is on the map only, saying the level it goes on the route at (opensAt). No
-	more quests are picked up than the log has room for, nearest first
+	more quests are picked up than the log has room for, nearest first (with Plan Ahead, by area first)
 ]]
 function routes.AddLocalQuestNodes(nodes, start, log, yield)
 	local mapOnly = {}
@@ -705,6 +802,10 @@ function routes.AddLocalQuestNodes(nodes, start, log, yield)
 		end
 		return a.task.questID < b.task.questID
 	end)
+	-- With Plan Ahead, then by area: a quest with work where the route goes anyway first (OrderByArea)
+	if planChains then
+		onRoute = OrderByArea(onRoute, nodes, QuestieDB, start, yield)
+	end
 	--[[
 		Past the nearest MAX_CHAIN_STARTS planned whole, a quest from across the zone waits for a later plan,
 		on the map off the route ("far") as any giver past the Search Range is, so Questie's own icon for it is
@@ -749,10 +850,31 @@ end
 local TYPE_SETTINGS = { "pickUpElite", "pickUpPvP", "pickUpDungeon", "pickUpRaid", "pickUpEscort", "pickUpOtherZone" }
 
 --[[
+	Questie's set of available quests in short: how many and their IDs added up. A change to Questie's own
+	settings (its level filters, repeatable, dungeon or hidden quests) works the set out again, so the
+	route is planned again and the map redrawn without a reload. A short text, as the full set runs to
+	thousands of quests
+]]
+local function AvailableSignature()
+	local available = AvailableQuestIDs()
+	if not available then
+		return "available:none"
+	end
+	local count, sum = 0, 0
+	for questID, isAvailable in pairs(available) do
+		if isAvailable and type(questID) == "number" then
+			count, sum = count + 1, sum + questID
+		end
+	end
+	return "available:" .. count .. "/" .. sum
+end
+
+--[[
 	What the settings add to the route's signature: the player's level, as Questie offers more quests with
-	each and Easiest First holds back those above it, and each What to Route choice. With Your Quests Only
-	only the asked-for pick-ups, the level and Route Focus count, as Route Focus still orders the log's
-	quests. The set of available quests near enough to matter is worked out again with every plan
+	each, each What to Route choice and Questie's set of
+	available quests (AvailableSignature). With Your Quests Only only the asked-for pick-ups, the level and
+	Route Focus count, as Route Focus still orders the log's quests. Which of the available quests are near
+	enough to matter is worked out again with every plan
 ]]
 function routes.LocalQuestSignature()
 	local settings = routes.Settings()
@@ -792,5 +914,6 @@ function routes.LocalQuestSignature()
 		tostring(settings.lowestQuestLevel),
 		table.concat(types),
 		tostring(settings.routeFocus),
+		AvailableSignature(),
 	}, ":")
 end

@@ -342,11 +342,17 @@ function routes.BuildNodes(yield)
 		yield()
 	end
 
+	-- An item a quest needs and the player doesn't have, one that ran out too, got first (Routes-Missing-Items.lua)
+	routes.AddMissingItemNodes(nodes, start, yield)
+
 	-- Quests to pick up, nearby with Nearby Pick-Ups or Plan Ahead, across the zone with Plan Ahead (Routes-Pick-Ups.lua)
 	local chainStarts = routes.AddLocalQuestNodes(nodes, start, log, yield)
 
 	-- Quests the zone can finish, planned whole with their follow-ups, with Plan Ahead (Routes-Chains.lua)
 	routes.AddChainNodes(nodes, start, log, chainStarts, yield)
+
+	-- A quest whose item another quest hands out waits on that quest, done first (Routes-Sub-Quests.lua)
+	routes.AddSubQuestNodes(nodes, start, log, yield)
 
 	--[[
 		A quest the party has that the player is to pick up: its party objectives wait on the pick-up, so the

@@ -148,6 +148,9 @@ function ns.QuestsPartyNeeds(questIDs, units)
 	end)
 end
 
+-- Runs work with every zone open, for a caller that finds quests by log index (Zone-Share-Offer.lua)
+ns.WithEveryZoneOpen = WithEveryZoneOpen
+
 --------------------------------------------------------------------------------
 -- Acting on Quests
 --------------------------------------------------------------------------------

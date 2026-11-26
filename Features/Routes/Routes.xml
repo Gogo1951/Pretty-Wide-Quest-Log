@@ -13,14 +13,18 @@
 	<Script file="Routes-Group-Up.lua"/>
 	<Script file="Routes-Geography.lua"/>
 	<Script file="Routes-Questie.lua"/>
+	<Script file="Routes-Timed-Items.lua"/>
 	<Script file="Routes-Blobs.lua"/>
+	<Script file="Routes-Missing-Items.lua"/>
 	<Script file="Routes-Nodes.lua"/>
 	<Script file="Routes-Pick-Ups.lua"/>
 	<Script file="Routes-Quest-Plans.lua"/>
 	<Script file="Routes-Chains.lua"/>
+	<Script file="Routes-Sub-Quests.lua"/>
 	<Script file="Routes-Flights.lua"/>
 	<Script file="Routes-Cities.lua"/>
 	<Script file="Routes-Pinning.lua"/>
+	<Script file="Routes-Heading.lua"/>
 	<Script file="Routes-Overlaps.lua"/>
 	<Script file="Routes-Stops.lua"/>
 	<Script file="Routes-Stop-Lines.lua"/>
@@ -32,7 +36,10 @@
 	<Script file="Routes-Map-Blizzard-Quests.lua"/>
 	<Script file="Routes-Map-Tooltip.lua"/>
 	<Script file="Routes-Map-Zones.lua"/>
+	<Script file="Routes-Map-Placement.lua"/>
 	<Script file="Routes-Map.lua"/>
+	<Script file="Routes-Map-Clicks.lua"/>
+	<Script file="Routes-Map-More.lua"/>
 	<Script file="Routes-Map-Meet.lua"/>
 	<Script file="Routes-Minimap.lua"/>
 
@@ -104,7 +111,7 @@
 
 	<!--
 		Where the zone map stops drawing the route (Waypoints Shown): a white pill with three dots, its
-		parts made in Routes-Map.lua as it's first acquired. Hovering it brings in the rest of the route
+		parts made in Routes-Map-More.lua as it's first acquired. Hovering it brings in the rest of the route
 	-->
 	<Frame name="PrettyWideQuestLogRouteMorePinTemplate" mixin="PrettyWideQuestLogRoutePinMixin" enableMouse="true" virtual="true">
 		<Size x="40" y="20"/>

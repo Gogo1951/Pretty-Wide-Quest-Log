@@ -11,7 +11,7 @@ local _, ns = ...
 	Next Objective (Next on the right), with a gray Ignore on the right under the mouse, clicked to leave it
 	off the route until the zone is reset
 	(routes.IgnoreTask), then a spacer. Then three labels with the submenu arrow, each opening a flyout
-	overlapping the menu on the same plate. Route, what the route plans, What to Route's choice in gray on its
+	overlapping the menu on the same plate. Route, what the route plans, What to Route's choice in light yellow on its
 	right: under What to Route, Plan Ahead's three choices (planAhead), the chosen one checked; under Also Route, Flight Paths, showFlightPaths; in a party,
 	Party Objectives, partyQuests, and with it on an Objectives From switch for each member, a space further in.
 	Show, what only the arrow draws: Next Objective, showNextObjective. A switch that's off is gray, On
@@ -112,12 +112,15 @@ end
 -- A key for a panel's rows that changes only when what they say does
 local EntriesKey = panels.EntriesKey
 
--- One choice of several, as Menu-Kit's are: the chosen one white with a check on the right, the others gray
+--[[
+	One choice of several, as Menu-Kit's are: the chosen one light yellow with a check on the right, matching
+	the value on the row that opened it, the others white
+]]
 local function ChoiceEntry(left, chosen, action)
 	return {
 		kind = "choice",
 		left = INDENT .. left,
-		leftColor = not chosen and "MUTED" or nil,
+		leftColor = chosen and "VALUE" or "BODY",
 		right = chosen and CHECK_MARK or nil,
 		action = action,
 	}
@@ -172,15 +175,15 @@ local function Entries()
 		Add({ kind = "section", left = left, right = right, rightColor = "MUTED" })
 	end
 	--[[
-		A label that opens a flyout: what's set inside it on the right, in gray, then Menu-Kit's chevron in the
-		plate's arrow column (Routes-Arrow-Menu-Panel.lua)
+		A label that opens a flyout: what's set inside it on the right, in light yellow, then Menu-Kit's chevron
+		in the plate's arrow column (Routes-Arrow-Menu-Panel.lua)
 	]]
 	local function Submenu(left, name, value)
 		Add({
 			kind = "section",
 			left = left,
 			right = value and tostring(value) or nil,
-			rightColor = "MUTED",
+			rightColor = "VALUE",
 			submenu = name,
 		})
 	end

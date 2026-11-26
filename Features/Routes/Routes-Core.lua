@@ -123,6 +123,17 @@ local function MoveWhatToRouteSettings()
 	settings.localEscortQuests, settings.localOtherZoneQuests = nil, nil
 end
 
+--[[
+	MIGRATION (remove after 2026-12-25): Route Focus's Easiest First ("easiest") is gone, as every focus now
+	takes an area's quests before working it (Routes-Focus.lua), so a profile that chose it gets Fastest
+	Clear, the default
+]]
+local function DropEasiestFirst()
+	if ns.db.profile.routes.routeFocus == "easiest" then
+		ns.db.profile.routes.routeFocus = "fastest"
+	end
+end
+
 -- A line in chat the way the rest of the add-on writes them: its name, a separator, the message
 function routes.Print(message)
 	ns:PrintMessage(message)
@@ -350,6 +361,7 @@ function routes:OnPlayerLogin()
 	DropPredictiveSettings() -- MIGRATION (remove after 2026-12-11)
 	DropQuestColorSetting() -- MIGRATION (remove after 2026-12-17)
 	MoveWhatToRouteSettings() -- MIGRATION (remove after 2026-12-17)
+	DropEasiestFirst() -- MIGRATION (remove after 2026-12-25)
 	for _, handler in ipairs(routes.loginHandlers) do
 		handler()
 	end

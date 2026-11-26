@@ -11,7 +11,7 @@ ns.AddWideQuestLogPart(function()
 	local AREA_PIN_TEMPLATE = "PrettyWideQuestLogAreaPinTemplate"
 	local FILL_ALPHA = 0.3
 	local OUTLINE_ALPHA = 0.75
-	local OUTLINE_WIDTH = 1.5 -- On screen, whatever the zoom
+	local OUTLINE_WIDTH = 2 -- On screen, whatever the zoom
 	local FALLBACK_COLOR = { ns.GetColorRGB("TITLE") }
 	local WHITE_TEXTURE = "Interface\\Buttons\\WHITE8X8"
 

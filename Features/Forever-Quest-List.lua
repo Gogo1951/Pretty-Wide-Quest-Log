@@ -20,7 +20,7 @@ listBar:SetPoint("BOTTOMLEFT", listBox, "BOTTOMRIGHT", 8, 4)
 
 local noQuestsText = frame:CreateFontString(nil, "OVERLAY")
 noQuestsText:SetFontObject(ns.AreaFont("list", "GameFontHighlight"))
-noQuestsText:SetPoint("TOP", listBox, "TOP", 0, -90)
+noQuestsText:SetPoint("TOP", listBox, "TOP", 0, -96)
 noQuestsText:SetText(QUESTLOG_NO_QUESTS_TEXT)
 noQuestsText:Hide()
 

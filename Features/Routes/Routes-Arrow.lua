@@ -25,7 +25,7 @@ local ADDON_NAME, ns = ...
 	(Routes-Arrow-Survey.lua).
 
 	Under the list, dimmed, with showNextObjective, the Next Objective: the waypoint after the area, or
-	heading to a waypoint, the one after that, past what "While You're Here" already lists. On the left a 16px arrow turning toward it, colored as the
+	heading to a waypoint, the one after that, past what "While You're Here" already lists. On the left a 32px arrow, half the big one, turning toward it, colored as the
 	big one is, with how far it is under it; on the right "Next Objective", its first quest and what's to
 	do there, with counts (and in a party, who needs each).
 
@@ -456,6 +456,17 @@ local function Point(self, elapsed)
 	local stop = routes.stops[1]
 	local meet = routes.groupUpTarget -- Where to join up with the group first (Routes-Group-Up.lua)
 	if not (stop or meet) then
+		-- Nothing on the route here, only timed quests elsewhere (HasTimedQuests): their list, with no arrow
+		if sinceList >= LIST_INTERVAL then
+			sinceList = 0
+			listed, listedNext, listedMeet = nil, nil, nil
+			routes.arrowTarget, routes.arrowNext = nil, nil
+			nextShown = routes.ListArrowQuests(nil, nil, nil, nil, nil)
+		end
+		arrow:Hide()
+		away:Hide()
+		distance:SetText("")
+		HideLittleArrows()
 		return
 	end
 	local hereBeDragons = routes.HereBeDragons()
@@ -511,10 +522,19 @@ local function Point(self, elapsed)
 
 	local angle, yards
 	if not label then
+		--[[
+			Through a city's gate going out (Routes-Arrow-Survey.lua): pointing at the gate's hidden point past
+			the city map's edge, the yards to it and on from it to the waypoint in the zone
+		]]
+		local via = view.via
+		local fromX, fromY = x, y
+		if via then
+			fromX, fromY = via.x, via.y
+		end
 		if rewrite or aimedAt ~= view then
 			aimedAt, aimedPlace, aimedTask = view, nil, nil
 			if not view.corpse then
-				aimedPlace, aimedTask = NearestPlace(view, x, y)
+				aimedPlace, aimedTask = NearestPlace(view, fromX, fromY)
 			end
 			local place = aimedPlace or view
 			--[[
@@ -523,18 +543,26 @@ local function Point(self, elapsed)
 			]]
 			aimedSpawnX, aimedSpawnY = nil, nil
 			if aimedTask and place ~= view and routes.IsAreaPoint(place) then
-				aimedSpawnX, aimedSpawnY = NearestSpawn(aimedTask, place, x, y)
+				aimedSpawnX, aimedSpawnY = NearestSpawn(aimedTask, place, fromX, fromY)
 			end
 		end
 		local target = aimedPlace or view
-		angle, yards = hereBeDragons:GetWorldVector(instance, x, y, target.x, target.y)
+		angle, yards = hereBeDragons:GetWorldVector(instance, fromX, fromY, target.x, target.y)
 		local isArea = target ~= view and routes.IsAreaPoint(target)
 		local spawnX, spawnY = aimedSpawnX, aimedSpawnY
 		if spawnX then
-			local spawnAngle, spawnYards = hereBeDragons:GetWorldVector(instance, x, y, spawnX, spawnY)
+			local spawnAngle, spawnYards = hereBeDragons:GetWorldVector(instance, fromX, fromY, spawnX, spawnY)
 			if spawnAngle then
 				angle, yards = spawnAngle, math.max(0, spawnYards - routes.AREA_REACH)
 			end
+		end
+		if via and yards then
+			local viaYards
+			angle, viaYards = hereBeDragons:GetWorldVector(instance, x, y, via.x, via.y)
+			yards = viaYards and yards + viaYards or nil
+		end
+		if not (angle and yards) then
+			return
 		end
 		-- At one place: the eye too, there's nowhere left to point
 		if not (isArea or view.corpse) and yards <= SPOT_REACH then
@@ -590,6 +618,24 @@ local function IsAway(settings)
 		or (settings.hideInInstances and (IsInInstance()) == true)
 end
 
+--[[
+	Whether a quest in the log is on a ticking clock, for the list to show (Routes-Arrow-List.lua), so the
+	arrow shows with nothing on the route here: a timed quest done in another zone still needs its time
+	watched
+]]
+local function HasTimedQuests(settings)
+	if not settings.showQuests then
+		return false
+	end
+	local log = routes.QuestLog()
+	for questID, seconds in pairs(routes.TimedQuests()) do
+		if seconds > 0 and type(log[questID]) == "table" then
+			return true
+		end
+	end
+	return false
+end
+
 local loggedIn = false
 -- The scale last applied: GetScale() hands back a rounded value that may never equal the setting's
 local appliedScale
@@ -597,7 +643,7 @@ local appliedScale
 local function Refresh()
 	local settings = routes.Settings()
 	local shown = settings.showArrow
-		and (routes.stops[1] ~= nil or routes.groupUpTarget ~= nil)
+		and (routes.stops[1] ~= nil or routes.groupUpTarget ~= nil or HasTimedQuests(settings))
 		and not IsAway(settings)
 	if appliedScale ~= settings.arrowScale then
 		appliedScale = settings.arrowScale

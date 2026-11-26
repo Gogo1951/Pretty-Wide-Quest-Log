@@ -3,17 +3,10 @@ local _, ns = ...
 --[[
 	Routes: What to Route's Route Focus (routeFocus), how the route chooses and orders what to pick up, on
 	top of the solver's shortest order (Routes-Solver.lua). Quests already in the log are always on the
-	route: Easiest First may only reorder them, and Most XP per Hour never drops them.
+	route: Most XP per Hour never drops them.
 
-	Fastest Clear ("fastest"): the solver's order as it is, every quest the settings allow with the least
-	walking.
-
-	Easiest First ("easiest", the default): solved once as Fastest Clear, then again with each harder quest's
-	pick-up and objectives (more than EASY_ABOVE levels over the player) waiting on every easier quest's
-	objectives, the first route as its start. The second is kept where it walks at most EASIEST_SLACK more,
-	else the first: easier quests first where it costs little. An easier objective that itself waits on a
-	harder quest (a follow-up of one) doesn't hold the harder ones back, so nothing waits on itself.
-	Turn-ins, timed quests, the party's nodes and quests the player asked for (IsAskedFor) keep their place.
+	Fastest Clear ("fastest", the default): the solver's order as it is, every quest the settings allow with
+	the least walking.
 
 	Most XP per Hour ("xp", experimental): solved once, then quests to pick up that pay less XP for the time
 	they add than the route as a whole earns are dropped, worst first, each with everything planned after
@@ -22,109 +15,107 @@ local _, ns = ...
 	the quest at the player's level (QuestXP) and MobXP for each kill. A dropped quest that's available now
 	is on the map only, saying why. One Zone Info's + asked for, one put on the route from its marker, and
 	one the party has are never dropped. Played through the Barrens offline, the route earned 14% more XP an
-	hour; how much depends on the seconds a kill really takes
+	hour; how much depends on the seconds a kill really takes.
+
+	Either way, no area is worked before every quest planned there is taken (GatherAreas): pick-ups, then
+	objectives, then turn-ins
 ]]
 
 local routes = ns.routes
 
-local EASY_ABOVE = 1 -- Levels over the player a quest can be and still be one of the easier ones
-local EASIEST_SLACK = 1.1 -- Easiest First's route can cost this many times Fastest Clear's
+local AREA_SPAN = 200 -- Yards apart two objectives' places can be and still be one area
+local MAX_AREA_DEPTH = 5 -- Quests deep along a chain whose pick-up an area waits for, as the maintainer chose
 local RUN_SPEED = 7 -- Yards a second, running
 local KILL_SECONDS = 25 -- Seconds a kill or an item to collect takes, fighting and looting
 local MOST_KILLS = 30 -- A number in an objective's text above this isn't a count
 
 --------------------------------------------------------------------------------
--- Easiest First
+-- Every quest for an area before working it
 --------------------------------------------------------------------------------
 
--- A node's quest level, nil for none or a quest at the player's own level whatever it is
-local function NodeLevel(node)
-	local level = node.quest and tonumber(node.quest.level)
-	return level and level > 0 and level or nil
+-- A node's place on the route as solved
+local function Point(node)
+	return node.candidates and node.candidates[node.choice or 1]
+end
+
+-- Whether two places are one area: within AREA_SPAN of each other, or their camps overlapping
+local function IsSameArea(a, b)
+	local dx, dy = a.x - b.x, a.y - b.y
+	local reach = math.max(AREA_SPAN, (a.radius or 0) + (b.radius or 0))
+	return dx * dx + dy * dy <= reach * reach
 end
 
 --[[
-	Whether the player asked for a quest to pick up, or its planned objectives: one Zone Info's + asked for,
-	one put on the route from its map marker, or one the party has. It keeps its place, however hard: held
-	back behind every easier objective it would drop off the waypoints the map draws
+	How many quests deep a pick-up is: 1 for a quest available now, and one more than the quest whose
+	turn-in unlocks it for a follow-up, a quest in the log counting 1
 ]]
-local function IsAskedFor(node)
-	local pickUp = node.kind == "pickUp" and node or node.pickUpNode
-	return pickUp ~= nil and (pickUp.wanted or pickUp.shared or routes.added[pickUp.key]) and true or false
+local function Depth(pickUp, depths)
+	if depths[pickUp] then
+		return depths[pickUp]
+	end
+	depths[pickUp] = 1
+	local depth = 1
+	for _, required in ipairs(pickUp.requires or {}) do
+		if required.kind == "turnIn" then
+			local before = required.pickUpNode
+			depth = math.max(depth, 1 + (before and Depth(before, depths) or 1))
+		end
+	end
+	depths[pickUp] = depth
+	return depth
 end
 
-local function Easiest(start, nodes, yield, previous)
+--[[
+	The solved route again, with no area worked before every quest planned there is taken: each objective
+	waits on the pick-up of every other quest with an objective planned in its area, up to MAX_AREA_DEPTH
+	quests deep along its chain (Routes-Chains.lua, with Plan Ahead), so the area is done once, for all of
+	them, and no kill there goes to waste. Not where that pick-up already waits on the objective, as a
+	follow-up waits on the quest before it, nor for a timed or escort quest's objective, which won't wait.
+	Solved again from the first route; as it was where nothing has to wait
+]]
+local function GatherAreas(start, route, cost, yield)
+	local depths, planned = {}, {}
+	for _, node in ipairs(route) do
+		local pickUp = node.kind == "objective" and node.predicted and node.pickUpNode
+		if pickUp and Point(node) and Depth(pickUp, depths) <= MAX_AREA_DEPTH then
+			planned[#planned + 1] = node
+		end
+	end
+	if #planned == 0 then
+		return route, cost
+	end
+	local gated = false
+	for _, node in ipairs(route) do
+		local point = Point(node)
+		if node.kind == "objective" and not node.urgent and point then
+			local requires
+			for _, other in ipairs(planned) do
+				local pickUp = other.pickUpNode
+				if
+					other.questID ~= node.questID
+					and IsSameArea(point, Point(other))
+					and not routes.WaitsFor(node, pickUp, {})
+					and not routes.WaitsFor(pickUp, node, {})
+				then
+					if not requires then
+						requires = {}
+						for _, required in ipairs(node.requires or {}) do
+							requires[#requires + 1] = required
+						end
+						node.requires = requires
+					end
+					requires[#requires + 1] = pickUp
+					gated = true
+				end
+			end
+		end
+		yield()
+	end
+	if not gated then
+		return route, cost
+	end
 	local Solver = ns.routesSolver
-	local route, cost = Solver.Solve(start, nodes, yield, previous)
-	local player = UnitLevel("player")
-	local hard, easy, isHard = {}, {}, {}
-	for _, node in ipairs(route) do
-		local level = NodeLevel(node)
-		if level and not node.party and not node.urgent and node.kind ~= "turnIn" and not IsAskedFor(node) then
-			if level > player + EASY_ABOVE then
-				hard[#hard + 1] = node
-				isHard[node] = true
-			elseif node.kind == "objective" then
-				easy[#easy + 1] = node
-			end
-		end
-	end
-	if #hard == 0 or #easy == 0 then
-		return route, cost
-	end
-
-	-- Whether a node waits, however far back, on a harder one: it can't hold the harder ones back
-	local waitsOnHard = {}
-	local function WaitsOnHard(node)
-		if waitsOnHard[node] ~= nil then
-			return waitsOnHard[node]
-		end
-		waitsOnHard[node] = false
-		for _, required in ipairs(node.requires or {}) do
-			if isHard[required] or WaitsOnHard(required) then
-				waitsOnHard[node] = true
-				return true
-			end
-		end
-		return false
-	end
-	local gates = {}
-	for _, node in ipairs(easy) do
-		if not WaitsOnHard(node) then
-			gates[#gates + 1] = node
-		end
-	end
-	if #gates == 0 then
-		return route, cost
-	end
-
-	local choices, kept = {}, {}
-	for _, node in ipairs(route) do
-		choices[node] = node.choice
-	end
-	local snapshot = Solver.Snapshot(route)
-	for _, node in ipairs(hard) do
-		kept[node] = node.requires or false
-		local requires = {}
-		for _, required in ipairs(node.requires or {}) do
-			requires[#requires + 1] = required
-		end
-		for _, gate in ipairs(gates) do
-			requires[#requires + 1] = gate
-		end
-		node.requires = requires
-	end
-	local banded, bandedCost = Solver.Solve(start, route, yield, snapshot)
-	for node, requires in pairs(kept) do
-		node.requires = requires or nil
-	end
-	if bandedCost <= cost * EASIEST_SLACK then
-		return banded, bandedCost
-	end
-	for node, choice in pairs(choices) do
-		node.choice = choice
-	end
-	return route, cost
+	return Solver.Solve(start, route, yield, Solver.Snapshot(route))
 end
 
 --------------------------------------------------------------------------------
@@ -194,10 +185,6 @@ local function AllKills(questID)
 		total = total + count
 	end
 	return math.max(1, total)
-end
-
-local function Point(node)
-	return node.candidates and node.candidates[node.choice or 1]
 end
 
 local function Seconds(a, b)
@@ -357,11 +344,11 @@ end
 	Focus. previous is the last route's Snapshot, as Solve takes it
 ]]
 function routes.SolveForFocus(start, nodes, yield, previous)
-	local focus = routes.Settings().routeFocus
-	if focus == "fastest" then
-		return ns.routesSolver.Solve(start, nodes, yield, previous)
-	elseif focus == "xp" then
-		return MostXP(start, nodes, yield, previous)
+	local route, cost
+	if routes.Settings().routeFocus == "xp" then
+		route, cost = MostXP(start, nodes, yield, previous)
+	else
+		route, cost = ns.routesSolver.Solve(start, nodes, yield, previous)
 	end
-	return Easiest(start, nodes, yield, previous)
+	return GatherAreas(start, route, cost, yield)
 end

@@ -2845,7 +2845,7 @@ ns.QUEST_ITEM_COUNTS = "\n"
 How We Got the Data
 
 Last Validated
-	2026-11-20, wago.tools, WoW Forever 1.60.1.70959
+	2026-11-25, wago.tools, WoW Forever 1.60.1.71139
 
 Notes
 	- How many of each item a quest asks the player to bring, for Zone Info's Things to Bring column
@@ -2871,7 +2871,7 @@ Wowhead
 	None.
 
 wago.tools
-	https://wago.tools/db2/Item?build=1.60.1.70959
+	https://wago.tools/db2/Item?build=1.60.1.71139
 
 QuestieDB
 	https://raw.githubusercontent.com/Questie/QuestieDB/master/data/Classic/classicQuestDB.lua

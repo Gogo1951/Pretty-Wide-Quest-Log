@@ -14,6 +14,7 @@ local CHECK_INTERVAL = 2 -- Seconds between checks for Questie's quest data chan
 local GROUP_SETTLE_DELAY = 5 -- Seconds after someone joins or leaves the group before Questie's data replans
 local REPLAN_DISTANCE = 400 -- Yards the player moves from where the route was planned before it's planned again
 local REPLAN_INTERVAL = 30 -- Seconds at least between plans for moving
+local KEEP_SLACK = 1.1 -- A plan for moving keeps the waypoint ahead first unless that makes the route this many times as long
 local EMPTY_HOLD = 5 -- Seconds after the quest log changes that an empty plan is checked once more before it's drawn
 --[[
 	Planning takes a share of each frame, not a fixed time: 4 milliseconds at 60 frames a second,
@@ -28,7 +29,7 @@ local MAX_BUDGET = 4 -- And at most
 	with no plan or redraw in between. The markers stay as they are till then, and the map shows Rerouting
 	while that plan runs (Routes-Map-Reroute.lua)
 ]]
-local REROUTE_DELAY = 3 -- Seconds after the last click on a map marker before the route is planned again
+local REROUTE_DELAY = 2 -- Seconds after the last click on a map marker before the route is planned again
 
 --------------------------------------------------------------------------------
 -- Planning, a few milliseconds a frame
@@ -42,6 +43,11 @@ local heldPlan = false -- A plan asked for while held, made once the hold ends
 local rerouting = false -- The plan underway, or queued after it, is the one a map click asked for
 local budget = MAX_BUDGET -- Milliseconds this frame's slice may take
 local onTaxi = false -- On a flight path: nothing is planned until the player lands
+--[[
+	Whether the next plan is one only for moving on (KeepFirst): nil while none is asked for, true while
+	every ask since the last plan began was for moving, false once any other was
+]]
+local keepFirstNext
 
 --[[
 	The quest IDs in a quest log, listed first: on Questie before 12.6.3 the log is Questie's own table, which
@@ -57,7 +63,7 @@ end
 
 -- Drops a plan underway and any asked for after it, so it can't put back what was just cleared or reset
 function routes.CancelPlan()
-	job, replanQueued, rerouting = nil, nil, false
+	job, replanQueued, rerouting, keepFirstNext = nil, nil, false, nil
 	planner:Hide()
 end
 
@@ -94,8 +100,9 @@ end
 --[[
 	The last plan's solved order, hidden turn-ins and all (Solver.Snapshot), with the zone and instance it was
 	planned in. The next plan there starts from it (Solver.Solve), so a replan after an objective or a quest
-	taken costs a fraction of a fresh one and keeps the route as it was where nothing changed. A new zone, a
-	landing or a reset starts fresh
+	taken costs a fraction of a fresh one and keeps the route as it was where nothing changed. A new zone or a
+	landing starts from that zone's saved route (SavedStart) where it still matches; only a zone reset starts
+	fresh
 ]]
 local lastSolve
 
@@ -175,7 +182,44 @@ function routes.ForgetLastSolve()
 	freshStart = true
 end
 
-local function Plan()
+--[[
+	A plan made only because the player moved on keeps the waypoint they were sent to first
+	(routes.KeepFirstNodes), unless the route without it is clearly shorter: the one that keeps it is solved
+	from the other, as an area's quests are gathered (Routes-Focus.lua), and kept where it costs at most KEEP_SLACK times
+	as much. Walking toward a waypoint then never swaps it for another a few yards better from here
+]]
+local function KeepFirst(start, engaged, solved, cost)
+	local keep = routes.KeepFirstNodes(solved, start, engaged)
+	if not keep then
+		return solved
+	end
+	for _, node in ipairs(solved) do
+		if not node.hidden then
+			for _, kept in ipairs(keep) do
+				if kept == node then
+					return solved -- Still first
+				end
+			end
+			break
+		end
+	end
+	local choices, requires = {}, {}
+	for _, node in ipairs(solved) do
+		choices[node], requires[node] = node.choice, node.requires or false
+	end
+	routes.PutFirst(solved, keep)
+	local Solver = ns.routesSolver
+	local held, heldCost = Solver.Solve(start, solved, Yield, Solver.Snapshot(solved))
+	if heldCost <= cost * KEEP_SLACK then
+		return held
+	end
+	for node, choice in pairs(choices) do
+		node.choice, node.requires = choice, requires[node] or nil
+	end
+	return solved
+end
+
+local function Plan(keepFirst)
 	local nodes, start, engaged = routes.BuildNodes(Yield)
 	if not nodes then
 		return nil
@@ -187,7 +231,10 @@ local function Plan()
 	end
 	start.flights = routes.KnownFlights(start, Yield) -- Flight paths as shortcuts (Routes-Flights.lua)
 	start.skippedFlights = routes.SkippedFlights() -- Fly waypoints the player ignored, walked instead
-	local solved = routes.SolveForFocus(start, nodes, Yield, previous) -- By What to Route's Route Focus (Routes-Focus.lua)
+	local solved, cost = routes.SolveForFocus(start, nodes, Yield, previous) -- By What to Route's Route Focus (Routes-Focus.lua)
+	if keepFirst then
+		solved = KeepFirst(start, engaged, solved, cost)
+	end
 	local snapshot = ns.routesSolver.Snapshot(solved)
 	snapshot.zone, snapshot.instance = start.zone, start.instance
 	local order = Shown(solved)
@@ -268,7 +315,7 @@ planner:SetScript("OnUpdate", function(self, elapsed)
 	end
 	if replanQueued then
 		replanQueued = nil
-		routes.RequestPlan()
+		routes.RequestPlan(keepFirstNext) -- Whether the asks it held were all for moving on
 	end
 	if not job then
 		rerouting = false
@@ -282,10 +329,12 @@ end)
 ]]
 local planAfterCombat = false
 
-function routes.RequestPlan()
+-- keepFirst: asked for only because the player moved on, so the waypoint ahead stays first (KeepFirst)
+function routes.RequestPlan(keepFirst)
 	if onTaxi or not routes.IsWanted() then
 		return
 	end
+	keepFirstNext = keepFirst == true and keepFirstNext ~= false
 	if InCombatLockdown() then
 		planAfterCombat = true
 		return
@@ -299,7 +348,11 @@ function routes.RequestPlan()
 		return
 	end
 	routes.signature = routes.Signature()
-	job = coroutine.create(Plan)
+	local keep = keepFirstNext
+	keepFirstNext = nil
+	job = coroutine.create(function()
+		return Plan(keep)
+	end)
 	planner:Show()
 end
 
@@ -312,7 +365,7 @@ function routes.ReleasePlanHold()
 	holdTimer = nil
 	if heldPlan then
 		heldPlan = false
-		routes.RequestPlan()
+		routes.RequestPlan(keepFirstNext)
 		rerouting = job ~= nil
 		if rerouting then
 			routes.ShowRerouting() -- Routes-Map-Reroute.lua
@@ -378,6 +431,7 @@ local checkElapsed, sincePlan = 0, 0
 -- A new zone or continent, or a landing: the old route may not be on it, so it's planned from here
 local function OnNewArea()
 	routes.CancelPlan()
+	routes.ResetHeading(true) -- Routes-Heading.lua
 	routes.start = nil
 	lastSolve = nil
 	checkElapsed = CHECK_INTERVAL
@@ -395,7 +449,8 @@ local function SetOnTaxi(now)
 	end
 	onTaxi = now
 	if now then
-		job, replanQueued = nil, nil
+		routes.ResetHeading(true)
+		job, replanQueued, keepFirstNext = nil, nil, nil
 		planner:Hide()
 	else
 		OnNewArea()
@@ -415,6 +470,7 @@ local function SetInCombat(now)
 	end
 	inCombat = now
 	if now then
+		routes.ResetHeading(false) -- A fight's steps say nothing of where the player is heading
 		if job or replanQueued then
 			planAfterCombat = true
 		end
@@ -424,7 +480,7 @@ local function SetInCombat(now)
 		checkElapsed = CHECK_INTERVAL
 		if planAfterCombat then
 			planAfterCombat = false
-			routes.RequestPlan()
+			routes.RequestPlan(keepFirstNext)
 		end
 	end
 end
@@ -482,14 +538,18 @@ watcher:SetScript("OnUpdate", function(_, elapsed)
 		return
 	end
 	routes.NoteProgress()
+	local headed = routes.NoteHeading() -- Routes-Heading.lua
 	local walkedIn = routes.nodes and routes.EngagedSignature(routes.nodes) ~= routes.PinnedSignature()
 	local signature = routes.Signature()
 	local changed = signature ~= routes.signature
 	local settled = changed and signature == settling and GetTime() >= groupSettleUntil
 	settling = changed and signature or nil
-	if settled or walkedIn or (sincePlan >= REPLAN_INTERVAL and PlayerMovedFar()) then
+	if settled or walkedIn or headed then
 		sincePlan, settling = 0, nil
 		routes.RequestPlan()
+	elseif sincePlan >= REPLAN_INTERVAL and PlayerMovedFar() then
+		sincePlan, settling = 0, nil
+		routes.RequestPlan(true)
 	end
 end)
 

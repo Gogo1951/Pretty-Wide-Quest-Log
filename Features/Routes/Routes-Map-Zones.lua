@@ -152,7 +152,7 @@ local function QuestZones(QuestieDB, questID)
 	return cached
 end
 
-routes.ZoneAt = ZoneAt -- For the zone a right-click on another zone's marker is for (Routes-Map.lua)
+routes.ZoneAt = ZoneAt -- For the zone a right-click on another zone's marker is for (Routes-Map-Clicks.lua)
 
 --[[
 	Whether a quest has a giver in the route's zone, a city in it or a zone linked to it (QuestZones,
@@ -457,8 +457,8 @@ local function ByLevel(a, b)
 end
 
 --[[
-	A zone's menu: its name with PWQL on the right, then a spacer; how many quests of each level color there are to pick up,
-	each in its color, then the group, dungeon and raid quests in blue; the objectives still to do there, the first OBJECTIVE_LIMIT by quest level with their
+	A zone's menu: its name with PWQL on the right, then a spacer; how many group, dungeon and raid quests there are to pick up
+	in blue, then how many of each level color, each in its color, any count of 0 left out; the objectives still to do there, the first OBJECTIVE_LIMIT by quest level with their
 	counts on the right and the rest counted; then Open Zone Map as a row, done with a click on the disc too.
 	openZone opens the zone's map
 ]]
@@ -467,23 +467,42 @@ function routes.ZoneMenuEntries(group, openZone)
 	rows:Add({ kind = "header", left = group.name, right = L["ADDON_SHORT_NAME"], rightColor = "MUTED" })
 	rows:Add({ kind = "spacer" })
 	local textRed, textGreen, textBlue = ns.GetColorRGB("TEXT")
-	for _, color in ipairs(COLORS) do
-		local red, green, blue = routes.ZoneColorRGB(color.key)
-		local count = tostring(group.counts[color.key])
-		rows:AddDoubleLine(ROW_INDENT .. L[color.label], count, red, green, blue, textRed, textGreen, textBlue)
+	-- Every count on the right is light yellow, as a menu's values are
+	local valueRed, valueGreen, valueBlue = ns.GetColorRGB("VALUE")
+	--[[
+		The group, dungeon and raid quests first, in the dungeon marker's ring blue, as Questie's ! for them is
+		hidden. A count of 0 shows no row
+	]]
+	local groupCount = group.groupCount or 0
+	if groupCount > 0 then
+		local groupRed, groupGreen, groupBlue = ns.GetColorRGB("ROUTE_DUNGEON_RING")
+		rows:AddDoubleLine(
+			ROW_INDENT .. L["ROUTES_ZONE_AVAILABLE_GROUP"],
+			tostring(groupCount),
+			groupRed,
+			groupGreen,
+			groupBlue,
+			valueRed,
+			valueGreen,
+			valueBlue
+		)
 	end
-	-- The group, dungeon and raid quests, in the dungeon marker's ring blue, as Questie's ! for them is hidden
-	local groupRed, groupGreen, groupBlue = ns.GetColorRGB("ROUTE_DUNGEON_RING")
-	rows:AddDoubleLine(
-		ROW_INDENT .. L["ROUTES_ZONE_AVAILABLE_GROUP"],
-		tostring(group.groupCount or 0),
-		groupRed,
-		groupGreen,
-		groupBlue,
-		textRed,
-		textGreen,
-		textBlue
-	)
+	for _, color in ipairs(COLORS) do
+		local count = group.counts[color.key] or 0
+		if count > 0 then
+			local red, green, blue = routes.ZoneColorRGB(color.key)
+			rows:AddDoubleLine(
+				ROW_INDENT .. L[color.label],
+				tostring(count),
+				red,
+				green,
+				blue,
+				valueRed,
+				valueGreen,
+				valueBlue
+			)
+		end
+	end
 	local objectives = group.objectives
 	if #objectives > 0 then
 		rows:AddSection(L["ROUTES_ZONE_OBJECTIVES"])
@@ -493,7 +512,7 @@ function routes.ZoneMenuEntries(group, openZone)
 			local name = ROW_INDENT .. routes.ObjectiveName(objective)
 			if objective.Needed then
 				local count = routes.CountText(objective.Collected, objective.Needed)
-				rows:AddDoubleLine(name, count, textRed, textGreen, textBlue, textRed, textGreen, textBlue)
+				rows:AddDoubleLine(name, count, textRed, textGreen, textBlue, valueRed, valueGreen, valueBlue)
 			else
 				rows:AddLine(name, textRed, textGreen, textBlue)
 			end
@@ -503,6 +522,6 @@ function routes.ZoneMenuEntries(group, openZone)
 			rows:AddLine(ROW_INDENT .. more, ns.GetColorRGB("MUTED"))
 		end
 	end
-	rows:AddHints({ { L["ROUTES_CLICK"], L["ROUTES_CLICK_OPEN_ZONE_MAP"], openZone } })
+	rows:AddHints({ { nil, L["ROUTES_CLICK_OPEN_ZONE_MAP"], openZone } })
 	return rows.entries
 end

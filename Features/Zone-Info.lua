@@ -204,10 +204,8 @@ ns.AddWideQuestLogPart(function()
 
 	local function ItemColor(itemID)
 		local _, _, quality = data.GetItemInfo(itemID)
-		if quality and C_Item and C_Item.GetItemQualityColor then
+		if quality then
 			return C_Item.GetItemQualityColor(quality)
-		elseif quality and GetItemQualityColor then
-			return GetItemQualityColor(quality)
 		end
 		return ns.GetColorRGB("TEXT")
 	end
@@ -459,7 +457,7 @@ ns.AddWideQuestLogPart(function()
 			local wanted = data.IsWanted(quest.questID)
 			rows:AddHints({
 				{
-					L["ROUTES_CLICK"],
+					nil,
 					L[wanted and "ROUTES_TAKE_OFF_ROUTE" or "ROUTES_ADD_TO_ROUTE"],
 					function()
 						if row.quest == quest then
@@ -498,7 +496,7 @@ ns.AddWideQuestLogPart(function()
 		end
 		rows:AddHints({
 			{
-				L["ZONE_INFO_SHIFT_CLICK"],
+				nil,
 				L["ZONE_INFO_LINK_ITEM"],
 				function()
 					LinkItem(item.itemID)
@@ -907,8 +905,10 @@ function zoneInfo:OnPlayerLevelUp()
 end
 zoneInfo.OnSkillLinesChanged = zoneInfo.OnPlayerLevelUp
 
--- An item the lists asked the game for has loaded: whether it can be traded, its name and icon. Other
--- add-ons' items arrive here too, and set off nothing
+--[[
+	An item the lists asked the game for has loaded: whether it can be traded, its name and icon. Other
+	add-ons' items arrive here too, and set off nothing
+]]
 function zoneInfo:OnGetItemInfoReceived(itemID, success)
 	if ns.zoneInfoData.ItemArrived(itemID, success) and self.built then
 		self.RequestRefresh()

@@ -74,8 +74,8 @@ function ns.BuildGeneralOptions()
 			get = Kit.Get("profile", "showWelcome"),
 			set = Kit.Set("profile", "showWelcome"),
 		},
-		-- Each is also at the top of its own panel
-		features = ns.FeatureSwitches(11),
+		-- Each but Quest Tooltips is also at the top of its own panel
+		features = Kit.FeatureSwitches(11),
 	}
 	Kit.Section(args, "Features", 10, L["OPTIONS_FEATURES_HEADER"])
 

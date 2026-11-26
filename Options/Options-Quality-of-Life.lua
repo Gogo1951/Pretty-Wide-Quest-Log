@@ -58,20 +58,20 @@ end
 	the speaker past the row's end to hear it before turning it on, lined up with every other speaker
 ]]
 local function ZoneShareSoundRow(order)
-	return Kit.SubRow(order, ZoneShareOfferOff, {
+	return Kit.SubToggleRow(
+		order,
+		ZoneShareOfferOff,
 		{
 			type = "toggle",
-			name = Kit.SubLabel(L["ZONE_SHARE_OFFERS_SOUND"]),
+			name = L["ZONE_SHARE_OFFERS_SOUND"],
 			desc = L["ZONE_SHARE_OFFERS_SOUND_DESCRIPTION"],
-			width = Kit.SUB_LABEL_WIDTH,
 			get = Kit.Get("profile", "zoneShareOfferSound"),
 			set = Kit.Set("profile", "zoneShareOfferSound"),
 		},
-		{ type = "description", name = " ", width = Kit.CONTROL_WIDTH },
 		Kit.SoundPreview(function()
 			ns.PlayZoneShareAlert()
-		end),
-	})
+		end)
+	)
 end
 
 -- The first message of the dungeon announcement, as the group reads it
@@ -103,7 +103,7 @@ function ns.BuildQualityOfLifeOptions()
 	local args = {
 		descIntro = Kit.Desc(L["TAB_QUALITY_OF_LIFE_DESCRIPTION"], 1),
 		spaceIntro = Kit.Spacer(2),
-		enableQualityOfLife = ns.FeatureSwitch("enableQualityOfLife", 3),
+		enableQualityOfLife = Kit.FeatureSwitch("enableQualityOfLife", 3),
 
 		zoneShareNeedsLog = Kit.StatusLine(ZoneShareNeedsLog, 23.5),
 		spaceQuestSharing2 = Kit.Spacer(24, Hidden),

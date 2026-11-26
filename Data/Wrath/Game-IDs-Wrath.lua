@@ -68,6 +68,11 @@ ns.NOT_FLIGHT_PATH_NPC_IDS = {
 	[11800] = true, -- Silva Fil'naveth
 }
 
+-- Quest ID = quest ID that hands out an item it needs, -- Quest: Sub-Quest
+ns.SUB_QUEST_IDS = {
+	[812] = 813, -- Need for a Cure: Finding the Antidote
+}
+
 --[[
 How We Got the Data
 

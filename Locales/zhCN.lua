@@ -9,7 +9,7 @@ end
 
 L["ADDON_TITLE"] = "Pretty Wide Quest Log"
 L["ADDON_SHORT_NAME"] = "PWQL"
--- TRANSLATORS: joins the items of a list, such as quest links or the letters after a quest's level
+-- TRANSLATORS: joins the items of a list, such as quest links, party members' names, or the QUEST_LEVEL_LEGEND_ENTRY pairs
 L["LIST_SEPARATOR"] = "、"
 L["CHAT_LOADED"] =
 	"版本 %s。设置（包括关闭此消息的选项）位于 选项 > 插件 > Pretty Wide Quest Log。喜欢这个插件吗？推荐给朋友，在 CurseForge 上收藏，或在 GitHub 上点 Star 吧。(="
@@ -163,9 +163,10 @@ L["FONT_LIST_DESCRIPTION"] = "任务列表中区域名称和任务的字体。"
 L["FONT_DETAILS_DESCRIPTION"] = "任务详情的字体：标题、小标题和任务文本。"
 L["FONT_DIALOGUE_DESCRIPTION"] = "任务NPC窗口和对话窗口的字体：标题、小标题和任务文本。"
 L["FONT_WINDOW_DESCRIPTION"] = "窗口标题、任务数量和交付行的字体。"
-L["FONT_FACE"] = "字体"
+L["FONT_FACE"] = "字体样式"
 L["FONT_FACE_DESCRIPTION"] =
 	'字体样式。"游戏默认"会跟随游戏字体，以及任何更改游戏字体的插件。通过 SharedMedia 添加的字体也会列出。'
+-- TRANSLATORS: the first choice of both the Typeface (FONT_FACE) and Outline (FONT_OUTLINE) dropdowns
 L["FONT_GAME_DEFAULT"] = "游戏默认"
 L["FONT_GAME_STANDARD"] = "标准文字"
 L["FONT_GAME_NAMES"] = "角色名称"
@@ -175,7 +176,6 @@ L["FONT_SIZE_DESCRIPTION"] = "以游戏字号为基准，按磅数放大或缩�
 L["FONT_OUTLINE"] = "描边"
 L["FONT_OUTLINE_DESCRIPTION"] =
 	'每个字周围的黑色描边。"游戏默认"保留游戏字体原有的描边，"无"则去掉描边。'
-L["FONT_OUTLINE_DEFAULT"] = "游戏默认"
 L["FONT_OUTLINE_NONE"] = "无"
 L["FONT_OUTLINE_THIN"] = "细"
 L["FONT_OUTLINE_THICK"] = "粗"
@@ -326,7 +326,7 @@ L["WHAT_TO_ROUTE_DESCRIPTION"] =
 	"你接受的每个任务都会一直在路线上。这些设置决定路线沿途引导你去接哪些任务，以适合你喜欢的做任务方式。"
 L["PLAN_AHEAD_HEADER"] = "提前规划"
 L["PLAN_AHEAD_DESCRIPTION"] = "路线向前寻找可接任务的范围。"
--- TRANSLATORS: Plan Ahead's three choices are also switches on the Quest Arrow's menu
+-- TRANSLATORS: Plan Ahead's three choices are also choices on the Quest Arrow's menu
 L["PLAN_AHEAD_YOURS"] = "仅你的任务"
 L["PLAN_AHEAD_YOURS_DESCRIPTION"] = "只有你任务日志里的任务，就像以前的 QuestHelper 插件。"
 L["PLAN_AHEAD_NEARBY"] = "你的任务和附近可接任务"
@@ -358,8 +358,6 @@ L["ROUTE_FOCUS_HEADER"] = "路线侧重"
 L["ROUTE_FOCUS_DESCRIPTION"] = "路线如何选择和安排你要接的任务。"
 L["ROUTE_FOCUS_FASTEST"] = "最快完成"
 L["ROUTE_FOCUS_FASTEST_DESCRIPTION"] = "你的设置允许的所有任务，走最少的路。"
-L["ROUTE_FOCUS_EASIEST"] = "先易后难"
-L["ROUTE_FOCUS_EASIEST_DESCRIPTION"] = "在多走不了几步的情况下，先做较简单的任务。"
 -- TRANSLATORS: Experimental: the option is new and may change
 L["ROUTE_FOCUS_XP"] = "每小时最多经验（实验性）"
 L["ROUTE_FOCUS_XP_DESCRIPTION"] = "跳过路程远、回报少的任务。这是新功能，欢迎反馈。"
@@ -463,6 +461,8 @@ L["QUEST_LEVEL_LEGEND"] = "等级后的字：%s。"
 -- TRANSLATORS: the first %s is a QUEST_SUFFIX_* letter and the second is its QUEST_TYPE_* word, as in "D dungeon"
 L["QUEST_LEVEL_LEGEND_ENTRY"] = "%s（%s）"
 L["QUEST_ID"] = "任务ID %d"
+-- TRANSLATORS: a quest reward choice's tooltip line, under the item; it has the coin that marks the choice worth the most at a vendor
+L["REWARD_SELLS_MOST"] = "这些奖励中售价最高。"
 -- TRANSLATORS: the first %d is this quest's step in its chain and the second is how many steps the chain has
 L["QUEST_CHAIN_PROGRESS"] = "任务链（%d/%d）"
 -- TRANSLATORS: %s is the time left as the game writes it, such as "3 Hr 12 Min"
@@ -492,7 +492,6 @@ L["ZONE_INFO_SHAREABLE"] = "可共享"
 L["ZONE_INFO_NOT_SHAREABLE"] = "不可共享"
 -- TRANSLATORS: an item tooltip's heading after "PWQL //"; the quests that need the item are listed under it
 L["ZONE_INFO_NEEDED_FOR"] = "需要它的任务"
-L["ZONE_INFO_SHIFT_CLICK"] = "Shift-点击"
 L["ZONE_INFO_LINK_ITEM"] = "在聊天中链接"
 L["ZONE_INFO_MENU_QUEST"] = "此任务"
 L["ZONE_INFO_MENU_HERE"] = "你所在的位置"
@@ -550,6 +549,12 @@ L["ROUTES_AREA_MORE"] = "路线后面还有"
 L["ROUTES_NEXT_OBJECTIVE"] = "下一个目标"
 -- TRANSLATORS: heads the dimmed objectives the player is passing through, planned for later on the route
 L["ROUTES_WHILE_HERE"] = "顺路可做"
+-- TRANSLATORS: heads the quests on a ticking clock under the Quest Arrow, a quest timer or an item that runs out
+L["ROUTES_TIMED_QUESTS"] = "计时进行中！"
+-- TRANSLATORS: printed to chat after "PWQL //" when a timed quest has 5 minutes left; %s is the quest's link
+L["TIMER_WARNING_FIVE"] = "%s剩余5分钟。"
+-- TRANSLATORS: as TIMER_WARNING_FIVE, at 1 minute left
+L["TIMER_WARNING_ONE"] = "%s剩余1分钟。"
 -- TRANSLATORS: %d is a distance in yards
 L["ROUTES_YARDS"] = "%d码"
 -- TRANSLATORS: ROUTES_YARDS for a distance of exactly 1
@@ -559,6 +564,8 @@ L["ROUTES_MORE_TASKS"] = "此处还有 +%d 个"
 L["ROUTES_TURN_IN"] = "交付任务"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_TURN_IN_QUEST"] = "交付 %s"
+-- TRANSLATORS: as ROUTES_TURN_IN_QUEST, for a turn-in planned ahead on the route, one that can't be handed in yet
+L["ROUTES_FUTURE_TURN_IN_QUEST"] = "稍后交付 %s"
 L["ROUTES_PICK_UP"] = "接受任务"
 -- TRANSLATORS: %s is the quest's title with its level, such as "[2] Wayward Weapons"
 L["ROUTES_PICK_UP_QUEST"] = "接受 %s"
@@ -599,7 +606,7 @@ L["ROUTES_LOOK_FOR"] = "寻找"
 L["ROUTES_MORE_WAYPOINT"] = "还有 1 个路径点"
 L["ROUTES_MORE_WAYPOINTS"] = "还有 %d 个路径点"
 L["ROUTES_MORE_WAYPOINTS_DESCRIPTION"] =
-	'悬停时显示的其余路线。在选项的区域地图中，用"显示的路径点"设置地图绘制多少个。'
+	'悬停时显示的其余路线。在设置界面的区域地图中，用"显示的路径点"设置地图绘制多少个。'
 L["ROUTES_CLICK_DRAG"] = "拖动"
 L["ROUTES_CLICK_RIGHT"] = "右键点击"
 L["ROUTES_CLICK_MIDDLE"] = "中键点击"
@@ -627,11 +634,11 @@ L["ROUTES_ZONE_AVAILABLE_YELLOW"] = "可接的黄色任务"
 L["ROUTES_ZONE_AVAILABLE_GREEN"] = "可接的绿色任务"
 L["ROUTES_ZONE_AVAILABLE_GRAY"] = "可接的灰色任务"
 -- TRANSLATORS: the zone menu's row counting the group, dungeon and raid quests to pick up, on the continent and world maps
-L["ROUTES_ZONE_AVAILABLE_GROUP"] = "可接的地下城和组队任务"
+L["ROUTES_ZONE_AVAILABLE_GROUP"] = "可接的组队、地下城和团队副本任务"
 -- TRANSLATORS: the heading over the player's objectives in a zone, on the continent and world maps
-L["ROUTES_ZONE_OBJECTIVES"] = "目标"
+L["ROUTES_ZONE_OBJECTIVES"] = "当前目标"
 -- TRANSLATORS: under a zone's objectives, past the first few; %d is how many more it holds
-L["ROUTES_ZONE_MORE"] = "还有 %d 个"
+L["ROUTES_ZONE_MORE"] = "还有 +%d 个"
 -- TRANSLATORS: beside ROUTES_CLICK on a zone's disc on the continent and world maps
 L["ROUTES_CLICK_OPEN_ZONE_MAP"] = "打开区域地图"
 -- TRANSLATORS: %s is a quest link or a list of them
@@ -642,17 +649,20 @@ L["ROUTES_ZONE_RESET"] = "区域已重置：在此忽略的目标已回到路线
 L["ROUTES_GROUP_LEFT_CLEARED"] = "已离开队伍：已忽略的队伍目标和队友已回到路线上。"
 -- TRANSLATORS: %s is a party member's name, or a list of them
 L["ROUTES_MEMBER_LEFT_CLEARED"] = "%s 已离开队伍：为其忽略的目标已回到路线上。"
--- TRANSLATORS: the Quest Arrow menu's labels over its groups of rows
+-- TRANSLATORS: the Quest Arrow menu's label over the current objective's rows
 L["ROUTES_MENU_SECTION_CURRENT"] = "当前目标"
+-- TRANSLATORS: beside an objective under the mouse on the Quest Arrow's menu; a click leaves it off the route
 L["ROUTES_MENU_IGNORE"] = "忽略"
+-- TRANSLATORS: rows on the Quest Arrow's menu that each open a sub-menu of its switches
 L["ROUTES_MENU_SECTION_ROUTE"] = "路线"
 L["ROUTES_MENU_SECTION_SHOW"] = "显示"
+-- TRANSLATORS: the label over the switches under the Plan Ahead choices, in the Quest Arrow menu's Route sub-menu
 L["ROUTES_MENU_SECTION_ALSO_ROUTE"] = "同时加入路线"
 -- TRANSLATORS: beside an objective on the Quest Arrow's menu that is at the Next Objective, not the current one
 L["ROUTES_MENU_NEXT"] = "下一个"
 -- TRANSLATORS: beside an ignored objective under the mouse on the Quest Arrow's menu; a click puts it back on the route
 L["ROUTES_MENU_PUT_BACK"] = "恢复"
--- TRANSLATORS: the Quest Arrow menu's label over its ignore list
+-- TRANSLATORS: the Quest Arrow menu's row that opens its ignore list, with how many are ignored
 L["ROUTES_MENU_IGNORED"] = "已忽略"
 -- TRANSLATORS: %s is a quest's name, such as "Wayward Weapons"
 L["ROUTES_MENU_TURN_IN"] = "交付 %s"

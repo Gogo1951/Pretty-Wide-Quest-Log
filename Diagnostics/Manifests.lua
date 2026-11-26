@@ -76,6 +76,8 @@ local SHARED_FUNCTIONS = {
 	"Mixin",
 	"CreateFont",
 	"PlaySound",
+	-- The Zone Share Offer's alert sound (Zone-Share-Offer.lua)
+	"PlaySoundFile",
 	"GetCursorPosition",
 	"IsMouseButtonDown",
 	"tContains",
@@ -138,6 +140,12 @@ local SHARED_FUNCTIONS = {
 	"ScrollUtil.InitScrollFrameWithScrollBar",
 	"IsModifiedClick",
 	"debugprofilestop",
+	-- The Complete Quest page's reward chosen before the player clicks (Quest-Reward-Pick.lua)
+	"GetNumQuestChoices",
+	"GetQuestItemInfo",
+	"GetQuestItemLink",
+	"QuestInfo_GetRewardButton",
+	"QuestInfoItem_OnClick",
 }
 
 -- The quest giver window's pieces, the quest text fonts, and the mixins the map's canvas is built from
@@ -169,6 +177,8 @@ local SHARED_TABLES = {
 	"QuestProgressItem1",
 	"QuestProgressScrollFrame",
 	"QuestInfoRewardsFrame.XPFrame.ValueText",
+	"QuestInfoFrame",
+	"QUEST_TEMPLATE_REWARD",
 	"StaticPopupDialogs",
 	"GameTooltip",
 	"NORMAL_FONT_COLOR",
@@ -300,6 +310,11 @@ local ROUTES_FUNCTIONS = {
 	"C_Map.GetMapRectOnMap",
 	-- A city gate's marker art; without the atlas the marker takes its usual icon (Routes-Stop-Look.lua)
 	"C_Texture.GetAtlasInfo",
+	-- The bags read for a quest item that runs out; without them no item counts as timed (Routes-Timed-Items.lua)
+	"C_Container.GetContainerNumSlots",
+	"C_Container.GetContainerItemID",
+	-- Where the player heads is noted only while alive (Routes-Heading.lua)
+	"UnitIsDeadOrGhost",
 }
 
 -- The font a tooltip's objective checks are set in (Routes-Map-Tooltip.lua)
@@ -437,6 +452,10 @@ local CLASSIC_FUNCTIONS = {
 	"QuestLogTitleButton_OnClick",
 	"IsModifiedClick",
 	"ChatFrameUtil.GetActiveWindow",
+	-- The coin on the quest log's reward worth the most (Quest-Reward-Coin.lua)
+	"GetNumQuestLogChoices",
+	"GetQuestLogChoiceInfo",
+	"GetQuestLogItemLink",
 }
 
 -- Blizzard's quest log pieces the widened layout moves, resizes or restyles
@@ -633,7 +652,6 @@ local QUEST_ID_TABLES = {
 
 -- The window on Mists, over the quest log index calls above (Quest-Log-API.lua, Mists-Tracking.lua, Mists-Quest-Portrait.lua)
 local INDEX_WINDOW_FUNCTIONS = {
-	"IsUnitOnQuest",
 	"AddQuestWatch",
 	"RemoveQuestWatch",
 	"WatchFrame_Update",
@@ -657,10 +675,17 @@ local function IsFunction(path)
 end
 
 --[[
-	The quest title and tag by quest ID, on every client but WoW Forever, take whichever call the client
-	has (Quest-Log-API.lua), so each row passes where one of them is there
+	The quest title and tag by quest ID, and whether a party member has a quest, on every client but WoW
+	Forever, take whichever call the client has (Quest-Log-API.lua), so each row passes where one of them
+	is there
 ]]
 local QUEST_LOOKUP_ROUTES = {
+	{
+		"C_QuestLog.IsUnitOnQuest or IsUnitOnQuest",
+		function()
+			return IsFunction("C_QuestLog.IsUnitOnQuest") or IsFunction("IsUnitOnQuest")
+		end,
+	},
 	{
 		"C_QuestLog.GetTitleForQuestID or C_QuestLog.GetQuestInfo",
 		function()
@@ -809,6 +834,8 @@ if IS_WIDENED_BLIZZARD_LOG then
 		})
 	)
 	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "QUEST_WATCH_TOO_MANY" }))
+	-- The timer line is split where Blizzard's text starts with this, the time left set apart (Classic-Quest-Details.lua)
+	Append(ns.DIAGNOSTIC_API_CHECKS, Rows("string", { "TIME_REMAINING" }))
 	-- Only TBC has daily quests; the quest list leaves out the daily tag where this is nil (Classic-Quest-Sort.lua)
 	if ns.FLAVOR == "TBC" then
 		Append(ns.DIAGNOSTIC_API_CHECKS, Rows("number", { "LE_QUEST_FREQUENCY_DAILY" }))
@@ -831,6 +858,7 @@ end
 	The Wowhead address and the corpse icon's coords are single settings, not tables of IDs, so each prints
 	its value itself ("value"). The Game-IDs map tables hold uiMapIDs, which C_Map.GetMapInfo looks up
 	("map"); its flight master NPC IDs answer to no client lookup, so they print their row count ("other").
+	The quest item counts are one string, a line a quest, so their quests and items are read out of it.
 ]]
 local function KeyId(id)
 	return id
@@ -838,6 +866,41 @@ end
 
 local function ListedId(_, questID)
 	return questID
+end
+
+-- Each quest and the quest that hands out an item it needs, a row apiece, both carrying the pair
+local function CollectSubQuests(rows)
+	local entries = {}
+	for parentID, subID in pairs(rows) do
+		entries[#entries + 1] = { id = parentID, key = parentID, row = subID }
+		entries[#entries + 1] = { id = subID, key = parentID, row = subID }
+	end
+	return entries
+end
+
+-- Each line of QUEST_ITEM_COUNTS, "Quest ID:Item ID,Count,Item ID,Count", as Zone-Info-Data.lua reads it
+local function CountLines(counts)
+	return counts:gmatch("\n(%d+):([%d,]+)")
+end
+
+-- Each quest the counts name, its items as written
+local function CollectCountQuests(counts)
+	local entries = {}
+	for questID, items in CountLines(counts) do
+		entries[#entries + 1] = { id = tonumber(questID), key = tonumber(questID), row = items }
+	end
+	return entries
+end
+
+-- Each item the counts name, with its quest and count, a row per quest that asks for it
+local function CollectCountItems(counts)
+	local entries = {}
+	for questID, items in CountLines(counts) do
+		for itemID, count in items:gmatch("(%d+),(%d+)") do
+			entries[#entries + 1] = { id = tonumber(itemID), key = tonumber(questID), row = tonumber(count) }
+		end
+	end
+	return entries
 end
 
 -- The sample dungeon, and the sample zone where the flavor has one
@@ -888,6 +951,25 @@ ns.DIAGNOSTIC_DATA_SOURCES = {
 			{ table = "LINKED_ZONE_MAP_IDS", kind = "map", rowId = KeyId },
 			{ table = "WORLD_ROOT_MAP_IDS", kind = "map", rowId = ListedId },
 			{ table = "NOT_FLIGHT_PATH_NPC_IDS", kind = "other" },
+			{
+				table = "SUB_QUEST_IDS",
+				kind = "quest",
+				collect = CollectSubQuests,
+				dataColumns = {
+					{
+						"DATA_QUEST_ID",
+						function(parentID)
+							return parentID
+						end,
+					},
+					{
+						"DATA_SUB_QUEST_ID",
+						function(_, subID)
+							return subID
+						end,
+					},
+				},
+			},
 		},
 	},
 	{
@@ -900,7 +982,40 @@ ns.DIAGNOSTIC_DATA_SOURCES = {
 	},
 	{
 		label = "Quest-Item-Counts",
-		sources = { { table = "QUEST_ITEM_COUNTS", kind = "other" } },
+		sources = {
+			{
+				table = "QUEST_ITEM_COUNTS",
+				kind = "quest",
+				collect = CollectCountQuests,
+				dataColumns = {
+					{
+						"DATA_ITEMS",
+						function(_, items)
+							return items
+						end,
+					},
+				},
+			},
+			{
+				table = "QUEST_ITEM_COUNTS",
+				kind = "item",
+				collect = CollectCountItems,
+				dataColumns = {
+					{
+						"DATA_QUEST_ID",
+						function(questID)
+							return questID
+						end,
+					},
+					{
+						"DATA_COUNT",
+						function(_, count)
+							return count
+						end,
+					},
+				},
+			},
+		},
 	},
 	{
 		label = "Quest-Tags",
@@ -1044,10 +1159,16 @@ elseif ns.hasWideQuestLog then
 	-- A full watch list's message (Classic-Tracking.lua, Mists-Tracking.lua)
 	AddLabels({ "QUEST_WATCH_TOO_MANY" })
 end
+-- The timer line's lead, matched against Blizzard's own line (Classic-Quest-Details.lua)
+if IS_WIDENED_BLIZZARD_LOG then
+	AddLabels({ "TIME_REMAINING" })
+end
 -- The name a party member has before the client knows it, which the route's party reads skip (Routes-Party.lua)
 -- and the line that marks a flight path learned (Routes-Flights.lua)
 if ns.routes then
 	AddLabels({ "UNKNOWNOBJECT", "ERR_NEWTAXIPATH" })
+	-- The duration lines read off a quest item's tooltip for its time left (Routes-Timed-Items.lua)
+	AddLabels({ "ITEM_DURATION_DAYS", "ITEM_DURATION_HOURS", "ITEM_DURATION_MIN", "ITEM_DURATION_SEC" })
 end
 -- The daily tag, on the client that has daily quests (see LE_QUEST_FREQUENCY_DAILY above)
 if IS_WIDENED_BLIZZARD_LOG and ns.FLAVOR == "TBC" then
@@ -1404,6 +1525,120 @@ local function CurrentZoneHeaderListed()
 	return false
 end
 
+--[[
+	The choice the vendor pays most for, by the shared test (rewardPick.MostValuable), over { item, amount }
+	choices; "waiting for items to load" while one hasn't, and "(none)" with fewer than two or none worth anything
+]]
+local function MostValuableChoice(choices)
+	local best, missing = ns.rewardPick.MostValuable(choices)
+	if missing then
+		return "waiting for items to load"
+	end
+	return best and tostring(best) or "(none)"
+end
+
+--[[
+	The reward chosen on the Complete Quest page before the player clicks, and the coin on the choice worth the
+	most (Quest-Reward-Pick.lua, Quest-Reward-Coin.lua): Pawn's upgrades come first in the pick, and while Pawn
+	marks quest rewards, or ElvUI's coin shows, the coin stays off the quest giver's buttons. A reward the
+	player clicked stays theirs, which the pick keeps inside its own file, so it can't show here
+]]
+
+-- Whether Pawn is loaded and set up for this character, by the pick's own test (Quest-Reward-Pick.lua's PawnReady)
+local function PawnReady()
+	if not (PawnCommon and PawnPlayerFullName and PawnGetItemData and PawnIsItemAnUpgrade) then
+		return false
+	end
+	return not (PawnIsIncompatible and PawnIsIncompatible())
+end
+
+--[[
+	The first quest giver choice Pawn calls an upgrade, which the pick takes over the one worth the most, by
+	the pick's own test (Quest-Reward-Pick.lua's IsPawnUpgrade); "waiting for Pawn's item data" while Pawn
+	can't read one yet
+]]
+local function PawnFirstUpgrade()
+	if not PawnReady() then
+		return "(Pawn not ready)"
+	end
+	local waiting = false
+	for index = 1, GetNumQuestChoices() do
+		local link = GetQuestItemLink("choice", index)
+		local usable = select(5, GetQuestItemInfo("choice", index))
+		if link and usable then
+			local item = PawnGetItemData(link)
+			if not item then
+				waiting = true
+			else
+				local upgradeInfo, itemLevelIncrease = PawnIsItemAnUpgrade(item)
+				if upgradeInfo or (PawnCommon.ShowItemLevelUpgrades and itemLevelIncrease) then
+					return tostring(index)
+				end
+			end
+		end
+	end
+	return waiting and "waiting for Pawn's item data" or "(none)"
+end
+
+local function RewardChoiceLines(lines)
+	local rewardPick = ns.rewardPick
+	if not rewardPick then
+		return
+	end
+	lines[#lines + 1] = string.format(
+		"Pawn: %s, set up for this character: %s, marks quest rewards: %s",
+		Loaded("Pawn"),
+		YesNo(PawnReady()),
+		YesNo(rewardPick.PawnMarksRewards())
+	)
+	lines[#lines + 1] = string.format("ElvUI's reward coin: %s", Shown(_G.ElvUI_QuestRewardGoldIconFrame))
+	-- The pick and the giver's coin act only on the Complete Quest page, its rewards in view
+	lines[#lines + 1] = string.format("Complete Quest page: %s", Shown(_G.QuestFrameRewardPanel))
+	if QuestInfoRewardsFrame and QuestInfoRewardsFrame:IsVisible() then
+		local choices = {}
+		for index = 1, GetNumQuestChoices() do
+			local _, _, amount = GetQuestItemInfo("choice", index)
+			choices[index] = { item = GetQuestItemLink("choice", index), amount = amount }
+		end
+		lines[#lines + 1] = string.format(
+			"  Reward choices: %d, chosen: %s, Pawn's first upgrade: %s, worth the most: %s",
+			#choices,
+			tostring(QuestInfoFrame and QuestInfoFrame.itemChoice),
+			PawnFirstUpgrade(),
+			MostValuableChoice(choices)
+		)
+	end
+	-- WoW Forever and Mists: the coin on the window's own rewards, for the selected quest (Forever-Quest-Details-Rewards.lua)
+	local selectedID = OWN_WINDOW and SelectedQuest()
+	if selectedID then
+		local choices = {}
+		for index, reward in ipairs(ns.GetSelectedQuestDetails(selectedID).choices) do
+			choices[index] = { item = reward.kind == "item" and reward.itemID or false, amount = reward.count }
+			if reward.kind == "item" and not reward.itemID then
+				choices[index].item = nil
+			end
+		end
+		lines[#lines + 1] = string.format(
+			"Selected quest's reward choices: %d, worth the most: %s",
+			#choices,
+			MostValuableChoice(choices)
+		)
+	end
+	-- Classic Era and TBC: the coin on Blizzard's quest log rewards, for the selected quest
+	if IS_WIDENED_BLIZZARD_LOG and SelectedQuest() then
+		local choices = {}
+		for index = 1, GetNumQuestLogChoices() do
+			local _, _, amount = GetQuestLogChoiceInfo(index)
+			choices[index] = { item = GetQuestLogItemLink("choice", index), amount = amount }
+		end
+		lines[#lines + 1] = string.format(
+			"Selected quest's reward choices: %d, worth the most: %s",
+			#choices,
+			MostValuableChoice(choices)
+		)
+	end
+end
+
 -- The state behind "the quest log looks wrong", "it won't open" and "the details are blank" reports. Reads only.
 function ns:BuildQuestLogContextReport()
 	local lines = { GetClientHeader(), "" }
@@ -1486,6 +1721,7 @@ function ns:BuildQuestLogContextReport()
 	local skinned = QuestFrame
 		and (QuestFrame.backdrop and "on a frame of its own" or QuestFrame.template and "on the window")
 	lines[#lines + 1] = string.format("Quest giver window skin backdrop: %s", skinned or "none, so it's left alone")
+	RewardChoiceLines(lines)
 
 	if OWN_WINDOW then
 		--[[
@@ -1616,6 +1852,9 @@ function ns:BuildQuestLogContextReport()
 		"Questie quest tooltips on chain rows: %s",
 		(chainLink and type(chainLink.CreateQuestTooltip) == "function") and "found" or "not found"
 	)
+	-- Before Questie has started, a chain row's hover shows nothing (Quest-Chain.lua)
+	lines[#lines + 1] =
+		string.format("Questie started: %s", tostring(type(Questie) == "table" and Questie.started or nil))
 	local selectedID = SelectedQuest()
 	if selectedID then
 		local parts, position = ns.GetQuestChain(selectedID)
@@ -2193,6 +2432,38 @@ end
 	icons, and on WoW Forever falls back to Blizzard's own quest areas. Reads
 	only.
 ]]
+--[[
+	Where the player's arrow goes on the map shown, found as Player-Map-Pin.lua finds it: Questie's
+	HereBeDragons, else Blizzard's own answer. The arrow hides off the map or without a readable facing
+]]
+local function PlayerArrowLine(mapID)
+	local x, y
+	local routes = ns.routes
+	local hereBeDragons = mapID and routes and routes.HereBeDragons()
+	if hereBeDragons then
+		local worldX, worldY, instance = routes.PlayerPosition()
+		if ns.IsReadable(worldX, worldY, instance) and worldX then
+			x, y = hereBeDragons:GetZoneCoordinatesFromWorldInstance(worldX, worldY, instance, mapID, true)
+		end
+	end
+	if not (x and y) and mapID then
+		local position = C_Map.GetPlayerMapPosition(mapID, "player")
+		if position then
+			x, y = position:GetXY()
+			if not ns.IsReadable(x, y) then
+				x, y = nil, nil
+			end
+		end
+	end
+	local facing = GetPlayerFacing()
+	return string.format(
+		"Your arrow on the map shown: %s, facing %s",
+		(x and y) and string.format("%.3f, %.3f%s", x, y, (x < 0 or x > 1 or y < 0 or y > 1) and " (off the map)" or "")
+			or "(no position)",
+		ns.IsReadable(facing) and tostring(facing) or "unreadable"
+	)
+end
+
 function ns:BuildMapContextReport()
 	local lines = { GetClientHeader(), "" }
 	local questMap = ns.questMap
@@ -2220,6 +2491,12 @@ function ns:BuildMapContextReport()
 			end
 		end
 		lines[#lines + 1] = string.format("Exploration pins: %d, with RefreshOverlays: %d", pins, withRefresh)
+		-- Classic Era and TBC: the explored areas hold their redraws until combat ends (Classic-Quest-Map.lua)
+		if IS_WIDENED_BLIZZARD_LOG then
+			lines[#lines + 1] =
+				string.format("In combat, so the explored areas wait to redraw: %s", YesNo(InCombatLockdown()))
+		end
+		lines[#lines + 1] = PlayerArrowLine(canvas and canvas:GetMapID())
 	end
 	lines[#lines + 1] = string.format(
 		"Map reveal table: %s",
@@ -2228,6 +2505,8 @@ function ns:BuildMapContextReport()
 			or "missing"
 	)
 	lines[#lines + 1] = MapLine("Your zone", MapUtil.GetDisplayableMapForPlayer())
+	-- Zone Info's lists leave out quests by level (Zone-Info-Data.lua)
+	lines[#lines + 1] = string.format("Level: %d of %d", UnitLevel("player"), GetMaxPlayerLevel())
 
 	lines[#lines + 1] = ""
 	local questID = SelectedQuest()
@@ -2561,6 +2840,65 @@ local function RouteQuestLines(lines)
 		withoutSpawns
 	)
 	lines[#lines + 1] = string.format("Going first: %d timed quests, %d escort quests (not timed)", timed, escort)
+end
+
+--[[
+	Each clock that puts a quest first (routes.TimedQuests): a quest timer, a quest item that runs out
+	(Routes-Timed-Items.lua), or a quest that hands out a timed quest's item and borrows its clock
+	(Routes-Sub-Quests.lua). The timer warnings print in chat as a clock drops to 5 and to 1 minute, once a
+	clock, so a borrowed one gets none (Timer-Warnings.lua)
+]]
+local function RouteTimedLines(lines)
+	local routes = ns.routes
+	local timed, borrowed = routes.TimedQuests()
+	local byItem = routes.TimedItemQuests()
+	local log = routes.QuestLog()
+	local subQuests = routes.SubQuests(log)
+	local questIDs = {}
+	for questID in pairs(timed) do
+		questIDs[#questIDs + 1] = questID
+	end
+	table.sort(questIDs)
+	lines[#lines + 1] = string.format("Clocks running: %d", #questIDs)
+	for _, questID in ipairs(questIDs) do
+		local from = "a quest timer"
+		if borrowed and borrowed[questID] then
+			from =
+				string.format("borrowed from quest %s, so no timer warnings of its own", tostring(subQuests[questID]))
+		elseif byItem[questID] then
+			from = "its quest item"
+		end
+		local quest = log[questID]
+		lines[#lines + 1] = string.format(
+			"  %d %s: %s seconds left, from %s",
+			questID,
+			tostring(type(quest) == "table" and quest.name or ""),
+			tostring(timed[questID]),
+			from
+		)
+	end
+	-- Quests done first for a quest whose item they hand out (Routes-Sub-Quests.lua)
+	local subIDs = {}
+	for subID, parentID in pairs(subQuests) do
+		subIDs[#subIDs + 1] = string.format("%d for %d", subID, parentID)
+	end
+	table.sort(subIDs)
+	lines[#lines + 1] = string.format(
+		"Quests done first for another quest's item: %s",
+		#subIDs > 0 and table.concat(subIDs, ", ") or "(none)"
+	)
+	-- An item a quest needs and the bags don't hold, gone after where Questie says it's got (Routes-Missing-Items.lua)
+	local missing = {}
+	for _, node in ipairs(routes.nodes or {}) do
+		if node.item and node.key == node.questID .. ":item" .. node.item then
+			missing[#missing + 1] = string.format("%d for %d", node.item, node.questID)
+		end
+	end
+	table.sort(missing)
+	lines[#lines + 1] = string.format(
+		"Missing quest items on the route to get: %s",
+		#missing > 0 and table.concat(missing, ", ") or "(none)"
+	)
 end
 
 -- Each task of a stop, or of what the arrow shows, as the arrow and the map's markers list them
@@ -2976,6 +3314,11 @@ function ns:BuildRoutesContextReport()
 		(phasing and type(phasing.IsSpawnVisible) == "function") and "found" or "not found, so every spawn counts"
 	)
 	RouteQuestLines(lines)
+	RouteTimedLines(lines)
+	-- Each quest's items still to get, as quest:item+item; one with nowhere to get it here adds nothing (Routes-Missing-Items.lua)
+	lines[#lines + 1] = string.format("Quest items still to get: %s", tostring(routes.MissingItemSignature()))
+	-- What the route picks up follows the player's level (Routes-Pick-Ups.lua)
+	lines[#lines + 1] = string.format("Level: %d of %d", UnitLevel("player"), GetMaxPlayerLevel())
 
 	-- A plan sets out from the player, or a ghost's corpse, and waits out combat (Routes-Nodes.lua, Routes-Core.lua)
 	lines[#lines + 1] = ""
@@ -2990,6 +3333,8 @@ function ns:BuildRoutesContextReport()
 			x and WorldPosition(x, y, instance) or "(the client won't say, so the route sets out from you)"
 		)
 	end
+	-- Dead or a ghost, where the heading isn't noted (Routes-Heading.lua)
+	lines[#lines + 1] = string.format("Dead or a ghost: %s", YesNo(UnitIsDeadOrGhost("player")))
 	lines[#lines + 1] = string.format("In combat, where planning waits: %s", YesNo(InCombatLockdown()))
 	-- On a flight path nothing plans and the Quest Arrow hides, until the player lands (Routes-Core.lua, Routes-Arrow.lua)
 	lines[#lines + 1] = string.format("On a flight path: %s", YesNo(routes.IsOnTaxi()))
@@ -3024,6 +3369,17 @@ function ns:BuildRoutesContextReport()
 		addedElsewhere
 	)
 	RouteStopLines(lines, "First stop", routes.stops[1])
+	--[[
+		The objective the player has been heading for, which the route plans first until they turn away, get
+		there or finish it (Routes-Heading.lua)
+	]]
+	local heading = routes.heading
+	lines[#lines + 1] = string.format(
+		"Heading for: %s",
+		type(heading) == "table"
+				and string.format("%s, nearest so far %.0f yards", tostring(heading.key), heading.nearest or 0)
+			or "(nothing picked by heading)"
+	)
 
 	lines[#lines + 1] = ""
 	ArrowLines(lines)

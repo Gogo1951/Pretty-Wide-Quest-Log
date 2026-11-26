@@ -238,7 +238,7 @@ function ns.BuildQuestLogOptions()
 		args = {
 			descIntro = Kit.Desc(L["TAB_QUEST_LOG_DESCRIPTION"], 1),
 			spaceIntro = Kit.Spacer(2),
-			enableWideQuestLog = ns.FeatureSwitch("enableWideQuestLog", 3),
+			enableWideQuestLog = Kit.FeatureSwitch("enableWideQuestLog", 3),
 			reloadPending = Kit.StatusLine(ns.QuestLogReloadPendingText, 4),
 			spaceSubPanels = Kit.Spacer(5),
 			descSubPanels = Kit.Desc(L["QUEST_LOG_SUB_PANELS_DESCRIPTION"], 6),

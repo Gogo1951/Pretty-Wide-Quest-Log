@@ -9,30 +9,33 @@ local _, ns = ...
 	the route and Questie's own icons show it once the player is there. Each needs an NPC or object to
 	start it, isn't gray, and isn't a dungeon or raid quest.
 
-	Things to Bring: every tradeable item the zone's quests ask for, apart from the list above. The zone's
-	quests are those available now (wherever their giver stands), those in the log, and those of a
-	profession the character knows at any skill, then every quest that follows them, at any level, for the
-	character's race and class. Items come from the ones that work in the zone. Questie's database names a
+	Things to Bring: every tradeable item the player should bring with them, asked for by a quest turned in
+	to someone in the zone, apart from the list above. The quests looked at are those that work in the zone
+	and are available now (wherever their giver stands), those in the log, and those of a profession the
+	character knows at any skill, then every quest that follows them, at any level, for the character's
+	race and class. Items come from the ones turned in in the zone. Questie's database names a
 	quest's items but not how many, so the count comes from the quest log when the quest is in it, then
 	from QUEST_ITEM_COUNTS (Data/{Game}/Quest-Item-Counts-{Game}.lua), then from the quest's objective
-	text. A quest item, or one that binds when picked up, can't be bought, so it's left out once the game
-	has loaded it.
+	text. One that binds when picked up can't be bought, so it's left out once the game has loaded it; a
+	quest item that doesn't bind, as Dig Rat, is kept.
 
 	A quest works in a zone when it's filed under the zone, its giver or turn-in stands there, or one of its
 	creatures, objects, kill credits or explore spots is there. An item that drops counts for the zone only
 	when the zone holds a fair share of what drops it (ZONE_DROP_SHARE), so cloth, potions and herbs that
-	drop everywhere never pull a quest in. Questie's spawns don't move, so each answer is kept for the zone
+	drop everywhere never pull a quest in. A chest found in several zones (WORLD_CHEST_ZONES) isn't counted
+	as a source, and an item a vendor sells never ties its quest to a zone. Questie's spawns don't move, so
+	each answer is kept for the zone
 ]]
 
 local data = {}
 ns.zoneInfoData = data
 
 local QUEST_FLAG_SHARABLE = 8 -- The game's quest flag for a quest players can share
-local ITEM_CLASS_QUEST = 12 -- Enum.ItemClass.Questitem, on every client
 local BIND_ON_PICKUP, BIND_QUEST = 1, 4 -- GetItemInfo's bind types that can't be traded
 local FEW_DROP_SOURCES = 4 -- Up to this many things drop an item and one in the zone is enough
 local ZONE_DROP_SHARE = 1 / 3 -- Otherwise this share of them must be in the zone
 local MAX_DROP_SOURCES = 64 -- An item more things drop than this drops everywhere, so no zone's
+local WORLD_CHEST_ZONES = 3 -- An object that spawns in this many zones or more is a treasure chest, not a source
 local MAX_FOLLOW_UP_DEPTH = 8 -- Quests followed at most after any one of the zone's
 local MAX_CACHED_ZONES = 4 -- Zones whose answers are kept at once
 local BUDGET_MS = 4 -- Of each frame, for working the lists out
@@ -241,7 +244,7 @@ end
 -- What's in a zone
 --------------------------------------------------------------------------------
 
--- Each zone's answers: { mapID, areas, npcs, objects, items, quests, starters }, the latest last
+-- Each zone's answers: { mapID, areas, npcs, objects, items, quests, starters, turnIns }, the latest last
 local zoneCache = {}
 
 local function ZoneAnswers(mapID)
@@ -252,7 +255,8 @@ local function ZoneAnswers(mapID)
 			return answers
 		end
 	end
-	local answers = { mapID = mapID, areas = {}, npcs = {}, objects = {}, items = {}, quests = {}, starters = {} }
+	local answers =
+		{ mapID = mapID, areas = {}, npcs = {}, objects = {}, items = {}, quests = {}, starters = {}, turnIns = {} }
 	zoneCache[#zoneCache + 1] = answers
 	if #zoneCache > MAX_CACHED_ZONES then
 		table.remove(zoneCache, 1)
@@ -322,7 +326,31 @@ local function AnyObjectHere(zone, QuestieDB, ids)
 	return false
 end
 
--- Whether an item drops in the zone, from enough of what drops it that it's the zone's (ZONE_DROP_SHARE)
+--[[
+	Whether an object is a treasure chest: it spawns in WORLD_CHEST_ZONES zones or more, as Battered Chest.
+	Kept for the session, as it's the same for every zone
+]]
+local worldChests = {}
+
+local function IsWorldChest(QuestieDB, objectID)
+	local chest = worldChests[objectID]
+	if chest == nil then
+		local zones = 0
+		for _, list in pairs(List(Query(QuestieDB.QueryObjectSingle, objectID, "spawns"))) do
+			if type(list) == "table" and #list > 0 then
+				zones = zones + 1
+			end
+		end
+		chest = zones >= WORLD_CHEST_ZONES
+		worldChests[objectID] = chest
+	end
+	return chest
+end
+
+--[[
+	Whether an item drops in the zone, from enough of what drops it that it's the zone's (ZONE_DROP_SHARE).
+	Treasure chests aren't counted, and an item a vendor sells is never the zone's
+]]
 local function ItemHere(zone, QuestieDB, itemID, yield)
 	if type(itemID) ~= "number" then
 		return false
@@ -331,10 +359,20 @@ local function ItemHere(zone, QuestieDB, itemID, yield)
 	if found ~= nil then
 		return found
 	end
-	local npcs = List(Query(QuestieDB.QueryItemSingle, itemID, "npcDrops"))
-	local objects = List(Query(QuestieDB.QueryItemSingle, itemID, "objectDrops"))
-	local total = #npcs + #objects
 	found = false
+	if #List(Query(QuestieDB.QueryItemSingle, itemID, "vendors")) > 0 then
+		zone.items[itemID] = found
+		return found
+	end
+	local npcs = List(Query(QuestieDB.QueryItemSingle, itemID, "npcDrops"))
+	local objects = {}
+	for _, id in ipairs(List(Query(QuestieDB.QueryItemSingle, itemID, "objectDrops"))) do
+		if type(id) == "number" and not IsWorldChest(QuestieDB, id) then
+			objects[#objects + 1] = id
+		end
+		yield()
+	end
+	local total = #npcs + #objects
 	if total > 0 and total <= MAX_DROP_SOURCES then
 		local here = 0
 		for _, id in ipairs(npcs) do
@@ -362,6 +400,17 @@ local function StarterHere(zone, QuestieDB, questID)
 	return found
 end
 
+-- Whether an NPC or object the quest is turned in to stands in the zone
+local function TurnInHere(zone, QuestieDB, questID)
+	local found = zone.turnIns[questID]
+	if found == nil then
+		local finishedBy = List(QueryQuest(QuestieDB, questID, "finishedBy"))
+		found = AnyNPCHere(zone, QuestieDB, finishedBy[1]) or AnyObjectHere(zone, QuestieDB, finishedBy[2])
+		zone.turnIns[questID] = found
+	end
+	return found
+end
+
 -- Whether the quest works in the zone: filed there, its giver, turn-in, objectives or explore spot there
 local function QuestHere(zone, QuestieDB, questID, yield)
 	local found = zone.quests[questID]
@@ -370,10 +419,7 @@ local function QuestHere(zone, QuestieDB, questID, yield)
 	end
 	local sort = QueryQuest(QuestieDB, questID, "zoneOrSort")
 	found = type(sort) == "number" and sort > 0 and AreaHere(zone, sort) or StarterHere(zone, QuestieDB, questID)
-	if not found then
-		local finishedBy = List(QueryQuest(QuestieDB, questID, "finishedBy"))
-		found = AnyNPCHere(zone, QuestieDB, finishedBy[1]) or AnyObjectHere(zone, QuestieDB, finishedBy[2])
-	end
+	found = found or TurnInHere(zone, QuestieDB, questID)
 	if not found then
 		local objectives = List(QueryQuest(QuestieDB, questID, "objectives"))
 		for _, entry in ipairs(List(objectives[1])) do
@@ -625,29 +671,24 @@ local function Needed(QuestieDB, questID, itemID, logQuest)
 end
 
 --[[
-	Whether an item can be bought or traded, as far as is known: not a quest item by Questie's database or
-	the game's, and not one that binds when picked up. Until the game has loaded it, it's kept and asked for,
+	Whether an item can be bought or traded, as far as is known: not one that binds when picked up or to a
+	quest. A quest item that doesn't bind, as Dig Rat, can be. Until the game has loaded it, it's kept and asked for,
 	and data.pendingItems, item ID to true, says the lists want working out again once it arrives. One the game
 	answered it doesn't have is kept and never asked for again, so it can't set off a refresh each time
 ]]
 data.pendingItems = {}
 local unloadableItems = {}
 
-local function IsTradeable(QuestieDB, itemID)
-	if Query(QuestieDB.QueryItemSingle, itemID, "class") == ITEM_CLASS_QUEST then
-		return false
-	end
-	local name, _, _, _, _, _, _, _, _, _, _, classID, _, bindType = GetItemInfo(itemID)
+local function IsTradeable(itemID)
+	local name, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID)
 	if not name then
 		if not unloadableItems[itemID] then
-			if C_Item and C_Item.RequestLoadItemDataByID then
-				C_Item.RequestLoadItemDataByID(itemID)
-			end
+			C_Item.RequestLoadItemDataByID(itemID)
 			data.pendingItems[itemID] = true
 		end
 		return true
 	end
-	return classID ~= ITEM_CLASS_QUEST and bindType ~= BIND_ON_PICKUP and bindType ~= BIND_QUEST
+	return bindType ~= BIND_ON_PICKUP and bindType ~= BIND_QUEST
 end
 
 -- GET_ITEM_INFO_RECEIVED: true when it's an item the lists were waiting on and it loaded
@@ -664,7 +705,7 @@ function data.ItemArrived(itemID, success)
 end
 
 local function AddItem(QuestieDB, items, itemID, questID, logQuest)
-	if type(itemID) ~= "number" or not IsTradeable(QuestieDB, itemID) then
+	if type(itemID) ~= "number" or not IsTradeable(itemID) then
 		return
 	end
 	local item = items[itemID]
@@ -856,7 +897,7 @@ local function Build(mapID, yield)
 		end
 	end
 
-	-- Every quest that follows them, at any level, and the items of those that work here
+	-- Every quest that follows them, at any level, and the items of those turned in here
 	local followUps = routes.FollowUpIndex(QuestieDB, yield)
 	local items = {}
 	local queue, seen = {}, {}
@@ -868,7 +909,7 @@ local function Build(mapID, yield)
 	while position < #queue do
 		position = position + 1
 		local questID, depth = queue[position][1], queue[position][2]
-		if depth == 0 or (not IsDungeonQuest(QuestieDB, questID) and QuestHere(zone, QuestieDB, questID, yield)) then
+		if (depth == 0 or not IsDungeonQuest(QuestieDB, questID)) and TurnInHere(zone, QuestieDB, questID) then
 			AddQuestItems(QuestieDB, items, questID, log[questID])
 		end
 		if depth < MAX_FOLLOW_UP_DEPTH then

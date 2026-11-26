@@ -12,7 +12,7 @@ ns.QUEST_TAG_SUFFIXES = {
 How We Got the Data
 
 Last Validated
-	2026-11-20, wago.tools, WoW Forever 1.60.1.70959
+	2026-11-25, wago.tools, WoW Forever 1.60.1.71139
 
 Notes
 	- The quest tags that put a letter after a quest's level, D for a dungeon, R for a raid, P for PvP, G for a
@@ -31,7 +31,7 @@ Wowhead
 	None.
 
 wago.tools
-	https://wago.tools/db2/QuestInfo?build=1.60.1.70959
+	https://wago.tools/db2/QuestInfo?build=1.60.1.71139
 
 QuestieDB
 	None.

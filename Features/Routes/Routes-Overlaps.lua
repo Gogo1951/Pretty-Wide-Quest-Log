@@ -62,8 +62,8 @@ end
 
 	Anchors and riders: an objective whose spawns in the zone are one blob can be done in one place only.
 	Another objective with spawns within RIDE_REACH of that place, or naming the same mob, rides along: while
-	the anchor is left to do, the rider's only candidate is the anchor's place, so the solver puts both at
-	one waypoint (Routes-Stops.lua joins them). The rider gets node.rider, the anchor. Stolen Silver drops
+	the anchor is left to do, the rider's only candidate is the anchor's place, so the solver does both at
+	the same place. The rider gets node.rider, the anchor. Stolen Silver drops
 	in one camp of Sunscale Scytheclaws, so Raptor Horns, from raptors all over the Barrens, is done there.
 
 	Shared camps: between spread-out objectives, each blob counts SHARED_CREDIT yards nearer for each other

@@ -232,6 +232,80 @@ ns.AddWideQuestLogPart(function()
 		end
 	end
 
+	--[[
+		A timed quest's timer in blue on a line of its own, a blank line above and below it, as on WoW Forever:
+		Blizzard's line keeps "Time Remaining:" and the time left goes right-aligned like the objective counts.
+		The parchment's deep blue, or the info blue when a skin (ElvUI) draws the description light
+	]]
+	local timerNumber = QuestLogDetailScrollChildFrame:CreateFontString(nil, "ARTWORK")
+	timerNumber:SetJustifyH("RIGHT")
+	timerNumber:Hide()
+
+	local TIME_PREFIX = TIME_REMAINING .. " "
+	local settingTimer -- While the hook below rewrites Blizzard's line, so it doesn't run again on it
+	hooksecurefunc(QuestLogTimerText, "SetText", function(region, text)
+		if settingTimer or type(text) ~= "string" or text:sub(1, #TIME_PREFIX) ~= TIME_PREFIX then
+			return
+		end
+		timerNumber:SetText(text:sub(#TIME_PREFIX + 1))
+		settingTimer = true
+		region:SetText(TIME_REMAINING)
+		settingTimer = false
+	end)
+	hooksecurefunc(QuestLogTimerText, "Show", function()
+		timerNumber:Show()
+	end)
+	hooksecurefunc(QuestLogTimerText, "Hide", function()
+		timerNumber:Hide()
+	end)
+
+	local function ColorTimer()
+		local red, green, blue = QuestLogQuestDescription:GetTextColor()
+		local light = (red + green + blue) / 3 > 0.5
+		local timerRed, timerGreen, timerBlue = ns.GetColorRGB(light and "INFO" or "PARCHMENT_TIMER")
+		QuestLogTimerText:SetTextColor(timerRed, timerGreen, timerBlue)
+		timerNumber:SetTextColor(timerRed, timerGreen, timerBlue)
+	end
+
+	-- Blizzard hangs the timer, and what follows it, 10px apart each time; a blank line's worth instead
+	local function SpaceTimerLine(region)
+		if region and region:IsShown() and region:GetNumPoints() > 0 then
+			local point, relativeTo, relativePoint, x = region:GetPoint(1)
+			if relativeTo == QuestLogTimerText then
+				region:SetPoint(point, relativeTo, relativePoint, x, -LAYOUT.SPACE.GROUP)
+			end
+		end
+	end
+
+	local function ShowTimer()
+		timerNumber:SetShown(QuestLogTimerText:IsShown())
+		if not QuestLogTimerText:IsShown() then
+			return
+		end
+		QuestLogTimerText:ClearAllPoints()
+		QuestLogTimerText:SetPoint("TOPLEFT", QuestLogObjectivesText, "BOTTOMLEFT", 0, -LAYOUT.SPACE.GROUP)
+		SpaceTimerLine(QuestLogObjective1)
+		SpaceTimerLine(QuestLogSuggestedGroupNum)
+		local fontObject = QuestLogTimerText:GetFontObject()
+		if fontObject then
+			timerNumber:SetFontObject(fontObject)
+		end
+		local file, size, flags = QuestLogTimerText:GetFont()
+		if file and size then
+			timerNumber:SetFont(file, size, flags)
+		end
+		timerNumber:ClearAllPoints()
+		timerNumber:SetPoint(
+			"TOPRIGHT",
+			QuestLogTimerText,
+			"TOPLEFT",
+			LAYOUT.CONTENT_WIDTH - ns.TwoSpacesWide(QuestLogQuestDescription),
+			0
+		)
+		ColorTimer()
+		C_Timer.After(0, ColorTimer) -- Again once a skin has recolored the description
+	end
+
 	-- Fills the quest chain for the selected quest, before PlaceQuestID positions it
 	local function UpdateQuestChain()
 		local questID = select(8, GetQuestLogTitle(GetQuestLogSelection()))
@@ -294,6 +368,7 @@ ns.AddWideQuestLogPart(function()
 
 	hooksecurefunc("QuestLog_UpdateQuestDetails", function()
 		ShowDailyReset()
+		ShowTimer()
 		SpaceAboveDescription()
 		StyleObjectives()
 		UpdateQuestChain()
